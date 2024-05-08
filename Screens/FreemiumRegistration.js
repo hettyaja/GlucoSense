@@ -1,5 +1,5 @@
 import React from 'react';
-import { ImageBackground, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Image, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 //import LoginPageBackground from '.../.../ '
 
