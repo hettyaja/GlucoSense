@@ -122,7 +122,7 @@ const FreemiumRegister= () => {
 };
 
     const styles = StyleSheet.create({
-        container: 1,
+        container: {flex: 1, alignItems: 'center'},
         safeArea: {flex: 1, justifyContent: 'center'},
         registerButtonContainer: {
             elevation: 5,
@@ -132,7 +132,7 @@ const FreemiumRegister= () => {
             resizeBorder: 10,
             borderWidth: 1,
             paddingVertical: 8,
-            paddingHorizontal: 57
+            paddingHorizontal: 60
         },
         image: {
             flex: 1,
@@ -149,15 +149,14 @@ const FreemiumRegister= () => {
             borderColor: '#ccc',
             borderWidth: 1,
             borderRadius: 15,
-            fontSize: 16,
+            fontSize: 16
         },
         registerButtonText: {
             fontFamily: 'Roboto',
             fontSize: 18,
             color: "#FAF5E1",
             fontWeight: "bold",
-            alignSelf: "center",
-            textTransform: "uppercase"
+            alignSelf: "center"
         },
         previousButtonContainer: {
             elevation: 6,
