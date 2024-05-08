@@ -135,7 +135,6 @@ const FreemiumRegister= () => {
             paddingHorizontal: 65
         },
         image: {
-            resizeMode="cover",
             width: 50,
             height: 200,
             flex: 1,
