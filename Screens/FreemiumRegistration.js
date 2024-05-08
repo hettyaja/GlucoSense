@@ -1,8 +1,7 @@
 import React from 'react';
 import { ImageBackground, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
-//import LoginPageBackground from '.../.../ ';
-const image = {uri: 'https://www.figma.com/file/81VSHMByukPMHkt0NWPm1z/Untitled?type=design&node-id=8%3A2&mode=design&t=chxWX4diUoWXY6Na-1.png'};
+//import LoginPageBackground from '.../.../ '
 
 const FreemiumRegister= () => {
     return (
