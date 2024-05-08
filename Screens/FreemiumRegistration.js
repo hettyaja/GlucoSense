@@ -9,7 +9,12 @@ const FreemiumRegister= () => {
     
     <SafeAreaView style={styles.safeArea}>
         <View style={styles.container}>
-        <ImageBackground source={image} resizeMode="cover" style={styles.image}/>
+        <Image
+        resizeMode="cover" style={styles.image}
+        source={{
+            uri: 'C:\Users\Hansen Yonatan\OneDrive - SIM - Singapore Institute of Management\Pictures\UI Design\Untitled',
+        }}
+        />
         </View>
         <View style={{flexDirection:'row', borderBottomColor:'#ccc', marginTop: 100, marginBottom: 50}}>
         <Text style={{
@@ -121,7 +126,7 @@ const FreemiumRegister= () => {
         container: 1,
         safeArea: {flex: 1, justifyContent: 'center'},
         registerButtonContainer: {
-            elevation: 6,
+            elevation: 5,
             backgroundColor: "#E58B68",
             borderRadius: 12,
             borderColor: "#000000",
@@ -148,6 +153,7 @@ const FreemiumRegister= () => {
             fontSize: 16,
         },
         registerButtonText: {
+            fontFamily: 'Roboto',
             fontSize: 18,
             color: "#FAF5E1",
             fontWeight: "bold",
@@ -156,13 +162,12 @@ const FreemiumRegister= () => {
         },
         previousButtonContainer: {
             elevation: 6,
-            backgroundColor: "#E58B68",
+            backgroundColor: "#FFFFFF",
             borderRadius: 60,
             resizeBorder: 10,
             paddingVertical: 8,
             paddingHorizontal: 30
         },
 });
-
 
 export default FreemiumRegister;
