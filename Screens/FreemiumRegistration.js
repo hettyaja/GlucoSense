@@ -132,7 +132,7 @@ const FreemiumRegister= () => {
             resizeBorder: 10,
             borderWidth: 1,
             paddingVertical: 8,
-            paddingHorizontal: 30
+            paddingHorizontal: 57
         },
         image: {
             flex: 1,
