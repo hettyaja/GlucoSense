@@ -9,7 +9,7 @@ const FreemiumRegister= () => {
     <SafeAreaView style={styles.safeArea}>
         <View style={styles.container}>
         <Image
-        resizeMode="cover" style={styles.image}
+        style={styles.image}
         source={{
             uri: 'C:\Users\Hansen Yonatan\OneDrive - SIM - Singapore Institute of Management\Pictures\UI Design\Untitled',
         }}
@@ -135,6 +135,9 @@ const FreemiumRegister= () => {
             paddingHorizontal: 65
         },
         image: {
+            resizeMode="cover",
+            width: 50,
+            height: 200,
             flex: 1,
             justifyContent: 'center',
         },
