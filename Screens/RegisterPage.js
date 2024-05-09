@@ -2,7 +2,6 @@ import React from 'react';
 import { Image, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 //import LoginPageBackground from '.../.../ '
-
 const FreemiumRegister= () => {
     return (
     
@@ -10,19 +9,13 @@ const FreemiumRegister= () => {
         <View style={styles.container}>
         <Image
         style={styles.image}
-        source={{
-            uri: 'C:\Users\Hansen Yonatan\OneDrive - SIM - Singapore Institute of Management\Pictures\UI Design\Untitled',
-        }}
-        />
+        source= {require('../assets/register.png')}/>
         </View>
         <View style={styles.touchablePreviousArrow}>
         <TouchableOpacity onPress={() => {}}>
         <Image
         style={styles.previousArrowIcon}
-        source={{
-            uri: 'C:\Users\Hansen Yonatan\OneDrive - SIM - Singapore Institute of Management\Pictures\UI Design\Untitled',
-        }}
-        />
+        source= {require('../assets/back.png')}/>
         </TouchableOpacity>
         </View>
         <View style={{flexDirection:'row', borderBottomColor:'#ccc', marginTop: 100, marginBottom: 50}}>
@@ -166,7 +159,7 @@ const FreemiumRegister= () => {
         registerButtonText: {
             fontFamily: 'Roboto',
             fontSize: 18,
-            color: "#D96B41",
+            color: "#FAF5E1",
             fontWeight: "bold",
             alignSelf: 'center',
             alignItems:'center'
