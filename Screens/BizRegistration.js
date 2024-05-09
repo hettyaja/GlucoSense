@@ -3,7 +3,7 @@ import { Image, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, Vie
 
 //import LoginPageBackground from '.../.../ '
 
-const FreemiumRegister= () => {
+const BusinessRegister= () => {
     return (
     
     <SafeAreaView style={styles.safeArea}>
@@ -15,20 +15,51 @@ const FreemiumRegister= () => {
         }}
         />
         </View>
-        <View style={{flexDirection:'row', borderBottomColor:'#ccc', marginTop: 100, marginBottom: 50}}>
+        <View style={styles.touchablePreviousArrow}>
+        <TouchableOpacity onPress={() => {}}>
+        <Image
+        style={styles.previousArrowIcon}
+        source={{
+            uri: 'C:\Users\Hansen Yonatan\OneDrive - SIM - Singapore Institute of Management\Pictures\UI Design\Untitled',
+        }}
+        />
+        </TouchableOpacity>
+        </View>
+        
+        <View style={{flexDirection:'row', borderBottomColor:'#ccc', marginTop: 95, paddingLeft:5}}>
         <Text style={{
             fontFamily: 'Poppins',
             fontSize: 30,
             fontWeight: '500',
             color: '#FAF5E1',
-            paddingTop: 20,
+            paddingTop: 15,
             marginTop: 30,
-            marginBottom: 5,
-            paddingLeft: 5,
             fontWeight: "bold"
-            }}> Sign up </Text>
+            }}> Business 
+        </Text>
         </View>
-
+        
+        <View style={{ paddingLeft:5 }}>
+        <Text style={{
+            fontFamily: 'Poppins',
+            fontSize: 30,
+            fontWeight: '500',
+            color: '#FAF5E1',
+            fontWeight: "bold"
+            }}> registration
+        </Text>
+        </View>
+        <View style={{ paddingLeft:5, marginBottom: 53}}>
+        <Text style={{
+            fontFamily: 'Poppins',
+            fontSize: 30,
+            fontWeight: '500',
+            color: '#FAF5E1',
+            fontWeight: "bold"
+            }}> details
+        </Text>
+        </View>
+        
         <Text style={{
             fontFamily: 'Roboto',
             fontSize: 18,
@@ -37,10 +68,10 @@ const FreemiumRegister= () => {
             paddingLeft: 12,
             fontWeight: "bold"
             }}>
-            Username
+            Entity Name
         </Text>
-        <View style={{ paddingLeft: 10, paddingRight: 10, flexDirection:'row', paddingBottom:2, marginBottom:10}}>
-            <TextInput style={styles.input} placeholder= 'Enter your username'  keyboardType="default" />
+        <View style={{ paddingLeft: 10, paddingRight: 10, flexDirection:'row', paddingBottom:2, marginBottom: 15}}>
+            <TextInput style={styles.input} placeholder= 'Enter your name'  keyboardType="default" />
         </View>
 
         <Text style={{
@@ -51,10 +82,10 @@ const FreemiumRegister= () => {
             paddingLeft: 12,
             fontWeight: "bold",
             }}>
-            Name
+            Unique Entity Number (UEN)
         </Text>
-        <View style={{ paddingLeft: 10, paddingRight: 10, flexDirection:'row', paddingBottom:2, marginBottom:15}}>
-            <TextInput style={styles.input} placeholder= 'Enter your name'  keyboardType="default" />
+        <View style={{ paddingLeft: 10, paddingRight: 10, flexDirection:'row', paddingBottom:2, marginBottom: 15}}>
+            <TextInput style={styles.input} placeholder= 'Enter your UEN'  secureTextEntry={true} />
         </View>
 
         <Text style={{
@@ -65,10 +96,10 @@ const FreemiumRegister= () => {
             paddingLeft: 12,
             fontWeight: "bold"
             }}>
-            Email
+            Contract Signee NRIC
         </Text>
         <View style={{ paddingLeft: 10, paddingRight: 10, flexDirection:'row', paddingBottom:2, marginBottom:15}}>
-            <TextInput style={styles.input} placeholder= 'Enter your email'  keyboardType="email-address" />
+            <TextInput style={styles.input} placeholder= 'Enter your contract NRIC'  secureTextEntry={true} />
         </View>
 
         <Text style={{
@@ -95,28 +126,16 @@ const FreemiumRegister= () => {
             }}>
             Confirm Password
         </Text>
-        <View style={{ paddingLeft: 10, paddingRight: 10, flexDirection:'row',paddingBottom:2, marginBottom: 15}}>
+        <View style={{ paddingLeft: 10, paddingRight: 10, flexDirection:'row',paddingBottom:2, marginBottom: 25}}>
             <TextInput style={styles.input} placeholder= 'Enter your confirmation password' secureTextEntry={true} />
         </View>
         
-        <View style={{alignItems:'center'}}>
+        <View style={{ paddingBottom: 85, alignItems:'center'}}>
         <TouchableOpacity onPress={() => {}} style={styles.registerButtonContainer}>
             <Text style={styles.registerButtonText}> Register </Text>
         </TouchableOpacity>
         </View>
-        
-        <View style={{ alignItems:'center',flexDirection:'row', marginBottom: 5, justifyContent: 'center'}}>
-        
-        <Text style={{ fontSize: 16, alignItems:'center', textAlign: 'center', marginTop: 20, fontWeight: "bold"}}> Already have an account? 
-        </Text>
-        </View>
-        
-        <View style={{ alignItems:'center'}}>
-        <TouchableOpacity onPress={() => {}}>
-            <Text style={{ alignItems:'center', fontFamily: 'Roboto', fontSize: 17, paddingBottom: 35, color: '#077167', marginTop: 15, marginBottom: 35, justifyContent: 'center', textAlign: 'center', fontWeight: 'bold'}}> Log In </Text>
-        </TouchableOpacity>
-        
-        </View>
+
     </SafeAreaView>
     );
 };
@@ -130,9 +149,9 @@ const FreemiumRegister= () => {
             borderRadius: 12,
             borderColor: "#000000",
             resizeBorder: 10,
-            borderWidth: 1,
+            borderWidth: 0,
             paddingVertical: 8,
-            paddingHorizontal: 65
+            paddingHorizontal: 65,
         },
         image: {
             width: 50,
@@ -162,16 +181,21 @@ const FreemiumRegister= () => {
             alignSelf: 'center',
             alignItems:'center'
         },
-        previousButtonContainer: {
-            paddingTop: 60,
-            alignItems: "left",
-            elevation: 6,
-            backgroundColor: "#FFFFFF",
-            borderRadius: 60,
-            resizeBorder: 10,
-            paddingVertical: 8,
-            paddingHorizontal: 30
+        touchablePreviousArrow: {
+            flex: 1,
+            paddingLeft: 30,
+            justifyContent: 'left',
+            alignItems: 'left',
         },
+        previousArrowIcon: {
+            width: 50,
+            height: 100,
+            size: 30,
+            color: '#FAF5E1',
+            paddingLeft: 30,
+            justifyContent: 'left',
+            alignItems: 'left',
+        }
 });
 
-export default FreemiumRegister;
+export default BusinessRegister;

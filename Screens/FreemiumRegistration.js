@@ -139,7 +139,7 @@ const FreemiumRegister= () => {
             borderRadius: 12,
             borderColor: "#000000",
             resizeBorder: 10,
-            borderWidth: 1,
+            borderWidth: 0,
             paddingVertical: 8,
             paddingHorizontal: 65
         },
