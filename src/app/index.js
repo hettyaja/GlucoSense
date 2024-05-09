@@ -9,7 +9,7 @@ const index = () => {
   //     <Link href="/welcome1">Go To welcome 1</Link>
   //   </View>
   // );
-  return <Redirect href="welcome1"/>
+  return <Redirect href="welcomePage_1"/>
 }
 
 export default index

@@ -1,23 +1,22 @@
-import { View, Text } from 'react-native'
 import React from 'react'
-import { Tabs, Stack } from 'expo-router'
+import {Stack } from 'expo-router'
 
 const _layout = () => {
   return (
     <Stack>
         <Stack.Screen
-          name="welcome1"
+          name="welcomePage_1"
           options={{
             headerShown:false
           }}
         />
         <Stack.Screen
-          name="welcome2"
+          name="welcomePage_2"
           options={{
             headerShown:false
           }}/>
         <Stack.Screen
-          name="welcome3"
+          name="welcomePage_3"
           options={{
             headerShown:false
           }}/>

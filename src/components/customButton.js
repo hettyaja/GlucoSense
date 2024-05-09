@@ -1,7 +1,7 @@
 import { View, Text } from 'react-native'
 import React from 'react'
 
-const customButton = () => {
+const CustomButton = () => {
   return (
     <View>
       <Text>customButton</Text>
@@ -9,4 +9,4 @@ const customButton = () => {
   )
 }
 
-export default customButton
+export default CustomButton
