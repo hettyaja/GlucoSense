@@ -4,9 +4,9 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { router } from 'expo-router'
 
 import { images } from '../../constants/images';
-import ImageButton from '../../components/ImageButton';
+import ImageButton from '../../components/ImageButton'
 
-const welcomePage_3 = () => {
+const getStartedPage_2 = () => {
   return (
     <View style={{flex:1}}>
         <SafeAreaView style={{
@@ -15,7 +15,7 @@ const welcomePage_3 = () => {
           alignItems:"center"
         }}>
         </SafeAreaView>
-
+        
         <View style={{
           flex:3,
           backgroundColor:"white",
@@ -27,7 +27,7 @@ const welcomePage_3 = () => {
             fontFamily:"Poppins-Bold",
             fontSize:16
           }}>
-            Customized Diet, Delivered!
+            Effortless Food Journaling
           </Text>
 
           <Text style={{
@@ -37,7 +37,7 @@ const welcomePage_3 = () => {
             paddingTop:12,
             color:"#808080"
           }}>
-              {'Order personalized plans and\nhealthy meals for easy,\nnutritious eating.'}
+            {'Effortlessly log meals with\nbarcode scans, image recognition\nfor a comprehensive food diary.'}
           </Text>
         </View>
 
@@ -52,14 +52,14 @@ const welcomePage_3 = () => {
           alignItems:"center"
         }}>
 
-            <Image source={ images.welcome3 }/>
+            <Image source={ images.welcome2 }/>
 
             <ImageButton
             source={require("../../assets/next.png")}
-            onPress={() => router.push('/welcomePage_3')}/>
+            onPress={() => router.push('/getStartedPage_3')}/>
         </View>
     </View>
   )
 }
 
-export default welcomePage_3
+export default getStartedPage_2

@@ -5,18 +5,18 @@ const _layout = () => {
   return (
     <Stack>
         <Stack.Screen
-          name="welcomePage_1"
+          name="getStartedPage_1"
           options={{
             headerShown:false
           }}
         />
         <Stack.Screen
-          name="welcomePage_2"
+          name="getStartedPage_2"
           options={{
             headerShown:false
           }}/>
         <Stack.Screen
-          name="welcomePage_3"
+          name="getStartedPage_3"
           options={{
             headerShown:false
           }}/>

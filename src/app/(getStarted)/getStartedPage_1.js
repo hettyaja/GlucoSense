@@ -1,21 +1,20 @@
 import { View, Text, Image} from 'react-native'
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { router } from 'expo-router'
+import {router } from 'expo-router'
 
 import { images } from '../../constants/images';
 import ImageButton from '../../components/ImageButton'
 
-const welcomePage_2 = () => {
+const getStartedPage_1 = () => {
   return (
     <View style={{flex:1}}>
         <SafeAreaView style={{
           flex:6,
-          backgroundColor:"#E58B68",
-          alignItems:"center"
+          backgroundColor:"#E58B68"
         }}>
         </SafeAreaView>
-        
+
         <View style={{
           flex:3,
           backgroundColor:"white",
@@ -27,7 +26,7 @@ const welcomePage_2 = () => {
             fontFamily:"Poppins-Bold",
             fontSize:16
           }}>
-            Effortless Food Journaling
+            Seamless Glucose Monitoring
           </Text>
 
           <Text style={{
@@ -37,7 +36,7 @@ const welcomePage_2 = () => {
             paddingTop:12,
             color:"#808080"
           }}>
-            {'Effortlessly log meals with\nbarcode scans, image recognition\nfor a comprehensive food diary.'}
+            {'Bluetooth and camera scans\nfor precise tracking,\nensuring peace of mind.'}
           </Text>
         </View>
 
@@ -51,15 +50,16 @@ const welcomePage_2 = () => {
           paddingBottom:50,
           alignItems:"center"
         }}>
-
-            <Image source={ images.welcome2 }/>
+            
+            <Image source={ images.welcome1 }/>
 
             <ImageButton
-            source={require("../../assets/next.png")}
-            onPress={() => router.push('/welcomePage_3')}/>
+              source={require("../../assets/next.png")}
+              onPress={() => router.push('/getStartedPage_2')}
+            />
         </View>
     </View>
   )
 }
 
-export default welcomePage_2
+export default getStartedPage_1

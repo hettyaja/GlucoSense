@@ -29,7 +29,7 @@ const _layout = () => {
   return (
     <Stack>
         <Stack.Screen name="index"/>
-        <Stack.Screen name="(welcome)" options={{ headerShown:false}}/>
+        <Stack.Screen name="(getStarted)" options={{ headerShown:false}}/>
         {/* <Stack.Screen name="(auth)"/> */}
     </Stack>
   )
