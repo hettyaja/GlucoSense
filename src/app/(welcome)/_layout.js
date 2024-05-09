@@ -16,6 +16,11 @@ const _layout = () => {
           options={{
             headerShown:false
           }}/>
+        <Stack.Screen
+          name="welcome3"
+          options={{
+            headerShown:false
+          }}/>
     </Stack>
   )
 }

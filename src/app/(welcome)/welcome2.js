@@ -11,8 +11,10 @@ const welcome2 = () => {
         <SafeAreaView style={{flex:6, backgroundColor:"#E58B68", alignItems:"center"}}>
 
         </SafeAreaView>
-        <View style={{flex:3, backgroundColor:"white", alignItems:"center", paddingTop:20}}>
-          <Text style={{fontFamily:"Poppins-SemiBold", fontSize:20}}>Track your glucose daily</Text>
+        <View style={{flex:3, backgroundColor:"white", alignItems:"center", paddingTop:24}}>
+          <Text style={{fontFamily:"Poppins-Bold", fontSize:16}}>Effortless Food Journaling</Text>
+          <Text style={{fontFamily:"Poppins-Regular", fontSize:14, textAlign:"center", paddingTop:12, color:"#808080"}}>{'Effortlessly log meals with\nbarcode scans, image recognition\nfor a comprehensive food diary.'}</Text>
+
         </View>
         <View style={{flex:2, backgroundColor:"white", justifyContent:"space-between", flexDirection:"row", paddingLeft:20, paddingRight:20}}>
             <Image source={ images.welcome1 } resizeMode='contain'/>
