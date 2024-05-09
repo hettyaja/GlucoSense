@@ -1,132 +1,177 @@
 import React from 'react';
-import { Button, StyleSheet, SafeAreaView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Image, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
-//import LoginPageBackground from '.../.../ ';
+//import LoginPageBackground from '.../.../ '
 
 const FreemiumRegister= () => {
     return (
     
-    <SafeAreaView style={{flex: 2, justifyContent: 'Right'}}>
-    <Button
-        title="Left button"
-        onPress={() => Alert.alert('Left button pressed')}
-    />
-        <View style={{flexDirection:'row', borderBottomColor:'#ccc', borderBottomWidth:1, paddingBottom:2, marginTop: 110, marginBottom: 50}}>
+    <SafeAreaView style={styles.safeArea}>
+        <View style={styles.container}>
+        <Image
+        style={styles.image}
+        source={{
+            uri: 'C:\Users\Hansen Yonatan\OneDrive - SIM - Singapore Institute of Management\Pictures\UI Design\Untitled',
+        }}
+        />
+        </View>
+        <View style={{flexDirection:'row', borderBottomColor:'#ccc', marginTop: 100, marginBottom: 50}}>
         <Text style={{
-            fontFamily: 'Roboto-Medium',
-            fontSize: 20,
+            fontFamily: 'Poppins',
+            fontSize: 30,
             fontWeight: '500',
-            color: '#333',
-            marginBottom: 10,
-            }}> Business registration details
-        </Text>
+            color: '#FAF5E1',
+            paddingTop: 20,
+            marginTop: 30,
+            marginBottom: 5,
+            paddingLeft: 5,
+            fontWeight: "bold"
+            }}> Sign up </Text>
         </View>
 
         <Text style={{
-            fontFamily: 'Roboto-Medium',
-            fontSize: 20,
+            fontFamily: 'Roboto',
+            fontSize: 18,
             fontWeight: '500',
             color: '#333',
-            marginBottom: 15,
+            paddingLeft: 12,
+            fontWeight: "bold"
             }}>
-            Entity Name
+            Username
         </Text>
-        <View style={{flexDirection:'row', borderBottomColor:'#ccc', borderBottomWidth:1, paddingBottom:2, marginBottom:25}}>
-            <TextInput placeholder= 'Enter your username' style={{flex: 1, paddingVertical: 0}} keyboardType="default" />
+        <View style={{ paddingLeft: 10, paddingRight: 10, flexDirection:'row', paddingBottom:2, marginBottom:10}}>
+            <TextInput style={styles.input} placeholder= 'Enter your username'  keyboardType="default" />
         </View>
 
         <Text style={{
-            fontFamily: 'Roboto-Medium',
-            fontSize: 20,
+            fontFamily: 'Roboto',
+            fontSize: 18,
             fontWeight: '500',
             color: '#333',
-            marginBottom: 15,
+            paddingLeft: 12,
+            fontWeight: "bold",
             }}>
-            Unique Entity Number (UEN)
+            Name
         </Text>
-        <View style={{flexDirection:'row', borderBottomColor:'#ccc', borderBottomWidth:1, paddingBottom:2, marginBottom:25}}>
-            <TextInput placeholder= 'Enter your password' style={{flex: 1, paddingVertical: 0}} keyboardType="default" />
+        <View style={{ paddingLeft: 10, paddingRight: 10, flexDirection:'row', paddingBottom:2, marginBottom:15}}>
+            <TextInput style={styles.input} placeholder= 'Enter your name'  keyboardType="default" />
         </View>
 
         <Text style={{
-            fontFamily: 'Roboto-Medium',
-            fontSize: 20,
+            fontFamily: 'Roboto',
+            fontSize: 18,
             fontWeight: '500',
             color: '#333',
-            marginBottom: 15,
+            paddingLeft: 12,
+            fontWeight: "bold"
             }}>
-            Contract Signee Name
+            Email
         </Text>
-        <View style={{flexDirection:'row', borderBottomColor:'#ccc', borderBottomWidth:1, paddingBottom:2, marginBottom:25}}>
-            <TextInput placeholder= 'Enter your username' style={{flex: 1, paddingVertical: 0}} keyboardType="default" />
+        <View style={{ paddingLeft: 10, paddingRight: 10, flexDirection:'row', paddingBottom:2, marginBottom:15}}>
+            <TextInput style={styles.input} placeholder= 'Enter your email'  keyboardType="email-address" />
         </View>
 
         <Text style={{
-            fontFamily: 'Roboto-Medium',
-            fontSize: 20,
+            fontFamily: 'Roboto',
+            fontSize: 18,
             fontWeight: '500',
             color: '#333',
-            marginBottom: 15,
-            }}>
-            Contract Signee NRIC
-        </Text>
-        <View style={{flexDirection:'row', borderBottomColor:'#ccc', borderBottomWidth:1, paddingBottom:2, marginBottom:25}}>
-            <TextInput placeholder= 'Enter your password' style={{flex: 1, paddingVertical: 0}} keyboardType="default" />
-        </View>
-
-        <Text style={{
-            fontFamily: 'Roboto-Medium',
-            fontSize: 20,
-            fontWeight: '500',
-            color: '#333',
-            marginBottom: 15,
+            paddingLeft: 12,
+            fontWeight: "bold"
             }}>
             Password
         </Text>
-        <View style={{flexDirection:'row', borderBottomColor:'#ccc', borderBottomWidth:1, paddingBottom:2, marginBottom: 15}}>
-            <TextInput placeholder= 'Enter your password' style={{flex: 1, paddingVertical: 0}} secureTextEntry={true} />
+        <View style={{ paddingLeft: 10, paddingRight: 10, flexDirection:'row', paddingBottom:2, marginBottom:15}}>
+            <TextInput style={styles.input} placeholder= 'Enter your password'  secureTextEntry={true} />
         </View>
 
         <Text style={{
-            fontFamily: 'Roboto-Medium',
-            fontSize: 20,
+            fontFamily: 'Roboto',
+            fontSize: 18,
             fontWeight: '500',
             color: '#333',
-            marginBottom: 15,
+            paddingLeft: 12,
+            fontWeight: "bold"
             }}>
-            Password
+            Confirm Password
         </Text>
-        <View style={{flexDirection:'row', borderBottomColor:'#ccc', borderBottomWidth:1, paddingBottom:2, marginBottom: 15}}>
-            <TextInput placeholder= 'Enter your password' style={{flex: 1, paddingVertical: 0}} secureTextEntry={true} />
+        <View style={{ paddingLeft: 10, paddingRight: 10, flexDirection:'row',paddingBottom:2, marginBottom: 15}}>
+            <TextInput style={styles.input} placeholder= 'Enter your confirmation password' secureTextEntry={true} />
         </View>
         
-        <View>
-            <Button style={styles.ButtonContainer} title="Register" onPress={() => {}}/>
-        </View>
-        
-        <TouchableOpacity onPress={onPress} style={styles.registerButtonContainer}>
+        <View style={{alignItems:'center'}}>
+        <TouchableOpacity onPress={() => {}} style={styles.registerButtonContainer}>
             <Text style={styles.registerButtonText}> Register </Text>
         </TouchableOpacity>
+        </View>
+        
+        <View style={{ alignItems:'center',flexDirection:'row', marginBottom: 5, justifyContent: 'center'}}>
+        
+        <Text style={{ fontSize: 16, alignItems:'center', textAlign: 'center', marginTop: 20, fontWeight: "bold"}}> Already have an account? 
+        </Text>
+        </View>
+        
+        <View style={{ alignItems:'center'}}>
+        <TouchableOpacity onPress={() => {}}>
+            <Text style={{ alignItems:'center', fontFamily: 'Roboto', fontSize: 17, paddingBottom: 35, color: '#077167', marginTop: 15, marginBottom: 35, justifyContent: 'center', textAlign: 'center', fontWeight: 'bold'}}> Log In </Text>
+        </TouchableOpacity>
+        
+        </View>
     </SafeAreaView>
     );
 };
 
     const styles = StyleSheet.create({
+        container: {flex: 1, alignItems: 'center'},
+        safeArea: {flex: 1, justifyContent: 'center'},
         registerButtonContainer: {
-            elevation: 8,
-            backgroundColor: "#009688",
-            borderRadius: 10,
-            paddingVertical: 10,
-            paddingHorizontal: 12
+            elevation: 5,
+            backgroundColor: "#E58B68",
+            borderRadius: 12,
+            borderColor: "#000000",
+            resizeBorder: 10,
+            borderWidth: 1,
+            paddingVertical: 8,
+            paddingHorizontal: 65
+        },
+        image: {
+            width: 50,
+            height: 200,
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+        input: {
+            fontFamily: 'Roboto',
+            flex:1,
+            width: 300,
+            height: 40,
+            backgroundColor: '#fff',
+            paddingVertical: 3,
+            paddingLeft: 5,
+            borderColor: '#ccc',
+            borderWidth: 1,
+            borderRadius: 15,
+            fontSize: 16
         },
         registerButtonText: {
+            fontFamily: 'Roboto',
             fontSize: 18,
-            color: "#fff",
+            color: "#FAF5E1",
             fontWeight: "bold",
-            alignSelf: "center",
-            textTransform: "uppercase"
-        }
+            alignSelf: 'center',
+            alignItems:'center'
+        },
+        previousButtonContainer: {
+            paddingTop: 60,
+            alignItems: "left",
+            elevation: 6,
+            backgroundColor: "#FFFFFF",
+            borderRadius: 60,
+            resizeBorder: 10,
+            paddingVertical: 8,
+            paddingHorizontal: 30
+        },
 });
-
 
 export default FreemiumRegister;

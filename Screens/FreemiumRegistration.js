@@ -15,6 +15,16 @@ const FreemiumRegister= () => {
         }}
         />
         </View>
+        <View style={styles.touchablePreviousArrow}>
+        <TouchableOpacity onPress={() => {}}>
+        <Image
+        style={styles.previousArrowIcon}
+        source={{
+            uri: 'C:\Users\Hansen Yonatan\OneDrive - SIM - Singapore Institute of Management\Pictures\UI Design\Untitled',
+        }}
+        />
+        </TouchableOpacity>
+        </View>
         <View style={{flexDirection:'row', borderBottomColor:'#ccc', marginTop: 100, marginBottom: 50}}>
         <Text style={{
             fontFamily: 'Poppins',
@@ -113,9 +123,8 @@ const FreemiumRegister= () => {
         
         <View style={{ alignItems:'center'}}>
         <TouchableOpacity onPress={() => {}}>
-            <Text style={{ fontFamily: 'Roboto', fontSize: 17, paddingBottom: 35, color: '#077167', marginTop: 15, marginBottom: 35, justifyContent: 'center', textAlign: 'center', fontWeight: 'bold'}}> Log In </Text>
-        </TouchableOpacity>
-        
+            <Text style={{ alignItems:'center', fontFamily: 'Roboto', fontSize: 17, paddingBottom: 35, color: '#077167', marginTop: 15, marginBottom: 35, justifyContent: 'center', textAlign: 'center', fontWeight: 'bold'}}> Log In </Text>
+        </TouchableOpacity> 
         </View>
     </SafeAreaView>
     );
@@ -139,6 +148,7 @@ const FreemiumRegister= () => {
             height: 200,
             flex: 1,
             justifyContent: 'center',
+            alignItems: 'center',
         },
         input: {
             fontFamily: 'Roboto',
@@ -158,16 +168,24 @@ const FreemiumRegister= () => {
             fontSize: 18,
             color: "#FAF5E1",
             fontWeight: "bold",
-            alignSelf: "center"
+            alignSelf: 'center',
+            alignItems:'center'
         },
-        previousButtonContainer: {
-            elevation: 6,
-            backgroundColor: "#FFFFFF",
-            borderRadius: 60,
-            resizeBorder: 10,
-            paddingVertical: 8,
-            paddingHorizontal: 30
+        touchablePreviousArrow: {
+            flex: 1,
+            paddingLeft: 30,
+            justifyContent: 'left',
+            alignItems: 'left',
         },
+        previousArrowIcon: {
+            width: 50,
+            height: 100,
+            size: 30,
+            color: '#FAF5E1',
+            paddingLeft: 30,
+            justifyContent: 'left',
+            alignItems: 'left',
+        }
 });
 
 export default FreemiumRegister;
