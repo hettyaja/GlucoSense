@@ -176,7 +176,7 @@ const BusinessRegister= () => {
         registerButtonText: {
             fontFamily: 'Roboto',
             fontSize: 18,
-            color: "#FAF5E1",
+            color: "#D96B41",
             fontWeight: "bold",
             alignSelf: 'center',
             alignItems:'center'

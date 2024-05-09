@@ -123,7 +123,7 @@ const FreemiumRegister= () => {
         
         <View style={{ alignItems:'center'}}>
         <TouchableOpacity onPress={() => {}}>
-            <Text style={{ alignItems:'center', fontFamily: 'Roboto', fontSize: 17, paddingBottom: 35, color: '#077167', marginTop: 15, marginBottom: 35, justifyContent: 'center', textAlign: 'center', fontWeight: 'bold'}}> Log In </Text>
+            <Text style={{ alignItems:'center', fontFamily: 'Roboto', fontSize: 17, paddingBottom: 35, color: '#0044CC', marginTop: 15, marginBottom: 35, justifyContent: 'center', textAlign: 'center', fontWeight: 'bold'}}> Log In </Text>
         </TouchableOpacity> 
         </View>
     </SafeAreaView>
@@ -166,7 +166,7 @@ const FreemiumRegister= () => {
         registerButtonText: {
             fontFamily: 'Roboto',
             fontSize: 18,
-            color: "#FAF5E1",
+            color: "#D96B41",
             fontWeight: "bold",
             alignSelf: 'center',
             alignItems:'center'
