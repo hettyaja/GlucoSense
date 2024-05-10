@@ -56,7 +56,7 @@ const getStartedPage_3 = () => {
 
             <ImageButton
             source={require("../../assets/next.png")}
-            onPress={() => router.push('/getStartedPage_3')}/>
+            onPress={() => router.push('login1')}/>
         </View>
     </View>
   )
