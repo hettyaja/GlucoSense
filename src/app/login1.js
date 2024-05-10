@@ -12,14 +12,16 @@ const Login = () => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "white"}}>
-        <Image source={images.back} style={{position:"absolute", left:24, top:60}}/>
-        <Image source={images.logo} style={{position:"absolute", top:89, left:63}}/>
-        <Text style={{ fontFamily: "Poppins-Medium", fontSize: 14, paddingTop: 12, position: "absolute", top: 400, left: 27 }}>Username</Text>
-        <Text style={{ fontFamily: "Poppins-Medium", fontSize: 14, paddingTop: 12, position: "absolute", top: 472, left: 27 }}>Password</Text>
-
-        <TextInput style={[styles.input, { position: "absolute", top: 424, left: 15, color: "black"}]} placeholder="Enter your username" placeholderTextColor="black" />
-        <TextInput style={[styles.input, { position: "absolute", top: 496, left: 15, color: "black"}]} placeholder="Enter your password" placeholderTextColor="black" />
+    <>
+    <View style={{backgroundColor:"white", paddingTop:60, paddingLeft:20}}>
+      <Image source={images.back}/>
+    </View>
+    <View style={{ flex: 1, backgroundColor: "white", alignItems:"center"}}>
+        <Image source={images.logo}/>
+        <Text style={{ fontFamily: "Poppins-Medium", fontSize: 14, paddingTop: 12, paddingRight:260}}>Username</Text>
+        <TextInput style={[styles.input, {color: "black"}]} placeholder="Enter your username" placeholderTextColor="black" />
+        <Text style={{ fontFamily: "Poppins-Medium", fontSize: 14, paddingTop: 12,}}>Password</Text>
+        <TextInput style={[styles.input, {color: "black"}]} placeholder="Enter your password" placeholderTextColor="black" />
         <Link style={{ fontFamily: "Poppins-Medium", fontSize: 12, paddingTop: 12, position: "absolute", top: 536, left: 255 }} href="/login1">Forgot Password?</Link>
 
         <TouchableOpacity onPress={handleLogin} style={{ position: "absolute", top: 610 }}>
@@ -29,7 +31,8 @@ const Login = () => {
         </TouchableOpacity>
         <Text style={{ fontFamily: "Poppins-Medium", fontSize: 12, paddingTop: 1, position: "absolute", top: 675}}>Don't have an account?</Text>
         <Link style={{ fontFamily: "Poppins-Medium", fontSize: 12, paddingTop: 1, position: "absolute", top: 695, color: "#0044CC"}} href="/login1">Sign Up</Link>
-    </SafeAreaView>
+    </View>
+    </>
   )
 }
 

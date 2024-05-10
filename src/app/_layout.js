@@ -24,7 +24,7 @@ const _layout = () => {
         <Stack.Screen name="index"/>
         <Stack.Screen name="(getStarted)" options={{ headerShown:false}}/>
         <Stack.Screen name="login1" options={{ headerShown:false}}/>
-        {/* <Stack.Screen name="welcome"/> */}
+        <Stack.Screen name="welcomePage" options={{ headerShown:false}}/>
         {/* <Stack.Screen name="(auth)"/> */}
     </Stack>
   )
