@@ -1,6 +1,8 @@
 import React from 'react';
 import { Image, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
+
+//need to modify this page!!!
 //import LoginPageBackground from '.../.../ '
 const FreemiumRegister= () => {
     return (
