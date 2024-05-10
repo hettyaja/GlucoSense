@@ -12,27 +12,40 @@ const Login = () => {
   };
 
   return (
-    <>
-    <View style={{backgroundColor:"white", paddingTop:60, paddingLeft:20}}>
-      <Image source={images.back}/>
-    </View>
-    <View style={{ flex: 1, backgroundColor: "white", alignItems:"center"}}>
-        <Image source={images.logo}/>
-        <Text style={{ fontFamily: "Poppins-Medium", fontSize: 14, paddingTop: 12, paddingRight:260}}>Username</Text>
-        <TextInput style={[styles.input, {color: "black"}]} placeholder="Enter your username" placeholderTextColor="black" />
-        <Text style={{ fontFamily: "Poppins-Medium", fontSize: 14, paddingTop: 12,}}>Password</Text>
-        <TextInput style={[styles.input, {color: "black"}]} placeholder="Enter your password" placeholderTextColor="black" />
-        <Link style={{ fontFamily: "Poppins-Medium", fontSize: 12, paddingTop: 12, position: "absolute", top: 536, left: 255 }} href="/login1">Forgot Password?</Link>
+    <SafeAreaView style={{flex:1, backgroundColor:"white", alignItems:"center"}}>
+      <View style={{backgroundColor:"white", alignItems:'flex-start', width:"100%", paddingHorizontal:20}}>
+        <Image source={images.back}/>
+      </View>
 
-        <TouchableOpacity onPress={handleLogin} style={{ position: "absolute", top: 610 }}>
-          <View style={styles.button}>
-            <Text style={styles.buttonText}>Login</Text>
-          </View>
-        </TouchableOpacity>
-        <Text style={{ fontFamily: "Poppins-Medium", fontSize: 12, paddingTop: 1, position: "absolute", top: 675}}>Don't have an account?</Text>
-        <Link style={{ fontFamily: "Poppins-Medium", fontSize: 12, paddingTop: 1, position: "absolute", top: 695, color: "#0044CC"}} href="/login1">Sign Up</Link>
-    </View>
-    </>
+      <Image source={images.logo} style={{marginBottom:60}}/>
+
+      <View style={{backgroundColor:"white", alignItems:'flex-start', width:"100%", paddingHorizontal:50}}>
+        <Text style={{ fontFamily: "Poppins-Medium", fontSize: 14}}>Username</Text>
+      </View>
+      
+      <TextInput style={[styles.input, {color: "black"}]} placeholder="Enter your username" placeholderTextColor="black" />
+      
+      <View style={{backgroundColor:"white", flexDirection: 'row', justifyContent:"space-between", width:'100%', paddingHorizontal:50}}>
+        <Text style={{ fontFamily: "Poppins-Medium", fontSize: 14}}>Password</Text>
+      </View>
+
+      <TextInput style={[styles.input, {color: "black"}]} placeholder="Enter your password" placeholderTextColor="black" />
+      
+      <View style={{backgroundColor:"white", flexDirection: 'row-reverse', justifyContent:"space-between", width:'100%', paddingHorizontal:50}}>
+        <Link style={{ fontFamily: "Poppins-Medium", fontSize: 12}} href="/login1">Forgot Password?</Link>
+      </View>
+
+      <TouchableOpacity onPress={handleLogin} style={{paddingTop:90, paddingVertical:30}}>
+        <View style={styles.button}>
+          <Text style={styles.buttonText}>Login</Text>
+        </View>
+      </TouchableOpacity>
+      
+
+      <Text style={{ fontFamily: "Poppins-Medium", fontSize: 12}}>Don't have an account?</Text>
+      <Link style={{ fontFamily: "Poppins-Medium", fontSize: 12, color: "#0044CC"}} href="/login1">Sign Up</Link>
+
+    </SafeAreaView>
   )
 }
 
