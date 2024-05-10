@@ -1,7 +1,12 @@
+import { router } from 'expo-router';
 import React from 'react';
-import { Image, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-//import LoginPageBackground from '.../.../ '
+//import registerImage images.registerBP from '.../.../ '
+//import registerPreviousButton back.png from '.../.../ '
+import { images } from '../../constants/images';
+import ImageButton from '../../components/ImageButton';
 
 const BusinessRegister= () => {
     return (
@@ -10,22 +15,15 @@ const BusinessRegister= () => {
         <View style={styles.container}>
         <Image
         style={styles.image}
-        source={{
-            uri: 'C:\Users\Hansen Yonatan\OneDrive - SIM - Singapore Institute of Management\Pictures\UI Design\Untitled',
-        }}
-        />
+        source={ images.registerBP }/>
         </View>
-        <View style={styles.touchablePreviousArrow}>
-        <TouchableOpacity onPress={() => {}}>
-        <Image
-        style={styles.previousArrowIcon}
-        source={{
-            uri: 'C:\Users\Hansen Yonatan\OneDrive - SIM - Singapore Institute of Management\Pictures\UI Design\Untitled',
-        }}
-        />
-        </TouchableOpacity>
+
+        <View style={styles.back}>
+        <ImageButton
+        source={require("../../assets/back.png")}
+            onPress={() => router.pull('/loginBusiness')}/>
         </View>
-        
+
         <View style={{flexDirection:'row', borderBottomColor:'#ccc', marginTop: 95, paddingLeft:5}}>
         <Text style={{
             fontFamily: 'Poppins',
@@ -181,13 +179,8 @@ const BusinessRegister= () => {
             alignSelf: 'center',
             alignItems:'center'
         },
-        touchablePreviousArrow: {
+        back: {
             flex: 1,
-            paddingLeft: 30,
-            justifyContent: 'left',
-            alignItems: 'left',
-        },
-        previousArrowIcon: {
             width: 50,
             height: 100,
             size: 30,
