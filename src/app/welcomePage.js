@@ -30,7 +30,7 @@ const welcomePage = () => {
 
         <CustomButton
             title="Let's get started"
-            onPress={() => router.push("/login1")}
+            onPress={() => router.push("/preReg")}
             buttonColor="#26513A"
             customStyle={{ marginTop: 20 }}
         />

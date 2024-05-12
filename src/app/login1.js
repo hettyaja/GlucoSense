@@ -1,9 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
 
 import { images } from '../constants/images';
+import ImageButton from '../components/ImageButton'
 
 const Login = () => {
   const handleLogin = () => {
@@ -14,7 +15,10 @@ const Login = () => {
   return (
     <SafeAreaView style={{flex:1, backgroundColor:"white", alignItems:"center"}}>
       <View style={{backgroundColor:"white", alignItems:'flex-start', width:"100%", paddingHorizontal:20}}>
-        <Image source={images.back}/>
+        <ImageButton
+          source={require("../assets/back(2).png")}
+          onPress={() => router.push('/welcomePage')}
+        />
       </View>
 
       <Image source={images.logo} style={{marginBottom:60}}/>
