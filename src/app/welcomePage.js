@@ -3,7 +3,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import React from 'react'
 
 import { images } from '../constants/images'
-import CustomButton from '../components/CustomButton'
+import CustomButton from '../components/customButton'
 import { router } from 'expo-router'
 
 const welcomePage = () => {
@@ -37,7 +37,7 @@ const welcomePage = () => {
 
         <CustomButton
             title="Sign in"
-            onPress={() => router.push("/login1")}
+            onPress={() => router.push("/registerBP")}
             buttonColor="#E58B68"
             customStyle={{ marginTop: 20 }}
         />

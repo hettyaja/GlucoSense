@@ -22,9 +22,9 @@ const BusinessRegister= () => {
     
     <SafeAreaView style={styles.safeArea}>
         <Image  style={{position:"absolute", right: 0.5, top:35}}
-        source={require('./src/register.png')}/>
+        source={require('../assets/registerBP.png')}/>
         <Image onPress={handleBack} style={{position:"absolute", alignItems: 'left', right: 365, top: 60}}
-        source={require('./src/back.png')}/>
+        source={require('../assets/back.png')}/>
         
         <View style={{ paddingLeft:5 }}>
         <Text style={{
@@ -64,7 +64,7 @@ const BusinessRegister= () => {
         </View>
         
         <Text style={{
-            fontFamily: 'Roboto',
+            fontFamily: 'Poppins',
             fontSize: 18,
             fontWeight: '500',
             color: '#333',
@@ -74,11 +74,11 @@ const BusinessRegister= () => {
             Entity Name
         </Text>
         <View style={{ paddingLeft: 10, paddingRight: 10, flexDirection:'row', paddingBottom:2, marginBottom: 15}}>
-            <TextInput style={styles.input} placeholder= 'Enter your name'  keyboardType="default" />
+            <TextInput style={styles.input}  keyboardType="default" />
         </View>
 
         <Text style={{
-            fontFamily: 'Roboto',
+            fontFamily: 'Poppins',
             fontSize: 18,
             fontWeight: '500',
             color: '#333',
@@ -88,7 +88,7 @@ const BusinessRegister= () => {
             Unique Entity Number (UEN)
         </Text>
         <View style={{ paddingLeft: 10, paddingRight: 10, flexDirection:'row', paddingBottom:2, marginBottom: 15}}>
-            <TextInput style={styles.input} placeholder= 'Enter your UEN'  secureTextEntry={true} />
+            <TextInput style={styles.input} secureTextEntry={true} />
         </View>
 
         <Text style={{
@@ -102,7 +102,7 @@ const BusinessRegister= () => {
             Contract Signee NRIC
         </Text>
         <View style={{ paddingLeft: 10, paddingRight: 10, flexDirection:'row', paddingBottom:2, marginBottom:15}}>
-            <TextInput style={styles.input} placeholder= 'Enter your contract NRIC'  secureTextEntry={true} />
+            <TextInput style={styles.input} secureTextEntry={true} />
         </View>
 
         <Text style={{
@@ -116,11 +116,11 @@ const BusinessRegister= () => {
             Password
         </Text>
         <View style={{ paddingLeft: 10, paddingRight: 10, flexDirection:'row', paddingBottom:2, marginBottom:15}}>
-            <TextInput style={styles.input} placeholder= 'Enter your password'  secureTextEntry={true} />
+            <TextInput style={styles.input} secureTextEntry={true} />
         </View>
 
         <Text style={{
-            fontFamily: 'Roboto',
+            fontFamily: 'Poppins',
             fontSize: 18,
             fontWeight: '500',
             color: '#333',
@@ -130,7 +130,7 @@ const BusinessRegister= () => {
             Confirm Password
         </Text>
         <View style={{ paddingLeft: 10, paddingRight: 10, flexDirection:'row',paddingBottom:2, marginBottom: 25}}>
-            <TextInput style={styles.input} placeholder= 'Enter your confirmation password' secureTextEntry={true} />
+            <TextInput style={styles.input} secureTextEntry={true} />
         </View>
         
         <View style={{ paddingBottom: 300, alignItems:'center'}}>
@@ -149,7 +149,7 @@ const BusinessRegister= () => {
         registerButtonContainer: {
             elevation: 5,
             backgroundColor: "#E58B68",
-            borderRadius: 12,
+            borderRadius: 8,
             borderColor: "#000000",
             resizeBorder: 10,
             borderWidth: 0,
@@ -161,7 +161,7 @@ const BusinessRegister= () => {
             resizeMode:  "contain",
         },
         input: {
-            fontFamily: 'Roboto',
+            fontFamily: 'Poppins',
             flex:1,
             width: 300,
             height: 40,
@@ -170,7 +170,7 @@ const BusinessRegister= () => {
             paddingLeft: 5,
             borderColor: '#ccc',
             borderWidth: 1,
-            borderRadius: 15,
+            borderRadius: 8,
             fontSize: 16
         },
         registerButtonText: {
