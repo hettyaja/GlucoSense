@@ -4,7 +4,7 @@ import SearchBox from './SearchBox'; // Adjust the import path accordingly
 
 //mport { AntDesign } from '@expo/vector-icons';
 
-const viewRecipe = () => {
+const ViewRecipe = () => {
 
   const [selectedButton, setSelectedButton] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -33,23 +33,23 @@ const clickDraft = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-    <Image  style={{position:"absolute", right: 0.5}}
+    <Image  style={{position:"absolute", width: 1000}}
         source={require('./image/view.png')}/>
       <View  style={{
         flex:1,
         flexDirection: 'row'}}>
-        <Image style={{ position:"absolute", alignItems: 'left', right: 300, top: 70}}
+        <Image style={{ position:"absolute", alignItems: 'left', right: 370, top: 70}}
         source={require('./image/x.png')}/>
       </View>
       <View style={{ fontFamily: 'Poppins'}}>
-      <Text style={{justifyContent: 'center', flexDirection: 'row', alignItems: 'center', marginLeft: 80, marginBottom: 360, fontSize: 17, fontWeight: 'bold', color:'#FFFFFF'}}>Create Menu & Recipe
+      <Text style={{justifyContent: 'center', flexDirection: 'row', alignItems: 'center', marginLeft: 120, marginBottom: 600, fontSize: 17, fontWeight: 'bold', color:'#FFFFFF'}}>Create Menu & Recipe
       </Text>
       </View>
 
       <View style={{
         flex:1,
         flexDirection: 'row-reverse'}}>
-        <Image style={{position:"absolute", alignItems: 'right', left: 305, bottom: 422}}
+        <Image style={{position:"absolute", alignItems: 'right', left: 375, bottom: 670}}
         source={require('./image/plus.png')}/>
       </View>
 
@@ -67,12 +67,16 @@ const clickDraft = () => {
         <Text style={styles.buttonText}>Draft</Text>
       </TouchableOpacity>
     </View>
-    <View style={{bottom: 435}}>
-<Text>_________________________________________________________</Text>
-    </View>
-    <View style={{bottom: 425}}>
+
+    <View style={{borderWidth: 1,
+    borderColor: '#ccc',
+    width: 325,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 15,
+    paddingHorizontal: 2, bottom: 650, backgroundColor: '#f0f0f0', marginLeft: 35}}>
      <SearchBox 
-        placeholder="Search..."
+        placeholder="Search Menu"
         onChangeText={setSearchQuery}
         onPressSearch={handleSearch}
       />
@@ -87,9 +91,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    bottom: 420,
+    bottom: 660,
     borderBottom: 15,
-    borderWidth: 1,
     borderColor: '#ccc',
   },
   buttonRecipe: {
@@ -112,4 +115,4 @@ const styles = StyleSheet.create({
 
 });
 
-export default viewRecipe;
+export default ViewRecipe;
