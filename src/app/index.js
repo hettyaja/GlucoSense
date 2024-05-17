@@ -6,10 +6,10 @@ const index = () => {
   // return (
   //   <View className="flex-1 items-center justify-center bg-white">
   //     <Text className="text-2xl">Hidasdsadsa</Text>
-  //     <Link href="/getStartedPage_1">Go To welcome 1</Link>
+  //     <Link href="/welcome1">Go To welcome 1</Link>
   //   </View>
   // );
-  return <Redirect href="getStartedPage_1"/>
+  return <Redirect href="welcome1"/>
 }
 
 export default index
