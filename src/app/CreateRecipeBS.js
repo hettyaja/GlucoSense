@@ -124,7 +124,7 @@ const App = () => {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <Image
           style={{ position: 'absolute', justifyContent: 'center' }}
-          source={require('./Image/Rectangle.png')}
+          source={require('../assets/Rectangle.png')}
         />
         <View
           style={{
@@ -133,7 +133,7 @@ const App = () => {
           }}>
           <Image
             style={{ position: 'absolute', alignItems: 'left', top: 69 }}
-            source={require('./Image/X.png')}
+            source={require('../assets/X.png')}
           />
         </View>
         <View style={{ fontFamily: 'Poppins' }}>
@@ -170,7 +170,7 @@ const App = () => {
                   justifyContent: 'center',
                   top: 25,
                 }}
-                source={require('./Image/iconCarrier.png')}
+                source={require('../assets/iconCarrier.png')}
               />
               <TouchableOpacity onPress={addImage} style={styles.uploadBtn}>
                 <Text>{image ? 'Edit' : 'Upload'} Recipe photo</Text>
@@ -485,6 +485,7 @@ const styles = StyleSheet.create({
     color: '#000000',
     fontSize: 16,
     fontFamily: 'Poppins',
+    textAlign: 'center' 
   },
   modalContainer: {
     flex: 1,
