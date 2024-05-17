@@ -13,6 +13,7 @@ import {
   FlatList,
 } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
 import { Picker } from '@react-native-picker/picker';
 
 const App = () => {
@@ -23,6 +24,10 @@ const App = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [ingredients, setIngredients] = useState([]);
   const [methods, setMethods] = useState([]); // State for methods
+  const [selectedTime, setSelectedTime] = useState({
+    hours: '0',
+    minutes: '0',
+  });
 
   const decrementServes = () => {
     if (serves > 1) {
@@ -34,8 +39,25 @@ const App = () => {
     setServes(serves + 1);
   };
 
-  const addImage = () => {
-    // Function to handle image upload
+  const addImage = async () => {
+    // Ask for permission to access the media library
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      alert('Sorry, we need camera roll permissions to make this work!');
+      return;
+    }
+
+    // Open the image picker
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
   };
 
   const addIngredient = () => {
@@ -102,7 +124,7 @@ const App = () => {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <Image
           style={{ position: 'absolute', justifyContent: 'center' }}
-          source={require('./src/assets/Rectangle.png')}
+          source={require('./Image/Rectangle.png')}
         />
         <View
           style={{
@@ -111,7 +133,7 @@ const App = () => {
           }}>
           <Image
             style={{ position: 'absolute', alignItems: 'left', top: 69 }}
-            source={require('./src/assets/X.png')}
+            source={require('./Image/X.png')}
           />
         </View>
         <View style={{ fontFamily: 'Poppins' }}>
@@ -140,15 +162,21 @@ const App = () => {
 
         <View style={styles.imageUploadContainer}>
           {image && <Image source={{ uri: image }} style={styles.image} />}
-          <View style={styles.uploadBtnContainer}>
-            <Image
-              style={{ position: 'absolute', justifyContent: 'center',top:25 }}
-              source={require('./src/assets/iconCarrier.png')}
-            />
-            <TouchableOpacity onPress={addImage} style={styles.uploadBtn}>
-              <Text>{image ? 'Edit' : 'Upload'} Recipe photo</Text>
-            </TouchableOpacity>
-          </View>
+          {!image && (
+            <View style={styles.uploadBtnContainer}>
+              <Image
+                style={{
+                  position: 'absolute',
+                  justifyContent: 'center',
+                  top: 25,
+                }}
+                source={require('./Image/iconCarrier.png')}
+              />
+              <TouchableOpacity onPress={addImage} style={styles.uploadBtn}>
+                <Text>{image ? 'Edit' : 'Upload'} Recipe photo</Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
 
         <View style={styles.inputContainer}>
@@ -166,7 +194,6 @@ const App = () => {
             keyboardType="default"
           />
         </View>
-
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.input}
@@ -199,8 +226,13 @@ const App = () => {
             <TouchableOpacity
               onPress={() => setIsModalVisible(true)}
               style={styles.selectTimeButton}>
-              <Text style={styles.selectTimeButtonText}>Select Time</Text>
+              <Text style={styles.selectTimeButtonText}>
+                {selectedTime.hours !== '0' || selectedTime.minutes !== '0'
+                  ? ` ${selectedTime.hours} hour ${selectedTime.minutes} min`
+                  : 'Select Time'}
+              </Text>
             </TouchableOpacity>
+
             <Modal
               animationType="slide"
               transparent={true}
@@ -228,7 +260,13 @@ const App = () => {
                   </Picker>
                   <Button
                     title="Done"
-                    onPress={() => setIsModalVisible(false)}
+                    onPress={() => {
+                      setIsModalVisible(false);
+                      setSelectedTime({
+                        hours: selectedHour,
+                        minutes: selectedMinute,
+                      });
+                    }}
                   />
                 </View>
               </View>
@@ -273,7 +311,7 @@ const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
   },
- 
+
   headerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -311,12 +349,11 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   uploadBtnContainer: {
-    opacity: 0.7,
     position: 'absolute',
     right: 0,
     bottom: 0,
     width: '100%',
-    height: '90%',
+    height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
   },
