@@ -24,11 +24,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 1,
     borderColor: '#ccc',
-    borderRadius: 5,
-    paddingHorizontal: 10,
+    borderRadius: 12,
+    paddingHorizontal: 2,
   },
   iconContainer: {
-    padding: 10,
+    padding: 2,
   },
   input: {
     flex: 1,
