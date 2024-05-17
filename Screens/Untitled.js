@@ -1,165 +1,87 @@
-import { router } from 'expo-router';
-import React from 'react';
-import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React, { useState } from 'react';
+import { TextInput, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Image, ScrollView } from 'react-native';
 
-//import registerImage images.registerBP from '.../.../ '
-//import registerPreviousButton back.png from '.../.../ '
-import { images } from '../../constants/images';
-import ImageButton from '../../components/ImageButton';
-
-const BusinessRegister= () => {
-    return (
-    
+const ReportProblem = () => {
+  const handleSubmit = () => {
+        // handle submit
+        console.log('Submit button pressed');
+        };
+  return (
     <SafeAreaView style={styles.safeArea}>
-        <View style={styles.container}>
-        <Image
-        style={styles.image}
-        source={ images.registerBP }/>
-        </View>
+    <Image  style={{position:"absolute", width: 1000}}
+        source={require('./image/view(2).png')}/>
+      <View  style={{
+        flex:1,
+        flexDirection: 'row'}}>
+        <TouchableOpacity onPress={() =>{}} style={{ position:"absolute", alignItems: 'left', right: 295, top: 60}}>
+        <Image 
+        source={require('./image/back(3).png')}/>
+        </TouchableOpacity>
+      </View>
+      <View style={{ fontFamily: 'Poppins'}}>
+      <Text style={{justifyContent: 'center', flexDirection: 'row', alignItems: 'center', marginLeft: 120, top: 40, fontSize: 17, fontWeight: 'bold', color:'#FFFFFF'}}>Report Problem
+      </Text>
+      </View>
 
-        <View style={styles.back}>
-        <ImageButton
-        source={require("../../assets/back.png")}
-            onPress={() => router.pull('/loginBusiness')}/>
-        </View>
-
-        <View style={{flexDirection:'row', borderBottomColor:'#ccc', marginTop: 95, paddingLeft:5}}>
-        <Text style={{
-            fontFamily: 'Poppins',
-            fontSize: 30,
-            fontWeight: '500',
-            color: '#FAF5E1',
-            paddingTop: 15,
-            marginTop: 30,
-            fontWeight: "bold"
-            }}> Business 
-        </Text>
-        </View>
-        
-        <View style={{ paddingLeft:5 }}>
-        <Text style={{
-            fontFamily: 'Poppins',
-            fontSize: 30,
-            fontWeight: '500',
-            color: '#FAF5E1',
-            fontWeight: "bold"
-            }}> registration
-        </Text>
-        </View>
-        <View style={{ paddingLeft:5, marginBottom: 53}}>
-        <Text style={{
-            fontFamily: 'Poppins',
-            fontSize: 30,
-            fontWeight: '500',
-            color: '#FAF5E1',
-            fontWeight: "bold"
-            }}> details
-        </Text>
-        </View>
-        
-        <Text style={{
-            fontFamily: 'Roboto',
-            fontSize: 18,
+    <View style={{ paddingLeft:5 }}>
+    <Text style={{
+    
+            fontSize: 15,
             fontWeight: '500',
             color: '#333',
-            paddingLeft: 12,
-            fontWeight: "bold"
+            paddingLeft: 5,
+            fontWeight: 'bold',
+            paddingTop: 90 
             }}>
-            Entity Name
-        </Text>
-        <View style={{ paddingLeft: 10, paddingRight: 10, flexDirection:'row', paddingBottom:2, marginBottom: 15}}>
-            <TextInput style={styles.input} placeholder= 'Enter your name'  keyboardType="default" />
-        </View>
+            Name
+      </Text>
 
+        <View style={{ paddingLeft: 5, paddingRight: 10, flexDirection:'row', paddingBottom:2, marginBottom: 15}}>
+            <TextInput style={styles.input}  keyboardType="default" />
+        </View>
         <Text style={{
-            fontFamily: 'Roboto',
-            fontSize: 18,
+            fontSize: 15,
             fontWeight: '500',
             color: '#333',
-            paddingLeft: 12,
-            fontWeight: "bold",
+            paddingLeft: 5,
+            fontWeight: 'bold'
             }}>
-            Unique Entity Number (UEN)
+            Email
         </Text>
-        <View style={{ paddingLeft: 10, paddingRight: 10, flexDirection:'row', paddingBottom:2, marginBottom: 15}}>
-            <TextInput style={styles.input} placeholder= 'Enter your UEN'  secureTextEntry={true} />
+        <View style={{ paddingLeft: 5, paddingRight: 10, flexDirection:'row', paddingBottom:2, marginBottom: 15}}>
+            <TextInput style={styles.input}  keyboardType="email-address" />
         </View>
-
         <Text style={{
-            fontFamily: 'Roboto',
-            fontSize: 18,
+            fontSize: 15,
             fontWeight: '500',
             color: '#333',
-            paddingLeft: 12,
-            fontWeight: "bold"
+            paddingLeft: 5,
+            fontWeight: 'bold'
             }}>
-            Contract Signee NRIC
+            Feedback or problem
         </Text>
-        <View style={{ paddingLeft: 10, paddingRight: 10, flexDirection:'row', paddingBottom:2, marginBottom:15}}>
-            <TextInput style={styles.input} placeholder= 'Enter your contract NRIC'  secureTextEntry={true} />
+        <View style={{ paddingLeft: 5, paddingRight: 10, flexDirection:'row', paddingBottom:2, marginBottom: 50}}>
+            <TextInput style={styles.feedback}  keyboardType="email-address" />
         </View>
 
-        <Text style={{
-            fontFamily: 'Roboto',
-            fontSize: 18,
-            fontWeight: '500',
-            color: '#333',
-            paddingLeft: 12,
-            fontWeight: "bold"
-            }}>
-            Password
-        </Text>
-        <View style={{ paddingLeft: 10, paddingRight: 10, flexDirection:'row', paddingBottom:2, marginBottom:15}}>
-            <TextInput style={styles.input} placeholder= 'Enter your password'  secureTextEntry={true} />
-        </View>
-
-        <Text style={{
-            fontFamily: 'Roboto',
-            fontSize: 18,
-            fontWeight: '500',
-            color: '#333',
-            paddingLeft: 12,
-            fontWeight: "bold"
-            }}>
-            Confirm Password
-        </Text>
-        <View style={{ paddingLeft: 10, paddingRight: 10, flexDirection:'row',paddingBottom:2, marginBottom: 25}}>
-            <TextInput style={styles.input} placeholder= 'Enter your confirmation password' secureTextEntry={true} />
-        </View>
-        
-        <View style={{ paddingBottom: 85, alignItems:'center'}}>
-        <TouchableOpacity onPress={() => {}} style={styles.registerButtonContainer}>
-            <Text style={styles.registerButtonText}> Register </Text>
+       <View style={{ fontFamily: 'Poppins', paddingBottom: 200, alignItems:'center'}}>
+        <TouchableOpacity onPress={handleSubmit} style={styles.submitButtonContainer}>
+            <Text style={styles.submitButtonText}> Submit </Text>
         </TouchableOpacity>
         </View>
-
+    </View>
     </SafeAreaView>
-    );
+  );
 };
 
-    const styles = StyleSheet.create({
-        container: {flex: 1, alignItems: 'center'},
-        safeArea: {flex: 1, justifyContent: 'center'},
-        registerButtonContainer: {
-            elevation: 5,
-            backgroundColor: "#E58B68",
-            borderRadius: 12,
-            borderColor: "#000000",
-            resizeBorder: 10,
-            borderWidth: 0,
-            paddingVertical: 8,
-            paddingHorizontal: 65,
-        },
-        image: {
-            width: 50,
-            height: 200,
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-        },
-        input: {
-            fontFamily: 'Roboto',
+
+
+
+
+const styles = StyleSheet.create({
+    safeArea: { flex: 1 },
+    input: {
+            fontFamily: 'Poppins',
             flex:1,
             width: 300,
             height: 40,
@@ -168,27 +90,39 @@ const BusinessRegister= () => {
             paddingLeft: 5,
             borderColor: '#ccc',
             borderWidth: 1,
-            borderRadius: 15,
+            borderRadius: 8,
             fontSize: 16
         },
-        registerButtonText: {
-            fontFamily: 'Roboto',
+    feedback: {
+            fontFamily: 'Poppins',
+            flex:1,
+            width: 300,
+            height: 120,
+            backgroundColor: '#fff',
+            paddingVertical: 3,
+            paddingLeft: 5,
+            borderColor: '#ccc',
+            borderWidth: 1,
+            borderRadius: 8,
+            fontSize: 16
+        },
+    submitButtonText: {
             fontSize: 18,
-            color: "#D96B41",
+            color: "#FAF5E1",
             fontWeight: "bold",
             alignSelf: 'center',
             alignItems:'center'
         },
-        back: {
-            flex: 1,
-            width: 50,
-            height: 100,
-            size: 30,
-            color: '#FAF5E1',
-            paddingLeft: 30,
-            justifyContent: 'left',
-            alignItems: 'left',
+    submitButtonContainer: {
+            elevation: 5,
+            backgroundColor: "#E58B68",
+            borderRadius: 8,
+            borderColor: "#000000",
+            resizeBorder: 10,
+            borderWidth: 0,
+            paddingVertical: 8,
+            paddingHorizontal: 65,
         }
 });
 
-export default BusinessRegister;
+export default ReportProblem;
