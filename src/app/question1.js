@@ -7,90 +7,6 @@ import { router } from 'expo-router';
 import { images } from '../constants/images'
 
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: 'white',
-    paddingTop: Platform.OS === 'android' ? 50 :0
-  },
-  contentContainer: {
-    flex: 3,
-    backgroundColor: 'white',
-    alignItems: 'center'
-  },
-  titleText: {
-    fontFamily: 'Poppins-Regular',
-    fontSize: 14,
-  },
-  headerText: {
-    fontFamily: 'Poppins-SemiBold',
-    fontSize: 24,
-    paddingTop: 12,
-    marginRight: 90,
-    marginTop: 60,
-  },
-  subHeaderText: {
-    fontFamily: 'Poppins-SemiBold',
-    fontSize: 12,
-    marginLeft: 45,
-    marginRight: 40,
-    color: '#808080',
-    marginBottom: 40,
-  },
-  pickerWrapper: {
-    width: 300,
-    borderBottomWidth: 1,
-    borderColor: '#077167',
-    marginBottom: 20,
-  },
-  picker: {
-    height: 50,  // You can adjust the height if necessary
-    marginTop: 0,
-    marginBottom: 0,
-  },
-  pickerItem: {
-    height: 50,
-    fontSize: 14,
-    fontFamily: 'Poppins-Regular',
-  },
-  dateInput: {
-    borderBottomWidth: 1,
-    borderColor: '#077167',
-    padding: 16,
-    
-    justifyContent: 'center',
-    width: 300,
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 16,
-    fontFamily: 'Poppins-SemiBold',
-    
-  },
-  textInput: {
-    height: 50,
-    paddingHorizontal: 16,
-    width: 300,
-    marginBottom: 20,
-    borderBottomWidth: 1,
-    borderColor: '#077167',
-  },
-  button: {
-    marginTop: 150,
-    backgroundColor: '#FF7A00',
-    paddingVertical: 16,
-    borderRadius: 8,
-    alignItems: 'center',
-    width: 312,
-    height: 50,
-  },
-  buttonText: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontFamily: 'Poppins-Regular',
-  },
-});
-
 export default function UserProfile() {
   const [gender, setGender] = useState('Male');
   const [birthdate, setBirthdate] = useState(new Date(2002, 8, 9));
@@ -118,40 +34,47 @@ export default function UserProfile() {
         </View>
         <View style={{width:'25%'}}/>
       </View>
-      <View style={styles.contentContainer}>
+
+      <View style={styles.headerContainer}>
         <Text style={styles.headerText}>Tell us about yourself</Text>
         <Text style={styles.subHeaderText}>
           Don't worry, we keep your info safe and only use it to make sure you get the best help with your health.
         </Text>
-        <View style={{width:'75%'}}>
+      </View>
+
+      <View style={{paddingTop:50, width:'100%', alignItems:'center'}}>
+        <View style={styles.pickerWrapper}>
           <Text style={styles.label}>Your Weight</Text>
-          <Picker
-            selectedValue={gender}
-            style={styles.picker}
-            itemStyle={styles.pickerItem}
-            onValueChange={(itemValue) => setGender(itemValue)}
-          >
-            <Picker.Item label="Male" value="male"/>
-            <Picker.Item label="Female" value="female"/>
-          </Picker>
+            <Picker
+              selectedValue={gender}
+              style={styles.picker}
+              itemStyle={styles.pickerItem}
+              onValueChange={(itemValue) => setGender(itemValue)}
+            >
+              <Picker.Item label="Male" value="male"/>
+              <Picker.Item label="Female" value="female"/>
+            </Picker>
         </View>
 
-        <View>
+        <View style={styles.pickerWrapper}>
           <Text style={styles.label}>Your Birthdate</Text>
-          <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.dateInput}>
-            <Text>{birthdate.toLocaleDateString()}</Text>
-          </TouchableOpacity>
-          {showDatePicker && (
-            <DateTimePicker
-              value={birthdate}
-              mode="date"
-              display="default"
-              onChange={handleDateChange}
-            />
-          )}
+          <View style={{flexDirection:'row', alignItems:'center', justifyContent:'space-between'}}>
+            <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.dateInput}>
+              <Text style={{fontFamily:'Poppins-Regular'}}>{birthdate.toLocaleDateString()}</Text>
+            </TouchableOpacity>
+            {showDatePicker && (
+              <DateTimePicker
+                value={birthdate}
+                mode="date"
+                display="default"
+                onChange={handleDateChange}
+                style={styles.datePicker} // Add this line
+              />
+            )}
+          </View>
         </View>
 
-        <View>
+        <View style={styles.pickerWrapper}>
           <Text style={styles.label}>Your Weight</Text>
           <TextInput
             style={styles.textInput}
@@ -161,16 +84,77 @@ export default function UserProfile() {
             onChangeText={setWeight}
           />
         </View>
+      </View>
 
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={() => router.push('/question2')}>
           <Text style={styles.buttonText}>Continue</Text>
         </TouchableOpacity>
-      </View>
     </SafeAreaView>
   );
 }
 
-
-
-
-
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: 'white',
+    paddingTop: Platform.OS === 'android' ? 50 :0,
+    alignItems: 'center'
+  },
+  titleText: {
+    fontFamily: 'Poppins-Regular',
+    fontSize: 14,
+  },
+  headerContainer: {
+    width:'75%',
+    alignItems:'flex-start',
+    marginTop:50
+  },
+  headerText: {
+    fontFamily: 'Poppins-SemiBold',
+    fontSize: 24
+  },
+  subHeaderText: {
+    fontFamily: 'Poppins-SemiBold',
+    fontSize: 12,
+    color: '#808080'
+  },
+  pickerWrapper: {
+    width: '75%',
+    borderBottomWidth: 1,
+    marginBottom: 20,
+  },
+  picker: {
+    height: 55
+  },
+  pickerItem: {
+    height: 55,
+    fontSize: 14,
+    fontFamily: 'Poppins-Regular',
+  },
+  dateInput: {
+    padding: 16
+  },
+  label: {
+    fontSize: 16,
+    fontFamily: 'Poppins-SemiBold',
+  },
+  textInput: {
+    height: 50,
+    paddingHorizontal: 16,
+    width: 300
+  },
+  button: {
+    marginTop: 150,
+    backgroundColor: '#D96B41',
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '75%',
+    height: 50,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+    fontFamily: 'Poppins-Medium',
+  },
+});
