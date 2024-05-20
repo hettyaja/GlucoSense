@@ -3,7 +3,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import React from 'react'
 
 import { images } from '../constants/images'
-import CustomButton from '../components/customButton'
+import CustomButton from '../components/CustomButton'
 import { router } from 'expo-router'
 
 const welcomePage = () => {

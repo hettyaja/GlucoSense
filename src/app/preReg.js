@@ -1,9 +1,10 @@
 import { View, Text, StyleSheet, Image, Button, TouchableOpacity} from 'react-native'
 import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Link } from 'expo-router'
+import { router } from 'expo-router'
 
 import { images } from '../constants/images';
+import ImageButton from '../components/ImageButton'
 
 const preReg = () => {
   const [selectedButton, setSelectedButton] = useState(null);
@@ -11,39 +12,64 @@ const preReg = () => {
   const handleButtonPress = (buttonIndex) => {
     setSelectedButton(buttonIndex === selectedButton ? null : buttonIndex);
   }
+
+  const handleNextPress = () => {
+    if (selectedButton === 1) {
+      router.push('/registerPage'); // Navigate to the user registration page
+    } else if (selectedButton === 2) {
+      router.push('/registerBP'); // Navigate to the business partner registration page
+    }
+  };
+
   return (
-    <View style={{flex:3, backgroundColor:"white", paddingTop:24}}>
-        
-      <Text style={{fontFamily:"Poppins-Bold", fontSize: 24, paddingLeft: 40, paddingTop: 120, color: '#FAF5E1'}}>Which one are you?</Text>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-around', paddingTop: 50 }}>
+    <SafeAreaView style={{flex:1, backgroundColor:"white"}}>
+      <Image source={images.header} style={{position:"absolute", width:430, height:275}}/>
+      <View style={{alignItems:'flex-start', width:"100%", paddingHorizontal:20}}>
+        <ImageButton
+          source={require("../assets/back.png")}
+          onPress={() => router.back('/welcomePage')}
+        />
+      </View>
+      <Text style={{fontFamily:"Poppins-Bold", fontSize: 24, paddingLeft: 25, paddingTop: 100, color: '#FAF5E1'}}>Which one are you?</Text>
+      <View style={{flexDirection: 'row', justifyContent: 'space-around', paddingTop: 50 }}>
         <View style={styles.container}>
           <TouchableOpacity
             style={[
               styles.button,
               selectedButton === 1 ? styles.selectedButton : null,
-              { marginRight: 20 }, // Added margin to create space between buttons
+              { marginRight: 20, alignItems:'center', justifyContent:'space-evenly'}, // Added margin to create space between buttons
             ]}
             onPress={() => handleButtonPress(1)}
           >
-            <Text style={styles.buttonText}>User</Text>
+            <Image
+            source={require('../assets/userIcon.png')}
+            style={styles.image}
+            />
+            <Text style={[styles.buttonText, {}]}>User</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[
               styles.button,
               selectedButton === 2 ? styles.selectedButton : null,
+              {alignItems:'center', justifyContent:'space-evenly'}
             ]}
             onPress={() => handleButtonPress(2)}
           >
-            <Text style={styles.buttonText}>Business Partner</Text>
+            <Image
+            source={require('../assets/businessIcon.png')}
+            style={styles.image}
+            />
+            <Text style={[styles.buttonText]}>Business Partner</Text>
           </TouchableOpacity>
         </View>
       </View>
-      <TouchableOpacity style={{ alignItems: 'center', paddingTop: 100 }}>
+      <TouchableOpacity style={{ alignItems: 'center', marginTop: 100 }}
+        onPress={handleNextPress}>
         <View style={{ backgroundColor: "#D96B41", width: 164, height: 42, borderRadius: 8, justifyContent: 'center' }}>
           <Text style={{ fontSize: 16, fontFamily: "Poppins-Regular", textAlign: 'center', color: '#FAF5E1' }}>Next</Text>
       </View>
       </TouchableOpacity>
-    </View>
+    </SafeAreaView>
     
   )
 }
@@ -54,7 +80,7 @@ const styles = StyleSheet.create({
     marginTop: 50,
   },
   button: {
-    backgroundColor: 'lightgray',
+    backgroundColor: '#f5f5f5',
     width: 146,
     height: 217,
     paddingVertical: 20,

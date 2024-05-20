@@ -1,12 +1,10 @@
 import React from 'react';
 import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-//import { Link } from 'expo-router';
+import { router } from 'expo-router';
 
-
-//import registerImage images.registerBP from '.../.../ '
-//import registerPreviousButton back.png from '.../.../ '
-//import { images } from '../../constants/images';
+import { images } from '../constants/images';
+import ImageButton from '../components/ImageButton';
 
 const BusinessRegister= () => {
         const handleRegister = () => {
@@ -21,55 +19,21 @@ const BusinessRegister= () => {
     return (
     
     <SafeAreaView style={styles.safeArea}>
-        <Image  style={{position:"absolute", right: 0.5, top:35}}
-        source={require('../assets/registerBP.png')}/>
-        <Image onPress={handleBack} style={{position:"absolute", alignItems: 'left', right: 365, top: 60}}
-        source={require('../assets/back.png')}/>
-        
-        <View style={{ paddingLeft:5 }}>
+      <Image source={images.header} style={{position:"absolute", width:430, height:275}}/>
+      <View style={{alignItems:'flex-start', width:"100%", paddingHorizontal:20}}>
+        <ImageButton
+          source={require("../assets/back.png")}
+          onPress={() => router.back('/welcomePage')}
+        />
+        <Text style={{fontFamily:"Poppins-Bold", fontSize: 24, paddingLeft: 25, paddingTop: 75, color: '#FAF5E1'}}>Business{'\n'}registration{'\n'}details</Text>
+      </View>
+      <View style={{paddingTop:50}}>
         <Text style={{
-            fontFamily: 'Poppins',
-            fontSize: 30,
-            fontWeight: '500',
-            color: '#FAF5E1',
-            paddingTop: 35,
-            marginTop: 320,
-            paddingLeft: 5,
-            fontWeight: "bold"
-            }}> Business 
-        </Text>
-        </View>
-        
-        <View style={{ paddingLeft:5 }}>
-        <Text style={{
-            fontFamily: 'Poppins',
-            fontSize: 30,
-            fontWeight: '500',
-            color: '#FAF5E1',
-            paddingLeft: 5,
-            fontWeight: "bold"
-            }}> registration
-        </Text>
-        </View>
-        <View style={{ paddingLeft:5, marginBottom: 53}}>
-        <Text style={{
-            fontFamily: 'Poppins',
-            fontSize: 30,
-            fontWeight: '500',
-            color: '#FAF5E1',
-            paddingLeft: 5,
-            fontWeight: "bold"
-            }}> details
-        </Text>
-        </View>
-        
-        <Text style={{
-            fontFamily: 'Poppins',
-            fontSize: 18,
+            fontFamily: 'Poppins-Medium',
+            fontSize: 14,
             fontWeight: '500',
             color: '#333',
-            paddingLeft: 12,
-            fontWeight: "bold"
+            paddingLeft: 12
             }}>
             Entity Name
         </Text>
@@ -78,12 +42,11 @@ const BusinessRegister= () => {
         </View>
 
         <Text style={{
-            fontFamily: 'Poppins',
-            fontSize: 18,
+            fontFamily: 'Poppins-Medium',
+            fontSize: 14,
             fontWeight: '500',
             color: '#333',
-            paddingLeft: 12,
-            fontWeight: "bold",
+            paddingLeft: 12
             }}>
             Unique Entity Number (UEN)
         </Text>
@@ -92,12 +55,11 @@ const BusinessRegister= () => {
         </View>
 
         <Text style={{
-            fontFamily: 'Roboto',
-            fontSize: 18,
+            fontFamily: 'Poppins-Medium',
+            fontSize: 14,
             fontWeight: '500',
             color: '#333',
-            paddingLeft: 12,
-            fontWeight: "bold"
+            paddingLeft: 12
             }}>
             Contract Signee NRIC
         </Text>
@@ -106,26 +68,25 @@ const BusinessRegister= () => {
         </View>
 
         <Text style={{
-            fontFamily: 'Roboto',
-            fontSize: 18,
+            fontFamily: 'Poppins-Medium',
+            fontSize: 14,
             fontWeight: '500',
             color: '#333',
-            paddingLeft: 12,
-            fontWeight: "bold"
+            paddingLeft: 12
             }}>
             Password
         </Text>
+        </View>
         <View style={{ paddingLeft: 10, paddingRight: 10, flexDirection:'row', paddingBottom:2, marginBottom:15}}>
             <TextInput style={styles.input} secureTextEntry={true} />
         </View>
 
         <Text style={{
-            fontFamily: 'Poppins',
-            fontSize: 18,
+            fontFamily: 'Poppins-Medium',
+            fontSize: 14,
             fontWeight: '500',
             color: '#333',
-            paddingLeft: 12,
-            fontWeight: "bold"
+            paddingLeft: 12
             }}>
             Confirm Password
         </Text>
@@ -133,7 +94,7 @@ const BusinessRegister= () => {
             <TextInput style={styles.input} secureTextEntry={true} />
         </View>
         
-        <View style={{ paddingBottom: 300, alignItems:'center'}}>
+        <View style={{ paddingBottom: 300, alignItems:'center', paddingTop:50}}>
         <TouchableOpacity onPress={handleRegister} style={styles.registerButtonContainer}>
             <Text style={styles.registerButtonText}> Register </Text>
         </TouchableOpacity>
@@ -145,23 +106,24 @@ const BusinessRegister= () => {
 
     const styles = StyleSheet.create({
         container: {flex: 1, alignItems: 'center'},
-        safeArea: {flex: 1, justifyContent: 'center'},
+        safeArea: {flex: 1, backgroundColor:'white'},
         registerButtonContainer: {
             elevation: 5,
             backgroundColor: "#E58B68",
             borderRadius: 8,
             borderColor: "#000000",
-            resizeBorder: 10,
+            resizeBorder: 8,
             borderWidth: 0,
             paddingVertical: 8,
             paddingHorizontal: 65,
         },
         image: {
-             paddingBottom: 500, alignItems:'center',
+            paddingBottom: 500,
+            alignItems:'center',
             resizeMode:  "contain",
         },
         input: {
-            fontFamily: 'Poppins',
+            fontFamily: 'Poppins-Medium',
             flex:1,
             width: 300,
             height: 40,
@@ -171,11 +133,11 @@ const BusinessRegister= () => {
             borderColor: '#ccc',
             borderWidth: 1,
             borderRadius: 8,
-            fontSize: 16
+            fontSize: 14
         },
         registerButtonText: {
-            fontFamily: 'Roboto',
-            fontSize: 18,
+            fontFamily: 'Poppins-Bold',
+            fontSize: 16,
             color: "#FAF5E1",
             fontWeight: "bold",
             alignSelf: 'center',
