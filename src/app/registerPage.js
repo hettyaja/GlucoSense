@@ -1,17 +1,15 @@
 import React from 'react';
-import { Image, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Image, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, Platform } from 'react-native';
 import { images } from '../constants/images'
 import { router } from 'expo-router'
 import ImageButton from '../components/ImageButton'
 
-//need to modify this page!!!
-//import LoginPageBackground from '.../.../ '
 const FreemiumRegister= () => {
     return (
     
     <SafeAreaView style={styles.safeArea}>
-    <Image source={images.header} style={{position:"absolute", width:430, height:275}}/>
-        <View style={{alignItems:'flex-start', width:"100%", paddingHorizontal:20}}>
+        <Image source={images.header} style={{position:"absolute", width:430, height:275}}/>
+        <View style={{alignItems:'flex-start', width:"100%", paddingHorizontal:20, paddingTop: Platform.OS === 'ios' ? 0 : 50}}>
         <ImageButton
             source={require("../assets/back.png")}
             onPress={() => router.back('/welcomePage')}
@@ -92,7 +90,7 @@ const FreemiumRegister= () => {
         </View>
         
         <View style={{alignItems:'center', paddingTop:50}}>
-        <TouchableOpacity onPress={() => {}} style={styles.registerButtonContainer}>
+        <TouchableOpacity onPress={() => {router.push('/question1')}} style={styles.registerButtonContainer}>
             <Text style={styles.registerButtonText}> Register </Text>
         </TouchableOpacity>
         </View>

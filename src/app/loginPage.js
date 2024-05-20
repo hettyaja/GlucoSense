@@ -17,7 +17,7 @@ const Login = () => {
       <View style={{backgroundColor:"white", alignItems:'flex-start', width:"100%", paddingHorizontal:20}}>
         <ImageButton
           source={require("../assets/back(2).png")}
-          onPress={() => router.push('/welcomePage')}
+          onPress={() => router.back('/welcomePage')}
         />
       </View>
 

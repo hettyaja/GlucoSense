@@ -94,12 +94,22 @@ const BusinessRegister= () => {
             <TextInput style={styles.input} secureTextEntry={true} />
         </View>
         
-        <View style={{ paddingBottom: 300, alignItems:'center', paddingTop:50}}>
+        <View style={{ paddingBottom:10, alignItems:'center', paddingTop:50}}>
         <TouchableOpacity onPress={handleRegister} style={styles.registerButtonContainer}>
             <Text style={styles.registerButtonText}> Register </Text>
         </TouchableOpacity>
         </View>
-
+        
+        <View style={{ alignItems:'center',flexDirection:'row', marginBottom: 5, justifyContent: 'center'}}>
+        <Text style={{fontSize: 14, alignItems:'center', textAlign: 'center', marginTop: 20, fontFamily: 'Poppins-Medium'}}> Already have an account? 
+        </Text>
+        </View>
+        
+        <View style={{ alignItems:'center'}}>
+        <TouchableOpacity onPress={() => {}}>
+            <Text style={{ alignItems:'center', fontFamily: 'Poppins-Medium', fontSize: 14, paddingBottom: 35, color: '#0044CC', justifyContent: 'center', textAlign: 'center', fontFamily:'Poppins-Medium'}}> Log In </Text>
+        </TouchableOpacity> 
+        </View>
     </SafeAreaView>
     );
 };
