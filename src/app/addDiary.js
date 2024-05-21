@@ -18,7 +18,7 @@ const preReg = () => {
         <Text style={{ color: 'white', fontFamily: 'Poppins-Bold', fontSize: 16, flex: 1, textAlign: 'center', marginLeft: 60}}>Add Meal</Text>
         <TouchableOpacity onPress = {() => router.push('login/viewDiary')}>
           <View style={styles.saveButtonContainer}>
-            <Text style={{ color: 'white',fontFamily: 'Poppins-Medium', fontSize: 16, marginRight: 10}}>Save</Text>
+            <Text style={{ color: 'white',fontFamily: 'Poppins-Regular', fontSize: 16, marginRight: 10}}>Save</Text>
           </View>
         </TouchableOpacity>
       </View>
