@@ -17,7 +17,7 @@ const preReg = () => {
     if (selectedButton === 1) {
       router.push('/registerPage'); // Navigate to the user registration page
     } else if (selectedButton === 2) {
-      router.push('/registerBP'); // Navigate to the business partner registration page
+      router.push('/getStartedBP'); // Navigate to the business partner registration page
     }
   };
 

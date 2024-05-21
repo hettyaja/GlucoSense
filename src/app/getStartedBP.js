@@ -1,85 +1,63 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ImageBackground, Image } from 'react-native';
+import { View, Text, Image} from 'react-native'
+import React from 'react'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import {router } from 'expo-router'
 
-export default function GetStartedPage({ navigation }) {
+import { images } from '../constants/images';
+import ImageButton from '../components/ImageButton'
+
+const getStartedPage_1 = () => {
   return (
-    <View style={styles.container}>
-      <ImageBackground
-        source={require('/assets/getStarted.png')} // Update the path to use the uploaded image
-        style={styles.topContainer}
-      />
-      <View style={styles.bottomContainer}>
-        <Text style={styles.title}>Health Conscious Market Opportunity</Text>
-        <Text style={styles.description}>Tap into a growing market by offering diabetic-friendly meal options</Text>
-        <View style={styles.pagination}>
-          <Image
-            source={require('/assets/dot.png')} // Ensure you have this image in the assets folder
-            style={styles.dot}
-          />
+    <View style={{flex:1}}>
+        <SafeAreaView style={{
+          flex:6,
+          backgroundColor:"#E58B68"
+        }}>
+        </SafeAreaView>
+
+        <View style={{
+          flex:3,
+          backgroundColor:"white",
+          alignItems:"center",
+          paddingTop:24
+        }}>
+
+          <Text style={{
+            fontFamily:"Poppins-Bold",
+            fontSize:16
+          }}>
+            Health Conscious Market Opportunity 
+          </Text>
+
+          <Text style={{
+            fontFamily:"Poppins-Regular",
+            fontSize:14,
+            textAlign:"center",
+            paddingTop:12,
+            color:"#808080"
+          }}>
+            {'Tap into a growing market\nby offering diabetic-friendly\nmeal options.'}
+          </Text>
         </View>
-        <TouchableOpacity
-          style={styles.nextButton}
-          onPress={() => navigation.navigate('Login')}
-        >
-          <Image
-            source={require('/assets/nextcircle.png')} // Ensure you have this image in the assets folder
-            style={styles.nextButtonImage}
-          />
-        </TouchableOpacity>
-      </View>
+
+        <View style={{
+          flex:2,
+          backgroundColor:"white",
+          justifyContent:"flex-end",
+          flexDirection:"row",
+          paddingLeft:20,
+          paddingRight:20,
+          paddingBottom:50,
+          alignItems:"center"
+        }}>
+        
+            <ImageButton
+              source={require("../assets/next.png")}
+              onPress={() => router.push('/registerBP')}
+            />
+        </View>
     </View>
-  );
+  )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  topContainer: {
-    flex: 3,
-  },
-  bottomContainer: {
-    flex: 2,
-    backgroundColor: '#fff',
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
-    padding: 20,
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 10,
-  },
-  description: {
-    fontSize: 14,
-    color: 'gray',
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  pagination: {
-    flexDirection: 'row',
-    marginBottom: 20,
-    alignSelf: 'flex-start', // Align dots to the left
-    paddingLeft: 30, // Adjust padding to match design
-  },
-  dot: {
-    marginTop: 85,
-    right: 35,
-    marginHorizontal: 4,
-  },
-  nextButton: {
-    width: 70,
-    height: 60,
-    borderRadius: 60,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  nextButtonImage: {
-    width: 30,
-    height: 30,
-    marginLeft: 250,
-    marginBottom: 100
-  },
-});
+export default getStartedPage_1

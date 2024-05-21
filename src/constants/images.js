@@ -10,4 +10,9 @@ export const images = {
     headerQuestion3: require('../assets/headerQuestion3.png'),
     headerQuestion4: require('../assets/headerQuestion4.png'),
     headerQuestion5: require('../assets/headerQuestion5.png'),
+    home: require('../assets/home.png'),
+    insight: require('../assets/insight.png'),
+    add: require('../assets/add.png'),
+    food: require('../assets/food.png'),
+    more: require('../assets/more.png')
   };

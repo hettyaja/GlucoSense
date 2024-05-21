@@ -26,12 +26,14 @@ const _layout = () => {
         <Stack.Screen name="loginPage" options={{ headerShown:false}}/>
         <Stack.Screen name="welcomePage" options={{ headerShown:false}}/>
         <Stack.Screen name="preReg" options={{ headerShown:false}}/>
+        <Stack.Screen name="getStartedBP" options={{ headerShown:false}}/>
         <Stack.Screen name="registerPage" options={{ headerShown:false}}/>
         <Stack.Screen name="question1" options={{ headerShown:false}}/>
         <Stack.Screen name="question2" options={{ headerShown:false}}/>
         <Stack.Screen name="question3" options={{ headerShown:false}}/>
         <Stack.Screen name="question4" options={{ headerShown:false}}/>
         <Stack.Screen name="question5" options={{ headerShown:false}}/>
+        <Stack.Screen name="(tabs)" options={{ headerShown:false}}/>
         <Stack.Screen name="registerBP" options={{ headerShown:false}}/>
         {/* <Stack.Screen name="(auth)"/> */}
     </Stack>

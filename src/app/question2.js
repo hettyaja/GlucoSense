@@ -17,12 +17,13 @@ const preReg = () => {
         <View style={{width:'25%', alignItems:'flex-start', paddingLeft:20, justifyContent:'center'}}>
           <ImageButton
             source={require("../assets/back(2).png")}
+            imageSize={{width:24, height:24}}
             onPress={() => router.back('/question1')}
           />
         </View>
         <View style={{width:'50%', alignItems:'center', justifyContent:'center'}}>
         <Text style={[styles.titleText, {paddingBottom:5}]}>User profiling</Text>
-        <Image source={images.headerQuestion2}/>
+        <Image source={images.headerQuestion2} resizeMode='contain' style={{width:168, height:7}}/>
         </View>
         <View style={{width:'25%'}}/>
       </View>

@@ -16,12 +16,13 @@ const preReg = () => {
         <View style={{width:'25%', alignItems:'flex-start', paddingLeft:20, justifyContent:'center'}}>
           <ImageButton
             source={require("../assets/back(2).png")}
+            imageSize={{width:24, height:24}}
             onPress={() => router.back('/question4')}
           />
         </View>
         <View style={{width:'50%', alignItems:'center', justifyContent:'center'}}>
         <Text style={[styles.titleText, {paddingBottom:5}]}>User profiling</Text>
-        <Image source={images.headerQuestion5}/>
+        <Image source={images.headerQuestion5} resizeMode='contain' style={{width:168, height:7}}/>
         </View>
         <View style={{width:'25%'}}/>
       </View>
@@ -75,7 +76,7 @@ const preReg = () => {
           </TouchableOpacity>
         </View>
       </View>
-      <TouchableOpacity style={{ alignItems: 'center', paddingTop: 100 }}>
+      <TouchableOpacity style={{ alignItems: 'center', paddingTop: 100 }} onPress={() => router.push('/(tabs)/home')}>
         <View style={{ backgroundColor: "#D96B41", width: 312, height: 50, borderRadius: 8, justifyContent: 'center', marginTop: 50 }}>
           <Text style={{ fontSize: 16, fontFamily: "Poppins-Medium", textAlign: 'center', color: '#FAF5E1' }}>Finish</Text>
       </View>
