@@ -7,6 +7,7 @@ const NotificationScreen = () => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.row}>
       <Text style={styles.title}>Push notifications</Text>
       <Switch
         trackColor={{ false: "#767577", true: "#f2a154" }}
@@ -14,6 +15,7 @@ const NotificationScreen = () => {
         onValueChange={toggleSwitch}
         value={isEnabled}
       />
+      </View>
     </View>
   );
 };
@@ -21,13 +23,18 @@ const NotificationScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding: 24,
     backgroundColor: '#fff',
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
+    fontSize: 14,
+    fontWeight: 'SemiBold',
     marginBottom: 20,
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
 });
 

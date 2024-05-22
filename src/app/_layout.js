@@ -38,6 +38,48 @@ const _layout = () => {
         <Stack.Screen name="question5" options={{ headerShown:false}}/>
         <Stack.Screen name="(tabs)" options={{ headerShown:false}}/>
         <Stack.Screen name="registerBP" options={{ headerShown:false}}/>
+
+        <Stack.Screen name='ReportProblem' options={{
+          title: 'ReportProblem',
+          headerStyle: { backgroundColor: '#E58B68' },
+          headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold'},
+          headerLeft: () => (
+            <ImageButton
+              source={require("../assets/back.png")}
+              imageSize={{width:24, height:24}}
+              customStyle={{paddingLeft:10}}
+              onPress={() => router.back('/registerPage')} //Perbaiki 
+            />
+          ),
+  
+          headerTitle: 'Help & Feedback',
+          headerTitleAlign: 'center',
+          tabBarIcon: ({ color, size }) => (
+            <TabIcon icon={images.more} size={size} />
+          ),
+        }} />
+
+        <Stack.Screen name='Notification' options={{
+          title: 'Notification',
+          headerStyle: { backgroundColor: '#E58B68' },
+          headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold'},
+          headerLeft: () => (
+            <ImageButton
+              source={require("../assets/back.png")}
+              imageSize={{width:24, height:24}}
+              customStyle={{paddingLeft:10}}
+            //   onPress={() => router.back('/registerPage')} //Perbaiki 
+            />
+          ),
+  
+          headerTitle: 'Notification',
+          headerTitleAlign: 'center',
+          tabBarIcon: ({ color, size }) => (
+            <TabIcon icon={images.more} size={size} />
+          ), 
+          }} />
+
+
         <Stack.Screen name='profile' options={{
           title: 'Profile',
           headerStyle: { backgroundColor: '#E58B68' },
