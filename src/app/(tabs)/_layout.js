@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import {React, Image, View, Modal} from 'react-native'
-import { Stack, Tabs } from 'expo-router'
+import {React, Image, View, Modal, TouchableOpacity, Text, StyleSheet} from 'react-native'
+import { router, Tabs } from 'expo-router'
 import { useFonts } from 'expo-font'
 import { Octicons } from '@expo/vector-icons';
 import { SimpleLineIcons } from '@expo/vector-icons';
 import { images } from '../../constants/images';
 import BottomSheetModal from '../../components/BottomSheetModal';
+import ImageButton from '../../components/ImageButton';
 
 const TabIcon = ({ icon, size, color}) => {
     return (
@@ -69,13 +70,29 @@ const _layout = () => {
                 <TabIcon icon={images.food} size={size}/>
             )
         }}/>
-        <Tabs.Screen name='more' options={{
-            title:'More',
-            headerShown:false,
-            tabBarIcon: ({color, size}) => (
-                <TabIcon icon={images.more} size={size}/>
-            )
-        }}/>
+      <Tabs.Screen name='setting' options={{
+          title: 'Setting',
+          headerStyle: { backgroundColor: '#E58B68' },
+          headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold'},
+          headerLeft: () => (
+            <ImageButton
+              source={require("../../assets/back.png")}
+              imageSize={{width:24, height:24}}
+              customStyle={{paddingLeft:10}}
+              onPress={() => router.back('/registerPage')}
+            />
+          ),
+          headerRight: () => (
+            <TouchableOpacity style={styles.button}>
+              <Text style={{padding:2, marginHorizontal:8, fontFamily: 'Poppins-Regular', fontSize:14, color:'white'}}>Upgrade</Text>
+            </TouchableOpacity>
+          ),
+          headerTitle: 'Setting',
+          headerTitleAlign: 'center',
+          tabBarIcon: ({ color, size }) => (
+            <TabIcon icon={images.more} size={size} />
+          )
+        }} />
     </Tabs>
           <BottomSheetModal
           isVisible={isModalVisible}
@@ -87,3 +104,12 @@ const _layout = () => {
 };
 
 export default _layout
+
+const styles = StyleSheet.create({
+  button: {
+    borderWidth:1,
+    borderColor:'white',
+    borderRadius:8,
+    marginHorizontal:16
+  }
+})

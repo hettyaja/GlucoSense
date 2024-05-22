@@ -12,6 +12,7 @@ const FreemiumRegister= () => {
         <View style={{alignItems:'flex-start', width:"100%", paddingHorizontal:20, paddingTop: Platform.OS === 'ios' ? 0 : 50}}>
         <ImageButton
             source={require("../assets/back.png")}
+            imageSize={{width:24, height:24}}
             onPress={() => router.back('/welcomePage')}
         />
         </View>

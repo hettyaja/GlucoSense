@@ -27,6 +27,7 @@ const preReg = () => {
       <View style={{alignItems:'flex-start', width:"100%", paddingHorizontal:20}}>
         <ImageButton
           source={require("../assets/back.png")}
+          imageSize={{width:24, height:24}}
           onPress={() => router.back('/welcomePage')}
         />
       </View>

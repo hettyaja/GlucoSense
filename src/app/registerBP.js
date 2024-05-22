@@ -23,6 +23,7 @@ const BusinessRegister= () => {
       <View style={{alignItems:'flex-start', width:"100%", paddingHorizontal:20}}>
         <ImageButton
           source={require("../assets/back.png")}
+          imageSize={{width:24, height:24}}
           onPress={() => router.back('/welcomePage')}
         />
         <Text style={{fontFamily:"Poppins-Bold", fontSize: 24, paddingLeft: 25, paddingTop: 75, color: '#FAF5E1'}}>Business{'\n'}registration{'\n'}details</Text>

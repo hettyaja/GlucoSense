@@ -14,5 +14,7 @@ export const images = {
     insight: require('../assets/insight.png'),
     add: require('../assets/add.png'),
     food: require('../assets/food.png'),
-    more: require('../assets/more.png')
+    more: require('../assets/more.png'),
+    upgrade: require('../assets/upgrade.png'),
+    reminder: require('../assets/reminder.png')
   };
