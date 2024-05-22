@@ -9,11 +9,7 @@ const index = () => {
   //     <Link href="/welcome1">Go To welcome 1</Link>
   //   </View>
   // );
-<<<<<<< HEAD
   return <Redirect href="setting"/>
-=======
-  return <Redirect href="ReportProblem"/>
->>>>>>> 4991813e0b20b7acdfdc15f66c53121f03c9c406
 }
 
 export default index
