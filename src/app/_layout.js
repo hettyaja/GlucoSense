@@ -36,6 +36,8 @@ const _layout = () => {
         <Stack.Screen name="(tabs)" options={{ headerShown:false}}/>
         <Stack.Screen name="registerBP" options={{ headerShown:false}}/>
         <Stack.Screen name="addDiary" options={{}}/>
+        <Stack.Screen name="ReportProblem" options={{title: 'Help & Feedback',headerStyle:{backgroundColor: '#E58B68'}, 
+      headerTitleStyle: {color: 'white', fontFamily: 'Poppins-Bold'} }}/>
         {/* <Stack.Screen name="addDiary" options={{ headerShown:false}}/> */}
         {/* <Stack.Screen name="(auth)"/> */}
     </Stack>
