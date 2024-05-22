@@ -35,6 +35,8 @@ const _layout = () => {
         <Stack.Screen name="question5" options={{ headerShown:false}}/>
         <Stack.Screen name="(tabs)" options={{ headerShown:false}}/>
         <Stack.Screen name="registerBP" options={{ headerShown:false}}/>
+        <Stack.Screen name="addDiary" options={{}}/>
+        {/* <Stack.Screen name="addDiary" options={{ headerShown:false}}/> */}
         {/* <Stack.Screen name="(auth)"/> */}
     </Stack>
   )
