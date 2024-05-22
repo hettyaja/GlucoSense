@@ -38,27 +38,7 @@ const _layout = () => {
         <Stack.Screen name="question5" options={{ headerShown:false}}/>
         <Stack.Screen name="(tabs)" options={{ headerShown:false}}/>
         <Stack.Screen name="registerBP" options={{ headerShown:false}}/>
-        <Stack.Screen name="profile" options={{title: 'Profile',
-          headerStyle: { backgroundColor: '#E58B68' },
-          headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold'},
-          headerLeft: () => (
-            <ImageButton
-              source={require("../assets/back.png")}
-              imageSize={{width:24, height:24}}
-              onPress={() => router.back('/registerPage')}
-            />
-          ),
-          headerRight: () => (
-            <TouchableOpacity style={styles.button}>
-              <Text style={{padding:2, marginHorizontal:8, fontFamily: 'Poppins-Regular', fontSize:14, color:'white'}}>Edit</Text>
-            </TouchableOpacity>
-          ),
-          headerTitle: 'Profile',
-          headerTitleAlign: 'center',
-          tabBarIcon: ({ color, size }) => (
-            <TabIcon icon={images.more} size={size} />
-          )
-        }}/>
+        {/* <Stack.Screen name="(auth)"/> */}
     </Stack>
   )
 }

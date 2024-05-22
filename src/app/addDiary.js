@@ -1,9 +1,18 @@
+<<<<<<< HEAD
 // import { View, Text, StyleSheet, Image, Button, TouchableOpacity, Touchable} from 'react-native'
 // import React, { useState } from 'react';
 // import { SafeAreaView } from 'react-native-safe-area-context'
 // import { Link, router} from 'expo-router'
 // import { images } from '../../constants/images';
 // import { Picker } from '@react-native-picker/picker';
+=======
+import { View, Text, StyleSheet, Image, Button, TouchableOpacity, Touchable} from 'react-native'
+import React, { useState } from 'react';
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { Link, router} from 'expo-router'
+import { images } from '../constants/images';
+import { Picker } from '@react-native-picker/picker';
+>>>>>>> 4991813e0b20b7acdfdc15f66c53121f03c9c406
 
 // const preReg = () => {
 //   const [selectedButton, setSelectedButton] = useState(null);
