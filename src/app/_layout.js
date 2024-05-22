@@ -1,4 +1,4 @@
-import {React, useEffect} from 'react'
+import {React, useEffect, useState} from 'react'
 import { Text, TouchableOpacity, StyleSheet } from 'react-native'
 import { Stack } from 'expo-router'
 import { useFonts } from 'expo-font'
@@ -6,6 +6,8 @@ import ImageButton from '../components/ImageButton';
 import { router, Tabs } from 'expo-router'
 
 const _layout = () => {
+
+  
   const [fontsLoaded] = useFonts({
     "Poppins-Black": require("../assets/fonts/Poppins-Black.ttf"),
     "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
@@ -38,7 +40,6 @@ const _layout = () => {
         <Stack.Screen name="question5" options={{ headerShown:false}}/>
         <Stack.Screen name="(tabs)" options={{ headerShown:false}}/>
         <Stack.Screen name="registerBP" options={{ headerShown:false}}/>
-
         <Stack.Screen name='ReportProblem' options={{
           title: 'ReportProblem',
           headerStyle: { backgroundColor: '#E58B68' },
@@ -92,8 +93,10 @@ const _layout = () => {
             />
           ),
           headerRight: () => (
-            <TouchableOpacity style={styles.button}>
-              <Text style={{padding:2, marginHorizontal:8, fontFamily: 'Poppins-Regular', fontSize:14, color:'white'}}>Upgrade</Text>
+            <TouchableOpacity style={styles.button}
+              onPress={()=> router.setParams({asd: 'hi'})}
+            >
+              <Text style={{padding:2, marginHorizontal:8, fontFamily: 'Poppins-Regular', fontSize:14, color:'white'}}>Edit</Text>
             </TouchableOpacity>
           ),
           headerTitle: 'Profile',
