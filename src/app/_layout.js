@@ -4,6 +4,7 @@ import { Stack } from 'expo-router'
 import { useFonts } from 'expo-font'
 import ImageButton from '../components/ImageButton';
 import { router, Tabs } from 'expo-router'
+import { BPProfileProvider } from './context/BPProfileContext';
 
 const _layout = () => {
 
@@ -25,6 +26,9 @@ const _layout = () => {
   }
 
   return (
+    <BPProfileProvider>
+
+
     <Stack>
         <Stack.Screen name="index"/>
         <Stack.Screen name="(getStarted)" options={{ headerShown:false}}/>
@@ -128,6 +132,7 @@ const _layout = () => {
         }} />
         {/* <Stack.Screen name="(auth)"/> */}
     </Stack>
+    </BPProfileProvider>
   )
 }
 
