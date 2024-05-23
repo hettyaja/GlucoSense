@@ -37,7 +37,7 @@ const welcomePage = () => {
 
         <CustomButton
             title="Sign in"
-            onPress={() => router.push("/CreateRecipeBS")}
+            onPress={() => router.push("/loginPage")}
             buttonColor="#E58B68"
             customStyle={{ marginTop: 20 }}
         />

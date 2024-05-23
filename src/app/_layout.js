@@ -39,6 +39,7 @@ const _layout = () => {
         <Stack.Screen name="question4" options={{ headerShown:false}}/>
         <Stack.Screen name="question5" options={{ headerShown:false}}/>
         <Stack.Screen name="(tabs)" options={{ headerShown:false}}/>
+        <Stack.Screen name="(resetPwd)" options={{ headerShown:false}}/>
         <Stack.Screen name="registerBP" options={{ headerShown:false}}/>
         <Stack.Screen name='ReportProblem' options={{
           title: 'ReportProblem',

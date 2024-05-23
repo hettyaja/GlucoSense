@@ -17,6 +17,7 @@ const Login = () => {
       <View style={{backgroundColor:"white", alignItems:'flex-start', width:"100%", paddingHorizontal:20}}>
         <ImageButton
           source={require("../assets/back(2).png")}
+          imageSize={{width:24, height:24}}
           onPress={() => router.back('/welcomePage')}
         />
       </View>
@@ -36,10 +37,12 @@ const Login = () => {
       <TextInput style={[styles.input, {color: "black"}]} placeholder="Enter your password" placeholderTextColor="black" />
       
       <View style={{backgroundColor:"white", flexDirection: 'row-reverse', justifyContent:"space-between", width:'100%', paddingHorizontal:50}}>
-        <Link style={{ fontFamily: "Poppins-Medium", fontSize: 12}} href="/login1">Forgot Password?</Link>
+        <TouchableOpacity onPress={() => router.push('/(resetPwd)/resetPwd1')}>
+            <Text style={{ alignItems:'center', fontFamily: 'Poppins-Medium', fontSize: 12, paddingBottom: 35, color: '#808080', justifyContent: 'center', textAlign: 'center', fontFamily:'Poppins-Medium'}}>Forgot Password?</Text>
+        </TouchableOpacity> 
       </View>
 
-      <TouchableOpacity onPress={handleLogin} style={{paddingTop:90, paddingVertical:30}}>
+      <TouchableOpacity onPress={()=> router.push('/home')} style={{paddingTop:90, paddingVertical:30}}>
         <View style={styles.button}>
           <Text style={styles.buttonText}>Login</Text>
         </View>
@@ -47,7 +50,9 @@ const Login = () => {
       
 
       <Text style={{ fontFamily: "Poppins-Medium", fontSize: 12}}>Don't have an account?</Text>
-      <Link style={{ fontFamily: "Poppins-Medium", fontSize: 12, color: "#0044CC"}} href="/login1">Sign Up</Link>
+      <TouchableOpacity onPress={() => router.push('/preReg')}>
+            <Text style={{ alignItems:'center', fontFamily: 'Poppins-Medium', fontSize: 12, paddingBottom: 35, color: '#0044CC', justifyContent: 'center', textAlign: 'center', fontFamily:'Poppins-Medium'}}> Sign Up </Text>
+      </TouchableOpacity> 
 
     </SafeAreaView>
   )
