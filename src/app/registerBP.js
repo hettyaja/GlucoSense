@@ -96,7 +96,7 @@ const BusinessRegister= () => {
         </View>
         
         <View style={{ paddingBottom:10, alignItems:'center', paddingTop:50}}>
-        <TouchableOpacity onPress={handleRegister} style={styles.registerButtonContainer}>
+        <TouchableOpacity onPress={() => router.push('/(tabsBP)/homeBP')} style={styles.registerButtonContainer}>
             <Text style={styles.registerButtonText}> Register </Text>
         </TouchableOpacity>
         </View>

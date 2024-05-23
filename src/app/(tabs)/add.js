@@ -1,98 +1,123 @@
+import { router } from 'expo-router';
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Modal, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native';
+import Modal from 'react-native-modal';
+import FontAwesome from 'react-native-vector-icons/FontAwesome'
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 
-const add = () => {
-  const [modalVisible, setModalVisible] = useState(false);
-
-  const toggleModal = () => {
-    setModalVisible(!modalVisible);
-  };
+const BottomSheetModal = ({ isVisible, onClose }) => {
+  const [currentSection, setCurrentSection] = useState('Diary');
 
   return (
-    <View style={styles.container}>
-      {/* Other components of your homepage */}
+    <Modal
+      isVisible={isVisible}
+      onBackdropPress={onClose}
+      onSwipeComplete={onClose}
+      swipeDirection="down"
+      backdropOpacity={0.2}
+      style={styles.modal}
+    >
+      <View style={styles.modalContent}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => setCurrentSection('Diary')} style={[styles.section, currentSection === 'Diary' && styles.activeSection]}>
+            <Text style={[styles.headerText, currentSection === 'Diary' && styles.activeTab]}>Diary</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setCurrentSection('Reminder')} style={[styles.section, currentSection === 'Reminder' && styles.activeSection]}>
+            <Text style={[styles.headerText, currentSection === 'Reminder' && styles.activeTab]}>Reminder</Text>
+          </TouchableOpacity>
+        </View>
 
-      <TouchableOpacity style={styles.addButton} onPress={toggleModal}>
-        <Text style={styles.addButtonText}>+</Text>
-      </TouchableOpacity>
-
-      <Modal
-        transparent={true}
-        visible={modalVisible}
-        animationType="slide"
-        onRequestClose={toggleModal}
-      >
-        <TouchableOpacity style={styles.modalOverlay} onPress={toggleModal}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Add Diary</Text>
-            <View style={styles.modalOptions}>
-              <TouchableOpacity style={styles.option}>
-                <Text>Glucose</Text>
+        <View style={styles.content}>
+          {currentSection === 'Diary' ? (
+            <>
+              <View style={styles.contentContainer}>
+                <TouchableOpacity style={styles.button}>
+                  <FontAwesome name="tint" size={24} color="#000" />
+                  <Text style={styles.buttonText}>Glucose</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.button} onPress={() => router.push({pathname: '/addDiary', query: onClose()})}>
+                  <FontAwesome name="cutlery" size={24} color="#000" />
+                  <Text style={styles.buttonText}>Meals</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.button}>
+                  <FontAwesome5 name="pills" size={24} color="#000" />
+                  <Text style={styles.buttonText}>Meds</Text>
+                </TouchableOpacity>
+              </View>
+            </>
+          ) : (
+            <>
+            <View style={styles.contentContainer}>
+              <TouchableOpacity style={styles.button} onPress={() => router.push()}>
+                <FontAwesome name="tint" size={24} color="#000" />
+                <Text style={styles.buttonText}>Glucose</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.option}>
-                <Text>Meals</Text>
+              <TouchableOpacity style={styles.button} onPress={() => router.push({pathname: '/addDiary', query: onClose()})}>
+                <FontAwesome name="cutlery" size={24} color="#000" />
+                <Text style={styles.buttonText}>Meals</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.option}>
-                <Text>Meds</Text>
+              <TouchableOpacity style={styles.button}>
+                <FontAwesome5 name="pills" size={24} color="#000" />
+                <Text style={styles.buttonText}>Meds</Text>
               </TouchableOpacity>
             </View>
-          </View>
-        </TouchableOpacity>
-      </Modal>
-    </View>
+          </>
+          )}
+        </View>
+      </View>
+    </Modal>
   );
 };
 
-const { height } = Dimensions.get('window');
-
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  modal: {
     justifyContent: 'flex-end',
-    alignItems: 'center',
-    backgroundColor: '#f5f5f5',
-  },
-  addButton: {
-    position: 'absolute',
-    bottom: 30,
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: '#ff6347',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  addButtonText: {
-    color: 'white',
-    fontSize: 24,
-  },
-  modalOverlay: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    margin: 0,
   },
   modalContent: {
-    height: height / 3,
     backgroundColor: 'white',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    padding: 20,
-    alignItems: 'center',
+    height: 200,
+    width: '100%'
   },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  modalOptions: {
+  header: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '100%',
+    justifyContent: 'space-between'
   },
-  option: {
+  headerText: {
+    fontFamily: 'Poppins-SemiBold',
+    fontSize:16
+  },
+  section: {
+    backgroundColor:'#E58B68',
+    width:'50%',
+    height:50,
+    justifyContent:'center',
+    alignItems:'center',
+    borderBottomWidth:1,
+    borderColor:'#f1f1f1'
+  },
+  activeSection: {
+    backgroundColor: 'white',
+    justifyContent:'center',
+    alignItems:'center'
+  },
+  content: {
+    flex: 1,
     alignItems: 'center',
-    padding: 10,
   },
+  contentContainer: {
+    flexDirection:'row',
+    padding:16,
+  },
+  button: {
+    paddingVertical:16,
+    paddingHorizontal:32,
+    alignItems:'center'
+  },
+  buttonText: {
+    fontFamily: 'Poppins-Regular',
+    fontSize:14
+  }
 });
 
-export default add;
+export default BottomSheetModal;

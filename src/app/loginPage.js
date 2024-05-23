@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput } from 'react-native';
+import React, {useState} from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Link, router } from 'expo-router';
 
@@ -7,9 +7,21 @@ import { images } from '../constants/images';
 import ImageButton from '../components/ImageButton'
 
 const Login = () => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  const userAccount = {username:'user', password:'user'}
+  const businessAccount = {username:'business', password:'business'}
+
   const handleLogin = () => {
-    // Handle login logic here
-    console.log('Login button pressed');
+    if (username === userAccount.username && password === userAccount.password) {
+      router.push('/home')
+    } else if (username === businessAccount.username && password === businessAccount.password) {
+      router.push('/homeBP')
+    } else {
+      Alert.alert('Invalid credentials', 'The username or password you entered is incorrect.');
+    }
+    
   };
 
   return (
@@ -28,13 +40,25 @@ const Login = () => {
         <Text style={{ fontFamily: "Poppins-Medium", fontSize: 14}}>Username</Text>
       </View>
       
-      <TextInput style={[styles.input, {color: "black"}]} placeholder="Enter your username" placeholderTextColor="black" />
+      <TextInput style={[styles.input, {color: "black"}]}
+        placeholder="Enter your username"
+        placeholderTextColor="black"
+        value={username}
+        onChangeText={setUsername}
+        autoCapitalize='none'
+      />
       
       <View style={{backgroundColor:"white", flexDirection: 'row', justifyContent:"space-between", width:'100%', paddingHorizontal:50}}>
         <Text style={{ fontFamily: "Poppins-Medium", fontSize: 14}}>Password</Text>
       </View>
 
-      <TextInput style={[styles.input, {color: "black"}]} placeholder="Enter your password" placeholderTextColor="black" />
+      <TextInput style={[styles.input, {color: "black"}]}
+        placeholder="Enter your password"
+        placeholderTextColor="black"
+        value={password}
+        onChangeText={setPassword}
+        autoCapitalize='none'
+      />
       
       <View style={{backgroundColor:"white", flexDirection: 'row-reverse', justifyContent:"space-between", width:'100%', paddingHorizontal:50}}>
         <TouchableOpacity onPress={() => router.push('/(resetPwd)/resetPwd1')}>
@@ -42,7 +66,7 @@ const Login = () => {
         </TouchableOpacity> 
       </View>
 
-      <TouchableOpacity onPress={()=> router.push('/home')} style={{paddingTop:90, paddingVertical:30}}>
+      <TouchableOpacity onPress={handleLogin} style={{paddingTop:90, paddingVertical:30}}>
         <View style={styles.button}>
           <Text style={styles.buttonText}>Login</Text>
         </View>
