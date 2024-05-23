@@ -6,136 +6,154 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
 
 const Profile = () => {
-    const { name } = useGlobalSearchParams();
+    // const { name } = useGlobalSearchParams();
+    const [name, setName] = useState();
+    
     const [isEditable, setIsEditable] = useState(false)
     const [birthdate, setBirthdate] = useState(new Date());
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [showGenderPicker, setShowGenderPicker] = useState(false);
-    const [gender, setGender] = useState('Male');
+    const [gender, setGender] = useState();
 
+    
     const toggleEdit = () => {
-        alert('hi')
+       // alert('hi')
+       setIsEditable(!isEditable);
     };
 
-    const onDateChange = (event, selectedDate) => {
-        if (Platform.OS === 'android') {
-            setShowDatePicker(false);
-        }
-        if (selectedDate) {
-            setBirthdate(selectedDate);
-        }
+    // const onDateChange = (event, selectedDate) => {
+    //     if (Platform.OS === 'android') {
+    //         setShowDatePicker(false);
+    //     }
+    //     if (selectedDate) {
+    //         setBirthdate(selectedDate);
+    //     }
+    // };
+
+    //Heti added
+    const saveChanges = () =>{
+        setIsEditable(false);
     };
 
     const showDatePickerModal = () => {
         setShowDatePicker(true);
     };
+    
+    const onDateChange = (event, selectedDate) => {
+        const currentDate = selectedDate || birthdate;
+        setBirthdate(currentDate);
+    };
 
+    const onChangeTextHandler = (text) => {
+        setName(text);
+    };
+    
+    
     const handleGenderChange = (selectedGender) => {
         setGender(selectedGender);
         setShowGenderPicker(false);
     };
-
     return (
-        <ScrollView style={styles.safeArea}>
+        <ScrollView style={styles.safeArea} keyboardShouldPersistTaps="handled">
             <TouchableOpacity style={{ alignItems: 'center', margin: 24 }} >
-                <View style={styles.profileImage}>
-                </View>
+                <View style={styles.profileImage}></View>
             </TouchableOpacity>
+    
+            {/* Section for account details */}
             <Text style={styles.sectionText}>ACCOUNT DETAILS</Text>
             <View style={styles.section}>
+                {/* Username field */}
                 <View style={styles.item}>
                     <Text>Username</Text>
-                    <TextInput style={styles.input} defaultValue={'Jon'} editable={isEditable} />
+                        <TextInput
+                            style={styles.input}
+                            value={'Jon'}
+                            editable={isEditable} 
+                        />
                 </View>
+
                 <View style={styles.item}>
                     <Text>Name</Text>
-                    <TextInput style={styles.input} defaultValue={'name'} />
+                    {isEditable ?(
+                        <TextInput
+                            style={styles.input}
+                            placeholder='Enter your name'
+                            value={name}
+                            onChangeText={onChangeTextHandler}
+                            editable={isEditable}
+                        />
+                    ) : (
+                        <Text style={styles.input}>{name}</Text>
+                    
+                    )}   
                 </View>
+
                 <View style={styles.item}>
-                    <Text>Email</Text>
-                    <TextInput style={styles.input} defaultValue={name} />
-                </View>
+                    <Text> Email </Text>
+                        <TextInput
+                            style={styles.input}
+                            value={'Email'}
+                            editable={isEditable} 
+                        />
+                </View>    
             </View>
+            
+            {/* Section for user information */}
             <Text style={styles.sectionText}>USER INFORMATION</Text>
             <View style={styles.section}>
+
+                {/* Birthdate field */}
                 <View style={styles.item}>
                     <Text>Birthdate</Text>
-                    <TouchableOpacity onPress={showDatePickerModal}>
-                        <TextInput
-                            style={styles.input}
-                            value={birthdate.toDateString()}
-                            editable={false}
-                        />
-                    </TouchableOpacity>
-                    {showDatePicker && Platform.OS === 'ios' && (
-                        <Modal
-                            transparent={true}
-                            animationType="slide"
-                            visible={showDatePicker}
-                            onRequestClose={() => setShowDatePicker(false)}
-                        >
-                            <View style={styles.modalContainer}>
-                                <View style={styles.pickerContainer}>
-                                    <DateTimePicker
-                                        value={birthdate}
-                                        mode="date"
-                                        display="default"
-                                        onChange={onDateChange}
-                                    />
-                                    <Button title="Done" onPress={() => setShowDatePicker(false)} />
-                                </View>
-                            </View>
-                        </Modal>
-                    )}
-                    {showDatePicker && Platform.OS === 'android' && (
-                        <DateTimePicker
-                            value={birthdate}
-                            mode="date"
-                            display="default"
-                            onChange={onDateChange}
-                        />
+                    {isEditable ? (
+                        <TouchableOpacity onPress={toggleEdit}>
+                            <DateTimePicker
+                                value={birthdate}
+                                mode="date"
+                                display="default"
+                                onChange={onDateChange}
+                            />
+                        </TouchableOpacity>
+                    ) : (
+                        <Text style={styles.input}>{birthdate.toDateString()}</Text>
                     )}
                 </View>
+
                 <View style={styles.item}>
                     <Text>Gender</Text>
-                    <TouchableOpacity onPress={() => setShowGenderPicker(true)}>
-                        <TextInput
-                            style={styles.input}
-                            value={gender}
-                            editable={false}
-                        />
-                    </TouchableOpacity>
-                    <Modal
-                        transparent={true}
-                        visible={showGenderPicker}
-                        animationType="slide"
-                        onRequestClose={() => setShowGenderPicker(false)}
+                    {isEditable?(
+                        <Picker
+                        selectedValue={gender}
+                        onValueChange={handleGenderChange}
+                        style={styles.picker}
                     >
-                        <View style={styles.modalContainer}>
-                            <View style={styles.pickerContainer}>
-                                <Text style={styles.pickerTitle}>Select gender</Text>
-                                <Picker
-                                    selectedValue={gender}
-                                    style={styles.picker}
-                                    onValueChange={(itemValue) => handleGenderChange(itemValue)}
-                                >
-                                    <Picker.Item label="Male" value="Male" />
-                                    <Picker.Item label="Female" value="Female" />
-                                </Picker>
-                                <Button title="Done" onPress={() => setShowGenderPicker(false)} />
-                            </View>
-                        </View>
-                    </Modal>
-                </View>
-                <View style={styles.item}>
-                    <Text>Weight</Text>
-                    <TextInput style={styles.input} defaultValue={'50'} />
-                </View>
-            </View>
-        </ScrollView>
-    )
-}
+                        <Picker.Item label="Male" value="Male" />
+                        <Picker.Item label="Female" value="Female" />
+                    </Picker>
 
+                    ):(
+                        <Text style={styles.input}>{gender}</Text>
+                    )}
+                    
+                </View>
+
+
+                
+
+
+              
+                
+            </View>
+            
+            {/* Button to toggle between edit mode and view mode */}
+            <TouchableOpacity onPress={isEditable ? saveChanges : toggleEdit}>
+                <Text>{isEditable ? "Save" : "Edit"}</Text>
+            </TouchableOpacity>
+        </ScrollView>
+    );
+                    };
+    
+    
 export default Profile
 
 const styles = StyleSheet.create({
@@ -170,17 +188,17 @@ const styles = StyleSheet.create({
     input: {
         fontFamily: 'Poppins-Regular',
         fontSize: 14,
-        color: '#808080'
+        color: '#808080',
     },
     picker: {
         width: '100%',
     },
-    modalContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    },
+    // modalContainer: {
+    //     flex: 1,
+    //     justifyContent: 'center',
+    //     alignItems: 'center',
+    //     backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    // },
     pickerContainer: {
         backgroundColor: 'white',
         borderRadius: 10,

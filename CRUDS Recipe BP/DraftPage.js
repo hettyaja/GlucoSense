@@ -1,8 +1,8 @@
 import React, { useState, useContext } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, Modal, TextInput } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { RecipeContext } from './RecipeContext';
-import RecipeCard from './RecipeCard';
+import { RecipeContext } from '../src/app/RecipeContext';
+import RecipeCard from './quiet-red-ramen/RecipeCard';
 
 const DraftPage = () => {
   const { drafts, removeDraft } = useContext(RecipeContext);

@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, Modal, TextInput } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { RecipeContext } from './RecipeContext';
+import { RecipeContext } from '../RecipeContext';
 import RecipeCard from './RecipeCard';
 
 const MenuRecipeManagementPage = () => {

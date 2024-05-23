@@ -17,7 +17,7 @@ import { AntDesign } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { Picker } from '@react-native-picker/picker';
 import { useNavigation, useRoute } from '@react-navigation/native'; 
-import { RecipeContext } from './RecipeContext'; // Import RecipeContext
+import { RecipeContext } from '../RecipeContext'; // Import RecipeContext
 
 const EditRecipePage = () => {
   const { updateRecipe } = useContext(RecipeContext); // Use RecipeContext
