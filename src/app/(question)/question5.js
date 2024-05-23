@@ -1,8 +1,8 @@
 import { View, Text, StyleSheet, Image, Button, TouchableOpacity, SafeAreaView, Platform} from 'react-native'
 import React, { useState } from 'react';
 import { router } from 'expo-router';
-import ImageButton from '../components/ImageButton';
-import { images } from '../constants/images'
+import ImageButton from '../../components/ImageButton';
+import { images } from '../../constants/images'
 
 const preReg = () => {
   const [selectedButton, setSelectedButton] = useState(null);
@@ -15,7 +15,7 @@ const preReg = () => {
       <View style={{flexDirection:'row'}}>
         <View style={{width:'25%', alignItems:'flex-start', paddingLeft:20, justifyContent:'center'}}>
           <ImageButton
-            source={require("../assets/back(2).png")}
+            source={require("../../assets/back(2).png")}
             imageSize={{width:24, height:24}}
             onPress={() => router.back('/question4')}
           />

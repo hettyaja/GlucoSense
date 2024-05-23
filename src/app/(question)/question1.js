@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, SafeAreaView, Platform, Image} from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import ImageButton from '../components/ImageButton';
+import ImageButton from '../../components/ImageButton';
 import { router } from 'expo-router';
-import { images } from '../constants/images'
+import { images } from '../../constants/images';
 
 
 export default function UserProfile() {
@@ -24,7 +24,7 @@ export default function UserProfile() {
       <View style={{flexDirection:'row'}}>
         <View style={{width:'25%', alignItems:'flex-start', paddingLeft:20, justifyContent:'center'}}>
           <ImageButton
-            source={require("../assets/back(2).png")}
+            source={require("../../assets/back(2).png")}
             imageSize={{width:24, height:24}}
             onPress={() => router.back('/registerPage')}
           />

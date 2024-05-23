@@ -5,7 +5,8 @@ import { Link, router} from 'expo-router'
 import { images } from '../constants/images';
 import { Picker } from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker'
-
+import Fontisto from 'react-native-vector-icons/Fontisto'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
 const preReg = () => {
   const [selectedButton, setSelectedButton] = useState(null);
@@ -48,10 +49,12 @@ const preReg = () => {
             <TouchableOpacity style={{borderColor: '#808080',backgroundColor: "#ffffff",width: 160,height: 70,paddingVertical: 10,paddingHorizontal: 20,borderBottomLeftRadius: 8, borderRightWidth: 1,
             borderTopLeftRadius: 8, marginBottom: 10, elevation: 3}}>
               <Text style={styles.buttonText}>Search</Text>
+              <Fontisto name="search" size={24}/>
             </TouchableOpacity>
             <TouchableOpacity style={{borderColor: '#808080', backgroundColor: "#ffffff",width: 160,height: 70,paddingVertical: 10,paddingHorizontal: 20,borderBottomRightRadius: 8, borderLeftWidth: 1,
             borderTopRightRadius: 8, marginBottom: 10, elevation: 3}}>
               <Text style={styles.buttonText}>Scan</Text>
+              <MaterialCommunityIcons name='barcode-scan' size={32}/>
             </TouchableOpacity>
           </View>
           <View style={{ marginTop: 10,backgroundColor: 'white',paddingVertical: 12,paddingHorizontal: 30,
@@ -130,5 +133,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Regular',
     height:36
   },
+  
 });
 export default preReg

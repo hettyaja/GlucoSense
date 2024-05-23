@@ -66,14 +66,6 @@ const _layout = () => {
           title: 'Setting',
           headerStyle: { backgroundColor: '#E58B68' },
           headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold'},
-          headerLeft: () => (
-            <ImageButton
-              source={require("../../assets/back.png")}
-              imageSize={{width:24, height:24}}
-              customStyle={{paddingLeft:10}}
-              onPress={() => router.back('/registerPage')}
-            />
-          ),
           headerRight: () => (
             <TouchableOpacity style={styles.button}>
               <Text style={{padding:2, marginHorizontal:8, fontFamily: 'Poppins-Regular', fontSize:14, color:'white'}}>Upgrade</Text>
