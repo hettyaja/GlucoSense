@@ -30,14 +30,23 @@ const _layout = () => {
                 headerShown:false,
                 tabBarIcon: ({color, size}) => (
                     <TabIcon icon={images.home} size={size}/>
-                )
+                ),
+                headerLeft: () => (
+                  <ImageButton
+                    source={require("../../assets/back.png")}
+                    imageSize={{width:24, height:24}}
+                    onPress={() => router.back('/registerPage')}
+                  />
+                ),
             }}/>
             <Tabs.Screen name='settingBP' options={{
-                title:'Setting',
-                headerShown:false,
+                title: 'Setting',
+                headerTitleAlign: 'center',
+                headerStyle: { backgroundColor: '#E58B68' },
+                headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold'},
                 tabBarIcon: ({color, size}) => (
                     <TabIcon icon={images.insight} size={size}/>
-                )
+                ),
             }}/>
         </Tabs>
     </>

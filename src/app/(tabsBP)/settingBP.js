@@ -1,7 +1,12 @@
+// settingBP.js
 import React from 'react';
 import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useProfile } from '../context/BPProfileContext';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import Octicons from 'react-native-vector-icons/Octicons'
+import AntDesign from 'react-native-vector-icons/AntDesign'
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 
 const settingBP = () => {
     const router = useRouter();
@@ -9,13 +14,6 @@ const settingBP = () => {
 
     return (
         <View style={styles.container}>
-            {/* Header */}
-            <View style={styles.header}>
-                <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-                    <Text style={styles.backButtonText}>{'<'}</Text>
-                </TouchableOpacity>
-                <Text style={styles.headerTitle}>Setting</Text>
-            </View>
 
             {/* Profile Card Section */}
             <View style={styles.profileCard}>
@@ -36,15 +34,19 @@ const settingBP = () => {
 
             {/* Settings Options */}
             <TouchableOpacity style={styles.optionButton}>
+                <MaterialCommunityIcons name='bell-outline' size={24} style={styles.icon}/>
                 <Text style={styles.optionButtonText}>Notification</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.optionButton}>
+              <Octicons name='report' size={24} style={styles.icon}/>
                 <Text style={styles.optionButtonText}>Report problem</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.optionButton}>
+                <MaterialIcons name='logout' size={24} style={styles.icon}/>
                 <Text style={styles.optionButtonText}>Log out</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.optionButton, styles.deleteButton]}>
+            <TouchableOpacity style={styles.optionButton}>
+                <AntDesign name='deleteuser' size={24} color='#E04530' style={styles.icon}/>
                 <Text style={styles.deleteButtonText}>Delete business account</Text>
             </TouchableOpacity>
         </View>
@@ -78,14 +80,15 @@ const styles = StyleSheet.create({
   },
   profileCard: {
     backgroundColor: '#fff',
-    margin: 20,
+    margin: 24,
     padding: 20,
     borderRadius: 10,
     flexDirection: 'row',
     alignItems: 'center',
     shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    shadowOffset:{width:0, height:5},
     elevation: 5,
   },
   profilePhoto: {
@@ -122,26 +125,29 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   optionButton: {
+    flexDirection:'row',
     backgroundColor: '#fff',
     padding: 15,
-    marginHorizontal: 20,
-    marginTop: 10,
-    borderRadius: 10,
+    marginHorizontal: 24,
+    marginBottom:24,
+    borderRadius: 8,
     shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    shadowOffset:{height:5},
     elevation: 5,
   },
   optionButtonText: {
-    fontSize: 16,
-  },
-  deleteButton: {
-    backgroundColor: '#ffe6e6',
+    fontFamily: 'Poppins-Medium',
+    fontSize: 14,
   },
   deleteButtonText: {
-    color: '#f28b54', // Adjust color as needed
-    textAlign: 'center',
+    fontFamily: 'Poppins-Medium',
+    color: '#E04530',
   },
+  icon: {
+    paddingRight:24
+  }
 });
 
 export default settingBP;

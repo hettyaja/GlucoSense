@@ -1,3 +1,4 @@
+// _layout.js
 import {React, useEffect, useState} from 'react'
 import { Text, TouchableOpacity, StyleSheet } from 'react-native'
 import { Stack } from 'expo-router'
@@ -7,8 +8,6 @@ import { router, Tabs } from 'expo-router'
 import { BPProfileProvider } from './context/BPProfileContext';
 
 const _layout = () => {
-
-  
   const [fontsLoaded] = useFonts({
     "Poppins-Black": require("../assets/fonts/Poppins-Black.ttf"),
     "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
@@ -27,111 +26,111 @@ const _layout = () => {
 
   return (
     <BPProfileProvider>
+      <Stack>
+          <Stack.Screen name="index"/>
+          <Stack.Screen name="(getStarted)" options={{ headerShown:false}}/>
+          <Stack.Screen name="loginPage" options={{ headerShown:false}}/>
+          <Stack.Screen name="welcomePage" options={{ headerShown:false}}/>
+          <Stack.Screen name="preReg" options={{ headerShown:false}}/>
+          <Stack.Screen name="getStartedBP" options={{ headerShown:false}}/>
+          <Stack.Screen name="registerPage" options={{ headerShown:false}}/>
+          <Stack.Screen name="(question)" options={{headerShown:false}}/>
+          <Stack.Screen name="(tabs)" options={{ headerShown:false}}/>
+          <Stack.Screen name="(tabsBP)" options={{ headerShown:false}}/>
+          <Stack.Screen name="(resetPwd)" options={{ headerShown:false}}/>
+          <Stack.Screen name="registerBP" options={{ headerShown:false}}/>
+          {/* THIS IS THE SAVE BUTTON PART */}
+          <Stack.Screen name="profileBP"/>
+          <Stack.Screen name="addDiary" options={{
+            title: 'ReportProblem',
+            headerStyle: { backgroundColor: '#E58B68' },
+            headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold'},
+            headerLeft: () => (
+              <ImageButton
+                source={require("../assets/back.png")}
+                imageSize={{width:24, height:24}}
+                customStyle={{paddingLeft:10}}
+                onPress={() => router.back('/registerPage')} //Perbaiki 
+              />
+            ),headerRight: () => (
+              <TouchableOpacity style={styles.button}
+                onPress={()=> router.push('/viewDiary')}
+              >
+                <Text style={{padding:2, marginHorizontal:8, fontFamily: 'Poppins-Regular', fontSize:14, color:'white'}}>Save</Text>
+              </TouchableOpacity>
+            ),
+            headerTitle: 'Add meal',
+            headerTitleAlign: 'center',
+            tabBarIcon: ({ color, size }) => (
+              <TabIcon icon={images.more} size={size} />
+            ),}}/>
 
-
-    <Stack>
-        <Stack.Screen name="index"/>
-        <Stack.Screen name="(getStarted)" options={{ headerShown:false}}/>
-        <Stack.Screen name="loginPage" options={{ headerShown:false}}/>
-        <Stack.Screen name="welcomePage" options={{ headerShown:false}}/>
-        <Stack.Screen name="preReg" options={{ headerShown:false}}/>
-        <Stack.Screen name="getStartedBP" options={{ headerShown:false}}/>
-        <Stack.Screen name="registerPage" options={{ headerShown:false}}/>
-        <Stack.Screen name="(question)" options={{headerShown:false}}/>
-        <Stack.Screen name="(tabs)" options={{ headerShown:false}}/>
-        <Stack.Screen name="(tabsBP)" options={{ headerShown:false}}/>
-        <Stack.Screen name="(resetPwd)" options={{ headerShown:false}}/>
-        <Stack.Screen name="registerBP" options={{ headerShown:false}}/>
-        <Stack.Screen name="addDiary" options={{
-          title: 'ReportProblem',
-          headerStyle: { backgroundColor: '#E58B68' },
-          headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold'},
-          headerLeft: () => (
-            <ImageButton
-              source={require("../assets/back.png")}
-              imageSize={{width:24, height:24}}
-              customStyle={{paddingLeft:10}}
-              onPress={() => router.back('/registerPage')} //Perbaiki 
-            />
-          ),headerRight: () => (
-            <TouchableOpacity style={styles.button}
-              onPress={()=> router.push('/viewDiary')}
-            >
-              <Text style={{padding:2, marginHorizontal:8, fontFamily: 'Poppins-Regular', fontSize:14, color:'white'}}>Save</Text>
-            </TouchableOpacity>
-          ),
-          headerTitle: 'Add meal',
-          headerTitleAlign: 'center',
-          tabBarIcon: ({ color, size }) => (
-            <TabIcon icon={images.more} size={size} />
-          ),}}/>
-
-        <Stack.Screen name='ReportProblem' options={{
-          title: 'ReportProblem',
-          headerStyle: { backgroundColor: '#E58B68' },
-          headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold'},
-          headerLeft: () => (
-            <ImageButton
-              source={require("../assets/back.png")}
-              imageSize={{width:24, height:24}}
-              customStyle={{paddingLeft:10}}
-              onPress={() => router.back('/registerPage')} //Perbaiki 
-            />
-          ),
-          headerTitle: 'Help & Feedback',
-          headerTitleAlign: 'center',
-          tabBarIcon: ({ color, size }) => (
-            <TabIcon icon={images.more} size={size} />
-          ),
-        }} />
-
-        <Stack.Screen name='Notification' options={{
-          title: 'Notification',
-          headerStyle: { backgroundColor: '#E58B68' },
-          headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold'},
-          headerLeft: () => (
-            <ImageButton
-              source={require("../assets/back.png")}
-              imageSize={{width:24, height:24}}
-              customStyle={{paddingLeft:10}}
-            //   onPress={() => router.back('/registerPage')} //Perbaiki 
-            />
-          ),
-  
-          headerTitle: 'Notification',
-          headerTitleAlign: 'center',
-          tabBarIcon: ({ color, size }) => (
-            <TabIcon icon={images.more} size={size} />
-          ), 
+          <Stack.Screen name='ReportProblem' options={{
+            title: 'ReportProblem',
+            headerStyle: { backgroundColor: '#E58B68' },
+            headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold'},
+            headerLeft: () => (
+              <ImageButton
+                source={require("../assets/back.png")}
+                imageSize={{width:24, height:24}}
+                customStyle={{paddingLeft:10}}
+                onPress={() => router.back('/registerPage')} //Perbaiki 
+              />
+            ),
+            headerTitle: 'Help & Feedback',
+            headerTitleAlign: 'center',
+            tabBarIcon: ({ color, size }) => (
+              <TabIcon icon={images.more} size={size} />
+            ),
           }} />
 
+          <Stack.Screen name='Notification' options={{
+            title: 'Notification',
+            headerStyle: { backgroundColor: '#E58B68' },
+            headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold'},
+            headerLeft: () => (
+              <ImageButton
+                source={require("../assets/back.png")}
+                imageSize={{width:24, height:24}}
+                customStyle={{paddingLeft:10}}
+              //   onPress={() => router.back('/registerPage')} //Perbaiki 
+              />
+            ),
+    
+            headerTitle: 'Notification',
+            headerTitleAlign: 'center',
+            tabBarIcon: ({ color, size }) => (
+              <TabIcon icon={images.more} size={size} />
+            ), 
+            }} />
 
-        <Stack.Screen name='profile' options={{
-          title: 'Profile',
-          headerStyle: { backgroundColor: '#E58B68' },
-          headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold'},
-          headerLeft: () => (
-            <ImageButton
-              source={require("../assets/back.png")}
-              imageSize={{width:24, height:24}}
-              onPress={() => router.back('/registerPage')}
-            />
-          ),
-          headerRight: () => (
-            <TouchableOpacity style={styles.button}
-              onPress={()=> router.setParams({asd: 'hi'})}
-            >
-              <Text style={{padding:2, marginHorizontal:8, fontFamily: 'Poppins-Regular', fontSize:14, color:'white'}}>Edit</Text>
-            </TouchableOpacity>
-          ),
-          headerTitle: 'Profile',
-          headerTitleAlign: 'center',
-          tabBarIcon: ({ color, size }) => (
-            <TabIcon icon={images.more} size={size} />
-          )
-        }} />
-        {/* <Stack.Screen name="(auth)"/> */}
-    </Stack>
+
+          <Stack.Screen name='profile' options={{
+            title: 'Profile',
+            headerStyle: { backgroundColor: '#E58B68' },
+            headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold'},
+            headerLeft: () => (
+              <ImageButton
+                source={require("../assets/back.png")}
+                imageSize={{width:24, height:24}}
+                onPress={() => router.back('/registerPage')}
+              />
+            ),
+            headerRight: () => (
+              <TouchableOpacity style={styles.button}
+                onPress={()=> router.setParams({asd: 'hi'})}
+              >
+                <Text style={{padding:2, marginHorizontal:8, fontFamily: 'Poppins-Regular', fontSize:14, color:'white'}}>Edit</Text>
+              </TouchableOpacity>
+            ),
+            headerTitle: 'Profile',
+            headerTitleAlign: 'center',
+            tabBarIcon: ({ color, size }) => (
+              <TabIcon icon={images.more} size={size} />
+            )
+          }} />
+          {/* <Stack.Screen name="(auth)"/> */}
+      </Stack>
     </BPProfileProvider>
   )
 }
