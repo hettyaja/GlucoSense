@@ -2,24 +2,13 @@ import { useState } from 'react';
 import {React, Image, View, Modal, TouchableOpacity, Text, StyleSheet} from 'react-native'
 import { router, Stack, Tabs } from 'expo-router'
 import { useFonts } from 'expo-font'
-import { Octicons } from '@expo/vector-icons';
+import Octicons from 'react-native-vector-icons/Octicons'
+import AntDesign from 'react-native-vector-icons/AntDesign'
 import { SimpleLineIcons } from '@expo/vector-icons';
 import { images } from '../../constants/images';
 import BottomSheetModal from '../(tabs)/add';
 import ImageButton from '../../components/ImageButton';
 import { BPProfileProvider } from '../context/BPProfileContext';
-
-const TabIcon = ({ icon, size, color}) => {
-    return (
-        <View>
-            <Image
-            source={icon}
-            style={{width:size, height:size}}
-            />
-        </View>
-
-    );
-  };
 
 const _layout = () => {
   return (
@@ -28,25 +17,28 @@ const _layout = () => {
             <Tabs.Screen name='homeBP' options={{
                 title:'Home',
                 headerShown:false,
-                tabBarIcon: ({color, size}) => (
-                    <TabIcon icon={images.home} size={size}/>
+                tabBarIcon: () => (
+                    <Octicons name='home' size={24} color='#E58B68'/>
                 ),
-                headerLeft: () => (
-                  <ImageButton
-                    source={require("../../assets/back.png")}
-                    imageSize={{width:24, height:24}}
-                    onPress={() => router.back('/registerPage')}
-                  />
-                ),
+                tabBarLabel: ({ focused }) => (
+                  <Text style={{ fontFamily: focused ? 'Poppins-SemiBold' : 'Poppins-Regular', color: '#E58B68' }}>
+                      Home
+                  </Text>
+              ),
             }}/>
             <Tabs.Screen name='settingBP' options={{
                 title: 'Setting',
                 headerTitleAlign: 'center',
                 headerStyle: { backgroundColor: '#E58B68' },
                 headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold'},
-                tabBarIcon: ({color, size}) => (
-                    <TabIcon icon={images.insight} size={size}/>
+                tabBarIcon: () => (
+                    <AntDesign name='setting' size={24} color='#E58B68'/>
                 ),
+                tabBarLabel: ({ focused }) => (
+                  <Text style={{ fontFamily: focused ? 'Poppins-SemiBold' : 'Poppins-Regular', color: '#E58B68' }}>
+                      Setting
+                  </Text>
+              ),
             }}/>
         </Tabs>
     </>
@@ -55,11 +47,4 @@ const _layout = () => {
 
 export default _layout
 
-const styles = StyleSheet.create({
-  button: {
-    borderWidth:1,
-    borderColor:'white',
-    borderRadius:8,
-    marginHorizontal:16
-  }
-})
+const styles = StyleSheet.create({})

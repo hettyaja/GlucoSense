@@ -3,10 +3,12 @@ import {React, Image, View, Modal, TouchableOpacity, Text, StyleSheet} from 'rea
 import { router, Tabs } from 'expo-router'
 import { useFonts } from 'expo-font'
 import { Octicons } from '@expo/vector-icons';
-import { SimpleLineIcons } from '@expo/vector-icons';
 import { images } from '../../constants/images';
 import BottomSheetModal from './add';
 import ImageButton from '../../components/ImageButton';
+import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons'
+import FontAwesome from 'react-native-vector-icons/FontAwesome'
+import AntDesign from 'react-native-vector-icons/AntDesign'
 
 const TabIcon = ({ icon, size, color}) => {
     return (
@@ -25,20 +27,30 @@ const _layout = () => {
 
   return (
     <>
-    <Tabs>
+      <Tabs>
         <Tabs.Screen name='home' options={{
             title:'Home',
             headerShown:false,
-            tabBarIcon: ({color, size}) => (
-                <TabIcon icon={images.home} size={size}/>
-            )
+            tabBarIcon: () => (
+                <Octicons name='home' size={24} color='#E58B68'/>
+            ),
+            tabBarLabel: ({ focused }) => (
+              <Text style={{ fontFamily: focused ? 'Poppins-SemiBold' : 'Poppins-Regular', color: '#E58B68' }}>
+                  Home
+              </Text>
+          ),
         }}/>
         <Tabs.Screen name='insight' options={{
             title:'Insight',
             headerShown:false,
-            tabBarIcon: ({color, size}) => (
-                <TabIcon icon={images.insight} size={size}/>
-            )
+            tabBarIcon: () => (
+                <SimpleLineIcons name='graph' size={24} color='#E58B68'/>
+            ),
+            tabBarLabel: ({ focused }) => (
+              <Text style={{ fontFamily: focused ? 'Poppins-SemiBold' : 'Poppins-Regular', color: '#E58B68' }}>
+                  Insight
+              </Text>
+          ),
         }}/>
         <Tabs.Screen name='add' 
         listeners={{
@@ -58,31 +70,31 @@ const _layout = () => {
         <Tabs.Screen name='food' options={{
             title:'Food',
             headerShown:false,
-            tabBarIcon: ({color, size}) => (
-                <TabIcon icon={images.food} size={size}/>
-            )
-        }}/>
-      <Tabs.Screen name='setting' options={{
-          title: 'Setting',
-          headerStyle: { backgroundColor: '#E58B68' },
-          headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold'},
-          headerRight: () => (
-            <TouchableOpacity style={styles.button}>
-              <Text style={{padding:2, marginHorizontal:8, fontFamily: 'Poppins-Regular', fontSize:14, color:'white'}}>Upgrade</Text>
-            </TouchableOpacity>
+            tabBarIcon: () => (
+                <FontAwesome name='cutlery' size={24} color='#E58B68'/>
+            ),
+            tabBarLabel: ({ focused }) => (
+              <Text style={{ fontFamily: focused ? 'Poppins-SemiBold' : 'Poppins-Regular', color: '#E58B68' }}>
+                  Food
+              </Text>
           ),
-          headerTitle: 'Setting',
-          headerTitleAlign: 'center',
-          tabBarIcon: ({ color, size }) => (
-            <TabIcon icon={images.more} size={size} />
-          )
-        }} />
+        }}/>
+        <Tabs.Screen name='setting' options={{
+            title:'Setting',
+            tabBarIcon: () => (
+                <AntDesign name='setting' size={24} color='#E58B68'/>
+            ),
+            tabBarLabel: ({ focused }) => (
+              <Text style={{ fontFamily: focused ? 'Poppins-SemiBold' : 'Poppins-Regular', color: '#E58B68' }}>
+                  Setting
+              </Text>
+          ),
+        }}/>
     </Tabs>
     <BottomSheetModal
       isVisible={isModalVisible}
       onClose={() => setModalVisible(false)}
     />
-
 </>
   );
 };

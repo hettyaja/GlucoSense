@@ -39,32 +39,11 @@ const _layout = () => {
           <Stack.Screen name="(tabsBP)" options={{ headerShown:false}}/>
           <Stack.Screen name="(resetPwd)" options={{ headerShown:false}}/>
           <Stack.Screen name="registerBP" options={{ headerShown:false}}/>
+          <Stack.Screen name="addMeds"/>
+          <Stack.Screen name="addGlucose"/>
           {/* THIS IS THE SAVE BUTTON PART */}
           <Stack.Screen name="profileBP"/>
-          <Stack.Screen name="addDiary" options={{
-            title: 'ReportProblem',
-            headerStyle: { backgroundColor: '#E58B68' },
-            headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold'},
-            headerLeft: () => (
-              <ImageButton
-                source={require("../assets/back.png")}
-                imageSize={{width:24, height:24}}
-                customStyle={{paddingLeft:10}}
-                onPress={() => router.back('/registerPage')} //Perbaiki 
-              />
-            ),headerRight: () => (
-              <TouchableOpacity style={styles.button}
-                onPress={()=> router.push('/viewDiary')}
-              >
-                <Text style={{padding:2, marginHorizontal:8, fontFamily: 'Poppins-Regular', fontSize:14, color:'white'}}>Save</Text>
-              </TouchableOpacity>
-            ),
-            headerTitle: 'Add meal',
-            headerTitleAlign: 'center',
-            tabBarIcon: ({ color, size }) => (
-              <TabIcon icon={images.more} size={size} />
-            ),}}/>
-
+          <Stack.Screen name="addMeals"/>
           <Stack.Screen name='ReportProblem' options={{
             title: 'ReportProblem',
             headerStyle: { backgroundColor: '#E58B68' },

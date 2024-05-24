@@ -1,7 +1,7 @@
 // setting.js
 import { StyleSheet, Text, View, SafeAreaView, Platform, TouchableOpacity, ScrollView, Image} from 'react-native'
 import React from 'react'
-import { router } from 'expo-router'
+import { router, Tabs } from 'expo-router'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import Fontisto from 'react-native-vector-icons/Fontisto'
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
@@ -9,6 +9,20 @@ import { images } from '../../constants/images'
 
 const setting = () => {
   return (
+    <>
+    <Tabs.Screen options={{
+        title: 'Edit profile',
+        headerStyle: { backgroundColor: '#E58B68' },
+        headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold'},
+        headerRight: () => (
+          <TouchableOpacity>
+            <Text style={{padding:2, marginHorizontal:8, fontFamily: 'Poppins-SemiBold', fontSize:14, color:'white'}}>Upgrade</Text>
+          </TouchableOpacity>
+        ),
+        headerTitle: 'Edit profile',
+        headerTitleAlign: 'center',
+      }}/>
+
     <ScrollView style={styles.safeArea}>
       <View style={[styles.profileCard, Platform.OS === 'ios' && styles.shadow]}>
         <TouchableOpacity style={{flexDirection:'row', padding:32, alignItems:'center'}}
@@ -67,6 +81,7 @@ const setting = () => {
         </TouchableOpacity>
       </View>
     </ScrollView>
+    </>
   )
 }
 

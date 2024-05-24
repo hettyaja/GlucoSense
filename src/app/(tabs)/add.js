@@ -31,15 +31,15 @@ const BottomSheetModal = ({ isVisible, onClose }) => {
           {currentSection === 'Diary' ? (
             <>
               <View style={styles.contentContainer}>
-                <TouchableOpacity style={styles.button}>
+                <TouchableOpacity style={styles.button} onPress={() => router.push({pathname: '/addGlucose', query: onClose()})}>
                   <FontAwesome name="tint" size={24} color="#000" />
                   <Text style={styles.buttonText}>Glucose</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.button} onPress={() => router.push({pathname: '/addDiary', query: onClose()})}>
+                <TouchableOpacity style={styles.button} onPress={() => router.push({pathname: '/addMeals', query: onClose()})}>
                   <FontAwesome name="cutlery" size={24} color="#000" />
                   <Text style={styles.buttonText}>Meals</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.button}>
+                <TouchableOpacity style={styles.button} onPress={() => router.push({pathname: '/addMeds', query: onClose()})}>
                   <FontAwesome5 name="pills" size={24} color="#000" />
                   <Text style={styles.buttonText}>Meds</Text>
                 </TouchableOpacity>

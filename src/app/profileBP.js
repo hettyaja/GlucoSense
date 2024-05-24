@@ -54,10 +54,10 @@ const profileBP = () => {
             customStyle={{paddingLeft:10}}
             onPress={() => router.back('/profileBP')} //Perbaiki 
           />
-        ),headerRight: () => (
+        ),
+        headerRight: () => (
           <TouchableOpacity style={styles.button}
-            onPress={saveProfile}
-          >
+            onPress={saveProfile}>
             <Text style={{padding:2, marginHorizontal:8, fontFamily: 'Poppins-Regular', fontSize:14, color:'white'}}>Save</Text>
           </TouchableOpacity>
         ),

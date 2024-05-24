@@ -13,8 +13,8 @@ const settingBP = () => {
     const { profileData } = useProfile();
 
     return (
+      <>
         <View style={styles.container}>
-
             {/* Profile Card Section */}
             <View style={styles.profileCard}>
                 <Image 
@@ -50,6 +50,8 @@ const settingBP = () => {
                 <Text style={styles.deleteButtonText}>Delete business account</Text>
             </TouchableOpacity>
         </View>
+
+      </>
     );
 };
 
