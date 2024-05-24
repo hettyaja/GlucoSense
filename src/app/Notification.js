@@ -8,13 +8,13 @@ const NotificationScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.row}>
-      <Text style={styles.title}>Push notifications</Text>
-      <Switch
-        trackColor={{ false: "#767577", true: "#f2a154" }}
-        thumbColor={isEnabled ? "#f4f3f4" : "#f4f3f4"}
-        onValueChange={toggleSwitch}
-        value={isEnabled}
-      />
+        <Text style={styles.title}>Push notifications</Text>
+        <Switch
+          trackColor={{ false: "#767577", true: "#f2a154" }}
+          thumbColor={isEnabled ? "#f4f3f4" : "#f4f3f4"}
+          onValueChange={toggleSwitch}
+          value={isEnabled}
+        />
       </View>
     </View>
   );
@@ -29,7 +29,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 14,
     fontWeight: 'SemiBold',
-    marginBottom: 20,
   },
   row: {
     flexDirection: 'row',

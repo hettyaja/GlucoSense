@@ -36,15 +36,16 @@ const settingBP = () => {
             </TouchableOpacity>
 
             {/* Settings Options */}
-            <TouchableOpacity style={styles.optionButton}>
+            <TouchableOpacity style={styles.optionButton} onPress={()=> router.push('Notification')}>
                 <MaterialCommunityIcons name='bell-outline' size={24} style={styles.icon}/>
                 <Text style={styles.optionButtonText}>Notification</Text>
+                
             </TouchableOpacity>
-            <TouchableOpacity style={styles.optionButton}>
+            <TouchableOpacity style={styles.optionButton} onPress={() => router.push('/ReportProblem')}>
               <Octicons name='report' size={24} style={styles.icon}/>
                 <Text style={styles.optionButtonText}>Report problem</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.optionButton}>
+            <TouchableOpacity style={styles.optionButton} onPress={() => router.push('/welcomePage')}>
                 <MaterialIcons name='logout' size={24} style={styles.icon}/>
                 <Text style={styles.optionButtonText}>Log out</Text>
             </TouchableOpacity>

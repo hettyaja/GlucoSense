@@ -38,7 +38,7 @@ const profileBP = () => {
 
   const saveProfile = () => {
     setProfileData({ photoUri, shopName, username, location, description });
-    router.push('/(tabsBP)/settingBP');
+    router.back('/(tabsBP)/settingBP');
   };
 
   return (
@@ -73,7 +73,7 @@ const profileBP = () => {
             resizeMode="cover" // Ensure the image covers the placeholder
           />
           <TouchableOpacity style={styles.changePhotoButton} onPress={addImage}>
-            <Text style={styles.changePhotoText}>Change photo</Text>
+            <Text>Change photo</Text>
           </TouchableOpacity>
         </View>
 
@@ -81,45 +81,50 @@ const profileBP = () => {
         <View style={styles.section}>
 
           <View style={styles.item}>
-            <Text>Shop name</Text>
-            <TextInput placeholder='Add Shop Name'
+            <Text style={styles.text}>Shop name</Text>
+            <TextInput style={styles.text}
+              placeholder='Add Shop Name'
               value={shopName}
               onChangeText={setShopName}/>
           </View>
 
           <View style={styles.item}>
-            <Text>Username</Text>
-            <TextInput placeholder = 'Add username'
-             value={username}
-             onChangeText={setUsername}
-             editable={false}
+            <Text style={styles.text}>Username</Text>
+            <TextInput style={styles.text}
+              placeholder = 'Add username'
+              value={username}
+              onChangeText={setUsername}
+              editable={false}
             />
           </View>
 
           <View style={styles.item}>
-            <Text>Description</Text>
-            <TextInput placeholder = 'Add a brief description'
-             value={description}
-             onChangeText={setDescription}/>
+            <Text style={styles.text}>Description</Text>
+            <TextInput style={styles.text}
+              placeholder = 'Add a brief description'
+              value={description}
+              onChangeText={setDescription}/>
           </View>
 
           <View style={styles.item}>
-            <Text>Phone number</Text>
-            <TextInput placeholder = 'Add phone number'
-            keyboardType="numeric" 
+            <Text style={styles.text}>Phone number</Text>
+            <TextInput style={styles.text}
+              placeholder = 'Add phone number'
+              keyboardType="numeric" 
             />
           </View>
 
           <View style={styles.item}>
-            <Text>Shop address</Text>
-            <TextInput placeholder = 'Add phone number'
-             value={location}
+            <Text style={styles.text}>Shop address</Text>
+            <TextInput style={styles.text}
+              placeholder = 'Add shop address'
+              value={location}
              onChangeText={setLocation}/>
           </View>
 
           <View style={styles.item}>
             <TouchableOpacity onPress={()=> router.push('resetPwd1')}>
-              <Text style={styles.resetPasswordText}> Reset Password</Text>
+              <Text style={styles.resetPasswordText}>Reset Password</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -163,6 +168,8 @@ const styles = StyleSheet.create({
   },
  
   resetPasswordText: {
+    fontFamily: 'Poppins-Regular',
+    fontSize:14,
     color: 'red'
   },
   section: {
@@ -176,6 +183,10 @@ const styles = StyleSheet.create({
     justifyContent:'space-between',
     borderBottomColor: '#ccc',
     borderBottomWidth: 0.5
+  },
+  text: {
+    fontFamily: 'Poppins-Regular',
+    fontSize:14
   }
 });
 
