@@ -72,7 +72,7 @@ const _layout = () => {
                 source={require("../assets/back.png")}
                 imageSize={{width:24, height:24}}
                 customStyle={{paddingLeft:10}}
-              //   onPress={() => router.back('/registerPage')} //Perbaiki 
+                onPress={() => router.back('/settingBP')} //Perbaiki 
               />
             ),
     

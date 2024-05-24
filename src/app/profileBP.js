@@ -38,7 +38,7 @@ const profileBP = () => {
 
   const saveProfile = () => {
     setProfileData({ photoUri, shopName, username, location, description });
-    router.push('/(tabsBP)/settingBP');
+    router.back('/(tabsBP)/settingBP');
   };
 
   return (
@@ -73,64 +73,60 @@ const profileBP = () => {
             resizeMode="cover" // Ensure the image covers the placeholder
           />
           <TouchableOpacity style={styles.changePhotoButton} onPress={addImage}>
-            <Text style={styles.changePhotoText}>Change photo</Text>
+            <Text>Change photo</Text>
           </TouchableOpacity>
         </View>
 
         {/* Form Fields */}
-        <View style={styles.form}>
-          <View style={styles.formRow}>
-            <Text style={styles.label}>Shop name</Text>
-            <TextInput 
-              style={styles.input} 
-              placeholder="Add Shop name" 
-              placeholderTextColor="rgba(0, 0, 0, 0.5)" // Translucent placeholder color
+        <View style={styles.section}>
+
+          <View style={styles.item}>
+            <Text style={styles.text}>Shop name</Text>
+            <TextInput style={styles.text}
+              placeholder='Add Shop Name'
               value={shopName}
-              onChangeText={setShopName}
-            />
+              onChangeText={setShopName}/>
           </View>
-          <View style={styles.formRow}>
-            <Text style={styles.label}>Username</Text>
-            <TextInput 
-              style={styles.input} 
-              placeholder="Add username" 
-              placeholderTextColor="rgba(0, 0, 0, 0.5)" // Translucent placeholder color
+
+          <View style={styles.item}>
+            <Text style={styles.text}>Username</Text>
+            <TextInput style={styles.text}
+              placeholder = 'Add username'
               value={username}
               onChangeText={setUsername}
+              editable={false}
             />
           </View>
-          <View style={styles.formRow}>
-            <Text style={styles.label}>Description</Text>
-            <TextInput 
-              style={styles.input} 
-              placeholder="Add a brief description" 
-              placeholderTextColor="rgba(0, 0, 0, 0.5)" // Translucent placeholder color
+
+          <View style={styles.item}>
+            <Text style={styles.text}>Description</Text>
+            <TextInput style={styles.text}
+              placeholder = 'Add a brief description'
               value={description}
-              onChangeText={setDescription}
-            />
+              onChangeText={setDescription}/>
           </View>
-          <View style={styles.formRow}>
-            <Text style={styles.label}>Phone number</Text>
-            <TextInput 
-              style={styles.input} 
-              placeholder="Add phone number" 
+
+          <View style={styles.item}>
+            <Text style={styles.text}>Phone number</Text>
+            <TextInput style={styles.text}
+              placeholder = 'Add phone number'
               keyboardType="numeric" 
-              placeholderTextColor="rgba(0, 0, 0, 0.5)" // Translucent placeholder color         
             />
           </View>
-          <View style={styles.formRow}>
-            <Text style={styles.label}>Shop Address</Text>
-            <TextInput 
-              style={styles.input} 
-              placeholder="Add shop address" 
-              placeholderTextColor="rgba(0, 0, 0, 0.5)" // Translucent placeholder color
+
+          <View style={styles.item}>
+            <Text style={styles.text}>Shop address</Text>
+            <TextInput style={styles.text}
+              placeholder = 'Add shop address'
               value={location}
-              onChangeText={setLocation}
-            />
+             onChangeText={setLocation}/>
           </View>
-          <TouchableOpacity style={styles.resetPasswordButton}>
-            <Text style={styles.resetPasswordText}>Reset password</Text>
-          </TouchableOpacity>
+
+          <View style={styles.item}>
+            <TouchableOpacity onPress={()=> router.push('resetPwd1')}>
+              <Text style={styles.resetPasswordText}>Reset Password</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </>
@@ -140,34 +136,9 @@ const profileBP = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#f5f5f5',
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#f28b54', // Adjust color as needed
-    padding: 15,
-  },
-  backButton: {
-    padding: 5,
-  },
-  backButtonText: {
-    color: '#fff',
-    fontSize: 18,
-  },
-  headerTitle: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  saveButton: {
-    padding: 5,
-  },
-  saveButtonText: {
-    color: '#fff',
-    fontSize: 18,
-  },
+ 
   photoSection: {
     alignItems: 'center',
     marginTop: 20,
@@ -195,26 +166,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginVertical: 10,
   },
-  label: {
-    fontSize: 14,
-  },
-  input: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-    flex: 1,
-    paddingLeft: 10, // Adjust padding to move the underline to the right
-    marginLeft: 20,
-    paddingVertical: 5,
-    fontSize: 14,
-
-  },
-  resetPasswordButton: {
-    marginTop: 20,
-  },
+ 
   resetPasswordText: {
-    color: '#f28b54', // Adjust color as needed
-    textAlign: 'center',
+    fontFamily: 'Poppins-Regular',
+    fontSize:14,
+    color: 'red'
   },
+  section: {
+    backgroundColor:'white',
+    marginTop:24,
+    // margin:,
+  },
+  item: {
+    flexDirection:'row',
+    padding:16,
+    justifyContent:'space-between',
+    borderBottomColor: '#ccc',
+    borderBottomWidth: 0.5
+  },
+  text: {
+    fontFamily: 'Poppins-Regular',
+    fontSize:14
+  }
 });
 
 export default profileBP;

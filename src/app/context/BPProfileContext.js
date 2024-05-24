@@ -8,10 +8,10 @@ export const useProfile = () => useContext(BPProfileContext);
 
 export const BPProfileProvider = ({ children }) => {
   const [profileData, setProfileData] = useState({
-    // https://unsplash.com/photos/wQLAGv4_OYs
-    photoUri: '',
+   
+    photoUri: 'https://reactnative.dev/img/tiny_logo.png',
     shopName: '',
-    username: '',
+    username: 'Ayam_ayam',
     location: '',
     description: ''
   });

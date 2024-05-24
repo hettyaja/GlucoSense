@@ -7,6 +7,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Octicons from 'react-native-vector-icons/Octicons'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
+import FontAwesome from 'react-native-vector-icons/FontAwesome'
 
 const settingBP = () => {
     const router = useRouter();
@@ -16,9 +17,10 @@ const settingBP = () => {
       <>
         <View style={styles.container}>
             {/* Profile Card Section */}
+            <TouchableOpacity onPress={() => router.push('/profileBP')}>
             <View style={styles.profileCard}>
                 <Image 
-                    source={{ uri: profileData.photoUri || 'PhotoUri'}} // Use actual photo URI
+                    source={{ uri: profileData.photoUri || 'photoUri'}} // Use actual photo URI
                     style={styles.profilePhoto}
                 />
                 <View style={styles.profileInfo}>
@@ -27,21 +29,23 @@ const settingBP = () => {
                     <Text style={styles.profileLocation}>{profileData.location || 'Location'}</Text>
                     <Text style={styles.profileDescription}>{profileData.description || 'Description'}</Text>
                 </View>
-                <TouchableOpacity style={styles.editButton} onPress={() => router.push('/profileBP')}>
-                    <Text style={styles.editButtonText}>✎</Text>
-                </TouchableOpacity>
+               
+                <FontAwesome name='angle-right' size={24} color="#00000"/> 
+
             </View>
+            </TouchableOpacity>
 
             {/* Settings Options */}
-            <TouchableOpacity style={styles.optionButton}>
+            <TouchableOpacity style={styles.optionButton} onPress={()=> router.push('Notification')}>
                 <MaterialCommunityIcons name='bell-outline' size={24} style={styles.icon}/>
                 <Text style={styles.optionButtonText}>Notification</Text>
+                
             </TouchableOpacity>
-            <TouchableOpacity style={styles.optionButton}>
+            <TouchableOpacity style={styles.optionButton} onPress={() => router.push('/ReportProblem')}>
               <Octicons name='report' size={24} style={styles.icon}/>
                 <Text style={styles.optionButtonText}>Report problem</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.optionButton}>
+            <TouchableOpacity style={styles.optionButton} onPress={() => router.push('/welcomePage')}>
                 <MaterialIcons name='logout' size={24} style={styles.icon}/>
                 <Text style={styles.optionButtonText}>Log out</Text>
             </TouchableOpacity>
@@ -118,9 +122,6 @@ const styles = StyleSheet.create({
   profileDescription: {
     color: '#666',
     marginTop: 10,
-  },
-  editButton: {
-    padding: 5,
   },
   editButtonText: {
     color: '#f28b54', // Adjust color as needed
