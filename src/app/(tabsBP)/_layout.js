@@ -8,6 +8,7 @@ import { images } from '../../constants/images';
 import BottomSheetModal from '../(tabs)/add';
 import ImageButton from '../../components/ImageButton';
 import { BPProfileProvider } from '../context/BPProfileContext';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
 const TabIcon = ({ icon, size, color}) => {
     return (
@@ -45,7 +46,7 @@ const _layout = () => {
                 headerStyle: { backgroundColor: '#E58B68' },
                 headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold'},
                 tabBarIcon: ({color, size}) => (
-                    <TabIcon icon={images.insight} size={size}/>
+                    <AntDesign name='setting' size={24} color="#E58B68"/> 
                 ),
             }}/>
         </Tabs>
