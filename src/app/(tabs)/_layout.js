@@ -61,7 +61,7 @@ const _layout = () => {
           }}
         options={{
             title:'',
-            presentation: 'modal',
+            presentation:'modal',
             headerShown:false,
             tabBarIcon: ({color, size}) => (
                 <TabIcon icon={images.add} size={size}/>
