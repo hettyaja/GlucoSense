@@ -10,7 +10,9 @@ export const ProfileProvider = ({ children }) => {
     photoUri: 'https://reactnative.dev/img/tiny_logo.png',
     username: 'Babi_babi',
     name: 'Agustianto Jusuf Kalla',
-    email: ''
+    email: 'dummy@gmail.com',
+    birthdate: new Date('2024-05-20'),
+    gender: 'Male'
   });
 
   return (

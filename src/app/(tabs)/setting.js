@@ -65,20 +65,19 @@ const setting = () => {
       }}/>
 
     <ScrollView style={styles.safeArea}>
-      <View style={[styles.profileCard, Platform.OS === 'ios' && styles.shadow]}>
-        <TouchableOpacity style={{flexDirection:'row', padding:32, alignItems:'center'}}
-           onPress={() => router.push({ pathname: 'profile', params: { name: 'Agustianto Jusuf Kalla' } })}>
-            <Image style={styles.profileImage} source={{uri: photoUri}}/>
-            <View>
-              <Text style={{fontFamily:'Poppins-Bold', fontSize:16}}>
-                {profileData.name}
-              </Text>
-              <Text style={{fontFamily:'Poppins-Regular', fontSize:14}}>
-                Free User
-              </Text>
-            </View>
-        </TouchableOpacity>
-      </View>
+      <TouchableOpacity style={[styles.profileCard, Platform.OS === 'ios' && styles.shadow]} onPress={() => router.push('profile')}>
+        <View style={{flexDirection:'row',alignItems:'center', padding:24}}>
+         <Image style={styles.profileImage} source={{uri: profileData.photoUri}}/>
+          <View>
+            <Text style={{fontFamily:'Poppins-Bold', fontSize:16}}>
+              {profileData.name}
+            </Text>
+            <Text style={{fontFamily:'Poppins-Regular', fontSize:14}}>
+              Free User
+            </Text>
+          </View>
+        </View>
+      </TouchableOpacity>
       <View style={styles.section}>
         <TouchableOpacity style={styles.button} onPress={() => router.push('test')}>
           <MaterialCommunityIcons name="bluetooth-connect" size={32} color="#000" />

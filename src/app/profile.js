@@ -1,71 +1,58 @@
-// profile.js
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View, TextInput, Platform, Modal, Button, Image } from 'react-native'
 import React, { useState } from 'react'
 import { Stack, router } from 'expo-router'
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
+import * as ImagePicker from 'expo-image-picker';
 import { useProfile } from './context/ProfileContext'
 import ImageButton from '../components/ImageButton';
 
 const Profile = () => {
-    // const { name } = useGlobalSearchParams();
-
     const { profileData, setProfileData } = useProfile();
 
     const [photoUri, setPhotoUri] = useState(profileData.photoUri);
     const [username, setUsername] = useState(profileData.username);
     const [name, setName] = useState(profileData.name);
     const [email, setEmail] = useState(profileData.email);
-    
-    const [isEditable, setIsEditable] = useState(false)
-    const [birthdate, setBirthdate] = useState(new Date());
+    const [birthdate, setBirthdate] = useState(new Date(profileData.birthdate));
+    const [gender, setGender] = useState(profileData.gender);
+    const [isEditable, setIsEditable] = useState(false);
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [showGenderPicker, setShowGenderPicker] = useState(false);
-    const [gender, setGender] = useState();
 
-    
     const toggleEdit = () => {
-       // alert('hi')
-       setIsEditable(!isEditable);
+        if (isEditable) {
+            saveProfile();
+        }
+        setIsEditable(!isEditable);
     };
 
-    // const onDateChange = (event, selectedDate) => {
-    //     if (Platform.OS === 'android') {
-    //         setShowDatePicker(false);
-    //     }
-    //     if (selectedDate) {
-    //         setBirthdate(selectedDate);
-    //     }
-    // };
-
-    //Heti added
-    const saveChanges = () =>{
-        setIsEditable(false);
+    const saveProfile = () => {
+        setProfileData({ photoUri, username, name, email, birthdate, gender });
     };
 
-    const showDatePickerModal = () => {
-        setShowDatePicker(true);
-    };
-    
     const onDateChange = (event, selectedDate) => {
         const currentDate = selectedDate || birthdate;
         setBirthdate(currentDate);
     };
 
-    const onChangeTextHandler = (text) => {
-        setName(text);
-    };
-    
-    
     const handleGenderChange = (selectedGender) => {
         setGender(selectedGender);
         setShowGenderPicker(false);
     };
 
-    const saveProfile = () => {
-        setProfileData({ photoUri, username, name, email});
-        router.back('/(tabsBP)/settingBP');
-      };
+    const pickImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+
+        if (!result.canceled) {
+            setPhotoUri(result.assets[0].uri);
+        }
+    };
 
     return (
         <>
@@ -77,13 +64,15 @@ const Profile = () => {
               <ImageButton
                 source={require("../assets/back.png")}
                 imageSize={{width:24, height:24}}
-                onPress={() => router.back('/setting')} //Perbaiki 
+                onPress={() => router.back('/setting')}
               />
             ),
             headerRight: () => (
               <TouchableOpacity style={styles.button}
-                onPress={saveProfile}>
-                <Text style={{fontFamily: 'Poppins-SemiBold', fontSize:14, color:'white'}}>Save</Text>
+                onPress={toggleEdit}>
+                <Text style={{fontFamily: 'Poppins-SemiBold', fontSize:14, color:'white'}}>
+                  {isEditable ? 'Save' : 'Edit'}
+                </Text>
               </TouchableOpacity>
             ),
             headerTitle: 'Edit profile',
@@ -91,8 +80,9 @@ const Profile = () => {
           }}/>
 
         <ScrollView style={styles.safeArea} keyboardShouldPersistTaps="handled">
-            <TouchableOpacity style={{ alignItems: 'center', margin: 24 }} >
+            <TouchableOpacity style={{ alignItems: 'center', margin: 24 }} onPress={isEditable ? pickImage : null}>
                 <Image style={styles.profileImage} source={{uri: photoUri}}/>
+                {isEditable && <Text style={styles.changePhotoText}>Change Photo</Text>}
             </TouchableOpacity>
     
             {/* Section for account details */}
@@ -104,31 +94,32 @@ const Profile = () => {
                         <TextInput
                             style={styles.input}
                             value={username}
-                            editable={isEditable} 
+                            onChangeText={setUsername}
+                            editable={false} 
                         />
                 </View>
 
                 <View style={styles.item}>
                     <Text>Name</Text>
-                    {isEditable ?(
+                    {isEditable ? (
                         <TextInput
                             style={styles.input}
                             placeholder='Enter your name'
                             value={name}
-                            onChangeText={onChangeTextHandler}
+                            onChangeText={setName}
                             editable={isEditable}
                         />
                     ) : (
                         <Text style={styles.input}>{name}</Text>
-                    
                     )}   
                 </View>
 
                 <View style={styles.item}>
-                    <Text> Email </Text>
+                    <Text>Email</Text>
                         <TextInput
                             style={styles.input}
                             value={email}
+                            onChangeText={setEmail}
                             editable={isEditable} 
                         />
                 </View>    
@@ -142,14 +133,12 @@ const Profile = () => {
                 <View style={styles.item}>
                     <Text>Birthdate</Text>
                     {isEditable ? (
-                        <TouchableOpacity onPress={toggleEdit}>
-                            <DateTimePicker
-                                value={birthdate}
-                                mode="date"
-                                display="default"
-                                onChange={onDateChange}
-                            />
-                        </TouchableOpacity>
+                        <DateTimePicker
+                            value={birthdate}
+                            mode="date"
+                            display="default"
+                            onChange={onDateChange}
+                        />
                     ) : (
                         <Text style={styles.input}>{birthdate.toDateString()}</Text>
                     )}
@@ -157,39 +146,25 @@ const Profile = () => {
 
                 <View style={styles.item}>
                     <Text>Gender</Text>
-                    {isEditable?(
+                    {isEditable ? (
                         <Picker
-                        selectedValue={gender}
-                        onValueChange={handleGenderChange}
-                        style={styles.picker}
-                    >
-                        <Picker.Item label="Male" value="Male" />
-                        <Picker.Item label="Female" value="Female" />
-                    </Picker>
-
-                    ):(
+                            selectedValue={gender}
+                            onValueChange={handleGenderChange}
+                            style={styles.picker}
+                            itemStyle={styles.pickerItem}
+                        >
+                            <Picker.Item label="Male" value="Male" />
+                            <Picker.Item label="Female" value="Female" />
+                        </Picker>
+                    ) : (
                         <Text style={styles.input}>{gender}</Text>
                     )}
-                    
                 </View>
-
-
-                
-
-
-              
-                
             </View>
-            
-            {/* Button to toggle between edit mode and view mode */}
-            <TouchableOpacity onPress={isEditable ? saveChanges : toggleEdit}>
-                <Text>{isEditable ? "Save" : "Edit"}</Text>
-            </TouchableOpacity>
         </ScrollView>
         </>
     );
 };
-    
     
 export default Profile
 
@@ -204,6 +179,12 @@ const styles = StyleSheet.create({
         borderRadius: 100,
         width: 80,
         height: 80
+    },
+    changePhotoText: {
+        fontFamily: 'Poppins-Medium',
+        fontSize: 14,
+        color: '#E58B68',
+        marginTop: 8
     },
     sectionText: {
         fontFamily: 'Poppins-SemiBold',
@@ -228,14 +209,12 @@ const styles = StyleSheet.create({
         color: '#808080',
     },
     picker: {
-        width: '100%',
+        width: '40%'
     },
-    // modalContainer: {
-    //     flex: 1,
-    //     justifyContent: 'center',
-    //     alignItems: 'center',
-    //     backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    // },
+    pickerItem: {
+        height:40,
+        borderRadius:16
+    },
     pickerContainer: {
         backgroundColor: 'white',
         borderRadius: 10,
