@@ -43,6 +43,21 @@ const _layout = () => {
             <Stack.Screen name="registerBP" options={{ headerShown:false}}/>
             <Stack.Screen name="addMeds"/>
             <Stack.Screen name="addGlucose"/>
+            <Stack.Screen name="details" options={{
+              title: 'Details',
+              headerStyle: { backgroundColor: '#E58B68' },
+              headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold'},
+              headerLeft: () => (
+                <ImageButton
+                  source={require("../assets/back.png")}
+                  imageSize={{width:24, height:24}}
+                  customStyle={{paddingLeft:10}}
+                  onPress={() => router.back('/registerPage')} //Perbaiki 
+                />
+              ),
+              headerTitle: 'Details',
+              headerTitleAlign: 'center',
+            }} />
             <Stack.Screen name="Subscribe" options={{ headerShown:false}}/>
             {/* THIS IS THE SAVE BUTTON PART */}
             <Stack.Screen name="profileBP"/>

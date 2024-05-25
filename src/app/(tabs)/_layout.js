@@ -69,7 +69,6 @@ const _layout = () => {
         }}/>  
         <Tabs.Screen name='food' options={{
             title:'Food',
-            headerShown:false,
             tabBarIcon: () => (
                 <FontAwesome name='cutlery' size={24} color='#E58B68'/>
             ),

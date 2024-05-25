@@ -8,7 +8,7 @@ export const ProfileProvider = ({ children }) => {
   const [profileData, setProfileData] = useState({
    
     photoUri: 'https://reactnative.dev/img/tiny_logo.png',
-    username: 'Babi_babi',
+    username: 'Bebek_bebek',
     name: 'Agustianto Jusuf Kalla',
     email: 'dummy@gmail.com',
     birthdate: new Date('2024-05-20'),

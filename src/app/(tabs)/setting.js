@@ -194,7 +194,6 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   profileImage: {
-    borderWidth:1,
     borderRadius:100,
     borderColor:'black',
     width:64,
