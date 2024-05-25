@@ -4,10 +4,10 @@ import React, { createContext, useContext, useState } from 'react';
 
 const BPProfileContext = createContext();
 
-export const useProfile = () => useContext(BPProfileContext);
+export const useBPProfile = () => useContext(BPProfileContext);
 
 export const BPProfileProvider = ({ children }) => {
-  const [profileData, setProfileData] = useState({
+  const [BPProfileData, setBPProfileData] = useState({
    
     photoUri: 'https://reactnative.dev/img/tiny_logo.png',
     shopName: '',
@@ -17,7 +17,7 @@ export const BPProfileProvider = ({ children }) => {
   });
 
   return (
-    <BPProfileContext.Provider value={{ profileData, setProfileData }}>
+    <BPProfileContext.Provider value={{BPProfileData, setBPProfileData }}>
       {children}
     </BPProfileContext.Provider>
   );

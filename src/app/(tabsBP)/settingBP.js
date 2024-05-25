@@ -2,7 +2,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useProfile } from '../context/BPProfileContext';
+import { useBPProfile } from '../context/BPProfileContext';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import Octicons from 'react-native-vector-icons/Octicons'
 import AntDesign from 'react-native-vector-icons/AntDesign'
@@ -11,7 +11,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome'
 
 const settingBP = () => {
     const router = useRouter();
-    const { profileData } = useProfile();
+    const { BPProfileData } = useBPProfile();
 
     return (
       <>
@@ -20,14 +20,14 @@ const settingBP = () => {
             <TouchableOpacity onPress={() => router.push('/profileBP')}>
             <View style={styles.profileCard}>
                 <Image 
-                    source={{ uri: profileData.photoUri || 'photoUri'}} // Use actual photo URI
+                    source={{ uri: BPProfileData.photoUri || 'photoUri'}} // Use actual photo URI
                     style={styles.profilePhoto}
                 />
                 <View style={styles.profileInfo}>
-                    <Text style={styles.profileName}>{profileData.shopName || 'Shop Name'}</Text>
-                    <Text style={styles.profileUsername}>{profileData.username || 'Username'}</Text>
-                    <Text style={styles.profileLocation}>{profileData.location || 'Location'}</Text>
-                    <Text style={styles.profileDescription}>{profileData.description || 'Description'}</Text>
+                    <Text style={styles.profileName}>{BPProfileData.shopName || 'Shop Name'}</Text>
+                    <Text style={styles.profileUsername}>{BPProfileData.username || 'Username'}</Text>
+                    <Text style={styles.profileLocation}>{BPProfileData.location || 'Location'}</Text>
+                    <Text style={styles.profileDescription}>{BPProfileData.description || 'Description'}</Text>
                 </View>
                
                 <FontAwesome name='angle-right' size={24} color="#00000"/> 

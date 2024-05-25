@@ -1,13 +1,21 @@
 // profile.js
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View, TextInput, Platform, Modal, Button } from 'react-native'
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View, TextInput, Platform, Modal, Button, Image } from 'react-native'
 import React, { useState } from 'react'
-import { useGlobalSearchParams } from 'expo-router'
+import { Stack, router } from 'expo-router'
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
+import { useProfile } from './context/ProfileContext'
+import ImageButton from '../components/ImageButton';
 
 const Profile = () => {
     // const { name } = useGlobalSearchParams();
-    const [name, setName] = useState();
+
+    const { profileData, setProfileData } = useProfile();
+
+    const [photoUri, setPhotoUri] = useState(profileData.photoUri);
+    const [username, setUsername] = useState(profileData.username);
+    const [name, setName] = useState(profileData.name);
+    const [email, setEmail] = useState(profileData.email);
     
     const [isEditable, setIsEditable] = useState(false)
     const [birthdate, setBirthdate] = useState(new Date());
@@ -53,10 +61,38 @@ const Profile = () => {
         setGender(selectedGender);
         setShowGenderPicker(false);
     };
+
+    const saveProfile = () => {
+        setProfileData({ photoUri, username, name, email});
+        router.back('/(tabsBP)/settingBP');
+      };
+
     return (
+        <>
+        <Stack.Screen options={{
+            title: 'Profile',
+            headerStyle: { backgroundColor: '#E58B68' },
+            headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold'},
+            headerLeft: () => (
+              <ImageButton
+                source={require("../assets/back.png")}
+                imageSize={{width:24, height:24}}
+                onPress={() => router.back('/setting')} //Perbaiki 
+              />
+            ),
+            headerRight: () => (
+              <TouchableOpacity style={styles.button}
+                onPress={saveProfile}>
+                <Text style={{fontFamily: 'Poppins-SemiBold', fontSize:14, color:'white'}}>Save</Text>
+              </TouchableOpacity>
+            ),
+            headerTitle: 'Edit profile',
+            headerTitleAlign: 'center',
+          }}/>
+
         <ScrollView style={styles.safeArea} keyboardShouldPersistTaps="handled">
             <TouchableOpacity style={{ alignItems: 'center', margin: 24 }} >
-                <View style={styles.profileImage}></View>
+                <Image style={styles.profileImage} source={{uri: photoUri}}/>
             </TouchableOpacity>
     
             {/* Section for account details */}
@@ -67,7 +103,7 @@ const Profile = () => {
                     <Text>Username</Text>
                         <TextInput
                             style={styles.input}
-                            value={'Jon'}
+                            value={username}
                             editable={isEditable} 
                         />
                 </View>
@@ -92,7 +128,7 @@ const Profile = () => {
                     <Text> Email </Text>
                         <TextInput
                             style={styles.input}
-                            value={'Email'}
+                            value={email}
                             editable={isEditable} 
                         />
                 </View>    
@@ -150,8 +186,9 @@ const Profile = () => {
                 <Text>{isEditable ? "Save" : "Edit"}</Text>
             </TouchableOpacity>
         </ScrollView>
+        </>
     );
-                    };
+};
     
     
 export default Profile

@@ -5,17 +5,17 @@ import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Alert } fro
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter, Stack } from 'expo-router';
 import ImageButton from '../components/ImageButton';
-import { useProfile } from './context/BPProfileContext';
+import { useBPProfile } from './context/BPProfileContext';
 
 const profileBP = () => {
   const router = useRouter();
-  const { profileData, setProfileData } = useProfile();
+  const { BPProfileData, setBPProfileData } = useBPProfile();
 
-  const [photoUri, setPhotoUri] = useState(profileData.photoUri);
-  const [shopName, setShopName] = useState(profileData.shopName);
-  const [username, setUsername] = useState(profileData.username);
-  const [location, setLocation] = useState(profileData.location);
-  const [description, setDescription] = useState(profileData.description);
+  const [photoUri, setPhotoUri] = useState(BPProfileData.photoUri);
+  const [shopName, setShopName] = useState(BPProfileData.shopName);
+  const [username, setUsername] = useState(BPProfileData.username);
+  const [location, setLocation] = useState(BPProfileData.location);
+  const [description, setDescription] = useState(BPProfileData.description);
 
   const addImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -37,7 +37,7 @@ const profileBP = () => {
   };
 
   const saveProfile = () => {
-    setProfileData({ photoUri, shopName, username, location, description });
+    setBPProfileData({ photoUri, shopName, username, location, description });
     router.back('/(tabsBP)/settingBP');
   };
 

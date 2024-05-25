@@ -1,18 +1,34 @@
 // setting.js
-import { StyleSheet, Text, View, SafeAreaView, Platform, TouchableOpacity, ScrollView, Image} from 'react-native'
+import { StyleSheet, Text, View, SafeAreaView, Platform, TouchableOpacity, ScrollView, Image, Alert} from 'react-native'
 import React, { useState}from 'react'
 import { router, Tabs } from 'expo-router'
 import Modal from 'react-native-modal'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import Fontisto from 'react-native-vector-icons/Fontisto'
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import { images } from '../../constants/images'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import AntDesign from 'react-native-vector-icons/AntDesign'
+import { useProfile } from '../context/ProfileContext'
 
 const setting = () => {
+  const { profileData } =  useProfile()
   const [isModalVisible, setModalVisible] = useState(false)
   const [glucoseUnit, setGlucoseUnit] = useState('mmoL/L')
   const [weightUnit, setWeightUnit] = useState('kgs')
   const [modalType, setModalType] = useState('')
+  const [photoUri, setPhotoUri] = useState('https://reactnative.dev/img/tiny_logo.png')
+
+  const createTwoButtonAlert = () =>
+  Alert.alert('Delete account', 'Are you sure you want to delete?', [
+    {
+      text: 'Cancel',
+      onPress: () => console.log('Cancel Pressed'),
+      style: 'cancel',
+    },
+    {text: 'Delete', onPress: () => router.push('welcomePage')},
+  ]);
 
   const handleGlucoseUnit = (glucoseSelection) => {
     setGlucoseUnit(glucoseSelection)
@@ -36,15 +52,15 @@ const setting = () => {
   return (
     <>
     <Tabs.Screen options={{
-        title: 'Edit profile',
+        title: 'Setting',
         headerStyle: { backgroundColor: '#E58B68' },
         headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold'},
         headerRight: () => (
-          <TouchableOpacity>
-            <Text style={{padding:2, marginHorizontal:8, fontFamily: 'Poppins-SemiBold', fontSize:14, color:'white'}}>Upgrade</Text>
+          <TouchableOpacity onPress={() => router.push('Subscribe')}>
+            <Text style={{paddingHorizontal:16, fontFamily: 'Poppins-SemiBold', fontSize:14, color:'white'}}>Upgrade</Text>
           </TouchableOpacity>
         ),
-        headerTitle: 'Edit profile',
+        headerTitle: 'Setting',
         headerTitleAlign: 'center',
       }}/>
 
@@ -52,10 +68,10 @@ const setting = () => {
       <View style={[styles.profileCard, Platform.OS === 'ios' && styles.shadow]}>
         <TouchableOpacity style={{flexDirection:'row', padding:32, alignItems:'center'}}
            onPress={() => router.push({ pathname: 'profile', params: { name: 'Agustianto Jusuf Kalla' } })}>
-            <View style={styles.profileImage}/>
+            <Image style={styles.profileImage} source={{uri: photoUri}}/>
             <View>
               <Text style={{fontFamily:'Poppins-Bold', fontSize:16}}>
-                Agustianto Jusuf Kalla
+                {profileData.name}
               </Text>
               <Text style={{fontFamily:'Poppins-Regular', fontSize:14}}>
                 Free User
@@ -65,29 +81,32 @@ const setting = () => {
       </View>
       <View style={styles.section}>
         <TouchableOpacity style={styles.button} onPress={() => router.push('test')}>
-          <Fontisto name="blood-test" size={24} color="#000" />
-          <Text style={styles.buttonText}>Connect blood glucose meter</Text>
+          <MaterialCommunityIcons name="bluetooth-connect" size={32} color="#000" />
+          <Text style={styles.buttonText}>Connect glucose meter</Text>
         </TouchableOpacity>
+        <View style={{borderBottomColor:'#d9d9d9', borderBottomWidth:1}}/>
         <TouchableOpacity style={styles.button}>
-          <MaterialIcons name="bar-chart" size={32} color="#000" />
+          <MaterialIcons name="bar-chart" size={32}/>
           <Text style={styles.buttonText}>Report</Text>
         </TouchableOpacity>
+        <View style={{borderBottomColor:'#d9d9d9', borderBottomWidth:1}}/>
         <TouchableOpacity style={styles.button}>
-          <Image source={images.reminder} style={styles.iconImage}/>
+          <MaterialCommunityIcons name='bell-outline' size={32}/>
           <Text style={styles.buttonText}>Reminder</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.section}>
         <TouchableOpacity style={styles.button} onPress={() => openModal('glucoseUnit')}>
-          <FontAwesome name="sliders" size={24} color="#000" />
-          <View style={{flexDirection:'row', flex:1, justifyContent:'space-between', paddingRight:16}}>
+          <FontAwesome name="sliders" size={32}/>
+          <View style={{flexDirection:'row', flex:1, justifyContent:'space-between'}}>
           <Text style={styles.buttonText}>Change glucose unit</Text>
           <Text style={{color:'#808080', fontFamily:'Poppins-Medium', fontSize:16}}>{glucoseUnit}</Text>
           </View>
         </TouchableOpacity>
+        <View style={{borderBottomColor:'#d9d9d9', borderBottomWidth:1}}/>
         <TouchableOpacity style={styles.button} onPress={() => openModal('weightUnit')}>
-          <FontAwesome name="sliders" size={24} color="#000" />
-          <View style={{flexDirection:'row', flex:1, justifyContent:'space-between', paddingRight:16}}>
+          <FontAwesome name="sliders" size={32}/>
+          <View style={{flexDirection:'row', flex:1, justifyContent:'space-between'}}>
           <Text style={styles.buttonText}>Change weight unit</Text>
           <Text style={{color:'#808080', fontFamily:'Poppins-Medium', fontSize:16}}>{weightUnit}</Text>
           </View>
@@ -96,18 +115,18 @@ const setting = () => {
 
       <View style={styles.section}>
         <TouchableOpacity style={styles.button} onPress={() => router.push('ReportProblem')}>
-          <FontAwesome name="question-circle" size={24} color="#000" />
+          <FontAwesome name="question-circle" size={32} color="#000" />
           <Text style={styles.buttonText}>Help & Feedback</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.section}>
-        <TouchableOpacity style={styles.button}>
-          <FontAwesome
-           name="user-times" size={24} color="#000" />
+        <TouchableOpacity style={styles.button} onPress={createTwoButtonAlert}>
+          <AntDesign name='deleteuser' size={32}/>
           <Text style={styles.buttonText}>Delete account</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button}>
-          <FontAwesome name="sign-out" size={24} color="#000" />
+        <View style={{borderBottomColor:'#d9d9d9', borderBottomWidth:1}}/>
+        <TouchableOpacity style={styles.button} onPress={() => router.push('welcomePage')}>
+          <MaterialIcons name='logout' size={32} style={styles.icon}/>
           <Text style={styles.buttonText}>Log out</Text>
         </TouchableOpacity>
       </View>
@@ -121,33 +140,29 @@ const setting = () => {
       <View style={styles.modalContent}>
         {modalType === 'glucoseUnit' ? (
           <>
-
-          <TouchableOpacity style={[styles.selectButton, {borderTopLeftRadius:16, borderTopRightRadius:16, borderBottomWidth:0.5, borderBottomColor:'#808080'}]} onPress={() => handleGlucoseUnit('mmoL/L')}>
-          <Text style={{fontFamily:'Poppins-Regular', fontSize:16}}>mmol/L</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.selectButton, {borderBottomLeftRadius:16, borderBottomRightRadius:16}]} onPress={() => handleGlucoseUnit('mg/dL')}>
-          <Text style={{fontFamily:'Poppins-Regular', fontSize:16}}>mg/dL</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.cancelButton} onPress={() => toggleModal()}>
-          <Text style={{fontFamily:'Poppins-SemiBold', fontSize:16}}>Cancel</Text>
-        </TouchableOpacity>
-
-        </>
-        ) : ( 
-          <>
-        <TouchableOpacity style={[styles.selectButton, {borderTopLeftRadius:16, borderTopRightRadius:16, borderBottomWidth:0.5, borderBottomColor:'#808080'}]} onPress={() => handleWeightUnit('kgs')}>
-          <Text style={{fontFamily:'Poppins-Regular', fontSize:16}}>kgs</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.selectButton, {borderBottomLeftRadius:16, borderBottomRightRadius:16}]} onPress={() => handleWeightUnit('lbs')}>
-          <Text style={{fontFamily:'Poppins-Regular', fontSize:16}}>lbs</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.cancelButton} onPress={() => toggleModal()}>
-          <Text style={{fontFamily:'Poppins-SemiBold', fontSize:16}}>Cancel</Text>
-        </TouchableOpacity>
+            <TouchableOpacity style={[styles.selectButton, {borderTopLeftRadius:16, borderTopRightRadius:16, borderBottomWidth:0.5, borderBottomColor:'#808080'}]} onPress={() => handleGlucoseUnit('mmoL/L')}>
+              <Text style={{fontFamily:'Poppins-Regular', fontSize:16}}>mmol/L</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.selectButton, {borderBottomLeftRadius:16, borderBottomRightRadius:16}]} onPress={() => handleGlucoseUnit('mg/dL')}>
+              <Text style={{fontFamily:'Poppins-Regular', fontSize:16}}>mg/dL</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.cancelButton} onPress={() => toggleModal()}>
+              <Text style={{fontFamily:'Poppins-SemiBold', fontSize:16}}>Cancel</Text>
+            </TouchableOpacity>
           </>
-
-        )} 
-
+          ) : ( 
+          <>
+            <TouchableOpacity style={[styles.selectButton, {borderTopLeftRadius:16, borderTopRightRadius:16, borderBottomWidth:0.5, borderBottomColor:'#808080'}]} onPress={() => handleWeightUnit('kgs')}>
+              <Text style={{fontFamily:'Poppins-Regular', fontSize:16}}>kgs</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.selectButton, {borderBottomLeftRadius:16, borderBottomRightRadius:16}]} onPress={() => handleWeightUnit('lbs')}>
+              <Text style={{fontFamily:'Poppins-Regular', fontSize:16}}>lbs</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.cancelButton} onPress={() => toggleModal()}>
+              <Text style={{fontFamily:'Poppins-SemiBold', fontSize:16}}>Cancel</Text>
+            </TouchableOpacity>
+          </>
+        )}
       </View>
     </Modal>
     </>
@@ -164,7 +179,8 @@ const styles = StyleSheet.create({
   profileCard: {
     backgroundColor:'white',
     flexDirection:'row',
-    margin:24,
+    margin:16,
+    marginVertical:24,
     borderRadius:8,
     elevation:5
   },
@@ -182,18 +198,17 @@ const styles = StyleSheet.create({
     borderWidth:1,
     borderRadius:100,
     borderColor:'black',
-    width:56,
-    height:56,
+    width:64,
+    height:64,
     marginRight:16
   },
   section: {
     backgroundColor:'white',
-    marginVertical:16,
+    marginBottom:24,
+    paddingHorizontal:16
   },
   button: {
-    padding:12,
-    borderBottomWidth:1,
-    borderBottomColor:'#d9d9d9',
+    padding:8,
     flexDirection:'row',
     alignItems:'center'
   },
