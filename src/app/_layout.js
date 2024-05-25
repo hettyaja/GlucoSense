@@ -41,6 +41,7 @@ const _layout = () => {
           <Stack.Screen name="registerBP" options={{ headerShown:false}}/>
           <Stack.Screen name="addMeds"/>
           <Stack.Screen name="addGlucose"/>
+          <Stack.Screen name="Subscribe" options={{ headerShown:false}}/>
           {/* THIS IS THE SAVE BUTTON PART */}
           <Stack.Screen name="profileBP"/>
           <Stack.Screen name="addMeals"/>

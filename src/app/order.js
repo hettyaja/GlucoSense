@@ -2,7 +2,7 @@
 // import React, { useState } from 'react';
 // import { SafeAreaView } from 'react-native-safe-area-context'
 // import { Link, router} from 'expo-router'
-// import { images } from '../../constants/images';
+// import { images } from '../../assets/images';
 // import { Picker } from '@react-native-picker/picker';
 
 // const preReg = () => {
