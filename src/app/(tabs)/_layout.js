@@ -18,7 +18,6 @@ const TabIcon = ({ icon, size, color}) => {
             style={{width:size, height:size}}
             />
         </View>
-
     );
   };
 
@@ -30,7 +29,6 @@ const _layout = () => {
       <Tabs>
         <Tabs.Screen name='home' options={{
             title:'Home',
-            headerShown:false,
             tabBarIcon: () => (
                 <Octicons name='home' size={24} color='#E58B68'/>
             ),
@@ -42,7 +40,6 @@ const _layout = () => {
         }}/>
         <Tabs.Screen name='insight' options={{
             title:'Insight',
-            headerShown:false,
             tabBarIcon: () => (
                 <SimpleLineIcons name='graph' size={24} color='#E58B68'/>
             ),

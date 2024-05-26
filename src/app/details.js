@@ -25,8 +25,8 @@ const preReg = () => {
   }
   return (
     <>
-          <Stack.Screen options={{
-        title: 'Edit profile',
+      <Stack.Screen options={{
+        title: 'Details',
         headerStyle: { backgroundColor: '#E58B68' },
         headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold'},
         headerLeft: () => (
@@ -34,13 +34,12 @@ const preReg = () => {
                 <Ionicons name="chevron-back" size={32} color='white'/>
             </TouchableOpacity>
         ),
-        headerTitle: 'Edit profile',
+        headerTitle: 'Details',
         headerTitleAlign: 'center',
       }}/>
 
     <ScrollView>
       <View style={{backgroundColor:'#f5f5f5'}}>
-          <View style = {{backgroundColor: '#f5f5f5', marginTop: 8, height: 720}}>
               <View style={styles.container2}/>
             <View style={styles.container1}>
               <View style = {{flexDirection: 'row', justifyContent: 'space-between'}}>
@@ -75,12 +74,11 @@ const preReg = () => {
                 <Text style={styles.buttonText}>+</Text>
               </TouchableOpacity>
             </View>
-            <TouchableOpacity style={{ alignItems: 'center', marginTop: 10 }} onPress = {() => router.push('login/confirm')}>
+            <TouchableOpacity style={{ alignItems: 'center', marginTop: 10 }} onPress = {() => router.push('/confirm')}>
               <View style={{ backgroundColor: "#D96B41", width: 164, height: 42, borderRadius: 8, justifyContent: 'center' }}>
                 <Text style={{ fontSize: 16, fontFamily: "Poppins-Medium", textAlign: 'center', color: '#FAF5E1' }}>Buy</Text>
               </View>
             </TouchableOpacity>
-          </View>
       </View>
     </ScrollView>
     </>

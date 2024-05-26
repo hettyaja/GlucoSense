@@ -1,9 +1,10 @@
 import { View, Text, StyleSheet, Image, Button, TouchableOpacity, Touchable, TextInput, ScrollView, } from 'react-native';
 import React, { useState, useRef, useEffect } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Link, router } from 'expo-router';
-import { images } from '../../constants/images';
+import { Stack, router } from 'expo-router';
+import { images } from '../constants/images';
 import { Picker } from '@react-native-picker/picker';
+import Ionicons from 'react-native-vector-icons/Ionicons'
 
 const preReg = () => {
     const [quantity, setQuantity] = useState(1);
@@ -37,11 +38,20 @@ const preReg = () => {
     };
     
   return (
-      <View style={{flex:3, backgroundColor:'#E58B68', paddingTop:24}}>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 30 }}>
-          <Text style={{ color: 'white', fontFamily: 'Poppins-Bold', fontSize: 16, flex: 1, textAlign: 'center'}}>Payment</Text>
-        </View>
-          <View style = {{backgroundColor: '#f5f5f5', marginTop: 8, height: 720}}>
+    <>
+        <Stack.Screen options={{
+        title: 'Payment',
+        headerStyle: { backgroundColor: '#E58B68' },
+        headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold'},
+        headerLeft: () => (
+            <TouchableOpacity onPress={() => router.back('/food')}>
+                <Ionicons name="chevron-back" size={32} color='white'/>
+            </TouchableOpacity>
+        ),
+        headerTitle: 'Payment',
+        headerTitleAlign: 'center',
+    }}/>
+      <View style={{backgroundColor:'#f5f5f5'}}>
           <View style={styles.container1}>
               <View style = {{flexDirection: 'row', justifyContent: 'space-between'}}>
                   <Text style={{fontFamily: 'Poppins-Bold', fontSize: 16, marginLeft: 20}}>Total Payment</Text>
@@ -67,8 +77,7 @@ const preReg = () => {
               <Text style={{fontFamily: 'Poppins-Regular', fontSize: 10, marginLeft: 20, marginTop: 10}}>4. If page does not redirect after payment do ...............</Text>
             </View>
           </View>
-      </View>
-    
+    </>
   )
 }
 const styles = StyleSheet.create({

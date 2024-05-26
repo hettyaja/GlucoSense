@@ -7,6 +7,8 @@ import ImageButton from '../components/ImageButton';
 import { router, Tabs } from 'expo-router'
 import { BPProfileProvider } from './context/BPProfileContext';
 import { ProfileProvider } from './context/ProfileContext'
+import { DietPlanProvider } from './context/DietPlanContext';
+import { RecipeContext, RecipeProvider } from './context/RecipeContext';
 
 const _layout = () => {
   const [fontsLoaded] = useFonts({
@@ -26,6 +28,10 @@ const _layout = () => {
   }
 
   return (
+    <RecipeProvider>
+
+
+    <DietPlanProvider>
     <ProfileProvider>
       <BPProfileProvider>
         <Stack>
@@ -43,6 +49,8 @@ const _layout = () => {
             <Stack.Screen name="registerBP" options={{ headerShown:false}}/>
             <Stack.Screen name="addMeds"/>
             <Stack.Screen name="addGlucose"/>
+            <Stack.Screen name="EditRecipePage"/>
+            <Stack.Screen name="CreateRecipePage"/>
             <Stack.Screen name="details" options={{
               title: 'Details',
               headerStyle: { backgroundColor: '#E58B68' },
@@ -107,6 +115,8 @@ const _layout = () => {
         </Stack>
       </BPProfileProvider>
     </ProfileProvider>
+    </DietPlanProvider>
+    </RecipeProvider>
   )
 }
 

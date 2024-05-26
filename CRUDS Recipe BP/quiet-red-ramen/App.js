@@ -6,7 +6,7 @@ import MenuRecipeManagementPage from './MenuRecipeManagementPage';
 import DraftPage from './DraftPage';
 import CreateRecipePage from './CreateRecipePage';
 import EditRecipePage from './EditRecipePage';
-import { RecipeProvider } from '../RecipeContext';  // Import RecipeProvider
+import { RecipeProvider } from '../../src/app/RecipeContext';  // Import RecipeProvider
 
 const Stack = createStackNavigator();
 

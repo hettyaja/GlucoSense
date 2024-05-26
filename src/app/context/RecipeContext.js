@@ -4,7 +4,10 @@ import React, { createContext, useState } from 'react';
 export const RecipeContext = createContext();
 
 export const RecipeProvider = ({ children }) => {
-  const [recipes, setRecipes] = useState([]);
+  const [recipes, setRecipes] = useState([
+    { id: 1, title: 'Mee Goreng', price: 5.00 },
+    { id: 2, title: 'Chicken Rice', price: 4.50 }
+  ]);
   const [drafts, setDrafts] = useState([]);
 
   const addRecipe = (recipe) => {

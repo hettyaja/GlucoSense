@@ -26,6 +26,34 @@ const _layout = () => {
                   </Text>
               ),
             }}/>
+            <Tabs.Screen name='foodBP' options={{
+                title: 'Food',
+                headerTitleAlign: 'center',
+                headerStyle: { backgroundColor: '#E58B68' },
+                headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold'},
+                tabBarIcon: () => (
+                    <AntDesign name='setting' size={24} color='#E58B68'/>
+                ),
+                tabBarLabel: ({ focused }) => (
+                  <Text style={{ fontFamily: focused ? 'Poppins-SemiBold' : 'Poppins-Regular', color: '#E58B68' }}>
+                      Food
+                  </Text>
+              ),
+            }}/>
+            <Tabs.Screen name='orderBP' options={{
+                title: 'Order',
+                headerTitleAlign: 'center',
+                headerStyle: { backgroundColor: '#E58B68' },
+                headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold'},
+                tabBarIcon: () => (
+                    <AntDesign name='setting' size={24} color='#E58B68'/>
+                ),
+                tabBarLabel: ({ focused }) => (
+                  <Text style={{ fontFamily: focused ? 'Poppins-SemiBold' : 'Poppins-Regular', color: '#E58B68' }}>
+                      Order
+                  </Text>
+              ),
+            }}/>
             <Tabs.Screen name='settingBP' options={{
                 title: 'Setting',
                 headerTitleAlign: 'center',

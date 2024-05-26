@@ -1,5 +1,4 @@
-//EditRecipe.js
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -16,11 +15,14 @@ import {
 import { AntDesign } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { Picker } from '@react-native-picker/picker';
-import { useNavigation, useRoute } from '@react-navigation/native'; 
-import { RecipeContext } from '../RecipeContext'; // Import RecipeContext
+import { useNavigation } from '@react-navigation/native';
+import { RecipeContext } from './context/RecipeContext';
+import { Stack, router } from 'expo-router';
+import Ionicons from 'react-native-vector-icons/Ionicons'
+import FontAwesome from 'react-native-vector-icons/FontAwesome'
 
-const EditRecipePage = () => {
-  const { updateRecipe } = useContext(RecipeContext); // Use RecipeContext
+const CreateRecipePage = () => {
+  const { addRecipe, addDraft } = useContext(RecipeContext);
   const [image, setImage] = useState(null);
   const [title, setTitle] = useState('');
   const [price, setPrice] = useState('');
@@ -36,23 +38,6 @@ const EditRecipePage = () => {
   });
 
   const navigation = useNavigation();
-  const route = useRoute();
-
-  useEffect(() => {
-    if (route.params?.recipe) {
-      const { recipe } = route.params;
-      setImage(recipe.image);
-      setTitle(recipe.title);
-      setPrice(recipe.price);
-      setServes(recipe.serves);
-      setSelectedTime({
-        hours: recipe.selectedTime.split(' ')[0],
-        minutes: recipe.selectedTime.split(' ')[2],
-      });
-      setIngredients(recipe.ingredients);
-      setMethods(recipe.methods);
-    }
-  }, [route.params?.recipe]);
 
   const decrementServes = () => {
     if (serves > 1) {
@@ -102,9 +87,9 @@ const EditRecipePage = () => {
     setMethods(methods.filter((item) => item.id !== id));
   };
 
-  const handleSave = () => {
-    const updatedRecipe = {
-      id: route.params.recipe.id,
+  const handlePublish = () => {
+    const newRecipe = {
+      id: Date.now().toString(),
       image,
       title,
       price,
@@ -112,102 +97,96 @@ const EditRecipePage = () => {
       selectedTime: `${selectedTime.hours} hour ${selectedTime.minutes} min`,
       ingredients,
       methods,
-      sold: route.params.recipe.sold,
+      sold: 1,
     };
 
-    updateRecipe(updatedRecipe);
-    navigation.navigate('MenuRecipeManagementPage');
+    console.log('New Recipe:', newRecipe);
+
+    if (image && title && price && serves && selectedTime && ingredients.length > 0 && methods.length > 0) {
+      addRecipe(newRecipe);
+      navigation.navigate('MenuRecipeManagementPage');
+    } else {
+      addDraft(newRecipe);
+      navigation.navigate('DraftPage');
+    }
   };
 
-  const renderIngredientItem = ({ item, index }) => {
-    return (
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder={`Ingredient ${index + 1}`}
-          value={item.text}
-          onChangeText={(text) => {
-            const updatedIngredients = [...ingredients];
-            updatedIngredients[index].text = text;
-            setIngredients(updatedIngredients);
-          }}
-        />
-        <TouchableOpacity onPress={() => deleteIngredient(item.id)}>
-          <AntDesign name="delete" size={24} color="red" />
-        </TouchableOpacity>
-      </View>
-    );
-  };
+  const renderIngredientItem = ({ item, index }) => (
+    <View style={styles.ingredientContainer}>
+      <Text style={{fontFamily:'Poppins-Regular', fontSize:14}}>{index+1}. </Text>
+      <TextInput 
+        style={styles.ingredientInput}
+        placeholder={' Add ingredient'}
+      />
+      <TouchableOpacity onPress={() => removeIngredient(index)}>
+        <FontAwesome name="trash" size={20} color="gray" />
+    </TouchableOpacity>
+    </View>
 
-  const renderMethodItem = ({ item, index }) => {
-    return (
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder={`Step ${index + 1}`}
-          value={item.text}
-          onChangeText={(text) => {
-            const updatedMethods = [...methods];
-            updatedMethods[index].text = text;
-            setMethods(updatedMethods);
-          }}
-        />
-        <TouchableOpacity onPress={() => deleteMethod(item.id)}>
-          <AntDesign name="delete" size={24} color="red" />
-        </TouchableOpacity>
-      </View>
-    );
-  };
+    // <View style={styles.inputContainer}>
+    //   <TextInput
+    //     style={styles.input}
+    //     placeholder={`Ingredient ${index + 1}`}
+    //     value={item.text}
+    //     onChangeText={(text) => {
+    //       const updatedIngredients = [...ingredients];
+    //       updatedIngredients[index].text = text;
+    //       setIngredients(updatedIngredients);
+    //     }}
+    //   />
+    //   <TouchableOpacity onPress={() => deleteIngredient(item.id)}>
+    //     <AntDesign name="delete" size={24} color="red" />
+    //   </TouchableOpacity>
+    // </View>
+  );
+
+  const renderMethodItem = ({ item, index }) => (
+    <View style={styles.inputContainer}>
+      <TextInput
+        style={styles.input}
+        placeholder={`Step ${index + 1}`}
+        value={item.text}
+        onChangeText={(text) => {
+          const updatedMethods = [...methods];
+          updatedMethods[index].text = text;
+          setMethods(updatedMethods);
+        }}
+      />
+      <TouchableOpacity onPress={() => deleteMethod(item.id)}>
+        <AntDesign name="delete" size={24} color="red" />
+      </TouchableOpacity>
+    </View>
+  );
 
   return (
+    <>
+      <Stack.Screen options={{
+      title: 'Create Menu & Recipe',
+      headerStyle: { backgroundColor: '#E58B68' },
+      headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold'},
+      headerTitle: 'Create Menu & Recipe',
+      headerTitleAlign: 'center',
+      headerLeft: () => (
+        <TouchableOpacity onPress={() => router.back('foodBP')}>
+          <Ionicons name='chevron-back' size={32} color='white'/>
+        </TouchableOpacity>
+      ),
+      headerRight: () => (
+        <TouchableOpacity onPress={() => handlePublish()}>
+          <Text style={{fontFamily: 'Poppins-SemiBold', fontSize:14, color:'white'}}>Publish</Text>
+        </TouchableOpacity>
+      ),
+    }}/>
+    
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Image
-          style={{ position: 'absolute', justifyContent: 'center' }}
-          source={require('./Image/Rectangle.png')}
-        />
-        <View style={{ flex: 1, flexDirection: 'row' }}>
-          <Image
-            style={{ position: 'absolute', alignItems: 'left', top: 50 }}
-            source={require('./Image/X.png')}
-          />
-        </View>
-        <View style={{ fontFamily: 'Poppins' }}>
-          <Text
-            style={{
-              justifyContent: 'center',
-              flexDirection: 'row',
-              alignItems: 'center',
-              marginLeft: 80,
-              marginBottom: 55,
-              fontSize: 17,
-              fontWeight: 'bold',
-              color: '#FFFFFF',
-              top: 69,
-            }}>
-            Edit Recipe
-          </Text>
-        </View>
-        <View style={styles.headerContainer}>
-          <TouchableOpacity
-            onPress={handleSave}
-            style={styles.saveButtonContainer}>
-            <Text style={styles.saveButtonText}>Save</Text>
-          </TouchableOpacity>
-        </View>
         <View style={styles.imageUploadContainer}>
-          {image && <Image source={{ uri: image }} style={styles.image} />}
-          {!image && (
+          {image ? (
+            <Image source={{ uri: image }} style={styles.image} />
+          ) : (
             <View style={styles.uploadBtnContainer}>
               <TouchableOpacity onPress={addImage} style={styles.uploadBtn}>
-                <Image
-                  style={{
-                    position: 'absolute',
-                    justifyContent: 'center',
-                    bottom: 18,
-                  }}
-                  source={require('./Image/iconCarrier.png')}
-                />
+                <Image source={require('../assets/iconCarrier.png')} style={styles.uploadIcon} />
                 <Text>{image ? 'Edit' : 'Upload'} Recipe photo</Text>
               </TouchableOpacity>
             </View>
@@ -236,15 +215,11 @@ const EditRecipePage = () => {
           <View style={styles.servescooktimeContainer}>
             <Text style={styles.labelText}>Serves</Text>
             <View style={styles.servesButtonsContainer}>
-              <TouchableOpacity
-                onPress={decrementServes}
-                style={styles.plusminusButton}>
+              <TouchableOpacity onPress={decrementServes} style={styles.plusminusButton}>
                 <Text style={styles.plusminusSymbol}>-</Text>
               </TouchableOpacity>
               <Text style={styles.servesText}>{serves}</Text>
-              <TouchableOpacity
-                onPress={incrementServes}
-                style={styles.plusminusButton}>
+              <TouchableOpacity onPress={incrementServes} style={styles.plusminusButton}>
                 <Text style={styles.plusminusSymbol}>+</Text>
               </TouchableOpacity>
               <Text style={styles.people}>People</Text>
@@ -253,9 +228,7 @@ const EditRecipePage = () => {
 
           <View style={styles.cooktimeContainer}>
             <Text style={styles.labelText}>Cooktime</Text>
-            <TouchableOpacity
-              onPress={() => setIsModalVisible(true)}
-              style={styles.selectTimeButton}>
+            <TouchableOpacity onPress={() => setIsModalVisible(true)} style={styles.selectTimeButton}>
               <Text style={styles.selectTimeButtonText}>
                 {selectedTime.hours !== '0' || selectedTime.minutes !== '0'
                   ? ` ${selectedTime.hours} hour ${selectedTime.minutes} min`
@@ -304,6 +277,26 @@ const EditRecipePage = () => {
           </View>
         </View>
 
+        {/* <View style={styles.containerBox}>
+          <Text style={styles.labelText2}>Ingredients</Text>
+          <FlatList
+        data={ingredients}
+        renderItem={({ item, index }) => (
+          <IngredientInput
+            index={index}
+            ingredient={item}
+            updateIngredient={updateIngredient}
+            removeIngredient={removeIngredient}
+          />
+        )}
+        keyExtractor={(item, index) => index.toString()}
+      />
+      <TouchableOpacity style={styles.addButton} onPress={addIngredient}>
+        <Text style={styles.addButtonText}>+ Ingredient</Text>
+      </TouchableOpacity>
+        </View> */}
+
+
         <View style={styles.containerBox}>
           <Text style={styles.labelText2}>Ingredients</Text>
           <FlatList
@@ -312,14 +305,12 @@ const EditRecipePage = () => {
             keyExtractor={(item) => item.id}
             extraData={ingredients}
           />
-          <TouchableOpacity
-            onPress={addIngredient}
-            style={styles.addIngredientButton}>
+          <TouchableOpacity onPress={addIngredient} style={styles.addIngredientButton}>
             <Text style={styles.addIngredientButtonText}>+ Ingredient</Text>
           </TouchableOpacity>
         </View>
 
-        <View style={styles.containerBox}>
+        {/* <View style={styles.containerBox}>
           <Text style={styles.labelText2}>Method</Text>
           <FlatList
             data={methods}
@@ -330,9 +321,10 @@ const EditRecipePage = () => {
           <TouchableOpacity onPress={addMethod} style={styles.addMethodButton}>
             <Text style={styles.addMethodButtonText}>+ Step</Text>
           </TouchableOpacity>
-        </View>
+        </View> */}
       </ScrollView>
     </SafeAreaView>
+    </>
   );
 };
 
@@ -340,26 +332,7 @@ const styles = StyleSheet.create({
   safeArea: { flex: 1 },
   scrollContainer: {
     flexGrow: 1,
-  },
-  headerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    width: '100%',
-    paddingHorizontal: 20,
-  },
-  saveButtonContainer: {
-    borderRadius: 13,
-    borderColor: '#FFFFFF',
-    borderWidth: 1,
-    paddingVertical: 8,
-    paddingHorizontal: 10,
-    bottom: 18,
-  },
-  saveButtonText: {
-    fontFamily: 'Poppins',
-    fontSize: 16,
-    color: '#FFFFFF',
+    paddingHorizontal:16
   },
   imageUploadContainer: {
     alignItems: 'center',
@@ -368,7 +341,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 15,
     borderStyle: 'dotted',
-    marginTop: 10,
+    marginVertical: 16,
     width: '100%',
   },
   image: {
@@ -389,12 +362,37 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  uploadIcon: {
+    width: 30,
+    height: 30,
+    marginBottom: 10,
+  },
   inputContainer: {
     flexDirection: 'row',
     paddingBottom: 2,
     marginVertical: 10,
-    width: '100%',
+    width: '100',
   },
+  // ============================
+  ingredientContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  ingredientInput: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+    marginRight: 10,
+    paddingVertical: 5,
+    fontFamily:'Poppins-Regular',
+    fontSize:14
+  },
+
+
+
+
+
+
+
   input: {
     fontFamily: 'Poppins',
     flex: 1,
@@ -552,4 +550,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EditRecipePage;
+export default CreateRecipePage;
