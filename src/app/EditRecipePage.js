@@ -1,4 +1,3 @@
-//EditRecipe.js
 import React, { useState, useContext, useEffect } from 'react';
 import {
   SafeAreaView,
@@ -16,15 +15,13 @@ import {
 import { AntDesign } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { Picker } from '@react-native-picker/picker';
-import { useNavigation, useRoute } from '@react-navigation/native'; 
-import { RecipeContext } from './context/RecipeContext'; // Import RecipeContext
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { RecipeContext } from './context/RecipeContext';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import { router, useLocalSearchParams, Stack } from 'expo-router';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
-import Ionicons from 'react-native-vector-icons/Ionicons'
-
 
 const EditRecipePage = () => {
-  const { updateRecipe } = useContext(RecipeContext); // Use RecipeContext
+  const { updateRecipe } = useContext(RecipeContext);
   const [image, setImage] = useState(null);
   const [title, setTitle] = useState('');
   const [price, setPrice] = useState('');
@@ -39,8 +36,7 @@ const EditRecipePage = () => {
     minutes: '0',
   });
 
-  // const navigation = useNavigation();
-
+  const navigation = useNavigation();
   const params = useLocalSearchParams();
   const recipe = params;
 
@@ -49,7 +45,7 @@ const EditRecipePage = () => {
       setImage(recipe.image);
       setTitle(recipe.title);
       setPrice(recipe.price);
-      // setServes(recipe.serves);
+      setServes(recipe.serves);w
       // setSelectedTime({
       //   hours: recipe.selectedTime.split(' ')[0],
       //   minutes: recipe.selectedTime.split(' ')[2],
@@ -124,80 +120,60 @@ const EditRecipePage = () => {
     navigation.navigate('MenuRecipeManagementPage');
   };
 
-  const renderIngredientItem = ({ item, index }) => {
-    return (
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder={`Ingredient ${index + 1}`}
-          value={item.text}
-          onChangeText={(text) => {
-            const updatedIngredients = [...ingredients];
-            updatedIngredients[index].text = text;
-            setIngredients(updatedIngredients);
-          }}
-        />
-        <TouchableOpacity onPress={() => deleteIngredient(item.id)}>
-          <AntDesign name="delete" size={24} color="red" />
-        </TouchableOpacity>
-      </View>
-    );
-  };
+  const renderIngredientItem = ({ item, index }) => (
+    <View style={styles.inputContainer}>
+      <TextInput
+        style={styles.input}
+        placeholder={`Ingredient ${index + 1}`}
+        value={item.text}
+        onChangeText={(text) => {
+          const updatedIngredients = [...ingredients];
+          updatedIngredients[index].text = text;
+          setIngredients(updatedIngredients);
+        }}
+      />
+      <TouchableOpacity onPress={() => deleteIngredient(item.id)}>
+        <AntDesign name="delete" size={24} color="red" />
+      </TouchableOpacity>
+    </View>
+  );
 
-  const renderMethodItem = ({ item, index }) => {
-    return (
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder={`Step ${index + 1}`}
-          value={item.text}
-          onChangeText={(text) => {
-            const updatedMethods = [...methods];
-            updatedMethods[index].text = text;
-            setMethods(updatedMethods);
-          }}
-        />
-        <TouchableOpacity onPress={() => deleteMethod(item.id)}>
-          <AntDesign name="delete" size={24} color="red" />
-        </TouchableOpacity>
-      </View>
-    );
-  };
+  const renderMethodItem = ({ item, index }) => (
+    <View style={styles.inputContainer}>
+      <TextInput
+        style={styles.input}
+        placeholder={`Step ${index + 1}`}
+        value={item.text}
+        onChangeText={(text) => {
+          const updatedMethods = [...methods];
+          updatedMethods[index].text = text;
+          setMethods(updatedMethods);
+        }}
+      />
+      <TouchableOpacity onPress={() => deleteMethod(item.id)}>
+        <AntDesign name="delete" size={24} color="red" />
+      </TouchableOpacity>
+    </View>
+  );
 
   return (
-    <>
-    <Stack.Screen options={{
-      title: 'Edit Recipe',
-      headerStyle: { backgroundColor: '#E58B68' },
-      headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold'},
-      headerTitle: 'Edit Recipe',
-      headerTitleAlign: 'center',
-      headerLeft: () => (
-        <TouchableOpacity onPress={() => router.back('foodBP')}>
-          <Ionicons name='chevron-back' size={32} color='white'/>
-        </TouchableOpacity>
-      ),
-      headerRight: () => (
-        <TouchableOpacity onPress={() => handleSave()}>
-          <Text style={{fontFamily: 'Poppins-SemiBold', fontSize:14, color:'white'}}>Save</Text>
-        </TouchableOpacity>
-      ),
-    }}/>
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.headerContainer}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Ionicons name='chevron-back' size={32} color='white'/>
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Edit Recipe</Text>
+          <TouchableOpacity onPress={handleSave}>
+            <Text style={styles.headerRightText}>Save</Text>
+          </TouchableOpacity>
+        </View>
         <View style={styles.imageUploadContainer}>
           {image && <Image source={{ uri: image }} style={styles.image} />}
           {!image && (
             <View style={styles.uploadBtnContainer}>
               <TouchableOpacity onPress={addImage} style={styles.uploadBtn}>
-                <Image
-                  style={{
-                    position: 'absolute',
-                    justifyContent: 'center',
-                    bottom: 18,
-                  }}
-                  source={require('../assets/iconCarrier.png')}
-                />
+                <Image source={require('../assets/iconCarrier.png')} style={styles.uploadIcon} />
                 <Text>{image ? 'Edit' : 'Upload'} Recipe photo</Text>
               </TouchableOpacity>
             </View>
@@ -226,15 +202,11 @@ const EditRecipePage = () => {
           <View style={styles.servescooktimeContainer}>
             <Text style={styles.labelText}>Serves</Text>
             <View style={styles.servesButtonsContainer}>
-              <TouchableOpacity
-                onPress={decrementServes}
-                style={styles.plusminusButton}>
+              <TouchableOpacity onPress={decrementServes} style={styles.plusminusButton}>
                 <Text style={styles.plusminusSymbol}>-</Text>
               </TouchableOpacity>
               <Text style={styles.servesText}>{serves}</Text>
-              <TouchableOpacity
-                onPress={incrementServes}
-                style={styles.plusminusButton}>
+              <TouchableOpacity onPress={incrementServes} style={styles.plusminusButton}>
                 <Text style={styles.plusminusSymbol}>+</Text>
               </TouchableOpacity>
               <Text style={styles.people}>People</Text>
@@ -243,9 +215,7 @@ const EditRecipePage = () => {
 
           <View style={styles.cooktimeContainer}>
             <Text style={styles.labelText}>Cooktime</Text>
-            <TouchableOpacity
-              onPress={() => setIsModalVisible(true)}
-              style={styles.selectTimeButton}>
+            <TouchableOpacity onPress={() => setIsModalVisible(true)} style={styles.selectTimeButton}>
               <Text style={styles.selectTimeButtonText}>
                 {selectedTime.hours !== '0' || selectedTime.minutes !== '0'
                   ? ` ${selectedTime.hours} hour ${selectedTime.minutes} min`
@@ -262,22 +232,24 @@ const EditRecipePage = () => {
               }}>
               <View style={styles.modalContainer}>
                 <View style={styles.modalContent}>
-                  <Picker
-                    selectedValue={selectedHour}
-                    style={styles.picker}
-                    onValueChange={(itemValue) => setSelectedHour(itemValue)}>
-                    {Array.from({ length: 24 }, (_, i) => (
-                      <Picker.Item key={i} label={`${i} hr`} value={`${i}`} />
-                    ))}
-                  </Picker>
-                  <Picker
-                    selectedValue={selectedMinute}
-                    style={styles.picker}
-                    onValueChange={(itemValue) => setSelectedMinute(itemValue)}>
-                    {Array.from({ length: 60 }, (_, i) => (
-                      <Picker.Item key={i} label={`${i} min`} value={`${i}`} />
-                    ))}
-                  </Picker>
+                  <View style={styles.pickerContainer}>
+                    <Picker
+                      selectedValue={selectedHour}
+                      style={styles.picker}
+                      onValueChange={(itemValue) => setSelectedHour(itemValue)}>
+                      {Array.from({ length: 24 }, (_, i) => (
+                        <Picker.Item key={i} label={`${i} hr`} value={`${i}`} />
+                      ))}
+                    </Picker>
+                    <Picker
+                      selectedValue={selectedMinute}
+                      style={styles.picker}
+                      onValueChange={(itemValue) => setSelectedMinute(itemValue)}>
+                      {Array.from({ length: 60 }, (_, i) => (
+                        <Picker.Item key={i} label={`${i} min`} value={`${i}`} />
+                      ))}
+                    </Picker>
+                  </View>
                   <Button
                     title="Done"
                     onPress={() => {
@@ -302,9 +274,7 @@ const EditRecipePage = () => {
             keyExtractor={(item) => item.id}
             extraData={ingredients}
           />
-          <TouchableOpacity
-            onPress={addIngredient}
-            style={styles.addIngredientButton}>
+          <TouchableOpacity onPress={addIngredient} style={styles.addIngredientButton}>
             <Text style={styles.addIngredientButtonText}>+ Ingredient</Text>
           </TouchableOpacity>
         </View>
@@ -323,7 +293,6 @@ const EditRecipePage = () => {
         </View>
       </ScrollView>
     </SafeAreaView>
-    </>
   );
 };
 
@@ -336,21 +305,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    width: '100%',
-    paddingHorizontal: 20,
+    backgroundColor: '#E58B68',
+    paddingHorizontal: 15,
+    paddingVertical: 10,
   },
-  saveButtonContainer: {
-    borderRadius: 13,
-    borderColor: '#FFFFFF',
-    borderWidth: 1,
-    paddingVertical: 8,
-    paddingHorizontal: 10,
-    bottom: 18,
-  },
-  saveButtonText: {
-    fontFamily: 'Poppins',
-    fontSize: 16,
+  headerTitle: {
+    fontSize: 17,
+    fontWeight: 'bold',
     color: '#FFFFFF',
+  },
+  headerRightText: {
+    fontFamily: 'Poppins-SemiBold',
+    fontSize: 14,
+    color: 'white',
   },
   imageUploadContainer: {
     alignItems: 'center',
@@ -380,6 +347,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  uploadIcon: {
+    width: 30,
+    height: 30,
+    marginBottom: 10,
+  },
   inputContainer: {
     flexDirection: 'row',
     paddingBottom: 2,
@@ -392,19 +364,6 @@ const styles = StyleSheet.create({
     height: 50,
     backgroundColor: '#fff',
     paddingVertical: 1,
-    paddingLeft: 5,
-    borderColor: '#E58B68',
-    borderWidth: 1,
-    borderRadius: 15,
-    fontSize: 18,
-    color: 'rgba(0,0,0,0.5)',
-  },
-  input2: {
-    fontFamily: 'Poppins',
-    flex: 1,
-    height: 100,
-    backgroundColor: '#fff',
-    paddingVertical: 3,
     paddingLeft: 5,
     borderColor: '#E58B68',
     borderWidth: 1,
@@ -481,6 +440,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 12,
     marginBottom: 16,
+  },
+  pickerContainer: {
+    flexDirection: 'row',
   },
   picker: {
     flex: 1,

@@ -1,7 +1,7 @@
 import React from 'react';
 import { SafeAreaView, ScrollView, View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { Stack, router} from 'expo-router'
+import { Tabs, router} from 'expo-router'
 
 const food= () => {
   const items = [
@@ -28,6 +28,14 @@ const food= () => {
   };
 
   return (
+    <>
+    <Tabs.Screen options={{
+        title: 'Food',
+        headerStyle: { backgroundColor: '#E58B68' },
+        headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold'},
+        headerTitle: 'Food',
+        headerTitleAlign: 'center',
+      }}/>
     <SafeAreaView style={styles.container}>
       <ScrollView>
       <TouchableOpacity style={styles.button} onPress={() => router.push('order')}>
@@ -43,6 +51,7 @@ const food= () => {
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
+    </>
   );
 };
 

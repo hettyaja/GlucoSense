@@ -1,5 +1,5 @@
-import { View, Text, Dimensions, ScrollView, TouchableOpacity, FlatList, StyleSheet} from 'react-native'
-import React from 'react'
+import { View, Text, Dimensions, ScrollView, TouchableOpacity, FlatList, StyleSheet, Button} from 'react-native'
+import React, { useState } from 'react'
 import { LineChart, BarChart, PieChart, ProgressChart, ContributionGraph, StackedBarChart } from "react-native-chart-kit";
 import { router, Tabs } from 'expo-router';
 import { useProfile } from '../context/ProfileContext'
@@ -8,8 +8,31 @@ import AntDesign from 'react-native-vector-icons/AntDesign'
 import Fontisto from 'react-native-vector-icons/Fontisto'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
+import Modal from 'react-native-modal'
 
 const home = () => {
+  const [isModalVisible, setModalVisible] = useState(false)
+  const [isDateModalVisible, setDateModalVisible] = useState(false)
+  const [filterType, setFilterType] = useState('Display all')
+  const [dateType, setDateType] = useState('Today')
+
+  const toggleModal = () => {
+    setModalVisible(false)
+  }
+
+  const handleFilterType = (filterSelected) => {
+    setFilterType(filterSelected)
+    toggleModal()
+  }
+
+  const toggleDateModal = () => {
+    setDateModalVisible(false)
+  }
+
+  const handleDateType = (dateSelected) => {
+    setDateType(dateSelected)
+    toggleDateModal()
+  }
 
 
   return (
@@ -28,7 +51,7 @@ const home = () => {
 
         ),
         headerRight: () => (
-          <TouchableOpacity style={{marginRight:16}}>
+          <TouchableOpacity style={{marginRight:16}} onPress={() => router.push('reminder')}>
             <MaterialCommunityIcons name='bell-outline' size={24} color='white'/>
           </TouchableOpacity>
         ),
@@ -37,12 +60,12 @@ const home = () => {
         <View style={styles.headerArea}>
           <View style={{flexDirection:'row', alignItems:'center', justifyContent:'space-between'}}>
             <Text style={{fontFamily:'Poppins-Bold', fontSize:18, color:'white'}}>Blood Glucose</Text>
-            <TouchableOpacity style={{flexDirection:'row', alignItems:'center'}}>
-              <Text style={{fontFamily:'Poppins-Medium', fontSize:14, color:'white'}}>Today </Text>
+            <TouchableOpacity style={{flexDirection:'row', alignItems:'center'}} onPress={() => setDateModalVisible(true)}>
+              <Text style={{fontFamily:'Poppins-Medium', fontSize:14, color:'white'}}>{dateType} </Text>
               <AntDesign name='caretdown' size={8} color='white'/>
             </TouchableOpacity>
           </View>
-          <View style={{flexDirection:'row', alignItems:'center', padding:16, margin:16, justifyContent:'space-evenly'}}>
+          <View style={{flexDirection:'row', alignItems:'center', padding:16, justifyContent:'space-evenly'}}>
             <View style={{justifyContent:'center', alignItems:'center'}}>
               <Text style={styles.titleText}>Avg</Text>
               <Text style={styles.subTitleText}>---</Text>
@@ -55,16 +78,18 @@ const home = () => {
               <Text style={styles.titleText}>High</Text>
               <Text style={styles.subTitleText}>---</Text>
             </View>
-            <View style={{justifyContent:'center', alignItems:'center'}}>
-              <Text style={styles.titleText}>A1C</Text>
-              <Text style={styles.subTitleText}>~</Text>
-            </View>
           </View>
+          <View style={{flexDirection:'row-reverse'}}>
+          <TouchableOpacity style={{borderColor:'white', borderWidth:1, borderRadius:8, width:'20%', paddingHorizontal:8}} onPress={() => router.push('Subscribe')}>
+            <Text style={styles.titleText}>A1C: ~</Text>
+          </TouchableOpacity>
+          </View>
+
         </View>
         <ScrollView style={{backgroundColor:'#f5f5f5', flex:1, borderTopLeftRadius:16, borderTopRightRadius:16}}>
           <View style={{padding:16, alignItems:'flex-end'}}>
-            <TouchableOpacity style={{flexDirection:'row', alignItems:'center'}}>
-              <Text style={{fontFamily:'Poppins-Medium'}}>Display all </Text>
+            <TouchableOpacity style={{flexDirection:'row', alignItems:'center'}} onPress={() => setModalVisible(true)}>
+              <Text style={{fontFamily:'Poppins-Medium'}}>{filterType} </Text>
               <AntDesign name='caretdown' size={8} color='black'/>
             </TouchableOpacity>
           </View>
@@ -105,7 +130,55 @@ const home = () => {
           </View>
         </ScrollView>
       </View>
+
+      <Modal
+      isVisible={isModalVisible}
+      swipeDirection={'down'}
+      onBackdropPress={toggleModal}
+      style={styles.modal}
+    >
+      <View style={styles.modalContent}>
+            <TouchableOpacity style={[styles.selectButton, {borderTopLeftRadius:16, borderTopRightRadius:16, borderBottomWidth:0.5, borderBottomColor:'#808080'}]} onPress={() => handleFilterType('Display all')}>
+              <Text style={{fontFamily:'Poppins-Regular', fontSize:16}}>Display all</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.selectButton, {borderBottomWidth:0.5, borderBottomColor:'#808080'}]} onPress={() => handleFilterType('Glucose')}>
+              <Text style={{fontFamily:'Poppins-Regular', fontSize:16}}>Glucose</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.selectButton, {borderBottomWidth:0.5, borderBottomColor:'#808080'}]} onPress={() => handleFilterType('Meal')}>
+              <Text style={{fontFamily:'Poppins-Regular', fontSize:16}}>Meal</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.selectButton, {borderBottomLeftRadius:16, borderBottomRightRadius:16}]} onPress={() => handleFilterType('Medicine')}>
+              <Text style={{fontFamily:'Poppins-Regular', fontSize:16}}>Medicine</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.cancelButton} onPress={() => toggleModal()}>
+              <Text style={{fontFamily:'Poppins-SemiBold', fontSize:16}}>Cancel</Text>
+            </TouchableOpacity>
+      </View>
+      </Modal>
+      
+      <Modal
+      isVisible={isDateModalVisible}
+      swipeDirection={'down'}
+      onBackdropPress={toggleDateModal}
+      style={styles.modal}
+    >
+      <View style={styles.modalContent}>
+            <TouchableOpacity style={[styles.selectButton, {borderTopLeftRadius:16, borderTopRightRadius:16, borderBottomWidth:0.5, borderBottomColor:'#f5f5f5'}]} onPress={() => handleDateType('Today')}>
+              <Text style={{fontFamily:'Poppins-Regular', fontSize:16}}>Today</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.selectButton, {borderBottomWidth:0.5, borderBottomColor:'#808080'}]} onPress={() => handleDateType('7 Day')}>
+              <Text style={{fontFamily:'Poppins-Regular', fontSize:16}}>7 Day</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.selectButton, {borderBottomLeftRadius:16, borderBottomRightRadius:16}]} onPress={() => handleDateType('30 Day')}>
+              <Text style={{fontFamily:'Poppins-Regular', fontSize:16}}>30 Day</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.cancelButton} onPress={() => toggleModal()}>
+              <Text style={{fontFamily:'Poppins-SemiBold', fontSize:16}}>Cancel</Text>
+            </TouchableOpacity>
+      </View>
+      </Modal>
     </>
+    
   )
 }
 
@@ -119,7 +192,7 @@ const styles = StyleSheet.create({
   headerArea: {
     backgroundColor:'E58B68',
     padding:16,
-    height:160
+    height:170
   },
   titleText: {
     fontFamily:'Poppins-Medium',
@@ -155,6 +228,31 @@ const styles = StyleSheet.create({
     fontSize:14,
     marginLeft:16,
     color:'#808080'
+  },
+  modal: {
+    margin:0,
+    justifyContent:'flex-end'
+  },
+  modalContent: {
+    alignItems:'center',
+    margin:8
+  },
+  cancelButton: {
+    backgroundColor:'#f5f5f5',
+    marginTop:8,
+    marginBottom:16,
+    padding:16,
+    width:'98%',
+    borderRadius:16,
+    justifyContent:'center',
+    alignItems:'center'
+  },
+  selectButton: {
+    backgroundColor:'#f5f5f5',
+    padding:16,
+    width:'98%',
+    justifyContent:'center',
+    alignItems:'center'
   }
 
 });
