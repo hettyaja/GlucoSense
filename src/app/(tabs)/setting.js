@@ -80,23 +80,23 @@ const setting = () => {
       </TouchableOpacity>
       <View style={styles.section}>
         <TouchableOpacity style={styles.button} onPress={() => router.push('test')}>
-          <MaterialCommunityIcons name="bluetooth-connect" size={32} color="#000" />
+          <MaterialCommunityIcons name="bluetooth-connect" size={24} color="#000" />
           <Text style={styles.buttonText}>Connect glucose meter</Text>
         </TouchableOpacity>
         <View style={{borderBottomColor:'#d9d9d9', borderBottomWidth:1}}/>
         <TouchableOpacity style={styles.button}>
-          <MaterialIcons name="bar-chart" size={32}/>
+          <MaterialIcons name="bar-chart" size={24}/>
           <Text style={styles.buttonText}>Report</Text>
         </TouchableOpacity>
         <View style={{borderBottomColor:'#d9d9d9', borderBottomWidth:1}}/>
         <TouchableOpacity style={styles.button}>
-          <MaterialCommunityIcons name='bell-outline' size={32}/>
+          <MaterialCommunityIcons name='bell-outline' size={24}/>
           <Text style={styles.buttonText}>Reminder</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.section}>
         <TouchableOpacity style={styles.button} onPress={() => openModal('glucoseUnit')}>
-          <FontAwesome name="sliders" size={32}/>
+          <FontAwesome name="sliders" size={24}/>
           <View style={{flexDirection:'row', flex:1, justifyContent:'space-between'}}>
           <Text style={styles.buttonText}>Change glucose unit</Text>
           <Text style={{color:'#808080', fontFamily:'Poppins-Medium', fontSize:16}}>{glucoseUnit}</Text>
@@ -104,7 +104,7 @@ const setting = () => {
         </TouchableOpacity>
         <View style={{borderBottomColor:'#d9d9d9', borderBottomWidth:1}}/>
         <TouchableOpacity style={styles.button} onPress={() => openModal('weightUnit')}>
-          <FontAwesome name="sliders" size={32}/>
+          <FontAwesome name="sliders" size={24}/>
           <View style={{flexDirection:'row', flex:1, justifyContent:'space-between'}}>
           <Text style={styles.buttonText}>Change weight unit</Text>
           <Text style={{color:'#808080', fontFamily:'Poppins-Medium', fontSize:16}}>{weightUnit}</Text>
@@ -114,18 +114,18 @@ const setting = () => {
 
       <View style={styles.section}>
         <TouchableOpacity style={styles.button} onPress={() => router.push('ReportProblem')}>
-          <FontAwesome name="question-circle" size={32} color="#000" />
+          <FontAwesome name="question-circle" size={24} color="#000" />
           <Text style={styles.buttonText}>Help & Feedback</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.section}>
         <TouchableOpacity style={styles.button} onPress={createTwoButtonAlert}>
-          <AntDesign name='deleteuser' size={32}/>
+          <AntDesign name='deleteuser' size={24}/>
           <Text style={styles.buttonText}>Delete account</Text>
         </TouchableOpacity>
         <View style={{borderBottomColor:'#d9d9d9', borderBottomWidth:1}}/>
         <TouchableOpacity style={styles.button} onPress={() => router.push('welcomePage')}>
-          <MaterialIcons name='logout' size={32} style={styles.icon}/>
+          <MaterialIcons name='logout' size={24} style={styles.icon}/>
           <Text style={styles.buttonText}>Log out</Text>
         </TouchableOpacity>
       </View>

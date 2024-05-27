@@ -1,95 +1,101 @@
-import { View, Text, StyleSheet, Image, Button, TouchableOpacity, Touchable, TextInput} from 'react-native'
-import React, { useState } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { Tabs, router} from 'expo-router'
-import { images } from '../../constants/images';
-import { Picker } from '@react-native-picker/picker';
+import React from 'react';
+import { SafeAreaView, ScrollView, View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { Stack, router} from 'expo-router'
 
-const food = () => {
-  const handleButtonPress = (buttonIndex) => {
-    setSelectedButton(buttonIndex === selectedButton ? null : buttonIndex);
-  }
+const food= () => {
+  const items = [
+    { name: 'Chicken Rice', price: 30,image: 'https://reactnative.dev/img/tiny_logo.png'},
+    { name: 'Beef Noodles', price: 25, image: 'https://example.com/image2.jpg' },
+    { name: 'Vegetable Salad', price: 20, image: 'https://example.com/image3.jpg' },
+  ];
+
+  const HorizontalScrollSection = ({ title, items }) => {
+    return (
+      <View style={styles.sectionContainer}>
+        <Text style={styles.sectionTitle}>{title}</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={true}>
+          {items.map((item, index) => (
+            <View key={index} style={styles.card}>
+              <Image source={{ uri: item.image}} style={styles.image} />
+              <Text style={styles.itemName}>{item.name}</Text>
+              {item.price && <Text style={styles.itemPrice}>${item.price}</Text>}
+            </View>
+          ))}
+        </ScrollView>
+      </View>
+    );
+  };
+
   return (
-    <>
-        <Tabs.Screen options={{
-        title: 'Food Order',
-        headerStyle: { backgroundColor: '#E58B68' },
-        headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold'},
-        headerTitle: 'Food Order',
-        headerTitleAlign: 'center',
-      }}/>
+    <SafeAreaView style={styles.container}>
+      <ScrollView>
+      <TouchableOpacity style={styles.button} onPress={() => router.push('order')}>
+          <HorizontalScrollSection title="History" items={items} />
+      </TouchableOpacity>
 
-    <View style={{flex:1, backgroundColor:'#f5f5f5'}}>
-        <View style = {{backgroundColor: '#f5f5f5', marginTop: 8, height: 700}}>
-          <TouchableOpacity style={styles.container1} onPress = {() => router.push('details')}>
-            <View style={styles.container2}>
-            </View>
-            <View style={{marginLeft: 20}}>
-                <Text style={{fontFamily: 'Poppins-SemiBold', fontSize: 16, marginTop: 22}}>Chicken Rice</Text>
-                <Text style={{fontFamily: 'Poppins-Regular', fontSize: 16}}>$4.50</Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-    </View>
-    
-    </>
-  )
-}
+      <TouchableOpacity style={styles.button} onPress={() => router.push('order')}>
+        <HorizontalScrollSection title="Available food" items={items} />
+      </TouchableOpacity>
 
-export default food
+      <TouchableOpacity style={styles.button} onPress={() => router.push('Subscribe')}>
+        <HorizontalScrollSection title="Diet plan" items={items} />
+        </TouchableOpacity>
+      </ScrollView>
+    </SafeAreaView>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: 'space-around',
+    flex: 1,
+    backgroundColor: '#f5f5f5',
   },
-  selectedButton: {
-    backgroundColor: '#FAF5E1',
-    borderColor: '#E58B68', 
+ 
+  headerText: {
+    color: '#fff',
+    fontSize: 20,
+    fontWeight: 'bold',
   },
-  buttonText: {
-    fontSize:12,
-    fontFamily:"Poppins-Regular",
-    textAlign: 'center',
-    color: 'black',
-  },
-  saveButtonContainer: {
-    borderColor: 'white',
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 3, // Adjust the padding to increase the width
-    paddingLeft: 10,
-    marginRight: 10,
-    alignItems: 'center',
-  },
-  container1: {
-    marginTop: 15,
-    backgroundColor: 'white',
-    paddingVertical: 8,
-    flexDirection: 'row',
-  },
-  container2: {
-    marginLeft: 20,
-    borderRadius: 8,
-    width: 80,
-    height: 80,
-    backgroundColor: '#D9D9D9',
-    marginVertical: 8,
-    justifyContent: 'space-between',
-  },
-  picker: {
-    fontFamily: 'Poppins-Regular',
-    width: '50%',
-    marginLeft: 170,
-    color: '#808080',
-  },
-  pickerItem: {
-    fontSize: 12,
-    fontFamily: 'Poppins-Regular',
-  },
-  text: {
-    fontSize: 16, 
-    fontFamily: 'Poppins-Medium', 
-    marginLeft: 20, 
+  sectionContainer: {
     marginVertical: 10,
   },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginHorizontal: 10,
+    marginBottom: 5,
+  },
+  card: {
+    width: 150,
+    height:220,
+    paddingBottom: 5,
+    marginHorizontal: 5,
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  image: {
+    width: '100%',
+    height: 150,
+    borderRadius: 1,
+  },
+  itemName: {
+    marginTop: 10,
+    fontSize: 16,
+    fontWeight: 'bold',
+    paddingLeft: 8,
+  },
+  itemPrice: {
+    marginTop: 5,
+    fontSize: 14,
+    paddingLeft: 8,
+    color: '#888',
+  },
+  
 });
+
+export default food;
