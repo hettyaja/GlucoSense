@@ -1,7 +1,7 @@
 import { View, Text, Dimensions, ScrollView, TouchableOpacity, FlatList, StyleSheet} from 'react-native'
 import React from 'react'
 import { LineChart, BarChart, PieChart, ProgressChart, ContributionGraph, StackedBarChart } from "react-native-chart-kit";
-import { Tabs } from 'expo-router';
+import { router, Tabs } from 'expo-router';
 import { useProfile } from '../context/ProfileContext'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import AntDesign from 'react-native-vector-icons/AntDesign'
@@ -70,18 +70,18 @@ const home = () => {
           </View>
           <Text style={{fontFamily:'Poppins-SemiBold', fontSize:14, paddingHorizontal:16, paddingBottom:16, color:'#808080'}}>Today</Text>
           <View style={styles.section}>
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity style={styles.button} onPress={() => router.push('editGlucose')}>
               <Fontisto name='blood-drop' size={24} color='black' style={{paddingRight:16}}/>
               <View style={{flexDirection:'row', alignItems:'center', width:'100%', justifyContent:'space-between', paddingRight:8}}>
                 <View>
-                  <Text style={styles.buttonText}>120 mg/dL</Text>
+                  <Text style={styles.buttonText}>5.7 mmol/L</Text>
                   <Text style={styles.buttonText2}>1:33 PM</Text>
                 </View>
                 <Ionicons name='chevron-forward' size={24} color='#808080'/>
               </View>
             </TouchableOpacity>
             <View style={{borderBottomColor:'#d9d9d9', borderBottomWidth:1}}/>
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity style={styles.button} onPress={() => router.push('editMeds')}>
               <Fontisto name='pills' size={24} color='black' style={{paddingRight:8}}/>
               <View style={{flexDirection:'row', alignItems:'center', width:'100%', justifyContent:'space-between', paddingRight:8}}>
                 <View>

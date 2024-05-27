@@ -49,7 +49,7 @@ const preReg = () => {
   return (
     <>
       <Stack.Screen options={{
-        title: 'Add glucose',
+        title: 'Edit glucose',
         headerStyle: { backgroundColor: '#E58B68' },
         headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold'},
         headerLeft: () => (
@@ -61,7 +61,7 @@ const preReg = () => {
                 <Text style={{padding:2, marginHorizontal:8, fontFamily: 'Poppins-SemiBold', fontSize:16, color:'white'}}>Save</Text>
             </TouchableOpacity>
         ),
-        headerTitle: 'Add glucose',
+        headerTitle: 'Edit glucose',
         headerTitleAlign: 'center',
       }}/>
 
