@@ -4,7 +4,7 @@ import { Card, Button } from 'react-native-elements';
 //import navigation:
 //without passed values
 
-const DietPlanOrderPage = () => {
+const FoodOrderPage = () => {
 
   const orders = [
     { id: 1, plan: '1 Week Diet Plan A', buyer: 'Jonathan', date: '09/08/2024', image: 'https://example.com/image1.jpg' },
@@ -140,4 +140,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DietPlanOrderPage;
+export default FoodOrderPage;
