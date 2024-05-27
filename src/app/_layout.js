@@ -29,8 +29,6 @@ const _layout = () => {
 
   return (
     <RecipeProvider>
-
-
     <DietPlanProvider>
     <ProfileProvider>
       <BPProfileProvider>
@@ -51,6 +49,8 @@ const _layout = () => {
             <Stack.Screen name="addGlucose"/>
             <Stack.Screen name="EditRecipePage"/>
             <Stack.Screen name="CreateRecipePage"/>
+            <Stack.Screen name="ViewAndSearchDietPlan"/>
+            <Stack.Screen name="CreateDietPlan"/>
             <Stack.Screen name="details" options={{
               title: 'Details',
               headerStyle: { backgroundColor: '#E58B68' },

@@ -2,8 +2,10 @@ import React, { useState, useContext } from 'react';
 import {SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity,View, Image, ScrollView} from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useNavigation } from '@react-navigation/native';
-import { DietPlanContext } from '../app/DietPlanContext';
+import { DietPlanContext } from './context/DietPlanContext';
 import { Picker } from '@react-native-picker/picker';
+import { Stack, router } from 'expo-router';
+import Ionicons from 'react-native-vector-icons/Ionicons'
 
 const CreateDietPlan = () => {
   const { addDietPlan} = useContext(DietPlanContext);
@@ -61,18 +63,27 @@ const CreateDietPlan = () => {
   };
 
   return (
+    <>
+      <Stack.Screen options={{
+      title: 'Create Menu & Recipe',
+      headerStyle: { backgroundColor: '#E58B68' },
+      headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold'},
+      headerTitle: 'Create Menu & Recipe',
+      headerTitleAlign: 'center',
+      headerLeft: () => (
+        <TouchableOpacity onPress={() => router.back('foodBP')}>
+          <Ionicons name='chevron-back' size={32} color='white'/>
+        </TouchableOpacity>
+      ),
+      headerRight: () => (
+        <TouchableOpacity onPress={() => handleSave()}>
+          <Text style={{fontFamily: 'Poppins-SemiBold', fontSize:14, color:'white'}}>Publish</Text>
+        </TouchableOpacity>
+      ),
+    }}/>
+
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Image source={require('../assets/X.png')} style={styles.icon} />
-          </TouchableOpacity>
-          <Text style={styles.title}>Diet Plan</Text>
-          <TouchableOpacity onPress={handleSave}>
-            <Text style={styles.saveText}>Save</Text>
-          </TouchableOpacity>
-        </View>
-
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Day</Text>
           <Picker selectedValue={day} onValueChange={(itemValue) => setDay(itemValue)} style={styles.picker}>
@@ -122,6 +133,7 @@ const CreateDietPlan = () => {
         </View>
       </ScrollView>
     </SafeAreaView>
+    </>
   );
 };
 

@@ -1,17 +1,5 @@
 import React, { useState, useContext } from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-  Image,
-  ScrollView,
-  Modal,
-  Button,
-  FlatList,
-} from 'react-native';
+import { SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, Image, ScrollView, Modal, Button, FlatList } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { Picker } from '@react-native-picker/picker';
@@ -27,9 +15,6 @@ const CreateRecipePage = () => {
   const [title, setTitle] = useState('');
   const [price, setPrice] = useState('');
   const [serves, setServes] = useState(1);
-  const [selectedHour, setSelectedHour] = useState('0');
-  const [selectedMinute, setSelectedMinute] = useState('0');
-  const [isModalVisible, setIsModalVisible] = useState(false);
   const [ingredients, setIngredients] = useState([]);
   const [methods, setMethods] = useState([]);
   const [selectedTime, setSelectedTime] = useState({
@@ -37,14 +22,17 @@ const CreateRecipePage = () => {
     minutes: '0',
   });
 
-  const navigation = useNavigation();
+
+  const [selectedHour, setSelectedHour] = useState('0');
+  const [selectedMinute, setSelectedMinute] = useState('0');
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
 
   const decrementServes = () => {
     if (serves > 1) {
       setServes(serves - 1);
     }
   };
-
   const incrementServes = () => {
     setServes(serves + 1);
   };
@@ -104,57 +92,54 @@ const CreateRecipePage = () => {
 
     if (image && title && price && serves && selectedTime && ingredients.length > 0 && methods.length > 0) {
       addRecipe(newRecipe);
-      navigation.navigate('MenuRecipeManagementPage');
+      router.push('foodBP')
     } else {
       addDraft(newRecipe);
-      navigation.navigate('DraftPage');
+      router.push('foodBP')
     }
   };
 
   const renderIngredientItem = ({ item, index }) => (
     <View style={styles.ingredientContainer}>
-      <Text style={{fontFamily:'Poppins-Regular', fontSize:14}}>{index+1}. </Text>
-      <TextInput 
-        style={styles.ingredientInput}
-        placeholder={' Add ingredient'}
-      />
-      <TouchableOpacity onPress={() => removeIngredient(index)}>
-        <FontAwesome name="trash" size={20} color="gray" />
-    </TouchableOpacity>
+      <View style={{flexDirection:'row', alignItems:'center'}}>
+        <Text style={{fontFamily:'Poppins-Regular', fontSize:14}}>{index+1}. </Text>
+        <TextInput 
+          style={styles.ingredientInput}
+          placeholder={' Add ingredient'}
+          value={item.text}
+          onChangeText={(text) => {
+          const updatedIngredients = [...ingredients];
+          updatedIngredients[index].text = text;
+          setIngredients(updatedIngredients);
+          }}
+        />
+        <TouchableOpacity onPress={() => deleteIngredient(item.id)}>
+          <FontAwesome name="trash" size={20} color="gray" />
+        </TouchableOpacity>
+      </View>
     </View>
-
-    // <View style={styles.inputContainer}>
-    //   <TextInput
-    //     style={styles.input}
-    //     placeholder={`Ingredient ${index + 1}`}
-    //     value={item.text}
-    //     onChangeText={(text) => {
-    //       const updatedIngredients = [...ingredients];
-    //       updatedIngredients[index].text = text;
-    //       setIngredients(updatedIngredients);
-    //     }}
-    //   />
-    //   <TouchableOpacity onPress={() => deleteIngredient(item.id)}>
-    //     <AntDesign name="delete" size={24} color="red" />
-    //   </TouchableOpacity>
-    // </View>
   );
 
   const renderMethodItem = ({ item, index }) => (
-    <View style={styles.inputContainer}>
-      <TextInput
-        style={styles.input}
-        placeholder={`Step ${index + 1}`}
-        value={item.text}
-        onChangeText={(text) => {
-          const updatedMethods = [...methods];
-          updatedMethods[index].text = text;
-          setMethods(updatedMethods);
-        }}
-      />
-      <TouchableOpacity onPress={() => deleteMethod(item.id)}>
-        <AntDesign name="delete" size={24} color="red" />
-      </TouchableOpacity>
+    <View style={styles.ingredientContainer}>
+      <View style={{flexDirection:'row', alignItems:'center'}}>
+        <Text style={{fontFamily:'Poppins-Regular', fontSize:14}}>{index+1}. </Text>
+          <TextInput
+          style={styles.ingredientInput}
+          placeholder={`Step ${index + 1}`}
+          value={item.text}
+          onChangeText={(text) => {
+            const updatedMethods = [...methods];
+            updatedMethods[index].text = text;
+            setMethods(updatedMethods);
+          }}
+        />
+        <TouchableOpacity onPress={() => deleteMethod(item.id)}>
+        <FontAwesome name="trash" size={20} color="gray" />
+        </TouchableOpacity>
+      </View>
+     
+
     </View>
   );
 
@@ -277,26 +262,6 @@ const CreateRecipePage = () => {
           </View>
         </View>
 
-        {/* <View style={styles.containerBox}>
-          <Text style={styles.labelText2}>Ingredients</Text>
-          <FlatList
-        data={ingredients}
-        renderItem={({ item, index }) => (
-          <IngredientInput
-            index={index}
-            ingredient={item}
-            updateIngredient={updateIngredient}
-            removeIngredient={removeIngredient}
-          />
-        )}
-        keyExtractor={(item, index) => index.toString()}
-      />
-      <TouchableOpacity style={styles.addButton} onPress={addIngredient}>
-        <Text style={styles.addButtonText}>+ Ingredient</Text>
-      </TouchableOpacity>
-        </View> */}
-
-
         <View style={styles.containerBox}>
           <Text style={styles.labelText2}>Ingredients</Text>
           <FlatList
@@ -310,7 +275,7 @@ const CreateRecipePage = () => {
           </TouchableOpacity>
         </View>
 
-        {/* <View style={styles.containerBox}>
+        <View style={styles.containerBox}>
           <Text style={styles.labelText2}>Method</Text>
           <FlatList
             data={methods}
@@ -321,7 +286,7 @@ const CreateRecipePage = () => {
           <TouchableOpacity onPress={addMethod} style={styles.addMethodButton}>
             <Text style={styles.addMethodButtonText}>+ Step</Text>
           </TouchableOpacity>
-        </View> */}
+        </View>
       </ScrollView>
     </SafeAreaView>
     </>
@@ -329,7 +294,9 @@ const CreateRecipePage = () => {
 };
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1 },
+  safeArea: {
+    flex: 1 
+  },
   scrollContainer: {
     flexGrow: 1,
     paddingHorizontal:16
@@ -384,7 +351,8 @@ const styles = StyleSheet.create({
     marginRight: 10,
     paddingVertical: 5,
     fontFamily:'Poppins-Regular',
-    fontSize:14
+    fontSize:14,
+    flex:1
   },
 
 

@@ -39,7 +39,7 @@ const EditRecipePage = () => {
     minutes: '0',
   });
 
-  const navigation = useNavigation();
+  // const navigation = useNavigation();
 
   const params = useLocalSearchParams();
   const recipe = params;
