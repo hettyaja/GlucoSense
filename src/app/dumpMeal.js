@@ -8,7 +8,9 @@ const App = () => {
 
   const handleSearch = async () => {
     try {
-      const data = await searchFood(query);
+      const data = await searchFood(query); 
+      //console.log(JSON.stringify(data, null, 2));
+      
       setResults(data.hints);
     } catch (error) {
       console.error('Error fetching food data:', error);
