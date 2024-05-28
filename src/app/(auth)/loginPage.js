@@ -2,33 +2,49 @@ import React, {useState} from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Link, router } from 'expo-router';
-
-import { images } from '../constants/images';
-import ImageButton from '../components/ImageButton'
+import { images } from '../../constants/images';
+import ImageButton from '../../components/ImageButton'
+import { auth } from '../../../firebase';
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 const Login = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const userAccount = {username:'user', password:'user'}
   const businessAccount = {username:'business', password:'business'}
 
-  const handleLogin = () => {
-    if (username === userAccount.username && password === userAccount.password) {
-      router.push('/home')
-    } else if (username === businessAccount.username && password === businessAccount.password) {
-      router.push('/homeBP')
-    } else {
-      Alert.alert('Invalid credentials', 'The username or password you entered is incorrect.');
-    }
-    
+  const handleSignUp = () => {
+    createUserWithEmailAndPassword(auth, email, password)
+      .then(userCredentials => {
+        const user = userCredentials.user;
+        console.log(user.email);
+        router.push('/home')
+      })
+      .catch(error => alert(error.message));
   };
+
+  const handleLogin = () => {
+    signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      // Signed in 
+      const user = userCredential.user;
+      console.log(user.email)
+      router.replace('/home')
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+    });
+  };
+
+   
 
   return (
     <SafeAreaView style={{flex:1, backgroundColor:"white", alignItems:"center"}}>
       <View style={{backgroundColor:"white", alignItems:'flex-start', width:"100%", paddingHorizontal:20}}>
         <ImageButton
-          source={require("../assets/back(2).png")}
+          source={require("../../assets/back(2).png")}
           imageSize={{width:24, height:24}}
           onPress={() => router.back('/welcomePage')}
         />
@@ -37,14 +53,14 @@ const Login = () => {
       <Image source={images.logo} style={{marginBottom:60}}/>
 
       <View style={{backgroundColor:"white", alignItems:'flex-start', width:"100%", paddingHorizontal:50}}>
-        <Text style={{ fontFamily: "Poppins-Medium", fontSize: 14}}>Username</Text>
+        <Text style={{ fontFamily: "Poppins-Medium", fontSize: 14}}>Email</Text>
       </View>
       
       <TextInput style={[styles.input, {color: "black"}]}
-        placeholder="Enter your username"
+        placeholder="Enter your email"
         placeholderTextColor="black"
-        value={username}
-        onChangeText={setUsername}
+        value={email}
+        onChangeText={setEmail}
         autoCapitalize='none'
       />
       

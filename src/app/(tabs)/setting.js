@@ -11,6 +11,8 @@ import { images } from '../../constants/images'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import { useProfile } from '../context/ProfileContext'
+import { auth } from '../../../firebase';
+import { getAuth, signOut } from "firebase/auth";
 
 const setting = () => {
   const { profileData } =  useProfile()
@@ -19,6 +21,15 @@ const setting = () => {
   const [weightUnit, setWeightUnit] = useState('kgs')
   const [modalType, setModalType] = useState('')
   const [photoUri, setPhotoUri] = useState('https://reactnative.dev/img/tiny_logo.png')
+
+  const handleSignOut = () => {
+    signOut(auth).then(() => {
+      router.replace('/loginPage')
+    }).catch((error) => {
+      // An error happened.
+    });
+  }
+
 
   const createTwoButtonAlert = () =>
   Alert.alert('Delete account', 'Are you sure you want to delete?', [
@@ -124,7 +135,7 @@ const setting = () => {
           <Text style={styles.buttonText}>Delete account</Text>
         </TouchableOpacity>
         <View style={{borderBottomColor:'#d9d9d9', borderBottomWidth:1}}/>
-        <TouchableOpacity style={styles.button} onPress={() => router.push('welcomePage')}>
+        <TouchableOpacity style={styles.button} onPress={() => handleSignOut()}>
           <MaterialIcons name='logout' size={24} style={styles.icon}/>
           <Text style={styles.buttonText}>Log out</Text>
         </TouchableOpacity>

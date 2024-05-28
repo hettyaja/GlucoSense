@@ -35,11 +35,10 @@ const _layout = () => {
         <Stack>
             <Stack.Screen name="index"/>
             <Stack.Screen name="(getStarted)" options={{ headerShown:false}}/>
-            <Stack.Screen name="loginPage" options={{ headerShown:false}}/>
+            <Stack.Screen name="(auth)" options={{ headerShown:false}}/>
             <Stack.Screen name="welcomePage" options={{ headerShown:false}}/>
             <Stack.Screen name="preReg" options={{ headerShown:false}}/>
             <Stack.Screen name="getStartedBP" options={{ headerShown:false}}/>
-            <Stack.Screen name="registerPage" options={{ headerShown:false}}/>
             <Stack.Screen name="(question)" options={{headerShown:false}}/>
             <Stack.Screen name="(tabs)" options={{ headerShown:false}}/>
             <Stack.Screen name="(tabsBP)" options={{ headerShown:false}}/>

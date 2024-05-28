@@ -191,8 +191,7 @@ const styles = StyleSheet.create({
   },
   headerArea: {
     backgroundColor:'E58B68',
-    padding:16,
-    height:170
+    padding:16
   },
   titleText: {
     fontFamily:'Poppins-Medium',

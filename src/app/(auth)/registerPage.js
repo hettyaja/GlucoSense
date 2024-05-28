@@ -1,17 +1,32 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { Image, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, Platform } from 'react-native';
-import { images } from '../constants/images'
+import { images } from '../../constants/images'
 import { router } from 'expo-router'
-import ImageButton from '../components/ImageButton'
+import ImageButton from '../../components/ImageButton'
+import { auth } from '../../../firebase';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 
 const FreemiumRegister= () => {
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+
+    const handleSignUp = () => {
+        createUserWithEmailAndPassword(auth, email, password)
+          .then(userCredentials => {
+            const user = userCredentials.user;
+            console.log(user.email);
+            router.push('/home')
+          })
+          .catch(error => alert(error.message));
+      };
+
     return (
     
     <SafeAreaView style={styles.safeArea}>
         <Image source={images.header} style={{position:"absolute", width:430, height:275}}/>
         <View style={{alignItems:'flex-start', width:"100%", paddingHorizontal:20, paddingTop: Platform.OS === 'ios' ? 0 : 50}}>
         <ImageButton
-            source={require("../assets/back.png")}
+            source={require("../../assets/back.png")}
             imageSize={{width:24, height:24}}
             onPress={() => router.back('/welcomePage')}
         />
@@ -58,7 +73,12 @@ const FreemiumRegister= () => {
             Email
         </Text>
         <View style={{ paddingLeft: 10, paddingRight: 10, flexDirection:'row', paddingBottom:2, marginBottom:15}}>
-            <TextInput style={styles.input} keyboardType="email-address" />
+            <TextInput
+                style={styles.input}
+                keyboardType="email-address"
+                value={email}
+                onChangeText={text => setEmail(text)}
+            />
         </View>
 
         <Text style={{
@@ -72,7 +92,11 @@ const FreemiumRegister= () => {
             Password
         </Text>
         <View style={{ paddingLeft: 10, paddingRight: 10, flexDirection:'row', paddingBottom:2, marginBottom:15}}>
-            <TextInput style={styles.input} secureTextEntry={true} />
+            <TextInput
+                style={styles.input}
+                secureTextEntry={true}
+                value={password}
+                onChangeText={text => setPassword(text)}/>
         </View>
 
         <Text style={{
@@ -91,7 +115,7 @@ const FreemiumRegister= () => {
         </View>
         
         <View style={{alignItems:'center', paddingTop:50}}>
-        <TouchableOpacity onPress={() => {router.push('/question1')}} style={styles.registerButtonContainer}>
+        <TouchableOpacity onPress={() => {handleSignUp()}} style={styles.registerButtonContainer}>
             <Text style={styles.registerButtonText}> Register </Text>
         </TouchableOpacity>
         </View>
