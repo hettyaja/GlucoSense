@@ -38,7 +38,7 @@ const food= () => {
       }}/>
     <SafeAreaView style={styles.container}>
       <ScrollView>
-      <TouchableOpacity style={styles.button} onPress={() => router.push('order')}>
+      <TouchableOpacity style={styles.button} onPress={() => router.push('dumpMeal')}>
           <HorizontalScrollSection title="History" items={items} />
       </TouchableOpacity>
 
