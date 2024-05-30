@@ -3,22 +3,44 @@ import { Image, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, Vie
 import { images } from '../../constants/images'
 import { router } from 'expo-router'
 import ImageButton from '../../components/ImageButton'
-import { auth } from '../../../firebase';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { registerUser } from './authService';
 
 const FreemiumRegister= () => {
+    const [username ,setUsername] = useState('')
+    const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [confirmPassword, setConfirmPassword] = useState('')
 
-    const handleSignUp = () => {
-        createUserWithEmailAndPassword(auth, email, password)
-          .then(userCredentials => {
-            const user = userCredentials.user;
-            console.log(user.email);
-            router.push('/home')
-          })
-          .catch(error => alert(error.message));
-      };
+    const handleSignUp = async () => {
+        if(password !== confirmPassword) {
+            alert('Password do not match!')
+            return;
+        }
+
+        try {
+            const additionalData = {
+                username,
+                name,
+                email,
+                userType: 'free'
+            }
+            const user = await registerUser(email, password, additionalData)
+            router.replace('/home')
+        } catch (error) {
+            alert(error.message)
+        }
+    }
+
+    // const handleSignUp = () => {
+    //     createUserWithEmailAndPassword(auth, email, password)
+    //       .then(userCredentials => {
+    //         const user = userCredentials.user;
+    //         console.log(user.email);
+    //         router.push('/home')
+    //       })
+    //       .catch(error => alert(error.message));
+    //   };
 
     return (
     
@@ -45,7 +67,12 @@ const FreemiumRegister= () => {
             Username
         </Text>
         <View style={{ paddingLeft: 10, paddingRight: 10, flexDirection:'row', paddingBottom:2, marginBottom:10}}>
-            <TextInput style={styles.input} keyboardType="default" />
+            <TextInput
+                style={styles.input}
+                keyboardType="default"
+                value={username}
+                onChangeText={text => setUsername(text)}
+            />
         </View>
 
         <Text style={{
@@ -59,7 +86,12 @@ const FreemiumRegister= () => {
             Name
         </Text>
         <View style={{ paddingLeft: 10, paddingRight: 10, flexDirection:'row', paddingBottom:2, marginBottom:15}}>
-            <TextInput style={styles.input} keyboardType="default" />
+            <TextInput
+                style={styles.input}
+                keyboardType="default"
+                value={name}
+                onChangeText={text => setName(text)}
+            />
         </View>
 
         <Text style={{
@@ -111,7 +143,12 @@ const FreemiumRegister= () => {
         </Text>
         </View>
         <View style={{ paddingLeft: 10, paddingRight: 10, flexDirection:'row',paddingBottom:2, marginBottom: 15}}>
-            <TextInput style={styles.input} secureTextEntry={true} />
+            <TextInput
+                style={styles.input}
+                secureTextEntry={true}
+                value={confirmPassword}
+                onChangeText={text => setConfirmPassword(text)}
+            />
         </View>
         
         <View style={{alignItems:'center', paddingTop:50}}>

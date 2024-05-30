@@ -2,9 +2,9 @@ import { View, Text, StyleSheet, Image, Button, TouchableOpacity} from 'react-na
 import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { router } from 'expo-router'
-
-import { images } from '../constants/images';
-import ImageButton from '../components/ImageButton'
+import { images } from '../../constants/images';
+import ImageButton from '../../components/ImageButton'
+import Ionicons from 'react-native-vector-icons/Ionicons'
 
 const preReg = () => {
   const [selectedButton, setSelectedButton] = useState(null);
@@ -24,12 +24,10 @@ const preReg = () => {
   return (
     <SafeAreaView style={{flex:1, backgroundColor:"white"}}>
       <Image source={images.header} style={{position:"absolute", width:430, height:275}}/>
-      <View style={{alignItems:'flex-start', width:"100%", paddingHorizontal:20}}>
-        <ImageButton
-          source={require("../assets/back.png")}
-          imageSize={{width:24, height:24}}
-          onPress={() => router.back('/welcomePage')}
-        />
+      <View style={{alignItems:'flex-start', width:"100%", paddingHorizontal:16}}>
+      <TouchableOpacity onPress={() => router.back('welcomePage')}>
+      <Ionicons name='chevron-back' size={32} color='white'/>
+      </TouchableOpacity>
       </View>
       <Text style={{fontFamily:"Poppins-Bold", fontSize: 24, paddingLeft: 25, paddingTop: 100, color: '#FAF5E1'}}>Which one are you?</Text>
       <View style={{flexDirection: 'row', justifyContent: 'space-around', paddingTop: 50 }}>
@@ -43,7 +41,7 @@ const preReg = () => {
             onPress={() => handleButtonPress(1)}
           >
             <Image
-            source={require('../assets/userIcon.png')}
+            source={require('../../assets/userIcon.png')}
             style={styles.image}
             />
             <Text style={[styles.buttonText, {}]}>User</Text>
@@ -57,7 +55,7 @@ const preReg = () => {
             onPress={() => handleButtonPress(2)}
           >
             <Image
-            source={require('../assets/businessIcon.png')}
+            source={require('../../assets/businessIcon.png')}
             style={styles.image}
             />
             <Text style={[styles.buttonText]}>Business Partner</Text>

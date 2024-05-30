@@ -15,6 +15,16 @@ const _layout = () => {
           options={{
             headerShown:false
           }}/>
+        <Stack.Screen
+          name="preReg"
+          options={{
+            headerShown:false
+          }}/>
+        <Stack.Screen
+          name="registerBP"
+          options={{
+            headerShown:false
+          }}/>
     </Stack>
   )
 }

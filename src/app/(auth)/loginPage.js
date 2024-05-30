@@ -4,41 +4,27 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Link, router } from 'expo-router';
 import { images } from '../../constants/images';
 import ImageButton from '../../components/ImageButton'
-import { auth } from '../../../firebase';
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { loginUser } from './authService';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const userAccount = {username:'user', password:'user'}
-  const businessAccount = {username:'business', password:'business'}
+  const handleLogin = async () => {
+    try {
+      const { user, data } = await loginUser(email, password)
 
-  const handleSignUp = () => {
-    createUserWithEmailAndPassword(auth, email, password)
-      .then(userCredentials => {
-        const user = userCredentials.user;
-        console.log(user.email);
-        router.push('/home')
-      })
-      .catch(error => alert(error.message));
-  };
-
-  const handleLogin = () => {
-    signInWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-      // Signed in 
-      const user = userCredential.user;
-      console.log(user.email)
-      router.replace('/home')
-    })
-    .catch((error) => {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-    });
-  };
-
-   
+      if(data.userType === 'free') {
+        router.replace('/home')
+      } else if (data.userType === 'business') {
+        router.replace('homeBP')
+      } else {
+        Alert.alert('Login Failed')
+      }
+    } catch (error) {
+      Alert.alert('Login Failed', error.message)
+    }
+  }
 
   return (
     <SafeAreaView style={{flex:1, backgroundColor:"white", alignItems:"center"}}>
