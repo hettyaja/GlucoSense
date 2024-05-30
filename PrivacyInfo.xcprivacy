@@ -1,0 +1,36 @@
+{
+  "privacySettings": {
+    "APIs": [
+      {
+        "usage": {
+          "title": "Bluetooth Usage",
+          "purpose": "Bluetooth is used to connect to glucose monitoring devices.",
+          "properties": {
+            "isUserTracking": false,
+            "dataTypes": ["Health Data"],
+            "dataRetentionPolicy": "Retained until user deletes the data."
+          }
+        }
+      },
+      {
+        "usage": {
+          "title": "Location Usage",
+          "purpose": "Location data is required for Bluetooth functionality.",
+          "properties": {
+            "isUserTracking": false,
+            "dataTypes": ["Location"],
+            "dataRetentionPolicy": "Not retained."
+          }
+        }
+      }
+    ],
+    "DataUse": [
+      {
+        "purpose": "App Functionality",
+        "dataTypes": ["Health Data", "Location"],
+        "dataRetentionPolicy": "Retained until user deletes the data.",
+        "isUserTracking": false
+      }
+    ]
+  }
+}

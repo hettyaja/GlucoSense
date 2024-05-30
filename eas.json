@@ -1,0 +1,17 @@
+{
+    "build": {
+      "development": {
+        "developmentClient": true,
+        "distribution": "internal"
+      },
+      "preview": {
+        "distribution": "internal"
+      },
+      "production": {},
+      "ios": {
+        "env": {
+            "PRIVACY_MANIFEST_PATH": "./PrivacyInfo.xcprivacy"
+          }
+      }
+    }
+  }
