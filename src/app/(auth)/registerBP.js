@@ -1,23 +1,41 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { images } from '../../constants/images';
-import ImageButton from '../../components/ImageButton';
 import Ionicons from 'react-native-vector-icons/Ionicons'
+import { registerUser } from './authService';
 
 const BusinessRegister= () => {
-        const handleRegister = () => {
-        // handle register
-        console.log('Register button pressed');
-        };
+    const [entityName, setEntityName] = useState('')
+    const [UEN, setUEN] = useState('')
+    const [NRIC, setNRIC] = useState('')
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const [confirmPassword, setConfirmPassword] = useState('')
 
-        const handleBack = () => {
-        // handle back
-        console.log('Back button pressed');
-        };
+    const handleSignUp = async () => {
+        if(password !== confirmPassword) {
+            alert('Password do not match!')
+            return;
+        }
+
+        try {
+            const additionalData = {
+                entityName,
+                UEN,
+                NRIC,
+                email,
+                userType: 'business'
+            }
+            const user = await registerUser(email, password, additionalData)
+            router.replace('/homeBP')
+        } catch (error) {
+            alert(error.message)
+        }
+    }
+
     return (
-    
     <SafeAreaView style={styles.safeArea}>
       <Image source={images.header} style={{position:"absolute", width:430, height:275}}/>
       <View style={{alignItems:'flex-start', width:"100%", paddingHorizontal:16}}>
@@ -25,7 +43,7 @@ const BusinessRegister= () => {
             <Ionicons name='chevron-back' size={32} color='white'/>
         </TouchableOpacity>
 
-        <Text style={{fontFamily:"Poppins-Bold", fontSize: 24, paddingLeft: 25, paddingTop: 75, color: '#FAF5E1'}}>Business{'\n'}registration{'\n'}details</Text>
+        <Text style={{fontFamily:"Poppins-Bold", fontSize: 24, paddingLeft: 25, paddingTop: 50, color: 'white'}}>Business{'\n'}registration{'\n'}details</Text>
       </View>
       <View style={{paddingTop:50}}>
         <Text style={{
@@ -38,7 +56,12 @@ const BusinessRegister= () => {
             Entity Name
         </Text>
         <View style={{ paddingLeft: 10, paddingRight: 10, flexDirection:'row', paddingBottom:2, marginBottom: 15}}>
-            <TextInput style={styles.input}  keyboardType="default" />
+            <TextInput
+                style={styles.input}
+                keyboardType="default"
+                value={entityName}
+                onChangeText={text => setEntityName(text)}
+            />
         </View>
 
         <Text style={{
@@ -51,7 +74,11 @@ const BusinessRegister= () => {
             Unique Entity Number (UEN)
         </Text>
         <View style={{ paddingLeft: 10, paddingRight: 10, flexDirection:'row', paddingBottom:2, marginBottom: 15}}>
-            <TextInput style={styles.input} secureTextEntry={true} />
+            <TextInput
+                style={styles.input}
+                value={UEN}
+                onChangeText={text => setUEN(text)}
+            />
         </View>
 
         <Text style={{
@@ -64,7 +91,28 @@ const BusinessRegister= () => {
             Contract Signee NRIC
         </Text>
         <View style={{ paddingLeft: 10, paddingRight: 10, flexDirection:'row', paddingBottom:2, marginBottom:15}}>
-            <TextInput style={styles.input} secureTextEntry={true} />
+            <TextInput
+                style={styles.input}
+                value={NRIC}
+                onChangeText={text => setNRIC(text)}
+            />
+        </View>
+
+        <Text style={{
+            fontFamily: 'Poppins-Medium',
+            fontSize: 14,
+            fontWeight: '500',
+            color: '#333',
+            paddingLeft: 12
+            }}>
+            Email
+        </Text>
+        <View style={{ paddingLeft: 10, paddingRight: 10, flexDirection:'row', paddingBottom:2, marginBottom:15}}>
+            <TextInput
+                style={styles.input}
+                value={email}
+                onChangeText={text => setEmail(text)}
+            />
         </View>
 
         <Text style={{
@@ -78,7 +126,12 @@ const BusinessRegister= () => {
         </Text>
         </View>
         <View style={{ paddingLeft: 10, paddingRight: 10, flexDirection:'row', paddingBottom:2, marginBottom:15}}>
-            <TextInput style={styles.input} secureTextEntry={true} />
+            <TextInput
+                style={styles.input}
+                secureTextEntry={true}
+                value={password}
+                onChangeText={text => setPassword(text)}
+            />
         </View>
 
         <Text style={{
@@ -91,22 +144,27 @@ const BusinessRegister= () => {
             Confirm Password
         </Text>
         <View style={{ paddingLeft: 10, paddingRight: 10, flexDirection:'row',paddingBottom:2, marginBottom: 25}}>
-            <TextInput style={styles.input} secureTextEntry={true} />
+            <TextInput
+                style={styles.input}
+                secureTextEntry={true}
+                value={confirmPassword}
+                onChangeText={text => setConfirmPassword(text)}
+            />
         </View>
         
-        <View style={{ paddingBottom:10, alignItems:'center', paddingTop:50}}>
-        <TouchableOpacity onPress={() => router.push('/(tabsBP)/homeBP')} style={styles.registerButtonContainer}>
+        <View style={{ paddingBottom:10, alignItems:'center'}}>
+        <TouchableOpacity onPress={() => handleSignUp()} style={styles.registerButtonContainer}>
             <Text style={styles.registerButtonText}> Register </Text>
         </TouchableOpacity>
         </View>
         
         <View style={{ alignItems:'center',flexDirection:'row', marginBottom: 5, justifyContent: 'center'}}>
-        <Text style={{fontSize: 14, alignItems:'center', textAlign: 'center', marginTop: 20, fontFamily: 'Poppins-Medium'}}> Already have an account? 
+        <Text style={{fontSize: 14, alignItems:'center', textAlign: 'center', marginTop: 10, fontFamily: 'Poppins-Medium'}}> Already have an account? 
         </Text>
         </View>
         
         <View style={{ alignItems:'center'}}>
-        <TouchableOpacity onPress={() => {}}>
+        <TouchableOpacity onPress={() => router.push('/loginPage')}>
             <Text style={{ alignItems:'center', fontFamily: 'Poppins-Medium', fontSize: 14, paddingBottom: 35, color: '#0044CC', justifyContent: 'center', textAlign: 'center', fontFamily:'Poppins-Medium'}}> Log In </Text>
         </TouchableOpacity> 
         </View>

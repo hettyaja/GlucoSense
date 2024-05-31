@@ -31,17 +31,6 @@ const FreemiumRegister= () => {
             alert(error.message)
         }
     }
-
-    // const handleSignUp = () => {
-    //     createUserWithEmailAndPassword(auth, email, password)
-    //       .then(userCredentials => {
-    //         const user = userCredentials.user;
-    //         console.log(user.email);
-    //         router.push('/home')
-    //       })
-    //       .catch(error => alert(error.message));
-    //   };
-
     return (
     
     <SafeAreaView style={styles.safeArea}>
@@ -152,7 +141,7 @@ const FreemiumRegister= () => {
         </View>
         
         <View style={{alignItems:'center', paddingTop:50}}>
-        <TouchableOpacity onPress={() => {handleSignUp()}} style={styles.registerButtonContainer}>
+        <TouchableOpacity onPress={() => handleSignUp()} style={styles.registerButtonContainer}>
             <Text style={styles.registerButtonText}> Register </Text>
         </TouchableOpacity>
         </View>

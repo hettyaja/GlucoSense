@@ -37,19 +37,18 @@ const _layout = () => {
             <Stack.Screen name="(getStarted)" options={{ headerShown:false}}/>
             <Stack.Screen name="(auth)" options={{ headerShown:false}}/>
             <Stack.Screen name="welcomePage" options={{ headerShown:false}}/>
-            <Stack.Screen name="preReg" options={{ headerShown:false}}/>
             <Stack.Screen name="getStartedBP" options={{ headerShown:false}}/>
             <Stack.Screen name="(question)" options={{headerShown:false}}/>
             <Stack.Screen name="(tabs)" options={{ headerShown:false}}/>
             <Stack.Screen name="(tabsBP)" options={{ headerShown:false}}/>
             <Stack.Screen name="(resetPwd)" options={{ headerShown:false}}/>
-            <Stack.Screen name="registerBP" options={{ headerShown:false}}/>
             <Stack.Screen name="addMeds"/>
             <Stack.Screen name="addGlucose"/>
             <Stack.Screen name="EditRecipePage"/>
             <Stack.Screen name="CreateRecipePage"/>
             <Stack.Screen name="ViewAndSearchDietPlan"/>
             <Stack.Screen name="CreateDietPlan"/>
+            <Stack.Screen name="searchFood"/>
             <Stack.Screen name="details" options={{
               title: 'Details',
               headerStyle: { backgroundColor: '#E58B68' },
