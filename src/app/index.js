@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image } from 'react-native'
+import { StyleSheet, Text, View, Image, ActivityIndicator} from 'react-native'
 import React from 'react'
 import { Link , Redirect} from 'expo-router'
 
@@ -9,7 +9,7 @@ const index = () => {
   //     <Link href="/welcome1">Go To welcome 1</Link>
   //   </View>
   // );
-  return <Redirect href="home"/>
+  return <Redirect href="getStartedPage_1"/>
 }
 
 export default index

@@ -11,10 +11,10 @@ import { images } from '../../constants/images'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import { useProfile } from '../context/ProfileContext'
-import { auth } from '../../../firebase';
-import { getAuth, signOut } from "firebase/auth";
+import { useAuth } from '../context/authContext'
 
 const setting = () => {
+  const { logout } = useAuth()
   const { profileData } =  useProfile()
   const [isModalVisible, setModalVisible] = useState(false)
   const [glucoseUnit, setGlucoseUnit] = useState('mmoL/L')
@@ -22,12 +22,8 @@ const setting = () => {
   const [modalType, setModalType] = useState('')
   const [photoUri, setPhotoUri] = useState('https://reactnative.dev/img/tiny_logo.png')
 
-  const handleSignOut = () => {
-    signOut(auth).then(() => {
-      router.replace('/loginPage')
-    }).catch((error) => {
-      // An error happened.
-    });
+  const handleSignOut = async () => {
+    await logout()
   }
 
 

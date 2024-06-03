@@ -1,14 +1,110 @@
-// _layout.js
-import {React, useEffect, useState} from 'react'
-import { Text, TouchableOpacity, StyleSheet } from 'react-native'
-import { Stack } from 'expo-router'
-import { useFonts } from 'expo-font'
+import React, { useEffect } from 'react';
+import { Stack, router, useSegments } from 'expo-router';
+import { useFonts } from 'expo-font';
 import ImageButton from '../components/ImageButton';
-import { router, Tabs } from 'expo-router'
 import { BPProfileProvider } from './context/BPProfileContext';
-import { ProfileProvider } from './context/ProfileContext'
+import { ProfileProvider } from './context/ProfileContext';
 import { DietPlanProvider } from './context/DietPlanContext';
-import { RecipeContext, RecipeProvider } from './context/RecipeContext';
+import { RecipeProvider } from './context/RecipeContext';
+import { AuthProvider, useAuth } from './context/authContext';
+
+const RootLayout = () => {
+  const { isAuthenticated, userType } = useAuth();
+
+  useEffect(() => {
+    if (typeof isAuthenticated === 'undefined') return;
+    // const inApp = useSegments[0] == ('(tabs)')
+
+    if (isAuthenticated) {
+      router.replace('/home')
+    } else if (isAuthenticated == false) {
+      router.replace('/loginPage');
+    }
+  }, [isAuthenticated, userType]);
+
+  // useEffect(() => {
+    // if (isAuthenticated === undefined) {
+    //   router.replace('/loginPage');
+    // } else if (isAuthenticated === true) {
+    //   if (userType === 'free') {
+    //     router.replace('/home');
+    //   } else if (userType === 'business') {
+    //     router.replace('/homeBP');
+    //   }
+    // }
+  // }, [isAuthenticated, userType]);
+
+  return (
+    <Stack>
+      {/* Define your stack screens here */}
+      <Stack.Screen name="index" />
+      <Stack.Screen name="(getStarted)" options={{ headerShown: false }} />
+      <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+      <Stack.Screen name="welcomePage" options={{ headerShown: false }} />
+      <Stack.Screen name="getStartedBP" options={{ headerShown: false }} />
+      <Stack.Screen name="(question)" options={{ headerShown: false }} />
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen name="(tabsBP)" options={{ headerShown: false }} />
+      <Stack.Screen name="(resetPwd)" options={{ headerShown: false }} />
+      <Stack.Screen name="addMeds" />
+      <Stack.Screen name="addGlucose" />
+      <Stack.Screen name="EditRecipePage" />
+      <Stack.Screen name="CreateRecipePage" />
+      <Stack.Screen name="ViewAndSearchDietPlan" />
+      <Stack.Screen name="CreateDietPlan" />
+      <Stack.Screen name="searchFood" />
+      <Stack.Screen name="details" options={{
+        title: 'Details',
+        headerStyle: { backgroundColor: '#E58B68' },
+        headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold' },
+        headerLeft: () => (
+          <ImageButton
+            source={require("../assets/back.png")}
+            imageSize={{ width: 24, height: 24 }}
+            customStyle={{ paddingLeft: 10 }}
+            onPress={() => router.back('/registerPage')}
+          />
+        ),
+        headerTitle: 'Details',
+        headerTitleAlign: 'center',
+      }} />
+      <Stack.Screen name="Subscribe" options={{ headerShown: false }} />
+      <Stack.Screen name="profileBP" />
+      <Stack.Screen name="addMeals" />
+      <Stack.Screen name='ReportProblem' options={{
+        title: 'ReportProblem',
+        headerStyle: { backgroundColor: '#E58B68' },
+        headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold' },
+        headerLeft: () => (
+          <ImageButton
+            source={require("../assets/back.png")}
+            imageSize={{ width: 24, height: 24 }}
+            customStyle={{ paddingLeft: 10 }}
+            onPress={() => router.back('/registerPage')}
+          />
+        ),
+        headerTitle: 'Help & Feedback',
+        headerTitleAlign: 'center',
+      }} />
+      <Stack.Screen name='Notification' options={{
+        title: 'Notification',
+        headerStyle: { backgroundColor: '#E58B68' },
+        headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold' },
+        headerLeft: () => (
+          <ImageButton
+            source={require("../assets/back.png")}
+            imageSize={{ width: 24, height: 24 }}
+            customStyle={{ paddingLeft: 10 }}
+            onPress={() => router.back('/settingBP')}
+          />
+        ),
+        headerTitle: 'Notification',
+        headerTitleAlign: 'center',
+      }} />
+      <Stack.Screen name='profile' />
+    </Stack>
+  );
+};
 
 const _layout = () => {
   const [fontsLoaded] = useFonts({
@@ -23,107 +119,23 @@ const _layout = () => {
     "Poppins-Thin": require("../assets/fonts/Poppins-Thin.ttf"),
   });
 
-  if(!fontsLoaded) {
+  if (!fontsLoaded) {
     return null;
   }
 
   return (
-    <RecipeProvider>
-    <DietPlanProvider>
-    <ProfileProvider>
-      <BPProfileProvider>
-        <Stack>
-            <Stack.Screen name="index"/>
-            <Stack.Screen name="(getStarted)" options={{ headerShown:false}}/>
-            <Stack.Screen name="(auth)" options={{ headerShown:false}}/>
-            <Stack.Screen name="welcomePage" options={{ headerShown:false}}/>
-            <Stack.Screen name="getStartedBP" options={{ headerShown:false}}/>
-            <Stack.Screen name="(question)" options={{headerShown:false}}/>
-            <Stack.Screen name="(tabs)" options={{ headerShown:false}}/>
-            <Stack.Screen name="(tabsBP)" options={{ headerShown:false}}/>
-            <Stack.Screen name="(resetPwd)" options={{ headerShown:false}}/>
-            <Stack.Screen name="addMeds"/>
-            <Stack.Screen name="addGlucose"/>
-            <Stack.Screen name="EditRecipePage"/>
-            <Stack.Screen name="CreateRecipePage"/>
-            <Stack.Screen name="ViewAndSearchDietPlan"/>
-            <Stack.Screen name="CreateDietPlan"/>
-            <Stack.Screen name="searchFood"/>
-            <Stack.Screen name="details" options={{
-              title: 'Details',
-              headerStyle: { backgroundColor: '#E58B68' },
-              headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold'},
-              headerLeft: () => (
-                <ImageButton
-                  source={require("../assets/back.png")}
-                  imageSize={{width:24, height:24}}
-                  customStyle={{paddingLeft:10}}
-                  onPress={() => router.back('/registerPage')} //Perbaiki 
-                />
-              ),
-              headerTitle: 'Details',
-              headerTitleAlign: 'center',
-            }} />
-            <Stack.Screen name="Subscribe" options={{ headerShown:false}}/>
-            {/* THIS IS THE SAVE BUTTON PART */}
-            <Stack.Screen name="profileBP"/>
-            <Stack.Screen name="addMeals"/>
-            <Stack.Screen name='ReportProblem' options={{
-              title: 'ReportProblem',
-              headerStyle: { backgroundColor: '#E58B68' },
-              headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold'},
-              headerLeft: () => (
-                <ImageButton
-                  source={require("../assets/back.png")}
-                  imageSize={{width:24, height:24}}
-                  customStyle={{paddingLeft:10}}
-                  onPress={() => router.back('/registerPage')} //Perbaiki 
-                />
-              ),
-              headerTitle: 'Help & Feedback',
-              headerTitleAlign: 'center',
-              tabBarIcon: ({ color, size }) => (
-                <TabIcon icon={images.more} size={size} />
-              ),
-            }} />
+    <AuthProvider>
+      <RecipeProvider>
+        <DietPlanProvider>
+          <ProfileProvider>
+            <BPProfileProvider>
+              <RootLayout />
+            </BPProfileProvider>
+          </ProfileProvider>
+        </DietPlanProvider>
+      </RecipeProvider>
+    </AuthProvider>
+  );
+};
 
-            <Stack.Screen name='Notification' options={{
-              title: 'Notification',
-              headerStyle: { backgroundColor: '#E58B68' },
-              headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold'},
-              headerLeft: () => (
-                <ImageButton
-                  source={require("../assets/back.png")}
-                  imageSize={{width:24, height:24}}
-                  customStyle={{paddingLeft:10}}
-                  onPress={() => router.back('/settingBP')} //Perbaiki 
-                />
-              ),
-      
-              headerTitle: 'Notification',
-              headerTitleAlign: 'center',
-              tabBarIcon: ({ color, size }) => (
-                <TabIcon icon={images.more} size={size} />
-              ), 
-              }} />
-
-
-            <Stack.Screen name='profile'/>
-            {/* <Stack.Screen name="(auth)"/> */}
-        </Stack>
-      </BPProfileProvider>
-    </ProfileProvider>
-    </DietPlanProvider>
-    </RecipeProvider>
-  )
-}
-
-export default _layout
-
-const styles = StyleSheet.create({
-  button: {
-    borderWidth:1,
-    borderColor:'white',
-    borderRadius:8,
-  }
-})
+export default _layout;

@@ -4,9 +4,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { images } from '../../constants/images';
 import Ionicons from 'react-native-vector-icons/Ionicons'
-import { registerUser } from './authService';
+// import { useAuth } from '../context/authContext'
 
 const BusinessRegister= () => {
+    // const { register } = useAuth()
     const [entityName, setEntityName] = useState('')
     const [UEN, setUEN] = useState('')
     const [NRIC, setNRIC] = useState('')
@@ -28,8 +29,7 @@ const BusinessRegister= () => {
                 email,
                 userType: 'business'
             }
-            const user = await registerUser(email, password, additionalData)
-            router.replace('/homeBP')
+            const user = await register(email, password, additionalData)
         } catch (error) {
             alert(error.message)
         }

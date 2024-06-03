@@ -4,23 +4,16 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Link, router } from 'expo-router';
 import { images } from '../../constants/images';
 import ImageButton from '../../components/ImageButton'
-import { loginUser } from './authService';
+import { useAuth } from '../context/authContext'
 
 const Login = () => {
+  const { login } = useAuth()
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleLogin = async () => {
     try {
-      const { user, data } = await loginUser(email, password)
-
-      if(data.userType === 'free') {
-        router.replace('/home')
-      } else if (data.userType === 'business') {
-        router.replace('homeBP')
-      } else {
-        Alert.alert('Login Failed')
-      }
+      await login(email, password)
     } catch (error) {
       Alert.alert('Login Failed', error.message)
     }
