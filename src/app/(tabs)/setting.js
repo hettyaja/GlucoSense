@@ -86,7 +86,7 @@ const setting = () => {
         </View>
       </TouchableOpacity>
       <View style={styles.section}>
-        <TouchableOpacity style={styles.button} onPress={() => router.push('test')}>
+        <TouchableOpacity style={styles.button} onPress={() => router.push('/application')}>
           <MaterialCommunityIcons name="bluetooth-connect" size={24} color="#000" />
           <Text style={styles.buttonText}>Connect glucose meter</Text>
         </TouchableOpacity>

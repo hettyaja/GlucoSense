@@ -3,7 +3,6 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import React from 'react'
 
 import { images } from '../constants/images'
-import CustomButton from '../components/CustomButton'
 import { router } from 'expo-router'
 
 const welcomePage = () => {
@@ -28,19 +27,33 @@ const welcomePage = () => {
             Join with Us & Enjoy Healthy Life!
         </Text>
 
-        <CustomButton
-            title="Let's get started"
+        <TouchableOpacity
             onPress={() => router.push("/preReg")}
-            buttonColor="#26513A"
-            customStyle={{ marginTop: 20 }}
-        />
+            style={[{
+            marginTop: 20,
+            backgroundColor:"#26513A",
+            borderRadius:8,
+            width:"55%",
+            height:"5%",
+            alignItems:'center',
+            justifyContent:'center',
+            }]}>
+                <Text style={{color:"#FFFFFF", fontFamily:"Poppins-Bold", fontSize:13}}>{"Let's get started"}</Text>
+        </TouchableOpacity>
 
-        <CustomButton
-            title="Sign in"
-            onPress={() => router.push("/loginPage")}
-            buttonColor="#E58B68"
-            customStyle={{ marginTop: 20 }}
-        />
+        <TouchableOpacity
+            onPress={() => router.push("/home")}
+            style={[{
+            marginTop: 20,
+            backgroundColor:"#E58B68",
+            borderRadius:8,
+            width:"55%",
+            height:"5%",
+            alignItems:'center',
+            justifyContent:'center',
+            }]}>
+                <Text style={{color:"#FFFFFF", fontFamily:"Poppins-Bold", fontSize:13}}>{"Sign in"}</Text>
+        </TouchableOpacity>
     </SafeAreaView>
   )
 }

@@ -1,17 +1,19 @@
 {
-    "build": {
-      "development": {
-        "developmentClient": true,
-        "distribution": "internal"
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal"
+    },
+    "preview": {
+      "distribution": "internal"
+    },
+    "production": {
+      "android": {
+        "releaseChannel": "default"
       },
-      "preview": {
-        "distribution": "internal"
-      },
-      "production": {},
       "ios": {
-        "env": {
-            "PRIVACY_MANIFEST_PATH": "./PrivacyInfo.xcprivacy"
-          }
+        "releaseChannel": "default"
       }
     }
   }
+}
