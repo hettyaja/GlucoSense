@@ -8,10 +8,19 @@ import Octicons from 'react-native-vector-icons/Octicons'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
+import { useAuth } from '../context/authContext';
+
 
 const settingBP = () => {
+    const { logout } = useAuth();
     const router = useRouter();
     const { BPProfileData } = useBPProfile();
+
+    const handleSignOut = async () => {
+      await logout()
+    }
+  
+
 
     return (
       <>
@@ -45,7 +54,7 @@ const settingBP = () => {
               <Octicons name='report' size={24} style={styles.icon}/>
                 <Text style={styles.optionButtonText}>Report problem</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.optionButton} onPress={() => router.push('/welcomePage')}>
+            <TouchableOpacity style={styles.optionButton} onPress={() => handleSignOut()}>
                 <MaterialIcons name='logout' size={24} style={styles.icon}/>
                 <Text style={styles.optionButtonText}>Log out</Text>
             </TouchableOpacity>

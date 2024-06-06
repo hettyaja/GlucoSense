@@ -3,10 +3,10 @@ import { Image, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, Vie
 import { images } from '../../constants/images'
 import { router } from 'expo-router'
 import ImageButton from '../../components/ImageButton'
-// import {useAuth } from '../context/authContext'
+import {useAuth } from '../context/authContext'
 
 const FreemiumRegister= () => {
-    // const {register} = useAuth()
+    const {register} = useAuth()
     const [username ,setUsername] = useState('')
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
@@ -26,7 +26,6 @@ const FreemiumRegister= () => {
                 userType: 'free'
             }
             const user = await register(email, password, additionalData)
-            router.replace('/home')
         } catch (error) {
             alert(error.message)
         }

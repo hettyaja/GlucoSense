@@ -16,7 +16,11 @@ const RootLayout = () => {
     // const inApp = useSegments[0] == ('(tabs)')
 
     if (isAuthenticated) {
-      router.replace('/home')
+      if (userType === 'free') {
+        router.replace('/home')
+      } else if (userType === 'business') {
+        router.replace('homeBP')
+      }
     } else if (isAuthenticated == false) {
       router.replace('/loginPage');
     }

@@ -4,10 +4,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { images } from '../../constants/images';
 import Ionicons from 'react-native-vector-icons/Ionicons'
-// import { useAuth } from '../context/authContext'
+import { useAuth } from '../context/authContext'
 
 const BusinessRegister= () => {
-    // const { register } = useAuth()
+    const { register } = useAuth()
     const [entityName, setEntityName] = useState('')
     const [UEN, setUEN] = useState('')
     const [NRIC, setNRIC] = useState('')

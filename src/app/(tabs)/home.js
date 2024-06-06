@@ -7,7 +7,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import Fontisto from 'react-native-vector-icons/Fontisto'
 import Ionicons from 'react-native-vector-icons/Ionicons'
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
+import Feather from 'react-native-vector-icons/Feather'
 import Modal from 'react-native-modal'
 
 const home = () => {
@@ -102,7 +102,7 @@ const home = () => {
                   <Text style={styles.buttonText}>5.7 mmol/L</Text>
                   <Text style={styles.buttonText2}>1:33 PM</Text>
                 </View>
-                <Ionicons name='chevron-forward' size={24} color='#808080'/>
+                <Feather name='more-vertical' size={24}/>
               </View>
             </TouchableOpacity>
             <View style={{borderBottomColor:'#d9d9d9', borderBottomWidth:1}}/>
@@ -113,7 +113,7 @@ const home = () => {
                   <Text style={styles.buttonText}>2 Pills</Text>
                   <Text style={styles.buttonText2}>1:53 PM</Text>
                 </View>
-                <Ionicons name='chevron-forward' size={24} color='#808080'/>
+                <Feather name='more-vertical' size={24}/>
               </View>
             </TouchableOpacity>
             <View style={{borderBottomColor:'#d9d9d9', borderBottomWidth:1}}/>
@@ -124,7 +124,7 @@ const home = () => {
                   <Text style={styles.buttonText}>500 Carbs</Text>
                   <Text style={styles.buttonText2}>1:59 PM</Text>
                 </View>
-                <Ionicons name='chevron-forward' size={24} color='#808080'/>
+                <Feather name='more-vertical' size={24}/>
               </View>
             </TouchableOpacity>
           </View>
