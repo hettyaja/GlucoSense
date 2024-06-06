@@ -1,5 +1,5 @@
 import { View, Text, Dimensions, ScrollView, TouchableOpacity, FlatList, StyleSheet, Button} from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { LineChart, BarChart, PieChart, ProgressChart, ContributionGraph, StackedBarChart } from "react-native-chart-kit";
 import { router, Tabs } from 'expo-router';
 import { useProfile } from '../context/ProfileContext'
@@ -9,12 +9,34 @@ import Fontisto from 'react-native-vector-icons/Fontisto'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import Feather from 'react-native-vector-icons/Feather'
 import Modal from 'react-native-modal'
+import { useAuth } from '../context/authContext';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../../../firebase'; 
 
 const home = () => {
+  const { user } = useAuth()
   const [isModalVisible, setModalVisible] = useState(false)
   const [isDateModalVisible, setDateModalVisible] = useState(false)
   const [filterType, setFilterType] = useState('Display all')
   const [dateType, setDateType] = useState('Today')
+  const [username, setUsername] = useState('')
+
+  useEffect(() => {
+    const fetchUsername = async () => {
+      try {
+        if (user) {
+          const userDoc = await getDoc(doc(db, 'users', user.uid));
+          if (userDoc.exists()) {
+            setUsername(userDoc.data().username);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    fetchUsername();
+  }, [user]);
 
   const toggleModal = () => {
     setModalVisible(false)
@@ -46,7 +68,7 @@ const home = () => {
         headerLeft: () => (
           <View style={{flexDirection:'row', marginLeft:16}}>
             <Text style={{fontFamily:'Poppins-Regular', fontSize:16, color:'white'}}>Welcome, </Text>
-            <Text style={{fontFamily:'Poppins-SemiBold', fontSize:16, color:'white'}}>Agustianto</Text>
+            <Text style={{fontFamily:'Poppins-SemiBold', fontSize:16, color:'white'}}>{username}</Text>
           </View>
 
         ),
