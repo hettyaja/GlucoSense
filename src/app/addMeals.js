@@ -9,6 +9,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { useAuth } from './context/authContext';
+import { addMealLog } from './service/diaryService';
 
 const preReg = () => {
   const { user } = useAuth();
@@ -27,16 +28,25 @@ const preReg = () => {
   const saveMeals = async () => {
     if (user) {
       const newMealLog = {
-        meal: 'Lunch',
-        carbs: 50,
+        label: parsedMealData.label,
+        category: parsedMealData.category,
+        servings: parsedMealData.servings,
+        calories: parsedMealData.calories,
+        fat: parsedMealData.fat,
+        protein: parsedMealData.protein,
+        carbs: parsedMealData.carbs,
+        notes,
         timestamp: selectedDate,
+        period: selectedValue,
       };
 
-      console.log('User ID: ', user.uid);
-      console.log('Meal: ', newMealLog);
-      // await addMealLog(user.uid, newMealLog);
-      // Optionally refetch logs or update state directly
-      // setMealLogs((prevLogs) => [...prevLogs, { id: newMealLog.id, ...newMealLog }]);
+      try {
+        await addMealLog(user.uid, newMealLog);
+        console.log('Meal log saved:', newMealLog);
+        router.push('/home')
+      } catch (error) {
+        console.error('Error saving meal log:', error);
+      }
     }
   };
 
