@@ -7,14 +7,16 @@ import { Picker } from '@react-native-picker/picker';
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import Feather from 'react-native-vector-icons/Feather'
-
+import { useAuth } from './context/authContext';
+import { addGlucoseLog } from './service/diaryService';
 
 
 const preReg = () => {
+  const { user } = useAuth()
   const [selectedButton, setSelectedButton] = useState(null);
   const [selectedValue, setSelectedValue] = useState("Breakfast");
   const [selectedDate, setSelectedDate] = useState(new Date())
-  const [value, setValue] = useState('5.7');
+  const [glucoseValue, setGlucoseValue] = useState('');
 
   const handleChange = (text) => {
     // Allow only numbers and a single decimal point
@@ -25,11 +27,27 @@ const preReg = () => {
       return;
     }
 
-    setValue(newText);
+    setGlucoseValue(newText);
   };
-  const handleButtonPress = (buttonIndex) => {
-    setSelectedButton(buttonIndex === selectedButton ? null : buttonIndex);
+
+  const saveGlucose = async () => {
+    if (user) {
+      const newGlucoseLog = {
+        timestamp: selectedDate,
+        period: selectedValue,
+        glucoseValue: glucoseValue
+      }
+
+      try {
+        await addGlucoseLog(user.uid, newGlucoseLog)
+        console.log('Meal log saved:', newGlucoseLog);
+        router.replace('home')
+      } catch (error) {
+        console.error('Error saving meal log:', error);
+      }
+    }
   }
+
 
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
@@ -57,7 +75,7 @@ const preReg = () => {
                 <AntDesign name='close' size={24} color='white'/>
             </TouchableOpacity>
         ),headerRight: () => (
-            <TouchableOpacity onPress={() => router.push('/home')}>
+            <TouchableOpacity onPress={() => saveGlucose()}>
                 <Text style={{padding:2, marginHorizontal:8, fontFamily: 'Poppins-SemiBold', fontSize:16, color:'white'}}>Save</Text>
             </TouchableOpacity>
         ),
@@ -101,7 +119,7 @@ const preReg = () => {
             <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center', padding:16}}>
               <Text style={{fontSize: 16, fontFamily: 'Poppins-Medium'}}>Glucose</Text>
               <View style={{flexDirection:'row', alignItems:'center'}}>
-                <TextInput style={{fontFamily: 'Poppins-Medium', fontSize: 16, marginRight:16}}defaultValue={value} onChangeText={handleChange} keyboardType="numeric" maxLength={3} color= "#808080"></TextInput>
+                <TextInput style={{fontFamily: 'Poppins-Medium', fontSize: 16, marginRight:16}}defaultValue={glucoseValue} placeholder='000' onChangeText={handleChange} keyboardType="numeric" maxLength={3} color= "#808080"></TextInput>
                 <Text style={{fontFamily: 'Poppins-Regular', fontSize: 12}}>mmol/L</Text>
               </View>
             </View>

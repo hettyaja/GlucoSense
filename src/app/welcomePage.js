@@ -42,7 +42,7 @@ const welcomePage = () => {
         </TouchableOpacity>
 
         <TouchableOpacity
-            onPress={() => router.push("/home")}
+            onPress={() => router.push("/loginPage")}
             style={[{
             marginTop: 20,
             backgroundColor:"#E58B68",

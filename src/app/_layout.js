@@ -13,35 +13,34 @@ const RootLayout = () => {
 
   useEffect(() => {
     if (typeof isAuthenticated === 'undefined') return;
-    // const inApp = useSegments[0] == ('(tabs)')
 
     if (isAuthenticated) {
       if (userType === 'free') {
-        router.replace('/home')
+        router.replace('/addMeds')
       } else if (userType === 'business') {
         router.replace('homeBP')
       }
     } else if (isAuthenticated == false) {
-      router.replace('/loginPage');
+      router.replace('/welcomePage');
     }
   }, [isAuthenticated, userType]);
 
   // useEffect(() => {
-    // if (isAuthenticated === undefined) {
-    //   router.replace('/loginPage');
-    // } else if (isAuthenticated === true) {
-    //   if (userType === 'free') {
-    //     router.replace('/home');
-    //   } else if (userType === 'business') {
-    //     router.replace('/homeBP');
-    //   }
-    // }
-  // }, [isAuthenticated, userType]);
+  //   if (isAuthenticated === false) {
+  //     router.replace('/loginPage');
+  //   } else if (isAuthenticated === true) {
+  //     if (userType === 'free') {
+  //       router.replace('/home');
+  //     } else if (userType === 'business') {
+  //       router.replace('/homeBP');
+  //     }
+  //   }
+  // }, [isAuthenticated, userType])
 
   return (
     <Stack>
       {/* Define your stack screens here */}
-      <Stack.Screen name="index" />
+      <Stack.Screen name="index" options={{ headerShown: false}}/>
       <Stack.Screen name="(getStarted)" options={{ headerShown: false }} />
       <Stack.Screen name="(auth)" options={{ headerShown: false }} />
       <Stack.Screen name="welcomePage" options={{ headerShown: false }} />

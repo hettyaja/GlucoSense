@@ -1,15 +1,44 @@
-import { StyleSheet, Text, View, Image, ActivityIndicator} from 'react-native'
-import React from 'react'
-import { Link , Redirect} from 'expo-router'
+import { StyleSheet, Text, View, ActivityIndicator } from 'react-native';
+import React from 'react';
+import { Link, Redirect } from 'expo-router';
+import { useAuth } from './context/authContext';
 
-const index = () => {
-  // return (
-  //   <View className="flex-1 items-center justify-center bg-white">
-  //     <Text className="text-2xl">Hidasdsadsa</Text>
-  //     <Link href="/welcome1">Go To welcome 1</Link>
-  //   </View>
-  // );
-  return <Redirect href="getStartedPage_1"/>
-}
+const Index = () => {
+  // const { isAuthenticated, userType } = useAuth();
+  // console.log(isAuthenticated);
 
-export default index
+  // if (isAuthenticated === undefined) {
+  //   return (
+  //     <View style={styles.container}>
+  //       <ActivityIndicator size="large" color="#0000ff" />
+  //     </View>
+  //   );
+  // }
+
+  // if (isAuthenticated) {
+  //   if (userType === 'free') {
+  //     return <Redirect href="home" />;
+  //   } else if (userType === 'business') {
+  //     return <Redirect href="homeBP" />;
+  //   }
+  // } else {
+  //   return <Redirect href="getStartedPage_1" />;
+  // }
+
+  return (
+    <View style={styles.container}>
+      <ActivityIndicator size="large" color="#0000ff" />
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+  },
+});
+
+export default Index;

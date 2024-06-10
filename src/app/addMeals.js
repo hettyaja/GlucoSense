@@ -43,7 +43,7 @@ const preReg = () => {
       try {
         await addMealLog(user.uid, newMealLog);
         console.log('Meal log saved:', newMealLog);
-        router.push('/home')
+        router.replace('/home')
       } catch (error) {
         console.error('Error saving meal log:', error);
       }
@@ -158,7 +158,7 @@ const preReg = () => {
       </ScrollView>
       <DateTimePickerModal
         isVisible={isDatePickerVisible}
-        mode="datetime"
+        mode="time"
         onConfirm={handleConfirm}
         onCancel={hideDatePicker}
       />
