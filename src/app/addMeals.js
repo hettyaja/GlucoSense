@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, Button, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Alert, Button, TouchableOpacity, ScrollView, TextInput } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
@@ -10,14 +10,15 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { useAuth } from './context/authContext';
 import { addMealLog } from './service/diaryService';
+import Feather from 'react-native-vector-icons/Feather'
 
 const preReg = () => {
   const { user } = useAuth();
   const [selectedButton, setSelectedButton] = useState(null);
-  const [selectedValue, setSelectedValue] = useState("Breakfast");
+  const [selectedValue, setSelectedValue] = useState("Before breakfast");
   const [selectedDate, setSelectedDate] = useState(new Date());
   const { mealData } = useLocalSearchParams();
-  const parsedMealData = mealData ? JSON.parse(mealData) : null;
+  const [parsedMealData, setParsedMealData] = useState(mealData ? JSON.parse(mealData) : null);
 
   const [calories, setCalories] = useState(parsedMealData?.calories || 0);
   const [fat, setFat] = useState(parsedMealData?.fat || 0);
@@ -50,8 +51,27 @@ const preReg = () => {
     }
   };
 
-  const handleButtonPress = (buttonIndex) => {
-    setSelectedButton(buttonIndex === selectedButton ? null : buttonIndex);
+  const removeData = () => {
+    setParsedMealData(null),
+    setCalories(0),
+    setCarbs(0),
+    setFat(0),
+    setProtein(0)
+  }
+
+  const clearMealData = () => {
+    Alert.alert(
+      "Delete Meal",
+      "Are you sure you want to delete this meal?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+        { text: "Delete", onPress: () => removeData()}
+      ],
+      { cancelable: false }
+    );
   };
 
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
@@ -81,7 +101,7 @@ const preReg = () => {
             <AntDesign name='close' size={24} color='white' />
           </TouchableOpacity>
         ), headerRight: () => (
-          <TouchableOpacity style={styles.button} onPress={() => saveMeals()}>
+          <TouchableOpacity onPress={() => saveMeals()}>
             <Text style={{ padding: 2, marginHorizontal: 8, fontFamily: 'Poppins-SemiBold', fontSize: 16, color: 'white' }}>Save</Text>
           </TouchableOpacity>
         ),
@@ -91,7 +111,7 @@ const preReg = () => {
 
       <ScrollView style={{ flex: 1, backgroundColor: '#f5f5f5' }}>
         <View style={styles.section}>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16 }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16}}>
             <Text style={{ fontSize: 16, fontFamily: 'Poppins-Medium' }}>Time</Text>
             <TouchableOpacity onPress={showDatePicker}>
               <Text>{selectedDate.toLocaleString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', hour: 'numeric', minute: 'numeric' })}</Text>
@@ -115,50 +135,60 @@ const preReg = () => {
             </Picker>
           </View>
         </View>
-        <View style={{ flexDirection: 'row', alignSelf: 'center', marginTop: 20 }}>
-          <TouchableOpacity style={{ borderColor: '#808080', backgroundColor: "#ffffff", width: 160, height: 70, paddingVertical: 10, paddingHorizontal: 20, borderBottomLeftRadius: 8, borderRightWidth: 1, borderTopLeftRadius: 8, marginBottom: 10, elevation: 3, alignItems: 'center' }} onPress={() => router.push('/searchFood')}>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={[styles.button, {borderRightColor:'#808080', borderRightWidth:0.5}]} onPress={() => router.push('/searchFood')}>
             <Text style={styles.buttonText}>Search</Text>
             <Fontisto name="search" size={24} />
           </TouchableOpacity>
-          <TouchableOpacity style={{ borderColor: '#808080', backgroundColor: "#ffffff", width: 160, height: 70, paddingVertical: 10, paddingHorizontal: 20, borderBottomRightRadius: 8, borderLeftWidth: 1, borderTopRightRadius: 8, marginBottom: 10, elevation: 3, alignItems: 'center' }}>
+          <TouchableOpacity style={styles.button}>
             <Text style={styles.buttonText}>Scan</Text>
             <MaterialCommunityIcons name='barcode-scan' size={32} />
           </TouchableOpacity>
         </View>
         {parsedMealData && (
-          <View style={{ marginTop: 10, backgroundColor: 'white', paddingVertical: 12, paddingHorizontal: 30, elevation: 3, borderColor: '#808080', width: 320, alignSelf: 'center', borderRadius: 8, flexDirection: 'row' }}>
-            <Text>{parsedMealData.label}</Text>
-            <Text style={{ marginLeft: 120, color: '#808080' }}>{parsedMealData.servings} Serving</Text>
+          <View style={{flexDirection:'row', borderRadius:8, backgroundColor:'white',marginHorizontal:24, marginTop:16, padding:16, justifyContent:'space-between'}}>
+            <Text style={styles.itemTitle}>{parsedMealData.label}</Text>
+            <View style={{flexDirection:'row', alignItems:'center'}}>
+              <Text style={[styles.itemTitle, {paddingRight:8}]}>{parsedMealData.servings} Serving</Text>
+              {/* this clicked and will be an option to delete */}
+              <TouchableOpacity onPress={() => clearMealData()}>
+                <Feather name='trash-2' color='red' size={16}/>
+              </TouchableOpacity>
+            </View>
           </View>
         )}
-        <View style={{ marginTop: 20, backgroundColor: 'white', paddingVertical: 10, borderTopWidth: 1, borderBottomWidth: 1, justifyContent: 'space-between', borderColor: '#808080' }}>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-            <Text style={{ fontSize: 16, fontFamily: 'Poppins-Medium', marginLeft: 20, marginVertical: 3 }}>Calories</Text>
-            <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 12, marginRight: 40, marginTop: 6 }}>{calories} kcal</Text>
+        <View style={styles.section}>
+          <View style={styles.item}>
+            <Text style={styles.itemTitle}>Calories</Text>
+            <Text style={styles.itemTitle}>{calories} kcal</Text>
           </View>
-          <View style={{ borderBottomWidth: StyleSheet.hairlineWidth, borderColor: '#808080', width: 370, alignSelf: 'center' }} />
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
-            <Text style={{ fontSize: 16, fontFamily: 'Poppins-Medium', marginTop: 6, marginLeft: 20 }}>Carbs</Text>
-            <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 12, marginTop: 6, marginRight: 40 }}>{carbs} g</Text>
+          <View style={{ borderBottomWidth: StyleSheet.hairlineWidth, marginHorizontal: 16 }} />
+          <View style={styles.item}>
+            <Text style={styles.itemTitle}>Carbs</Text>
+            <Text style={styles.itemTitle}>{carbs} g</Text>
           </View>
-          <View style={{ borderBottomWidth: StyleSheet.hairlineWidth, borderColor: '#808080', width: 370, alignSelf: 'center' }} />
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
-            <Text style={{ fontSize: 16, fontFamily: 'Poppins-Medium', marginTop: 6, marginLeft: 20 }}>Protein</Text>
-            <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 12, marginTop: 6, marginRight: 40 }}>{protein} g</Text>
+          <View style={{ borderBottomWidth: StyleSheet.hairlineWidth, marginHorizontal: 16 }} />
+          <View style={styles.item}>
+            <Text style={styles.itemTitle}>Protein</Text>
+            <Text style={styles.itemTitle}>{protein} g</Text>
           </View>
-          <View style={{ borderBottomWidth: StyleSheet.hairlineWidth, borderColor: '#808080', width: 370, alignSelf: 'center' }} />
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
-            <Text style={{ fontSize: 16, fontFamily: 'Poppins-Medium', marginTop: 6, marginLeft: 20 }}>Fat</Text>
-            <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 12, marginTop: 6, marginRight: 40 }}>{fat} g</Text>
+          <View style={{ borderBottomWidth: StyleSheet.hairlineWidth, marginHorizontal: 16 }} />
+          <View style={styles.item}>
+            <Text style={styles.itemTitle}>Fat</Text>
+            <Text style={styles.itemTitle}>{fat} g</Text>
           </View>
-          <View style={{ borderBottomWidth: StyleSheet.hairlineWidth, borderColor: '#808080', width: 370, alignSelf: 'center' }} />
-          <Text style={{ fontSize: 16, fontFamily: 'Poppins-Medium', marginTop: 6, marginLeft: 20 }}>Notes{"\n\n\n"}</Text>
+          <View style={{ borderBottomWidth: StyleSheet.hairlineWidth, marginHorizontal: 16 }} />
+          <View style={styles.item}>
+            <Text style={styles.itemTitle}>Notes{"\n\n\n"}</Text>
+            <TextInput style={styles.itemTitle} placeholder='Add your notes'></TextInput>
+          </View>
+          
         </View>
         <Text>{"\n\n\n\n\n\n\n"}</Text>
       </ScrollView>
       <DateTimePickerModal
         isVisible={isDatePickerVisible}
-        mode="time"
+        mode="datetime"
         onConfirm={handleConfirm}
         onCancel={hideDatePicker}
       />
@@ -171,32 +201,35 @@ const styles = StyleSheet.create({
     borderColor: '#808080',
     borderTopWidth: 1,
     borderBottomWidth: 1,
-    marginVertical: 24
+    marginVertical: 24,
+  },
+  buttonContainer: {
+    backgroundColor:'white',
+    flexDirection:'row',
+    marginHorizontal:24,
+    justifyContent:'space-between',
+    borderRadius:8,
+  },
+  button: {
+    alignItems:'center',
+    padding:16,
+    width:'50%'
   },
   item: {
-    padding: 8,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection:'row',
+    justifyContent:'space-between',
+    paddingHorizontal:16,
+    paddingVertical:8
   },
-  selectedButton: {
-    backgroundColor: '#FAF5E1',
-    borderColor: '#E58B68',
+  itemTitle: {
+    fontSize:14,
+    fontFamily: "Poppins-Medium"
   },
   buttonText: {
-    fontSize: 12,
-    fontFamily: "Poppins-Regular",
+    fontSize: 14,
+    fontFamily: "Poppins-Medium",
     textAlign: 'center',
     color: 'black',
-  },
-  saveButtonContainer: {
-    borderColor: 'white',
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 3, // Adjust the padding to increase the width
-    paddingLeft: 10,
-    marginRight: 10,
-    alignItems: 'center',
   },
   picker: {
     fontFamily: 'Poppins-Regular',

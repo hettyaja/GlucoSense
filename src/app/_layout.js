@@ -15,27 +15,15 @@ const RootLayout = () => {
     if (typeof isAuthenticated === 'undefined') return;
 
     if (isAuthenticated) {
-      if (userType === 'free') {
-        router.replace('/addMeds')
-      } else if (userType === 'business') {
+      if (userType === 'user') {
+        router.replace('/addMeals')
+      } else if (userType === 'businessPartner') {
         router.replace('homeBP')
       }
     } else if (isAuthenticated == false) {
       router.replace('/welcomePage');
     }
   }, [isAuthenticated, userType]);
-
-  // useEffect(() => {
-  //   if (isAuthenticated === false) {
-  //     router.replace('/loginPage');
-  //   } else if (isAuthenticated === true) {
-  //     if (userType === 'free') {
-  //       router.replace('/home');
-  //     } else if (userType === 'business') {
-  //       router.replace('/homeBP');
-  //     }
-  //   }
-  // }, [isAuthenticated, userType])
 
   return (
     <Stack>
@@ -74,6 +62,7 @@ const RootLayout = () => {
       <Stack.Screen name="Subscribe" options={{ headerShown: false }} />
       <Stack.Screen name="profileBP" />
       <Stack.Screen name="addMeals" />
+      <Stack.Screen name="selectMedicine" />
       <Stack.Screen name='ReportProblem' options={{
         title: 'ReportProblem',
         headerStyle: { backgroundColor: '#E58B68' },

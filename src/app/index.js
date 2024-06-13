@@ -1,11 +1,11 @@
 import { StyleSheet, Text, View, ActivityIndicator } from 'react-native';
 import React from 'react';
-import { Link, Redirect } from 'expo-router';
+import { Link, Redirect, router } from 'expo-router';
 import { useAuth } from './context/authContext';
 
 const Index = () => {
-  // const { isAuthenticated, userType } = useAuth();
-  // console.log(isAuthenticated);
+  const { isAuthenticated, userType, resetAuth } = useAuth();
+  console.log(isAuthenticated);
 
   // if (isAuthenticated === undefined) {
   //   return (
@@ -21,11 +21,12 @@ const Index = () => {
   //   } else if (userType === 'business') {
   //     return <Redirect href="homeBP" />;
   //   }
-  // } else {
+  // } else if (isAuthenticated == false) {
   //   return <Redirect href="getStartedPage_1" />;
   // }
 
   return (
+    // <Redirect href="home" />
     <View style={styles.container}>
       <ActivityIndicator size="large" color="#0000ff" />
     </View>

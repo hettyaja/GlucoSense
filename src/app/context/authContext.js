@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'firebase/auth';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, collection } from 'firebase/firestore';
 import { auth, db } from '../../../firebase';
 
 const AuthContext = createContext();
@@ -15,7 +15,17 @@ export const AuthProvider = ({ children }) => {
             if (user) {
                 const userDoc = await getDoc(doc(db, 'users', user.uid));
                 if (userDoc.exists()) {
-                    setUserType(userDoc.data().userType);
+                    setUserType('user');
+                } else {
+                    const businessDoc = await getDoc(doc(db, 'businessPartner', user.uid))
+                    if (businessDoc.exists()) {
+                        setUserType('businessPartner')
+                    } else {
+                        const adminDoc = await getDoc(doc(db, 'systemAdmin', user.uid))
+                        if (adminDoc.exists()) {
+                            setUserType('systemAdmin')
+                        }
+                    }
                 }
                 setUser(user);
                 setIsAuthenticated(true);
@@ -32,10 +42,23 @@ export const AuthProvider = ({ children }) => {
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
+            const { userType, username, name, UEN, NRIC, entityName } = additionalData;
 
-            // Store additional data in Firestore
-            await setDoc(doc(db, 'users', user.uid), additionalData);
-
+            if (userType === 'free') {
+                await setDoc(doc(db, 'users', user.uid), {
+                    username,
+                    name,
+                    email: user.email,
+                    subscriptionType: 'free'
+                })
+            } else if (userType === 'businessPartner') {
+                await setDoc(doc(db, 'businessPartner', user.uid), {
+                    entityName,
+                    email: user.email,
+                    UEN,
+                    NRIC
+                })
+            }
             return user;
         } catch (error) {
             throw error;
@@ -58,8 +81,12 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const resetAuth = async () => {
+        setIsAuthenticated(false)
+    }
+
     return (
-        <AuthContext.Provider value={{ user, isAuthenticated, userType, login, register, logout }}>
+        <AuthContext.Provider value={{ user, isAuthenticated, userType, login, register, logout, resetAuth}}>
             {children}
         </AuthContext.Provider>
     );

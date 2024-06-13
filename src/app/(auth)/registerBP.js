@@ -26,8 +26,7 @@ const BusinessRegister= () => {
                 entityName,
                 UEN,
                 NRIC,
-                email,
-                userType: 'business'
+                userType: 'businessPartner'
             }
             const user = await register(email, password, additionalData)
         } catch (error) {

@@ -12,7 +12,6 @@ export const addMealLog = async (userId, mealLog) => {
     throw error;
   }
 };
-
 // Add a new glucose log
 export const addGlucoseLog = async (userId, glucoseLog) => {
   try {
@@ -85,3 +84,18 @@ export const getMedicineLogs = async (userId) => {
     throw error;
   }
 };
+
+export const getMedicine = async (userId) => {
+  try {
+    const medicinesRef = collection(db, 'users', userId, 'medicines')
+    const medicinesSnapshot = await getDocs(medicinesRef)
+    const medicinesList = medicinesSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }))
+    return medicinesList
+  } catch (error) {
+    
+    throw error;
+  }
+}
