@@ -52,7 +52,7 @@ const selectMedicine = () => {
     <>
       <Header
         title='Select meds'
-        leftButton='back'
+        leftButton='Back'
         onLeftButtonPress={handleBackPress}
         rightButton='Save'
         onRightButtonPress={saveMeds}
