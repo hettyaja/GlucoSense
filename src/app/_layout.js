@@ -7,6 +7,7 @@ import { ProfileProvider } from './context/ProfileContext';
 import { DietPlanProvider } from './context/DietPlanContext';
 import { RecipeProvider } from './context/RecipeContext';
 import { AuthProvider, useAuth } from './context/authContext';
+import { MenuProvider } from 'react-native-popup-menu';
 
 const RootLayout = () => {
   const { isAuthenticated, userType } = useAuth();
@@ -16,7 +17,7 @@ const RootLayout = () => {
 
     if (isAuthenticated) {
       if (userType === 'user') {
-        router.replace('/addMeals')
+        router.replace('/home')
       } else if (userType === 'businessPartner') {
         router.replace('homeBP')
       }
@@ -116,17 +117,19 @@ const _layout = () => {
   }
 
   return (
-    <AuthProvider>
-      <RecipeProvider>
-        <DietPlanProvider>
-          <ProfileProvider>
-            <BPProfileProvider>
-              <RootLayout />
-            </BPProfileProvider>
-          </ProfileProvider>
-        </DietPlanProvider>
-      </RecipeProvider>
-    </AuthProvider>
+    <MenuProvider>
+      <AuthProvider>
+        <RecipeProvider>
+          <DietPlanProvider>
+            <ProfileProvider>
+              <BPProfileProvider>
+                <RootLayout />
+              </BPProfileProvider>
+            </ProfileProvider>
+          </DietPlanProvider>
+        </RecipeProvider>
+      </AuthProvider>
+    </MenuProvider>
   );
 };
 

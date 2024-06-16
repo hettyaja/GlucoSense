@@ -1,7 +1,7 @@
 import { View, Text, Dimensions, ScrollView, TouchableOpacity, FlatList, StyleSheet, Button} from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { LineChart, BarChart, PieChart, ProgressChart, ContributionGraph, StackedBarChart } from "react-native-chart-kit";
-import { router, Tabs } from 'expo-router';
+import { router, Tabs, Stack } from 'expo-router';
 import { useProfile } from '../context/ProfileContext'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import AntDesign from 'react-native-vector-icons/AntDesign'
@@ -12,6 +12,7 @@ import Modal from 'react-native-modal'
 import { useAuth } from '../context/authContext';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../../firebase'; 
+import Header from '../../components/Header';
 
 const home = () => {
   const { user } = useAuth()
@@ -59,7 +60,13 @@ const home = () => {
 
   return (
     <>
-    <Tabs.Screen options={{
+    <Header
+      title = ''
+      leftButton='Home'
+      rightButton='Notification'
+      onRightButtonPress={() => router.push('reminder')}
+    />
+    {/* <Stack.Screen options={{
         title: '',
         headerStyle: { backgroundColor: '#E58B68' },
         headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold'},
@@ -77,7 +84,7 @@ const home = () => {
             <MaterialCommunityIcons name='bell-outline' size={24} color='white'/>
           </TouchableOpacity>
         ),
-      }}/>
+      }}/> */}
       <View style={styles.container}>
         <View style={styles.headerArea}>
           <View style={{flexDirection:'row', alignItems:'center', justifyContent:'space-between'}}>

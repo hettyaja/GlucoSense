@@ -1,32 +1,34 @@
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import { Stack, router } from 'expo-router'
-import Ionicons from 'react-native-vector-icons/Ionicons'
-import { getMedicine } from './service/diaryService'
-import { useAuth } from './context/authContext'
-import Checkbox from 'expo-checkbox'
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { getMedicine } from './service/diaryService';
+import { useAuth } from './context/authContext';
+import Checkbox from 'expo-checkbox';
+import PopupMenu from '../components/PopupMenu';
+import Header from '../components/Header';
+import { router } from 'expo-router';
 
 const selectMedicine = () => {
-  const { user } = useAuth()
-  const [medicines, setMedicines] = useState([])
-  const [selectedMedicines, setSelectedMedicines] = useState({})
+  const { user } = useAuth();
+  const [medicines, setMedicines] = useState([]);
+  const [selectedMedicines, setSelectedMedicines] = useState({});
 
   useEffect(() => {
     const fetchMedicines = async () => {
-      if(user) {
-        try { 
+      if (user) {
+        try {
           const medicinesList = await getMedicine(user.uid);
           setMedicines(medicinesList);
-        } catch(error) {
+        } catch (error) {
           console.error('Error fetching medicines:', error);
         }
       }
-    }
-    fetchMedicines()
-  }, [user])
+    };
+    fetchMedicines();
+  }, [user]);
 
   const toggleMedicineSelection = (id) => {
-    setSelectedMedicines(prevState => {
+    setSelectedMedicines((prevState) => {
       const newState = { ...prevState };
       if (newState[id]) {
         delete newState[id];
@@ -42,34 +44,29 @@ const selectMedicine = () => {
     console.log('Selected Medicines:', selectedMedicines);
   };
 
+  const handleBackPress = () => {
+    router.back(); // Default back action
+  };
+
   return (
     <>
-      <Stack.Screen options={{
-        title: 'Select meds',
-        headerStyle: { backgroundColor: '#E58B68' },
-        headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold'},
-        headerLeft: () => (
-            <TouchableOpacity onPress={() => router.back('/home')}>
-                <Ionicons name='chevron-back' size={24} color='white'/>
-            </TouchableOpacity>
-        ),headerRight: () => (
-            <TouchableOpacity onPress={saveMeds}>
-                <Text style={{padding:2, marginHorizontal:8, fontFamily: 'Poppins-SemiBold', fontSize:16, color:'white'}}>Save</Text>
-            </TouchableOpacity>
-        ),
-        headerTitle: 'Select meds',
-        headerTitleAlign: 'center',
-      }}/>
-      <ScrollView style={{flex:1, backgroundColor:'#f5f5f5'}}>
-        {medicines.map(medicine => (
-          <TouchableOpacity 
+      <Header
+        title='Select meds'
+        leftButton='back'
+        onLeftButtonPress={handleBackPress}
+        rightButton='Save'
+        onRightButtonPress={saveMeds}
+      />
+      <ScrollView style={{ flex: 1, backgroundColor: '#f5f5f5' }}>
+        {medicines.map((medicine) => (
+          <TouchableOpacity
             key={medicine.id}
             style={styles.button}
             onPress={() => toggleMedicineSelection(medicine.id)}
           >
             <View style={styles.checkboxContainer}>
-              <Checkbox 
-                value={selectedMedicines[medicine.id]} 
+              <Checkbox
+                value={selectedMedicines[medicine.id]}
                 onValueChange={() => toggleMedicineSelection(medicine.id)}
                 style={styles.checkbox}
                 color='#E58B68'
@@ -79,27 +76,31 @@ const selectMedicine = () => {
                 <Text style={styles.unit}>{medicine.unit}</Text>
               </View>
             </View>
+            <PopupMenu onEdit={() => alert('Edit')} onDelete={() => alert('Delete')} />
           </TouchableOpacity>
         ))}
 
-        <TouchableOpacity style={{padding:16, backgroundColor:'white', justifyContent:'center'}}>
-          <Text>Create medicine</Text>
+        <TouchableOpacity style={styles.createButton} onPress={() => router.push('createMedicine')}>
+          <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 14 }}>Create medicine</Text>
+          <Ionicons name='chevron-forward' size={24} color='black' />
         </TouchableOpacity>
       </ScrollView>
     </>
-  )
-}
+  );
+};
 
-export default selectMedicine
+export default selectMedicine;
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor:'white',
-    paddingHorizontal:16,
-    paddingVertical:8,
-    justifyContent:'center',
-    borderBottomColor:'#808080',
-    borderBottomWidth:0.5
+    backgroundColor: 'white',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    justifyContent: 'space-between',
+    borderBottomColor: '#808080',
+    borderBottomWidth: 0.5,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   checkboxContainer: {
     flexDirection: 'row',
@@ -116,12 +117,19 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   medicineName: {
-    fontSize:14,
-    fontFamily:'Poppins-Regular'
+    fontSize: 14,
+    fontFamily: 'Poppins-Regular',
   },
   unit: {
-    fontSize:12,
-    fontFamily:'Poppins-Regular',
-    color:'#808080'
-  }
-})
+    fontSize: 12,
+    fontFamily: 'Poppins-Regular',
+    color: '#808080',
+  },
+  createButton: {
+    padding: 16,
+    backgroundColor: 'white',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+});
