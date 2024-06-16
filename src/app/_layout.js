@@ -17,7 +17,7 @@ const RootLayout = () => {
 
     if (isAuthenticated) {
       if (userType === 'user') {
-        router.replace('/home')
+        router.replace('createMedicine')
       } else if (userType === 'businessPartner') {
         router.replace('homeBP')
       }
@@ -95,6 +95,7 @@ const RootLayout = () => {
         headerTitleAlign: 'center',
       }} />
       <Stack.Screen name='profile' />
+      <Stack.Screen name='createMedicine' />
     </Stack>
   );
 };
