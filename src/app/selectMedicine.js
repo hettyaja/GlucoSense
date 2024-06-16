@@ -40,8 +40,11 @@ const selectMedicine = () => {
   };
 
   const saveMeds = () => {
-    // Implement the logic to save the selected medicines
-    console.log('Selected Medicines:', selectedMedicines);
+    // Get the selected medicine IDs
+    const selectedMedicineIds = Object.keys(selectedMedicines).filter(key => selectedMedicines[key]);
+    console.log(selectedMedicineIds)
+    // Navigate to the 'addMeds' page with selected medicine IDs
+    router.push({ pathname: 'addMeds', params: { selectedMedicineIds: JSON.stringify(selectedMedicineIds) } });
   };
 
   const handleBackPress = () => {

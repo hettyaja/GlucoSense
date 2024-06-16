@@ -87,7 +87,7 @@ export const getMedicineLogs = async (userId) => {
 
 export const getMedicine = async (userId) => {
   try {
-    const medicinesRef = collection(db, 'users', userId, 'medicines')
+    const medicinesRef = collection(db, 'users', userId, 'medicinesSaved')
     const medicinesSnapshot = await getDocs(medicinesRef)
     const medicinesList = medicinesSnapshot.docs.map(doc => ({
       id: doc.id,
@@ -100,17 +100,29 @@ export const getMedicine = async (userId) => {
   }
 }
 
-export const addMedicine = async (userId) => {
+export const getMedicineByIds = async (userId, ids) => {
   try {
-    const medicinesRef = collection(db, 'users', userId, 'medicines')
-    const medicinesSnapshot = await getDocs(medicinesRef)
-    const medicinesList = medicinesSnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }))
-    return medicinesList
+    const medicines = [];
+    const userRef = doc(db, 'users', userId); 
+    const medicineRef = collection(userRef, 'medicinesSaved');
+    const q = query(medicineRef, where('__name__', 'in', ids));
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      medicines.push({ id: doc.id, ...doc.data() });
+    });
+    return medicines;
   } catch (error) {
-    
+    console.error('Error fetching medicines by IDs:', error);
+    throw error;
+  }
+};
+
+export const addMedicine = async (userId, medicine) => {
+  try {
+    const medicineLogsRef = collection(db, 'users', userId, 'medicinesSaved');
+    await addDoc(medicineLogsRef, medicine);
+  } catch (error) {
+    console.error('Error adding medicine:', error);
     throw error;
   }
 }

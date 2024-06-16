@@ -4,18 +4,38 @@ import Header from '../components/Header';
 import { router } from 'expo-router';
 import { Picker } from '@react-native-picker/picker';
 import RNNPickerSelect from 'react-native-picker-select';
+import { useAuth } from './context/authContext';
+import { addMedicine } from './service/diaryService';
+
 
 const createMedicine = () => {
-  const [selectedType, setSelectedType] = useState();
-  const [selectedUnit, setSelectedUnit] = useState();
-  const [selectedInsulinType, setSelectedInsulinType] = useState();
+  const { user } = useAuth()
+  const [medicineName, setMedicineName] = useState('')
+  const [selectedType, setSelectedType] = useState(null);
+  const [selectedUnit, setSelectedUnit] = useState(null);
+  const [selectedInsulinType, setSelectedInsulinType] = useState(null);
 
   const handleBackButton = () => {
     router.back();
   };
 
-  const handleSaveButton = () => {
-    router.back();
+  const handleSaveButton = async () => {
+    if (user) {
+      const newMedicine = {
+        medicineName: medicineName,
+        type: selectedType,
+        InsulinType: selectedInsulinType,
+        unit:  selectedUnit
+      }
+
+      try {
+        await addMedicine(user.uid, newMedicine)
+        console.log('Medicine saved:', newMedicine);
+        router.replace('home')
+      } catch (error) {
+        console.error('Error saving medicine:', error);
+      }
+    }
   };
 
   return (
@@ -32,7 +52,9 @@ const createMedicine = () => {
           <Text style={styles.itemText}>Name</Text>
           <TextInput 
             placeholder='Medicine Name' 
-            style={styles.inputText} 
+            style={styles.inputText}
+            value={medicineName}
+            onChangeText={(text) => setMedicineName(text)}
           />
         </View>
         <View style={styles.item}>
