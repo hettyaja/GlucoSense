@@ -8,7 +8,6 @@ import { useAuth } from '../app/context/authContext';
 
 const Header = ({ title, leftButton, onLeftButtonPress, rightButton, onRightButtonPress}) => {
     const { username } = useAuth()
-
   const renderLeftButton = () => {
     switch (leftButton) {
       case 'Back':

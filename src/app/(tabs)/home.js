@@ -150,7 +150,7 @@ const home = () => {
               <MaterialCommunityIcons name='food' size={24} color='black' style={{paddingRight:8}}/>
               <View style={{flexDirection:'row', alignItems:'center', width:'100%', justifyContent:'space-between', paddingRight:8}}>
                 <View>
-                  <Text style={styles.buttonText}>500 Carbs</Text>
+                  <Text style={styles.buttonText}>550 Carbs</Text>
                   <Text style={styles.buttonText2}>1:59 PM</Text>
                 </View>
                 <Feather name='more-vertical' size={24}/>

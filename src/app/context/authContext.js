@@ -70,6 +70,26 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const setBodyProfile = async (uid, gender, birthdate, weight) => {
+        try {
+            // Construct the document reference for the user
+            const userDocRef = doc(db, 'users', uid);
+                
+            // Set the fields gender, birthdate, and weight in the user document
+            await setDoc(userDocRef, {
+                gender,
+                birthdate,
+                weight
+            }, { merge: true }); // Using merge: true ensures existing fields are not overwritten
+    
+                // Return the updated user document or whatever you need
+            return { uid, gender, birthdate, weight };
+             
+        } catch (error) {
+            throw error; // Rethrow the error to handle it elsewhere in your application
+        }
+    };
+
     const login = async (email, password) => {
         try {
             await signInWithEmailAndPassword(auth, email, password);
@@ -91,7 +111,7 @@ export const AuthProvider = ({ children }) => {
     }
 
     return (
-        <AuthContext.Provider value={{ user, isAuthenticated, userType, username, login, register, logout, resetAuth}}>
+        <AuthContext.Provider value={{ user, isAuthenticated, userType, username, login, register, logout, resetAuth, setBodyProfile}}>
             {children}
         </AuthContext.Provider>
     );

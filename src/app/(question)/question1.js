@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, SafeAreaView, Platform, Image} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, SafeAreaView, Platform, Image } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import ImageButton from '../../components/ImageButton';
 import { router } from 'expo-router';
 import { images } from '../../constants/images';
-
-
+import { useAuth } from '../context/authContext';
 export default function UserProfile() {
+  const {setBodyProfile} = useAuth()
+  const { user } = useAuth()
+  const uid = user.uid
   const [gender, setGender] = useState('Male');
   const [birthdate, setBirthdate] = useState(new Date(2002, 8, 9));
   const [weight, setWeight] = useState('');
@@ -19,21 +21,33 @@ export default function UserProfile() {
     setBirthdate(currentDate);
   };
 
+  const handleContinue = async () => {
+
+      try {
+
+          const user = await setBodyProfile(uid, gender, birthdate.toISOString(), weight)
+      } catch (error) {
+          alert(error.message)
+      }
+    // Navigate to the next screen
+    router.push('/question2');
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={{flexDirection:'row'}}>
-        <View style={{width:'25%', alignItems:'flex-start', paddingLeft:20, justifyContent:'center'}}>
+      <View style={{ flexDirection: 'row' }}>
+        <View style={{ width: '25%', alignItems: 'flex-start', paddingLeft: 20, justifyContent: 'center' }}>
           <ImageButton
             source={require("../../assets/back(2).png")}
-            imageSize={{width:24, height:24}}
+            imageSize={{ width: 24, height: 24 }}
             onPress={() => router.back('/registerPage')}
           />
         </View>
-        <View style={{width:'50%', alignItems:'center', justifyContent:'center'}}>
-        <Text style={[styles.titleText, {paddingBottom:5}]}>User profiling</Text>
-        <Image source={images.headerQuestion1} resizeMode='contain' style={{width:168, height:7}}/>
+        <View style={{ width: '50%', alignItems: 'center', justifyContent: 'center' }}>
+          <Text style={[styles.titleText, { paddingBottom: 5 }]}>User profiling</Text>
+          <Image source={images.headerQuestion1} resizeMode='contain' style={{ width: 168, height: 7 }} />
         </View>
-        <View style={{width:'25%'}}/>
+        <View style={{ width: '25%' }} />
       </View>
 
       <View style={styles.headerContainer}>
@@ -43,25 +57,25 @@ export default function UserProfile() {
         </Text>
       </View>
 
-      <View style={{paddingTop:50, width:'100%', alignItems:'center'}}>
+      <View style={{ paddingTop: 50, width: '100%', alignItems: 'center' }}>
         <View style={styles.pickerWrapper}>
-          <Text style={styles.label}>Your Weight</Text>
-            <Picker
-              selectedValue={gender}
-              style={styles.picker}
-              itemStyle={styles.pickerItem}
-              onValueChange={(itemValue) => setGender(itemValue)}
-            >
-              <Picker.Item label="Male" value="male"/>
-              <Picker.Item label="Female" value="female"/>
-            </Picker>
+          <Text style={styles.label}>Your Gender</Text>
+          <Picker
+            selectedValue={gender}
+            style={styles.picker}
+            itemStyle={styles.pickerItem}
+            onValueChange={(itemValue) => setGender(itemValue)}
+          >
+            <Picker.Item label="Male" value="male" />
+            <Picker.Item label="Female" value="female" />
+          </Picker>
         </View>
 
         <View style={styles.pickerWrapper}>
           <Text style={styles.label}>Your Birthdate</Text>
-          <View style={{flexDirection:'row', alignItems:'center', justifyContent:'space-between'}}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
             <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.dateInput}>
-              <Text style={{fontFamily:'Poppins-Regular'}}>{birthdate.toLocaleDateString()}</Text>
+              <Text style={{ fontFamily: 'Poppins-Regular' }}>{birthdate.toLocaleDateString()}</Text>
             </TouchableOpacity>
             {showDatePicker && (
               <DateTimePicker
@@ -87,9 +101,9 @@ export default function UserProfile() {
         </View>
       </View>
 
-        <TouchableOpacity style={styles.button} onPress={() => router.push('/question2')}>
-          <Text style={styles.buttonText}>Continue</Text>
-        </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={handleContinue}>
+        <Text style={styles.buttonText}>Continue</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }
@@ -98,7 +112,7 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: 'white',
-    paddingTop: Platform.OS === 'android' ? 50 :0,
+    paddingTop: Platform.OS === 'android' ? 50 : 0,
     alignItems: 'center'
   },
   titleText: {
@@ -106,9 +120,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   headerContainer: {
-    width:'75%',
-    alignItems:'flex-start',
-    marginTop:50
+    width: '75%',
+    alignItems: 'flex-start',
+    marginTop: 50
   },
   headerText: {
     fontFamily: 'Poppins-SemiBold',
