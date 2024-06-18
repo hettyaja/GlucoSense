@@ -7,11 +7,12 @@ import Checkbox from 'expo-checkbox';
 import PopupMenu from '../components/PopupMenu';
 import Header from '../components/Header';
 import { router } from 'expo-router';
+import Divider from '../components/Divider';
 
 const selectMedicine = () => {
   const { user } = useAuth();
   const [medicines, setMedicines] = useState([]);
-  const [selectedMedicines, setSelectedMedicines] = useState({});
+  const [selectedMedicinesName, setSelectedMedicinesName] = useState({});
 
   useEffect(() => {
     const fetchMedicines = async () => {
@@ -27,24 +28,24 @@ const selectMedicine = () => {
     fetchMedicines();
   }, [user]);
 
-  const toggleMedicineSelection = (id) => {
-    setSelectedMedicines((prevState) => {
+  const toggleMedicineSelection = (id, name) => {
+    setSelectedMedicinesName((prevState) => {
       const newState = { ...prevState };
       if (newState[id]) {
         delete newState[id];
       } else {
-        newState[id] = true;
+        newState[id] = name;
       }
       return newState;
     });
   };
 
   const saveMeds = () => {
-    // Get the selected medicine IDs
-    const selectedMedicineIds = Object.keys(selectedMedicines).filter(key => selectedMedicines[key]);
-    console.log(selectedMedicineIds)
-    // Navigate to the 'addMeds' page with selected medicine IDs
-    router.push({ pathname: 'addMeds', params: { selectedMedicineIds: JSON.stringify(selectedMedicineIds) } });
+    // Get the selected medicine names
+    const selectedMedicineNames = Object.values(selectedMedicinesName);
+    console.log(selectedMedicineNames);
+    // Navigate to the 'addMeds' page with selected medicine names
+    router.push({ pathname: 'addMeds', params: { selectedMedicineNames: JSON.stringify(selectedMedicineNames) } });
   };
 
   const handleBackPress = () => {
@@ -61,26 +62,28 @@ const selectMedicine = () => {
         onRightButtonPress={saveMeds}
       />
       <ScrollView style={{ flex: 1, backgroundColor: '#f5f5f5' }}>
-        {medicines.map((medicine) => (
-          <TouchableOpacity
-            key={medicine.id}
-            style={styles.button}
-            onPress={() => toggleMedicineSelection(medicine.id)}
-          >
-            <View style={styles.checkboxContainer}>
-              <Checkbox
-                value={selectedMedicines[medicine.id]}
-                onValueChange={() => toggleMedicineSelection(medicine.id)}
-                style={styles.checkbox}
-                color='#E58B68'
-              />
-              <View style={styles.textContainer}>
-                <Text style={styles.medicineName}>{medicine.medicineName}</Text>
-                <Text style={styles.unit}>{medicine.unit}</Text>
+        {medicines.map((medicine, index) => (
+          <View key={medicine.id}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => toggleMedicineSelection(medicine.id, medicine.medicineName)}
+            >
+              <View style={styles.checkboxContainer}>
+                <Checkbox
+                  value={selectedMedicinesName[medicine.id] !== undefined}
+                  onValueChange={() => toggleMedicineSelection(medicine.id, medicine.medicineName)}
+                  style={styles.checkbox}
+                  color='#E58B68'
+                />
+                <View style={styles.textContainer}>
+                  <Text style={styles.medicineName}>{medicine.medicineName}</Text>
+                  <Text style={styles.unit}>{medicine.unit}</Text>
+                </View>
               </View>
-            </View>
-            <PopupMenu onEdit={() => alert('Edit')} onDelete={() => alert('Delete')} />
-          </TouchableOpacity>
+              <PopupMenu onEdit={() => alert('Edit')} onDelete={() => alert('Delete')} />
+            </TouchableOpacity>
+            {index < medicines.length - 1 && <Divider withMargin={false} />}
+          </View>
         ))}
 
         <TouchableOpacity style={styles.createButton} onPress={() => router.push('createMedicine')}>
@@ -100,10 +103,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     justifyContent: 'space-between',
-    borderBottomColor: '#808080',
-    borderBottomWidth: 0.5,
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   checkboxContainer: {
     flexDirection: 'row',
@@ -134,5 +135,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     flexDirection: 'row',
     alignItems: 'center',
+    borderColor:'#808080',
+    borderBottomWidth:0.5,
+    borderTopWidth:0.5
   },
 });

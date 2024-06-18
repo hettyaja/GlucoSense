@@ -1,127 +1,178 @@
-import { View, Text, Dimensions, ScrollView, TouchableOpacity, FlatList, StyleSheet, Button} from 'react-native'
-import React, { useEffect, useState } from 'react'
-import { LineChart, BarChart, PieChart, ProgressChart, ContributionGraph, StackedBarChart } from "react-native-chart-kit";
-import { router, Tabs, Stack } from 'expo-router';
-import { useProfile } from '../context/ProfileContext'
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-import AntDesign from 'react-native-vector-icons/AntDesign'
-import Fontisto from 'react-native-vector-icons/Fontisto'
-import Ionicons from 'react-native-vector-icons/Ionicons'
-import Feather from 'react-native-vector-icons/Feather'
-import Modal from 'react-native-modal'
+import { View, Text, StyleSheet, TouchableOpacity, SectionList } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { router } from 'expo-router';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import Fontisto from 'react-native-vector-icons/Fontisto';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Feather from 'react-native-vector-icons/Feather';
 import { useAuth } from '../context/authContext';
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../../../firebase'; 
 import Header from '../../components/Header';
+import { fetchLogs } from '../service/diaryService';
+import PopupMenu from '../../components/PopupMenu';
+import Divider from '../../components/Divider';
+
+const formatDate = (timestamp) => {
+  const date = new Date(timestamp.seconds * 1000);
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1);
+
+  if (date.toDateString() === today.toDateString()) {
+    return 'Today';
+  } else if (date.toDateString() === yesterday.toDateString()) {
+    return 'Yesterday';
+  } else {
+    return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  }
+};
+
+const groupLogsByDate = (logs) => {
+  return logs.reduce((groups, log) => {
+    const date = formatDate(log.timestamp);
+    if (!groups[date]) {
+      groups[date] = [];
+    }
+    groups[date].push(log);
+    return groups;
+  }, {});
+};
 
 const home = () => {
-  const { user } = useAuth()
-  const [isModalVisible, setModalVisible] = useState(false)
-  const [isDateModalVisible, setDateModalVisible] = useState(false)
-  const [filterType, setFilterType] = useState('Display all')
-  const [dateType, setDateType] = useState('Today')
-  const [username, setUsername] = useState('')
+  const { user } = useAuth();
+  const [dateType, setDateType] = useState('Today');
+  const [logs, setLogs] = useState([]);
+  const [filteredLogs, setFilteredLogs] = useState([]);
 
   useEffect(() => {
-    const fetchUsername = async () => {
-      try {
-        if (user) {
-          const userDoc = await getDoc(doc(db, 'users', user.uid));
-          if (userDoc.exists()) {
-            setUsername(userDoc.data().username);
-          }
+    const fetchAllLogs = async () => {
+      if (user) {
+        try {
+          const [mealLogs, glucoseLogs, medicineLogs] = await Promise.all([
+            fetchLogs(user.uid, 'mealLogs', 10),
+            fetchLogs(user.uid, 'glucoseLogs', 10),
+            fetchLogs(user.uid, 'medicineLogs', 10),
+          ]);
+
+          const combinedLogs = [
+            ...mealLogs.map(log => ({ ...log, type: 'meal' })),
+            ...glucoseLogs.map(log => ({ ...log, type: 'glucose' })),
+            ...medicineLogs.map(log => ({ ...log, type: 'medicine' })),
+          ].sort((a, b) => b.timestamp.seconds - a.timestamp.seconds); // Sort logs by timestamp
+
+          setLogs(combinedLogs);
+          setFilteredLogs(combinedLogs);
+        } catch (error) {
+          console.error('Error fetching logs:', error);
         }
-      } catch (error) {
-        console.error('Error fetching user data:', error);
       }
     };
 
-    fetchUsername();
+    fetchAllLogs();
   }, [user]);
 
-  const toggleModal = () => {
-    setModalVisible(false)
-  }
+  const filterLogs = (type) => {
+    if (type === 'Display all') {
+      setFilteredLogs(logs);
+    } else {
+      setFilteredLogs(logs.filter(log => log.type === type));
+    }
+  };
+
+  const groupedLogs = groupLogsByDate(filteredLogs);
+  const sections = Object.keys(groupedLogs).map(date => ({
+    title: date,
+    data: groupedLogs[date]
+  }));
 
   const handleFilterType = (filterSelected) => {
-    setFilterType(filterSelected)
-    toggleModal()
-  }
+    filterLogs(filterSelected);
+  };
 
-  const toggleDateModal = () => {
-    setDateModalVisible(false)
-  }
+  const renderMedicineDetails = (medicines) => {
+    return Object.entries(medicines).map(([medicineName, unit], index) => (
+      <Text key={index} style={styles.buttonText}>
+        {medicineName}: {unit}
+      </Text>
+    ));
+  };
 
-  const handleDateType = (dateSelected) => {
-    setDateType(dateSelected)
-    toggleDateModal()
-  }
-
+  const renderLogItem = ({ item, index, section }) => (
+    <View>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => router.push(item.type === 'glucose' ? 'editGlucose' : item.type === 'medicine' ? 'editMeds' : 'editMeal')}
+      >
+        {item.type === 'glucose' && <Fontisto name='blood-drop' size={24} color='black' style={{ paddingRight: 16 }} />}
+        {item.type === 'medicine' && <Fontisto name='pills' size={24} color='black' style={{ paddingRight: 8 }} />}
+        {item.type === 'meal' && <MaterialCommunityIcons name='food' size={24} color='black' style={{ paddingRight: 8 }} />}
+        <View style={{ flexDirection: 'row', alignItems: 'center', width: '100%', justifyContent: 'space-between', paddingRight: 8 }}>
+          <View>
+            {item.type === 'medicine' ? (
+              renderMedicineDetails(item.medicine)
+            ) : (
+              <Text style={styles.buttonText}>
+                {item.type === 'glucose' && `${item.glucoseValue} mmol/L`}
+                {item.type === 'meal' && `${item.carbs} Carbs`}
+              </Text>
+            )}
+            <Text style={styles.buttonText2}>{new Date(item.timestamp.seconds * 1000).toLocaleTimeString()}</Text>
+          </View>
+          <Feather name='more-vertical' size={24} style={{ paddingRight: 16 }} />
+        </View>
+      </TouchableOpacity>
+      {index < section.data.length - 1 && <Divider withMargin={false} />}
+    </View>
+  );
 
   return (
     <>
-    <Header
-      title = ''
-      leftButton='Home'
-      rightButton='Notification'
-      onRightButtonPress={() => router.push('reminder')}
-    />
-    {/* <Stack.Screen options={{
-        title: '',
-        headerStyle: { backgroundColor: '#E58B68' },
-        headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold'},
-        headerTitle: '',
-        headerTitleAlign: 'center',
-        headerLeft: () => (
-          <View style={{flexDirection:'row', marginLeft:16}}>
-            <Text style={{fontFamily:'Poppins-Regular', fontSize:16, color:'white'}}>Welcome, </Text>
-            <Text style={{fontFamily:'Poppins-SemiBold', fontSize:16, color:'white'}}>{username}</Text>
-          </View>
-
-        ),
-        headerRight: () => (
-          <TouchableOpacity style={{marginRight:16}} onPress={() => router.push('reminder')}>
-            <MaterialCommunityIcons name='bell-outline' size={24} color='white'/>
-          </TouchableOpacity>
-        ),
-      }}/> */}
+      <Header
+        title=''
+        leftButton='Home'
+        rightButton='Notification'
+        onRightButtonPress={() => router.push('reminder')}
+      />
       <View style={styles.container}>
         <View style={styles.headerArea}>
-          <View style={{flexDirection:'row', alignItems:'center', justifyContent:'space-between'}}>
-            <Text style={{fontFamily:'Poppins-Bold', fontSize:18, color:'white'}}>Blood Glucose</Text>
-            <TouchableOpacity style={{flexDirection:'row', alignItems:'center'}} onPress={() => setDateModalVisible(true)}>
-              <Text style={{fontFamily:'Poppins-Medium', fontSize:14, color:'white'}}>{dateType} </Text>
-              <AntDesign name='caretdown' size={8} color='white'/>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 18, color: 'white' }}>Blood Glucose</Text>
+            <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => setDateModalVisible(true)}>
+              <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 14, color: 'white' }}>{dateType} </Text>
+              <AntDesign name='caretdown' size={8} color='white' />
             </TouchableOpacity>
           </View>
-          <View style={{flexDirection:'row', alignItems:'center', padding:16, justifyContent:'space-evenly'}}>
-            <View style={{justifyContent:'center', alignItems:'center'}}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', padding: 16, justifyContent: 'space-evenly' }}>
+            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
               <Text style={styles.titleText}>Avg</Text>
               <Text style={styles.subTitleText}>---</Text>
             </View>
-            <View style={{justifyContent:'center', alignItems:'center'}}>
+            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
               <Text style={styles.titleText}>Low</Text>
               <Text style={styles.subTitleText}>---</Text>
             </View>
-            <View style={{justifyContent:'center', alignItems:'center'}}>
+            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
               <Text style={styles.titleText}>High</Text>
               <Text style={styles.subTitleText}>---</Text>
             </View>
           </View>
-          <View style={{flexDirection:'row-reverse'}}>
-          <TouchableOpacity style={{borderColor:'white', borderWidth:1, borderRadius:8, width:'20%', paddingHorizontal:8}} onPress={() => router.push('Subscribe')}>
-            <Text style={styles.titleText}>A1C: ~</Text>
-          </TouchableOpacity>
-          </View>
-
-        </View>
-        <ScrollView style={{backgroundColor:'#f5f5f5', flex:1, borderTopLeftRadius:16, borderTopRightRadius:16}}>
-          <View style={{padding:16, alignItems:'flex-end'}}>
-            <TouchableOpacity style={{flexDirection:'row', alignItems:'center'}} onPress={() => setModalVisible(true)}>
-              <Text style={{fontFamily:'Poppins-Medium'}}>{filterType} </Text>
-              <AntDesign name='caretdown' size={8} color='black'/>
+          <View style={{ flexDirection: 'row-reverse' }}>
+            <TouchableOpacity style={{ borderColor: 'white', borderWidth: 1, borderRadius: 8, width: '20%', paddingHorizontal: 8 }} onPress={() => router.push('Subscribe')}>
+              <Text style={styles.titleText}>A1C: ~</Text>
             </TouchableOpacity>
           </View>
+        </View>
+        
+        <View style={{ backgroundColor: '#f5f5f5', flex: 1, borderTopLeftRadius: 16, borderTopRightRadius: 16 }}>
+          <View style={{ padding: 16, alignItems: 'flex-end' }}>
+            <PopupMenu
+              type='home'
+              onDisplayAll={() => handleFilterType('Display all')}
+              onGlucose={() => handleFilterType('glucose')}
+              onMeal={() => handleFilterType('meal')}
+              onMedicine={() => handleFilterType('medicine')}
+            />
+          </View>
+<<<<<<< HEAD
           <Text style={{fontFamily:'Poppins-SemiBold', fontSize:14, paddingHorizontal:16, paddingBottom:16, color:'#808080'}}>Today</Text>
           <View style={styles.section}>
             <TouchableOpacity style={styles.button} onPress={() => router.push('editGlucose')}>
@@ -158,129 +209,71 @@ const home = () => {
             </TouchableOpacity>
           </View>
         </ScrollView>
+=======
+          <SectionList
+            sections={sections}
+            keyExtractor={(item) => item.id}
+            renderItem={renderLogItem}
+            renderSectionHeader={({ section: { title } }) => (
+              <Text style={styles.sectionHeader}>{title}</Text>
+            )}
+            contentContainerStyle={styles.section}
+          />
+        </View>
+>>>>>>> b46c322b3206a2b7bd7687052c23398e0b23f259
       </View>
-
-      <Modal
-      isVisible={isModalVisible}
-      swipeDirection={'down'}
-      onBackdropPress={toggleModal}
-      style={styles.modal}
-    >
-      <View style={styles.modalContent}>
-            <TouchableOpacity style={[styles.selectButton, {borderTopLeftRadius:16, borderTopRightRadius:16, borderBottomWidth:0.5, borderBottomColor:'#808080'}]} onPress={() => handleFilterType('Display all')}>
-              <Text style={{fontFamily:'Poppins-Regular', fontSize:16}}>Display all</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.selectButton, {borderBottomWidth:0.5, borderBottomColor:'#808080'}]} onPress={() => handleFilterType('Glucose')}>
-              <Text style={{fontFamily:'Poppins-Regular', fontSize:16}}>Glucose</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.selectButton, {borderBottomWidth:0.5, borderBottomColor:'#808080'}]} onPress={() => handleFilterType('Meal')}>
-              <Text style={{fontFamily:'Poppins-Regular', fontSize:16}}>Meal</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.selectButton, {borderBottomLeftRadius:16, borderBottomRightRadius:16}]} onPress={() => handleFilterType('Medicine')}>
-              <Text style={{fontFamily:'Poppins-Regular', fontSize:16}}>Medicine</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.cancelButton} onPress={() => toggleModal()}>
-              <Text style={{fontFamily:'Poppins-SemiBold', fontSize:16}}>Cancel</Text>
-            </TouchableOpacity>
-      </View>
-      </Modal>
-      
-      <Modal
-      isVisible={isDateModalVisible}
-      swipeDirection={'down'}
-      onBackdropPress={toggleDateModal}
-      style={styles.modal}
-    >
-      <View style={styles.modalContent}>
-            <TouchableOpacity style={[styles.selectButton, {borderTopLeftRadius:16, borderTopRightRadius:16, borderBottomWidth:0.5, borderBottomColor:'#f5f5f5'}]} onPress={() => handleDateType('Today')}>
-              <Text style={{fontFamily:'Poppins-Regular', fontSize:16}}>Today</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.selectButton, {borderBottomWidth:0.5, borderBottomColor:'#808080'}]} onPress={() => handleDateType('7 Day')}>
-              <Text style={{fontFamily:'Poppins-Regular', fontSize:16}}>7 Day</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.selectButton, {borderBottomLeftRadius:16, borderBottomRightRadius:16}]} onPress={() => handleDateType('30 Day')}>
-              <Text style={{fontFamily:'Poppins-Regular', fontSize:16}}>30 Day</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.cancelButton} onPress={() => toggleModal()}>
-              <Text style={{fontFamily:'Poppins-SemiBold', fontSize:16}}>Cancel</Text>
-            </TouchableOpacity>
-      </View>
-      </Modal>
     </>
-    
-  )
-}
+  );
+};
 
-export default home
+export default home;
 
 const styles = StyleSheet.create({
   container: {
-    flex:1,
-    backgroundColor:'#E58B68'
+    flex: 1,
+    backgroundColor: '#E58B68'
   },
   headerArea: {
-    backgroundColor:'E58B68',
-    padding:16
+    padding: 16
   },
   titleText: {
-    fontFamily:'Poppins-Medium',
-    fontSize:18,
-    color:'white'
+    fontFamily: 'Poppins-Medium',
+    fontSize: 18,
+    color: 'white'
   },
   subTitleText: {
-    fontFamily:'Poppins-Bold',
-    fontSize:20,
-    color:'white'
+    fontFamily: 'Poppins-Bold',
+    fontSize: 20,
+    color: 'white'
   },
-  scrollArea: {
-
+  sectionHeader: {
+    fontFamily: 'Poppins-Medium',
+    fontSize: 14,
+    backgroundColor: '#f5f5f5',
+    color:'#808080',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
   },
   section: {
-    backgroundColor:'white',
-    marginBottom:24,
-    paddingHorizontal:16
+    backgroundColor: 'white',
+    marginBottom: 24,
+    borderColor:'#808080',
   },
   button: {
-    paddingHorizontal:16,
-    paddingVertical:8,
-    flexDirection:'row',
-    alignItems:'center'
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    flexDirection: 'row',
+    alignItems: 'center'
   },
   buttonText: {
     fontFamily: 'Poppins-SemiBold',
-    fontSize:16,
-    marginLeft:16
+    fontSize: 16,
+    marginLeft: 16
   },
   buttonText2: {
     fontFamily: 'Poppins-Regular',
-    fontSize:14,
-    marginLeft:16,
-    color:'#808080'
+    fontSize: 14,
+    marginLeft: 16,
+    color: '#808080'
   },
-  modal: {
-    margin:0,
-    justifyContent:'flex-end'
-  },
-  modalContent: {
-    alignItems:'center',
-    margin:8
-  },
-  cancelButton: {
-    backgroundColor:'#f5f5f5',
-    marginTop:8,
-    marginBottom:16,
-    padding:16,
-    width:'98%',
-    borderRadius:16,
-    justifyContent:'center',
-    alignItems:'center'
-  },
-  selectButton: {
-    backgroundColor:'#f5f5f5',
-    padding:16,
-    width:'98%',
-    justifyContent:'center',
-    alignItems:'center'
-  }
-
 });

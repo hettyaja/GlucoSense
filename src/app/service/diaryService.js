@@ -1,6 +1,6 @@
 // services/logService.js
 import { db } from '../../../firebase'; // Adjust the path according to your project structure
-import { collection, doc, addDoc, getDocs, query, where } from 'firebase/firestore';
+import { collection, doc, addDoc, getDocs, query, where, orderBy, limit } from 'firebase/firestore';
 
 // Add a new meal log
 export const addMealLog = async (userId, mealLog) => {
@@ -100,19 +100,19 @@ export const getMedicine = async (userId) => {
   }
 }
 
-export const getMedicineByIds = async (userId, ids) => {
+export const getMedicineByName = async (userId, names) => {
   try {
     const medicines = [];
     const userRef = doc(db, 'users', userId); 
     const medicineRef = collection(userRef, 'medicinesSaved');
-    const q = query(medicineRef, where('__name__', 'in', ids));
+    const q = query(medicineRef, where('medicineName', 'in', names));
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
       medicines.push({ id: doc.id, ...doc.data() });
     });
     return medicines;
   } catch (error) {
-    console.error('Error fetching medicines by IDs:', error);
+    console.error('Error fetching medicines by names:', error);
     throw error;
   }
 };
@@ -126,3 +126,16 @@ export const addMedicine = async (userId, medicine) => {
     throw error;
   }
 }
+
+export const fetchLogs = async (userId, logType, limitCount = 10) => {
+  try {
+    const logsRef = collection(db, 'users', userId, logType);
+    const logsQuery = query(logsRef, orderBy('timestamp', 'desc'), limit(limitCount));
+    const querySnapshot = await getDocs(logsQuery);
+    const logs = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    return logs;
+  } catch (error) {
+    console.error(`Error fetching ${logType}:`, error);
+    throw error;
+  }
+};
