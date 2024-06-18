@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity, SectionList } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, SectionList, Alert } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { router } from 'expo-router';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -7,7 +7,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Feather from 'react-native-vector-icons/Feather';
 import { useAuth } from '../context/authContext';
 import Header from '../../components/Header';
-import { fetchLogs } from '../service/diaryService';
+import { fetchLogs, deleteLog } from '../service/diaryService';
 import PopupMenu from '../../components/PopupMenu';
 import Divider from '../../components/Divider';
 
@@ -91,16 +91,49 @@ const home = () => {
   const renderMedicineDetails = (medicines) => {
     return Object.entries(medicines).map(([medicineName, unit], index) => (
       <Text key={index} style={styles.buttonText}>
-        {medicineName}: {unit}
+        {medicineName} - {unit}
       </Text>
     ));
+  };
+
+  const handleEdit = (item) => {
+    if (item.type === 'meal') {
+      router.push({ pathname: 'editMeals', params: { mealData: JSON.stringify(item) } });
+    } else if (item.type === 'medicine') {
+      router.push({ pathname: 'editMeds', params: { medicineData: JSON.stringify(item) } });
+    } else if (item.type === 'glucose') {
+      router.push({ pathname: 'editGlucose', params: { log: JSON.stringify(item) } });
+    }
+  };
+
+  const confirmDelete = (item) => {
+    Alert.alert(
+      "Delete Log",
+      "Are you sure you want to delete this log?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+        { text: "OK", onPress: () => handleDelete(item) }
+      ]
+    );
+  };
+
+  const handleDelete = async (item) => {
+    try {
+      await deleteLog(user.uid, item.type === 'meal' ? 'mealLogs' : item.type === 'medicine' ? 'medicineLogs' : 'glucoseLogs', item.id);
+      setFilteredLogs(filteredLogs.filter(log => log.id !== item.id));
+    } catch (error) {
+      console.error('Error deleting log:', error);
+    }
   };
 
   const renderLogItem = ({ item, index, section }) => (
     <View>
       <TouchableOpacity
         style={styles.button}
-        onPress={() => router.push(item.type === 'glucose' ? 'editGlucose' : item.type === 'medicine' ? 'editMeds' : 'editMeal')}
+        onPress={() => handleEdit(item)}
       >
         {item.type === 'glucose' && <Fontisto name='blood-drop' size={24} color='black' style={{ paddingRight: 16 }} />}
         {item.type === 'medicine' && <Fontisto name='pills' size={24} color='black' style={{ paddingRight: 8 }} />}
@@ -117,7 +150,12 @@ const home = () => {
             )}
             <Text style={styles.buttonText2}>{new Date(item.timestamp.seconds * 1000).toLocaleTimeString()}</Text>
           </View>
-          <Feather name='more-vertical' size={24} style={{ paddingRight: 16 }} />
+          <View style={{ paddingRight: 16 }}>
+            <PopupMenu
+              onEdit={() => handleEdit(item)}
+              onDelete={() => confirmDelete(item)}
+            />
+          </View>
         </View>
       </TouchableOpacity>
       {index < section.data.length - 1 && <Divider withMargin={false} />}

@@ -31,7 +31,7 @@ const createMedicine = () => {
       try {
         await addMedicine(user.uid, newMedicine)
         console.log('Medicine saved:', newMedicine);
-        router.replace('home')
+        router.replace('selectMedicine')
       } catch (error) {
         console.error('Error saving medicine:', error);
       }

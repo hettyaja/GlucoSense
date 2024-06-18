@@ -34,7 +34,7 @@ const FoodDetails = () => {
     };
 
     router.push({
-      pathname: '/addMeals', // Ensure this matches the route for your preReg page
+      pathname: '/addMeals',
       params: { mealData: JSON.stringify(mealData) },
     });
   };

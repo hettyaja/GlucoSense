@@ -1,6 +1,5 @@
-// services/logService.js
 import { db } from '../../../firebase'; // Adjust the path according to your project structure
-import { collection, doc, addDoc, getDocs, query, where, orderBy, limit } from 'firebase/firestore';
+import { collection, doc, addDoc, getDocs, query, where, orderBy, limit, deleteDoc, updateDoc } from 'firebase/firestore';
 
 // Add a new meal log
 export const addMealLog = async (userId, mealLog) => {
@@ -136,6 +135,68 @@ export const fetchLogs = async (userId, logType, limitCount = 10) => {
     return logs;
   } catch (error) {
     console.error(`Error fetching ${logType}:`, error);
+    throw error;
+  }
+};
+
+export const deleteLog = async (userId, logType, logId) => {
+  try {
+    const logRef = doc(db, 'users', userId, logType, logId);
+    await deleteDoc(logRef);
+  } catch (error) {
+    console.error('Error deleting log:', error);
+    throw error;
+  }
+};
+
+export const updateGlucoseLog = async (userId, glucoseLog) => {
+  try {
+    const glucoseLogRef = doc(db, 'users', userId, 'glucoseLogs', glucoseLog.id);
+    await updateDoc(glucoseLogRef, {
+      timestamp: glucoseLog.timestamp,
+      period: glucoseLog.period,
+      glucoseValue: glucoseLog.glucoseValue,
+    });
+    console.log('Glucose log updated successfully:', glucoseLog);
+  } catch (error) {
+    console.error('Error updating glucose log:', error);
+    throw error;
+  }
+};
+
+export const updateMealLog = async (userId, mealLog) => {
+  try {
+    const mealLogRef = doc(db, 'users', userId, 'mealLogs', mealLog.id);
+    await updateDoc(mealLogRef, {
+      label: mealLog.label,
+      category: mealLog.category,
+      servings: mealLog.servings,
+      calories: mealLog.calories,
+      fat: mealLog.fat,
+      protein: mealLog.protein,
+      carbs: mealLog.carbs,
+      notes: mealLog.notes,
+      timestamp: mealLog.timestamp,
+      period: mealLog.period,
+    });
+    console.log('Meal log updated successfully:', mealLog);
+  } catch (error) {
+    console.error('Error updating meal log:', error);
+    throw error;
+  }
+};
+
+export const updateMedicineLog = async (userId, medicineLog) => {
+  try {
+    const medicineLogRef = doc(db, 'users', userId, 'medicineLogs', medicineLog.id);
+    await updateDoc(medicineLogRef, {
+      timestamp: medicineLog.timestamp,
+      medicine: medicineLog.medicine,
+      notes: medicineLog.notes,
+    });
+    console.log('Medicine log updated successfully:', medicineLog);
+  } catch (error) {
+    console.error('Error updating medicine log:', error);
     throw error;
   }
 };
