@@ -7,6 +7,7 @@ import Checkbox from 'expo-checkbox';
 import PopupMenu from '../components/PopupMenu';
 import Header from '../components/Header';
 import { router } from 'expo-router';
+import Divider from '../components/Divider';
 
 const selectMedicine = () => {
   const { user } = useAuth();
@@ -61,7 +62,8 @@ const selectMedicine = () => {
         onRightButtonPress={saveMeds}
       />
       <ScrollView style={{ flex: 1, backgroundColor: '#f5f5f5' }}>
-        {medicines.map((medicine) => (
+        {medicines.map((medicine, index) => (
+          <View>
           <TouchableOpacity
             key={medicine.id}
             style={styles.button}
@@ -79,8 +81,10 @@ const selectMedicine = () => {
                 <Text style={styles.unit}>{medicine.unit}</Text>
               </View>
             </View>
-            <PopupMenu onEdit={() => alert('Edit')} onDelete={() => alert('Delete')} />
+            <PopupMenu onEdit={() => alert('Edit')} onDelete={() => alert('Delete')}/>
           </TouchableOpacity>
+          {index < medicines.length - 1 && <Divider withMargin={false} />}
+          </View>
         ))}
 
         <TouchableOpacity style={styles.createButton} onPress={() => router.push('createMedicine')}>
@@ -100,10 +104,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     justifyContent: 'space-between',
-    borderBottomColor: '#808080',
-    borderBottomWidth: 0.5,
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   checkboxContainer: {
     flexDirection: 'row',
@@ -134,5 +136,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     flexDirection: 'row',
     alignItems: 'center',
+    borderColor:'#808080',
+    borderBottomWidth:0.5,
+    borderTopWidth:0.5
   },
 });

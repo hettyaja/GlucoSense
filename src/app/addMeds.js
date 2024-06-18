@@ -60,7 +60,6 @@ const preReg = () => {
     }
   }
 
-
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
   const showDatePicker = () => {
