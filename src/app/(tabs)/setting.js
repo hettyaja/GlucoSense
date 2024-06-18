@@ -14,14 +14,16 @@ import { useProfile } from '../context/ProfileContext'
 import { useAuth } from '../context/authContext'
 
 const setting = () => {
+  const { user } = useAuth()
   const { logout } = useAuth()
+  const { name } = useAuth()
   const { profileData } =  useProfile()
   const [isModalVisible, setModalVisible] = useState(false)
   const [glucoseUnit, setGlucoseUnit] = useState('mmoL/L')
   const [weightUnit, setWeightUnit] = useState('kgs')
   const [modalType, setModalType] = useState('')
   const [photoUri, setPhotoUri] = useState('https://reactnative.dev/img/tiny_logo.png')
-
+  
   const handleSignOut = async () => {
     await logout()
   }
@@ -77,7 +79,7 @@ const setting = () => {
          <Image style={styles.profileImage} source={{uri: profileData.photoUri}}/>
           <View>
             <Text style={{fontFamily:'Poppins-Bold', fontSize:16}}>
-              {profileData.name}
+              {name}
             </Text>
             <Text style={{fontFamily:'Poppins-Regular', fontSize:14}}>
               Free User

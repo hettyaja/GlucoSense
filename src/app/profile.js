@@ -6,6 +6,7 @@ import { Picker } from '@react-native-picker/picker';
 import * as ImagePicker from 'expo-image-picker';
 import { useProfile } from './context/ProfileContext'
 import ImageButton from '../components/ImageButton';
+import { useAuth } from './context/authContext'
 
 const Profile = () => {
     const { profileData, setProfileData } = useProfile();

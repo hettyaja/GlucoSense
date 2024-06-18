@@ -9,7 +9,8 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [isAuthenticated, setIsAuthenticated] = useState(undefined);
     const [userType, setUserType] = useState(null);
-    const [username, setUsername] = useState(null)
+    const [username, setUsername] = useState(null);
+    const [name, setName] = useState(null);
 
     useEffect(() => {
         const unsub = onAuthStateChanged(auth, async (user) => {
@@ -18,6 +19,7 @@ export const AuthProvider = ({ children }) => {
                 if (userDoc.exists()) {
                     setUserType('user');
                     setUsername(userDoc.data().username)
+                    setName(userDoc.data().name)
                 } else {
                     const businessDoc = await getDoc(doc(db, 'businessPartner', user.uid))
                     if (businessDoc.exists()) {
@@ -111,7 +113,7 @@ export const AuthProvider = ({ children }) => {
     }
 
     return (
-        <AuthContext.Provider value={{ user, isAuthenticated, userType, username, login, register, logout, resetAuth, setBodyProfile}}>
+        <AuthContext.Provider value={{ user, isAuthenticated, userType, name, username, login, register, logout, resetAuth, setBodyProfile}}>
             {children}
         </AuthContext.Provider>
     );
