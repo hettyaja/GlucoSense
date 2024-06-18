@@ -100,19 +100,19 @@ export const getMedicine = async (userId) => {
   }
 }
 
-export const getMedicineByIds = async (userId, ids) => {
+export const getMedicineByName = async (userId, names) => {
   try {
     const medicines = [];
     const userRef = doc(db, 'users', userId); 
     const medicineRef = collection(userRef, 'medicinesSaved');
-    const q = query(medicineRef, where('__name__', 'in', ids));
+    const q = query(medicineRef, where('medicineName', 'in', names));
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
       medicines.push({ id: doc.id, ...doc.data() });
     });
     return medicines;
   } catch (error) {
-    console.error('Error fetching medicines by IDs:', error);
+    console.error('Error fetching medicines by names:', error);
     throw error;
   }
 };

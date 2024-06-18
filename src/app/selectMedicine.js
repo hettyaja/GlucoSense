@@ -12,7 +12,7 @@ import Divider from '../components/Divider';
 const selectMedicine = () => {
   const { user } = useAuth();
   const [medicines, setMedicines] = useState([]);
-  const [selectedMedicines, setSelectedMedicines] = useState({});
+  const [selectedMedicinesName, setSelectedMedicinesName] = useState({});
 
   useEffect(() => {
     const fetchMedicines = async () => {
@@ -28,24 +28,24 @@ const selectMedicine = () => {
     fetchMedicines();
   }, [user]);
 
-  const toggleMedicineSelection = (id) => {
-    setSelectedMedicines((prevState) => {
+  const toggleMedicineSelection = (id, name) => {
+    setSelectedMedicinesName((prevState) => {
       const newState = { ...prevState };
       if (newState[id]) {
         delete newState[id];
       } else {
-        newState[id] = true;
+        newState[id] = name;
       }
       return newState;
     });
   };
 
   const saveMeds = () => {
-    // Get the selected medicine IDs
-    const selectedMedicineIds = Object.keys(selectedMedicines).filter(key => selectedMedicines[key]);
-    console.log(selectedMedicineIds)
-    // Navigate to the 'addMeds' page with selected medicine IDs
-    router.push({ pathname: 'addMeds', params: { selectedMedicineIds: JSON.stringify(selectedMedicineIds) } });
+    // Get the selected medicine names
+    const selectedMedicineNames = Object.values(selectedMedicinesName);
+    console.log(selectedMedicineNames);
+    // Navigate to the 'addMeds' page with selected medicine names
+    router.push({ pathname: 'addMeds', params: { selectedMedicineNames: JSON.stringify(selectedMedicineNames) } });
   };
 
   const handleBackPress = () => {
@@ -63,27 +63,26 @@ const selectMedicine = () => {
       />
       <ScrollView style={{ flex: 1, backgroundColor: '#f5f5f5' }}>
         {medicines.map((medicine, index) => (
-          <View>
-          <TouchableOpacity
-            key={medicine.id}
-            style={styles.button}
-            onPress={() => toggleMedicineSelection(medicine.id)}
-          >
-            <View style={styles.checkboxContainer}>
-              <Checkbox
-                value={selectedMedicines[medicine.id]}
-                onValueChange={() => toggleMedicineSelection(medicine.id)}
-                style={styles.checkbox}
-                color='#E58B68'
-              />
-              <View style={styles.textContainer}>
-                <Text style={styles.medicineName}>{medicine.medicineName}</Text>
-                <Text style={styles.unit}>{medicine.unit}</Text>
+          <View key={medicine.id}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => toggleMedicineSelection(medicine.id, medicine.medicineName)}
+            >
+              <View style={styles.checkboxContainer}>
+                <Checkbox
+                  value={selectedMedicinesName[medicine.id] !== undefined}
+                  onValueChange={() => toggleMedicineSelection(medicine.id, medicine.medicineName)}
+                  style={styles.checkbox}
+                  color='#E58B68'
+                />
+                <View style={styles.textContainer}>
+                  <Text style={styles.medicineName}>{medicine.medicineName}</Text>
+                  <Text style={styles.unit}>{medicine.unit}</Text>
+                </View>
               </View>
-            </View>
-            <PopupMenu onEdit={() => alert('Edit')} onDelete={() => alert('Delete')}/>
-          </TouchableOpacity>
-          {index < medicines.length - 1 && <Divider withMargin={false} />}
+              <PopupMenu onEdit={() => alert('Edit')} onDelete={() => alert('Delete')} />
+            </TouchableOpacity>
+            {index < medicines.length - 1 && <Divider withMargin={false} />}
           </View>
         ))}
 

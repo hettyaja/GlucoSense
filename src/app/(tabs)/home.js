@@ -9,6 +9,7 @@ import { useAuth } from '../context/authContext';
 import Header from '../../components/Header';
 import { fetchLogs } from '../service/diaryService';
 import PopupMenu from '../../components/PopupMenu';
+import Divider from '../../components/Divider';
 
 const formatDate = (timestamp) => {
   const date = new Date(timestamp.seconds * 1000);
@@ -83,31 +84,44 @@ const home = () => {
     data: groupedLogs[date]
   }));
 
-
   const handleFilterType = (filterSelected) => {
     filterLogs(filterSelected);
   };
 
-  const renderLogItem = ({ item }) => (
-    <TouchableOpacity
-      style={styles.button}
-      onPress={() => router.push(item.type === 'glucose' ? 'editGlucose' : item.type === 'medicine' ? 'editMeds' : 'editMeal')}
-    >
-      {item.type === 'glucose' && <Fontisto name='blood-drop' size={24} color='black' style={{ paddingRight: 16 }} />}
-      {item.type === 'medicine' && <Fontisto name='pills' size={24} color='black' style={{ paddingRight: 8 }} />}
-      {item.type === 'meal' && <MaterialCommunityIcons name='food' size={24} color='black' style={{ paddingRight: 8 }} />}
-      <View style={{ flexDirection: 'row', alignItems: 'center', width: '100%', justifyContent: 'space-between', paddingRight: 8 }}>
-        <View>
-          <Text style={styles.buttonText}>
-            {item.type === 'glucose' && `${item.glucoseValue} mmol/L`}
-            {item.type === 'medicine' && `${item.medicine} ${item.unit}`}
-            {item.type === 'meal' && `${item.carbs} Carbs`}
-          </Text>
-          <Text style={styles.buttonText2}>{new Date(item.timestamp.seconds * 1000).toLocaleTimeString()}</Text>
+  const renderMedicineDetails = (medicines) => {
+    return Object.entries(medicines).map(([medicineName, unit], index) => (
+      <Text key={index} style={styles.buttonText}>
+        {medicineName}: {unit}
+      </Text>
+    ));
+  };
+
+  const renderLogItem = ({ item, index, section }) => (
+    <View>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => router.push(item.type === 'glucose' ? 'editGlucose' : item.type === 'medicine' ? 'editMeds' : 'editMeal')}
+      >
+        {item.type === 'glucose' && <Fontisto name='blood-drop' size={24} color='black' style={{ paddingRight: 16 }} />}
+        {item.type === 'medicine' && <Fontisto name='pills' size={24} color='black' style={{ paddingRight: 8 }} />}
+        {item.type === 'meal' && <MaterialCommunityIcons name='food' size={24} color='black' style={{ paddingRight: 8 }} />}
+        <View style={{ flexDirection: 'row', alignItems: 'center', width: '100%', justifyContent: 'space-between', paddingRight: 8 }}>
+          <View>
+            {item.type === 'medicine' ? (
+              renderMedicineDetails(item.medicine)
+            ) : (
+              <Text style={styles.buttonText}>
+                {item.type === 'glucose' && `${item.glucoseValue} mmol/L`}
+                {item.type === 'meal' && `${item.carbs} Carbs`}
+              </Text>
+            )}
+            <Text style={styles.buttonText2}>{new Date(item.timestamp.seconds * 1000).toLocaleTimeString()}</Text>
+          </View>
+          <Feather name='more-vertical' size={24} style={{ paddingRight: 16 }} />
         </View>
-        <Feather name='more-vertical' size={24} style={{paddingRight:16}}/>
-      </View>
-    </TouchableOpacity>
+      </TouchableOpacity>
+      {index < section.data.length - 1 && <Divider withMargin={false} />}
+    </View>
   );
 
   return (
