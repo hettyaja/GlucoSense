@@ -15,27 +15,43 @@ import { useAuth } from '../context/authContext'
 
 const setting = () => {
   const { logout } = useAuth()
+  const { name, user } = useAuth()
+  const uid = user.uid
+  const { deleteUser } = useAuth()
   const { profileData } =  useProfile()
   const [isModalVisible, setModalVisible] = useState(false)
   const [glucoseUnit, setGlucoseUnit] = useState('mmoL/L')
   const [weightUnit, setWeightUnit] = useState('kgs')
   const [modalType, setModalType] = useState('')
   const [photoUri, setPhotoUri] = useState('https://reactnative.dev/img/tiny_logo.png')
-
+  
   const handleSignOut = async () => {
     await logout()
   }
 
 
   const createTwoButtonAlert = () =>
-  Alert.alert('Delete account', 'Are you sure you want to delete?', [
-    {
-      text: 'Cancel',
-      onPress: () => console.log('Cancel Pressed'),
-      style: 'cancel',
-    },
-    {text: 'Delete', onPress: () => router.push('welcomePage')},
-  ]);
+    Alert.alert('Delete account', 'Are you sure you want to delete?', [
+      {
+        text: 'Cancel',
+        onPress: () => console.log('Cancel Pressed'),
+        style: 'cancel',
+      },
+      {
+        text: 'Delete',
+        onPress: async () => {
+          try {
+            await deleteUser(uid);  
+            router.push('welcomePage');    
+          } catch (error) {
+            console.error('Error deleting user profile:', error);
+            alert('Error deleting user profile: ' + error.message);
+          }
+        },
+      },
+    ]);
+
+  
 
   const handleGlucoseUnit = (glucoseSelection) => {
     setGlucoseUnit(glucoseSelection)
@@ -77,7 +93,7 @@ const setting = () => {
          <Image style={styles.profileImage} source={{uri: profileData.photoUri}}/>
           <View>
             <Text style={{fontFamily:'Poppins-Bold', fontSize:16}}>
-              {profileData.name}
+              {name}
             </Text>
             <Text style={{fontFamily:'Poppins-Regular', fontSize:14}}>
               Free User

@@ -29,6 +29,7 @@ const FreemiumRegister= () => {
         } catch (error) {
             alert(error.message)
         }
+        router.push('/(question)/question1');
     }
     return (
     
