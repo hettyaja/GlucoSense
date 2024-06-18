@@ -172,44 +172,6 @@ const home = () => {
               onMedicine={() => handleFilterType('medicine')}
             />
           </View>
-<<<<<<< HEAD
-          <Text style={{fontFamily:'Poppins-SemiBold', fontSize:14, paddingHorizontal:16, paddingBottom:16, color:'#808080'}}>Today</Text>
-          <View style={styles.section}>
-            <TouchableOpacity style={styles.button} onPress={() => router.push('editGlucose')}>
-              <Fontisto name='blood-drop' size={24} color='black' style={{paddingRight:16}}/>
-              <View style={{flexDirection:'row', alignItems:'center', width:'100%', justifyContent:'space-between', paddingRight:8}}>
-                <View>
-                  <Text style={styles.buttonText}>5.7 mmol/L</Text>
-                  <Text style={styles.buttonText2}>1:33 PM</Text>
-                </View>
-                <Feather name='more-vertical' size={24}/>
-              </View>
-            </TouchableOpacity>
-            <View style={{borderBottomColor:'#d9d9d9', borderBottomWidth:1}}/>
-            <TouchableOpacity style={styles.button} onPress={() => router.push('editMeds')}>
-              <Fontisto name='pills' size={24} color='black' style={{paddingRight:8}}/>
-              <View style={{flexDirection:'row', alignItems:'center', width:'100%', justifyContent:'space-between', paddingRight:8}}>
-                <View>
-                  <Text style={styles.buttonText}>2 Pills</Text>
-                  <Text style={styles.buttonText2}>1:53 PM</Text>
-                </View>
-                <Feather name='more-vertical' size={24}/>
-              </View>
-            </TouchableOpacity>
-            <View style={{borderBottomColor:'#d9d9d9', borderBottomWidth:1}}/>
-            <TouchableOpacity style={styles.button}>
-              <MaterialCommunityIcons name='food' size={24} color='black' style={{paddingRight:8}}/>
-              <View style={{flexDirection:'row', alignItems:'center', width:'100%', justifyContent:'space-between', paddingRight:8}}>
-                <View>
-                  <Text style={styles.buttonText}>550 Carbs</Text>
-                  <Text style={styles.buttonText2}>1:59 PM</Text>
-                </View>
-                <Feather name='more-vertical' size={24}/>
-              </View>
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
-=======
           <SectionList
             sections={sections}
             keyExtractor={(item) => item.id}
@@ -220,7 +182,6 @@ const home = () => {
             contentContainerStyle={styles.section}
           />
         </View>
->>>>>>> b46c322b3206a2b7bd7687052c23398e0b23f259
       </View>
     </>
   );

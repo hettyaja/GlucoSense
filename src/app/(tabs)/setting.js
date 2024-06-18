@@ -14,9 +14,10 @@ import { useProfile } from '../context/ProfileContext'
 import { useAuth } from '../context/authContext'
 
 const setting = () => {
-  const { user } = useAuth()
   const { logout } = useAuth()
-  const { name } = useAuth()
+  const { name, user } = useAuth()
+  const uid = user.uid
+  const { deleteUser } = useAuth()
   const { profileData } =  useProfile()
   const [isModalVisible, setModalVisible] = useState(false)
   const [glucoseUnit, setGlucoseUnit] = useState('mmoL/L')
@@ -30,14 +31,27 @@ const setting = () => {
 
 
   const createTwoButtonAlert = () =>
-  Alert.alert('Delete account', 'Are you sure you want to delete?', [
-    {
-      text: 'Cancel',
-      onPress: () => console.log('Cancel Pressed'),
-      style: 'cancel',
-    },
-    {text: 'Delete', onPress: () => router.push('welcomePage')},
-  ]);
+    Alert.alert('Delete account', 'Are you sure you want to delete?', [
+      {
+        text: 'Cancel',
+        onPress: () => console.log('Cancel Pressed'),
+        style: 'cancel',
+      },
+      {
+        text: 'Delete',
+        onPress: async () => {
+          try {
+            await deleteUser(uid);  
+            router.push('welcomePage');    
+          } catch (error) {
+            console.error('Error deleting user profile:', error);
+            alert('Error deleting user profile: ' + error.message);
+          }
+        },
+      },
+    ]);
+
+  
 
   const handleGlucoseUnit = (glucoseSelection) => {
     setGlucoseUnit(glucoseSelection)
