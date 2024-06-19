@@ -63,27 +63,59 @@ const FoodDetails = () => {
 
       <View style={styles.container}>
         <Text style={styles.title}>{food.label}</Text>
-        <Text>Category: {food.category}</Text>
-
-        <View style={styles.servingContainer}>
-          <Button title="-" onPress={handleDecrease} />
-          <Text style={styles.servingText}>Servings: {servings}</Text>
-          <Button title="+" onPress={handleIncrease} />
+        <View style={styles.section}>
+          <View style={styles.subSection}>
+            <Text style={styles.sectionText}>Serving size</Text>
+            <View style={{flexDirection:'row', alignItems:'center'}}>
+              <Button title="-" onPress={handleDecrease}/>
+              <Text style={styles.sectionText}>{servings}</Text>
+              <Button title="+" onPress={handleIncrease} />
+            </View>
+          </View>
         </View>
 
+
+        <Text style={styles.subHeaderText}>Nutrition Facts</Text>
         {nutrients && (
-          <View style={styles.nutrientContainer}>
+          <View style={styles.section}>
             {nutrients.ENERC_KCAL !== undefined && (
-              <Text>Calories: {(nutrients.ENERC_KCAL * servings).toFixed(2)} kcal</Text>
+              <>
+                <View style={styles.subSection}>
+                <Text style={styles.sectionText}>Calories</Text>
+                <Text style={styles.sectionText}>{(nutrients.ENERC_KCAL * servings).toFixed(2)} kcal</Text>
+
+                </View>
+                <View style={{borderBottomWidth:1, marginHorizontal:16}}/>
+                
+              </>
+
             )}
             {nutrients.FAT !== undefined && (
-              <Text>Fat: {(nutrients.FAT * servings).toFixed(2)} g</Text>
+              <>
+              <View style={styles.subSection}>
+              <Text style={styles.sectionText}>Fat</Text>
+              <Text style={styles.sectionText}>{(nutrients.FAT * servings).toFixed(2)} g</Text>
+              </View>
+              <View style={{borderBottomWidth:1, marginHorizontal:16}}/>
+              </>
             )}
             {nutrients.PROCNT !== undefined && (
-              <Text>Protein: {(nutrients.PROCNT * servings).toFixed(2)} g</Text>
+              <>
+              <View style={styles.subSection}>
+              <Text style={styles.sectionText}>Protein</Text>
+              <Text style={styles.sectionText}>{(nutrients.PROCNT * servings).toFixed(2)} g</Text>
+              
+              </View>
+              <View style={{borderBottomWidth:1, marginHorizontal:16}}/>
+              </>
             )}
             {nutrients.CHOCDF !== undefined && (
-              <Text>Carbohydrates: {(nutrients.CHOCDF * servings).toFixed(2)} g</Text>
+              <>
+              <View style={styles.subSection}>
+              <Text style={styles.sectionText}>Carbohydrates</Text>
+              <Text style={styles.sectionText}>{(nutrients.CHOCDF * servings).toFixed(2)} g</Text>
+              </View>
+              </>
             )}
           </View>
         )}
@@ -95,23 +127,39 @@ const FoodDetails = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
-    backgroundColor: '#fff',
+    backgroundColor: '#f5f5f5',
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 8,
+    fontSize: 20,
+    fontFamily: 'Poppins-SemiBold',
+    padding:16
   },
   errorText: {
     fontSize: 18,
     color: 'red',
   },
-  servingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginVertical: 16,
+  section: {
+    backgroundColor:'white',
+    borderBottomWidth:0.5,
+    borderTopWidth:0.5
+  },
+  sectionText: {
+    fontSize:14,
+    fontFamily:'Poppins-Regular',
+    padding:16
+  },
+  subSection: {
+    flexDirection:'row',
+    justifyContent:'space-between',
+    alignItems:'center'
+  },
+  subHeaderText: {
+    color:'#808080',
+    fontFamily:'Poppins-Regular',
+    fontSize:14,
+    paddingHorizontal:16,
+    paddingTop:24,
+    paddingBottom:8
   },
   servingText: {
     marginHorizontal: 16,
