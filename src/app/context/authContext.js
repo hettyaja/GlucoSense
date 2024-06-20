@@ -81,7 +81,17 @@ export const AuthProvider = ({ children }) => {
             }
             return user;
         } catch (error) {
-            throw error;
+            if (error.code === 'auth/email-already-in-use') {
+                throw new Error('This email is already in use. Please use a different email.');
+            } else if (error.code === 'auth/weak-password') {
+                throw new Error('Password should be at least 6 characters.');
+            } else if (error.code === 'auth/missing-password') {
+                throw new Error('The password field cannot be empty.');
+            } else if (error.code === 'auth/invalid-email') {
+                throw new Error('Please input valid email.');
+            } else {
+                throw new Error(error.message);
+            }
         }
     };
 
@@ -154,7 +164,13 @@ export const AuthProvider = ({ children }) => {
         try {
             await signInWithEmailAndPassword(auth, email, password);
         } catch (error) {
-            throw error;
+            if (error.code === 'auth/invalid-credential') {
+                throw new Error('The password is wrong. Please try again.');
+            } else if (error.code === 'auth/invalid-email') {
+                throw new Error('Please input valid email.');
+            } else {
+                throw new Error(error.message);
+            }
         }
     };
 

@@ -22,7 +22,7 @@ const RootLayout = () => {
         router.replace('homeBP')
       }
     } else if (isAuthenticated == false) {
-      router.replace('/welcomePage');
+      router.replace('/getStartedPage_1');
     }
   }, [isAuthenticated, userType]);
 

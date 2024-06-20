@@ -26,10 +26,11 @@ const FreemiumRegister= () => {
                 userType: 'free'
             }
             const user = await register(email, password, additionalData)
+            router.push('/(question)/question1');
         } catch (error) {
             alert(error.message)
         }
-        router.push('/(question)/question1');
+        
     }
     return (
     
