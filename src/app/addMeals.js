@@ -27,6 +27,15 @@ const preReg = () => {
   const [notes, setNotes] = useState('');
 
   const saveMeals = async () => {
+    if (!parsedMealData) {
+      Alert.alert(
+        "No Food Selected",
+        "Please select food before saving.",
+        [{ text: "OK" }]
+      );
+      return;
+    }
+
     if (user) {
       const newMealLog = {
         label: parsedMealData.label,

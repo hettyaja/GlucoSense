@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, Button, TouchableOpacity, Touchable, TextInput, ScrollView} from 'react-native'
+import { View, Text, StyleSheet, Image, Button, TouchableOpacity, Alert, TextInput, ScrollView} from 'react-native'
 import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack, router} from 'expo-router'
@@ -31,6 +31,15 @@ const preReg = () => {
   };
 
   const saveGlucose = async () => {
+    if (!glucoseValue) {
+      Alert.alert(
+        "No Glucose Reading",
+        "Please input glucose reading before saving.",
+        [{ text: "OK" }]
+      );
+      return;
+    }
+
     if (user) {
       const newGlucoseLog = {
         timestamp: selectedDate,

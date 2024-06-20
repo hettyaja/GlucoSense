@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -38,6 +38,16 @@ const preReg = () => {
   };
 
   const saveMeds = async () => {
+    if (!selectedMedicineNames) {
+      Alert.alert(
+        "No Medicine Selected",
+        "Please select medicine before saving.",
+        [{ text: "OK" }]
+      );
+      return;
+    }
+
+
     if (user) {
       const newMedicineLog = {
         timestamp: selectedDate,
