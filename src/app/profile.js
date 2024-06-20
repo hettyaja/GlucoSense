@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View, TextInput, Platform, Modal, Button, Image } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View, TextInput, Alert, Modal, Button, Image } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { Stack, router } from 'expo-router';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -29,7 +29,15 @@ const Profile = () => {
     }, []);
 
     const toggleEdit = async () => {
+        
         if (isEditable) {
+            if (!localName) {
+                Alert.alert("Empty Field", "Name cannot be empty.");
+                return;
+            } else if (!localUsername) {
+                Alert.alert("Empty Field", "Username cannot be empty.");
+                return;
+            }
             try {
                 await setAccountProfile(uid, localName, localEmail, localUsername);
                 await setBodyProfile(uid, localGender, localBirthdate, localWeight);
