@@ -1,7 +1,8 @@
-import { StyleSheet, Text, View, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, ActivityIndicator, Button } from 'react-native';
 import React from 'react';
 import { Link, Redirect, router } from 'expo-router';
 import { useAuth } from './context/authContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Index = () => {
   const { isAuthenticated, userType, resetAuth } = useAuth();
@@ -25,9 +26,20 @@ const Index = () => {
   //   return <Redirect href="getStartedPage_1" />;
   // }
 
+  // const clearAsync = async () => {
+  //   try {
+  //     await AsyncStorage.clear();
+  //     console.log('AsyncStorage cleared');
+  //     resetAuth(); // Optionally reset the auth state
+  //   } catch (error) {
+  //     console.error('Error clearing AsyncStorage:', error);
+  //   }
+  // };
+
   return (
     // <Redirect href="home" />
     <View style={styles.container}>
+      {/* <Button title="Clear Storage" onPress={clearAsync} /> */}
       <ActivityIndicator size="large" color="#0000ff" />
     </View>
   );

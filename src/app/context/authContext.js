@@ -152,7 +152,7 @@ export const AuthProvider = ({ children }) => {
 
             // Delete the user document
             await deleteDoc(userDocRef);
-
+            await AsyncStorage.clear()
             // Additional cleanup if necessary (e.g., related documents or storage)
 
             return true;

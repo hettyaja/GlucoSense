@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, Button, TouchableOpacity, Alert, TextInput, ScrollView} from 'react-native'
+import { View, Text, StyleSheet, Image, Button, TouchableOpacity, Alert, TextInput, ScrollView, Platform, KeyboardAvoidingView } from 'react-native'
 import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack, router} from 'expo-router'
@@ -144,6 +144,7 @@ const preReg = () => {
     <DateTimePickerModal
       isVisible={isDatePickerVisible}
       mode="datetime"
+      display='inline'
       onConfirm={handleConfirm}
       onCancel={hideDatePicker}
     />
