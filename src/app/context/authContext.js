@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'firebase/auth';
 import { doc, getDoc, setDoc, collection, deleteDoc } from 'firebase/firestore';
+import { deleteUser as firebaseDeleteUser } from 'firebase/auth';
 import { auth, db } from '../../../firebase';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -14,6 +15,7 @@ export const AuthProvider = ({ children }) => {
     const [name, setName] = useState(null);
     const [email, setEmail] = useState(null);
     const [weight, setWeight] = useState(null);
+    const [height, setHeight] = useState(null);
     const [gender, setGender] = useState(null);
     const [birthdate, setBirthdate] = useState(null);
 
@@ -29,6 +31,7 @@ export const AuthProvider = ({ children }) => {
                     setGender(userDoc.data().gender);
                     setBirthdate(userDoc.data().birthdate);
                     setWeight(userDoc.data().weight);
+                    setHeight(userDoc.data().height);
                 } else {
                     const businessDoc = await getDoc(doc(db, 'businessPartner', user.uid));
                     if (businessDoc.exists()) {
@@ -96,7 +99,7 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const setBodyProfile = async (uid, gender, birthdate, weight) => {
+    const setBodyProfile = async (uid, gender, birthdate, weight, height) => {
         try {
             // Construct the document reference for the user
             const userDocRef = doc(db, 'users', uid);
@@ -105,16 +108,18 @@ export const AuthProvider = ({ children }) => {
             await setDoc(userDocRef, {
                 gender,
                 birthdate,
-                weight
+                weight,
+                height
             }, { merge: true }); // Using merge: true ensures existing fields are not overwritten
 
             // Update local state
             setGender(gender);
             setBirthdate(birthdate);
             setWeight(weight);
+            setHeight(height);
 
             // Return the updated user document or whatever you need
-            return { uid, gender, birthdate, weight };
+            return { uid, gender, birthdate, weight, height };
 
         } catch (error) {
             throw error; // Rethrow the error to handle it elsewhere in your application
@@ -147,19 +152,31 @@ export const AuthProvider = ({ children }) => {
     };
     const deleteUser = async (uid) => {
         try {
-            // Construct the document reference for the user
-            const userDocRef = doc(db, 'users', uid);
-
-            // Delete the user document
-            await deleteDoc(userDocRef);
-            await AsyncStorage.clear()
-            // Additional cleanup if necessary (e.g., related documents or storage)
-
-            return true;
+          // Construct the document reference for the user
+          const userDocRef = doc(db, 'users', uid);
+      
+          // Delete the user document from Firestore
+          await deleteDoc(userDocRef);
+      
+          // Clear local storage
+          await AsyncStorage.clear();
+      
+          // Delete the authenticated user
+          const currentUser = auth.currentUser;
+          if (currentUser) {
+            await firebaseDeleteUser(currentUser);
+          } else {
+            throw new Error('No user is currently signed in');
+          }
+      
+          // Additional cleanup if necessary (e.g., related documents or storage)
+          
+          return true;
         } catch (error) {
-            throw error; // Rethrow the error to handle it elsewhere in your application
+          console.error('Error deleting user profile:', error);
+          throw error; // Rethrow the error to handle it elsewhere in your application
         }
-    };
+      };
     
     const login = async (email, password) => {
         try {
@@ -189,7 +206,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, isAuthenticated, userType, name, username, email, gender, birthdate, weight, deleteUser, login, register, logout, resetAuth, setBodyProfile, setAccountProfile}}>
+        <AuthContext.Provider value={{ user, isAuthenticated, userType, name, username, email, gender, birthdate, weight, height, deleteUser, login, register, logout, resetAuth, setBodyProfile, setAccountProfile}}>
             {children}
         </AuthContext.Provider>
     );

@@ -13,6 +13,7 @@ export default function UserProfile() {
   const [gender, setGender] = useState('Male');
   const [birthdate, setBirthdate] = useState(new Date(2002, 8, 9));
   const [weight, setWeight] = useState('');
+  const [height, setHeight] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
 
   const handleDateChange = (event, selectedDate) => {
@@ -25,7 +26,7 @@ export default function UserProfile() {
 
       try {
 
-          const user = await setBodyProfile(uid, gender, birthdate.toISOString(), weight)
+          const user = await setBodyProfile(uid, gender, birthdate.toISOString(), weight, height)
       } catch (error) {
           alert(error.message)
       }
@@ -57,7 +58,7 @@ export default function UserProfile() {
         </Text>
       </View>
 
-      <View style={{ paddingTop: 50, width: '100%', alignItems: 'center' }}>
+      <View style={{ paddingTop: 20, width: '100%', alignItems: 'center' }}>
         <View style={styles.pickerWrapper}>
           <Text style={styles.label}>Your Gender</Text>
           <Picker
@@ -90,13 +91,24 @@ export default function UserProfile() {
         </View>
 
         <View style={styles.pickerWrapper}>
-          <Text style={styles.label}>Your Weight</Text>
+          <Text style={styles.label}>Your Weight (kg)</Text>
           <TextInput
             style={styles.textInput}
             placeholder="Enter your weight"
             keyboardType="numeric"
             value={weight}
             onChangeText={setWeight}
+          />
+        </View>
+
+        <View style={styles.pickerWrapper}>
+          <Text style={styles.label}>Your Height (cm)</Text>
+          <TextInput
+            style={styles.textInput}
+            placeholder="Enter your height"
+            keyboardType="numeric"
+            value={height}
+            onChangeText={setHeight}
           />
         </View>
       </View>
@@ -159,7 +171,7 @@ const styles = StyleSheet.create({
     width: 300
   },
   button: {
-    marginTop: 150,
+    marginTop: 50,
     backgroundColor: '#D96B41',
     borderRadius: 8,
     alignItems: 'center',

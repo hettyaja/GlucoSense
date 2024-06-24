@@ -79,7 +79,7 @@ const preReg = () => {
           </TouchableOpacity>
         </View>
       </View>
-      <TouchableOpacity style={{ alignItems: 'center', paddingTop: 100 }} onPress={() => router.push('/question3')}>
+      <TouchableOpacity style={{ alignItems: 'center', paddingTop: 60 }} onPress={() => router.push('/question3')}>
         <View style={{ backgroundColor: "#D96B41", width: 312, height: 50, borderRadius: 8, justifyContent: 'center', marginTop: 50 }}>
           <Text style={{ fontSize: 16, fontFamily: "Poppins-Medium", textAlign: 'center', color: '#FAF5E1' }}>Continue</Text>
       </View>

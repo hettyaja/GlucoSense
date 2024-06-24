@@ -9,7 +9,7 @@ import ImageButton from '../components/ImageButton';
 import { useAuth } from './context/authContext';
 
 const Profile = () => {
-    const { setAccountProfile, setBodyProfile, name, email, username, weight, gender, birthdate } = useAuth();
+    const { setAccountProfile, setBodyProfile, name, email, username, weight, gender, birthdate, height } = useAuth();
     const { profileData, setProfileData } = useProfile();
     const { user } = useAuth()
     const uid = user.uid
@@ -19,6 +19,7 @@ const Profile = () => {
     const [localEmail] = useState(email);
     const [localBirthdate, setBirthdate] = useState(birthdate ? new Date(birthdate) : new Date());
     const [localWeight, setWeight] = useState(weight);
+    const [localHeight, setHeight] = useState(height);
     const [localGender, setGender] = useState(gender);
     const [isEditable, setIsEditable] = useState(false);
     const [showDatePicker, setShowDatePicker] = useState(false);
@@ -40,7 +41,7 @@ const Profile = () => {
             }
             try {
                 await setAccountProfile(uid, localName, localEmail, localUsername);
-                await setBodyProfile(uid, localGender, localBirthdate, localWeight);
+                await setBodyProfile(uid, localGender, localBirthdate, localWeight, localHeight);
             } catch (error) {
                 alert(error.message);
             }
@@ -182,6 +183,20 @@ const Profile = () => {
                             />
                         ) : (
                             <Text style={styles.input}>{localWeight}</Text>
+                        )}
+                    </View>
+                    
+                    <View style={styles.item}>
+                        <Text>Height</Text>
+                        {isEditable ? (
+                            <TextInput
+                                style={styles.input}
+                                value={localHeight}
+                                onChangeText={setHeight}
+                                editable={isEditable}
+                            />
+                        ) : (
+                            <Text style={styles.input}>{localHeight}</Text>
                         )}
                     </View>
 
