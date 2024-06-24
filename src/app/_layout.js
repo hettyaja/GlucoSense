@@ -20,6 +20,8 @@ const RootLayout = () => {
         router.replace('home')
       } else if (userType === 'businessPartner') {
         router.replace('homeBP')
+      } else if (userType === 'systemAdmin') {
+        router.replace('insightSA')
       }
     } else if (isAuthenticated == false) {
       router.replace('/getStartedPage_1');
