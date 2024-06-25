@@ -145,16 +145,27 @@ export const AuthProvider = ({ children }) => {
             throw error; // Rethrow the error to handle it elsewhere in your application
         }
     };
-    const deleteUser = async (uid) => {
+    const deleteUser = async (uid, roles) => {
         try {
-            // Construct the document reference for the user
-            const userDocRef = doc(db, 'users', uid);
+            if (roles === 'users'){
+                // Ini taro condition check, kalo dia biz partner, berarti dia pinda ke biz partner 
+                const userDocRef = doc(db, 'users', uid);
 
             // Delete the user document
-            await deleteDoc(userDocRef);
-            await AsyncStorage.clear()
+                await deleteDoc(userDocRef);
+                await AsyncStorage.clear()
             // Additional cleanup if necessary (e.g., related documents or storage)
+                
+            }else if(roles === 'businessPartner'){
+                const userDocRef = doc(db, 'businessPartner', uid);
 
+            // Delete the user document
+                await deleteDoc(userDocRef);
+                await AsyncStorage.clear()
+
+            }
+            // Construct the document reference for the user
+            
             return true;
         } catch (error) {
             throw error; // Rethrow the error to handle it elsewhere in your application
