@@ -17,7 +17,7 @@ const RootLayout = () => {
 
     if (isAuthenticated) {
       if (userType === 'user') {
-        router.replace('reminder')
+        router.replace('home')
       } else if (userType === 'businessPartner') {
         router.replace('homeBP')
       } else if (userType === 'systemAdmin') {
