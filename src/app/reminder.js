@@ -10,16 +10,23 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import Header from '../components/Header';
 
 
-
 const reminder = () => {
+  const handleLeftButton = () => {
+    router.back()
+  }
 
+  const handleRightButton = () => {
+    router.push('/createReminder')
+  }
 
   return (
     <>
       <Header
         title='Reminder'
         leftButton='Back'
+        onLeftButtonPress={handleLeftButton}
         rightButton='Add'
+        onRightButtonPress={handleRightButton}
       />
 
     <ScrollView style={{flex:1, backgroundColor:'#f5f5f5'}}>

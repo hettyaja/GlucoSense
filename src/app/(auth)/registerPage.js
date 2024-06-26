@@ -3,7 +3,7 @@ import { Image, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, Vie
 import { images } from '../../constants/images'
 import { router } from 'expo-router'
 import ImageButton from '../../components/ImageButton'
-import {useAuth } from '../context/authContext'
+import { useAuth } from '../context/authContext'
 
 const FreemiumRegister= () => {
     const {register} = useAuth()

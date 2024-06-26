@@ -11,6 +11,7 @@ export const addMealLog = async (userId, mealLog) => {
     throw error;
   }
 };
+
 // Add a new glucose log
 export const addGlucoseLog = async (userId, glucoseLog) => {
   try {

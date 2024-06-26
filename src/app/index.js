@@ -39,7 +39,7 @@ const Index = () => {
   return (
     // <Redirect href="home" />
     <View style={styles.container}>
-      {/* <Button title="Clear Storage" onPress={clearAsync} /> */}
+      <Button title="Clear Storage" onPress={clearAsync} />
       <ActivityIndicator size="large" color="#0000ff" />
     </View>
   );
