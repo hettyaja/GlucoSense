@@ -45,7 +45,7 @@ const PartnerSA = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerText}>Business Partner</Text>
+        <Text style={styles.headerText}>Pending Account</Text>
       </View>
       <View style={styles.searchBar}>
         <TextInput
