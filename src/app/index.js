@@ -26,15 +26,15 @@ const Index = () => {
   //   return <Redirect href="getStartedPage_1" />;
   // }
 
-  // const clearAsync = async () => {
-  //   try {
-  //     await AsyncStorage.clear();
-  //     console.log('AsyncStorage cleared');
-  //     resetAuth(); // Optionally reset the auth state
-  //   } catch (error) {
-  //     console.error('Error clearing AsyncStorage:', error);
-  //   }
-  // };
+  const clearAsync = async () => {
+    try {
+      await AsyncStorage.clear();
+      console.log('AsyncStorage cleared');
+      resetAuth(); // Optionally reset the auth state
+    } catch (error) {
+      console.error('Error clearing AsyncStorage:', error);
+    }
+  };
 
   return (
     // <Redirect href="home" />

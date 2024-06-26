@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, SafeAreaView, Platform, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, SafeAreaView, Platform, Image, Alert } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import ImageButton from '../../components/ImageButton';
 import { router } from 'expo-router';
 import { images } from '../../constants/images';
 import { useAuth } from '../context/authContext';
+
 export default function UserProfile() {
-  const {setBodyProfile} = useAuth()
-  const { user } = useAuth()
-  const uid = user.uid
+  const { setBodyProfile } = useAuth();
+  const { user } = useAuth();
+  const uid = user.uid;
   const [gender, setGender] = useState('Male');
   const [birthdate, setBirthdate] = useState(new Date(2002, 8, 9));
   const [weight, setWeight] = useState('');
@@ -22,14 +23,28 @@ export default function UserProfile() {
     setBirthdate(currentDate);
   };
 
+  const calculateAge = (birthdate) => {
+    const today = new Date();
+    const age = today.getFullYear() - birthdate.getFullYear();
+    const m = today.getMonth() - birthdate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthdate.getDate())) {
+      return age - 1;
+    }
+    return age;
+  };
+
   const handleContinue = async () => {
+    const age = calculateAge(birthdate);
+    if (age < 10) {
+      Alert.alert("Invalid Age", "You must be at least 10 years old.");
+      return;
+    }
 
-      try {
-
-          const user = await setBodyProfile(uid, gender, birthdate.toISOString(), weight, height)
-      } catch (error) {
-          alert(error.message)
-      }
+    try {
+      await setBodyProfile(uid, gender, birthdate.toISOString(), weight, height);
+    } catch (error) {
+      alert(error.message);
+    }
     // Navigate to the next screen
     router.push('/question2');
   };
