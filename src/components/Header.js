@@ -2,6 +2,7 @@ import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import Feather from 'react-native-vector-icons/Feather';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Stack } from 'expo-router';
 import { useAuth } from '../app/context/authContext';
@@ -48,7 +49,13 @@ const Header = ({ title, leftButton, onLeftButtonPress, rightButton, onRightButt
                 <Text style={styles.rightButton}>{rightButton}</Text>
             </TouchableOpacity>
         );
-    case 'Notification':
+      case 'Add':
+        return (
+          <TouchableOpacity onPress={onLeftButtonPress}>
+            <Feather name='plus' size={24} color='white' />
+          </TouchableOpacity>
+        );
+      case 'Notification':
         return (
         <TouchableOpacity style={{marginRight:16}} onPress={onRightButtonPress}>
             <MaterialCommunityIcons name='bell-outline' size={24} color='white'/>

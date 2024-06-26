@@ -13,7 +13,7 @@ const Profile = () => {
     const { profileData, setProfileData } = useProfile();
     const { user } = useAuth()
     const uid = user.uid
-    const [localName, setName] = useState(name);
+    const [localName, setName] = useState('name');
     const [photoUri, setPhotoUri] = useState(profileData?.photoUri || '');
     const [localUsername, setUsername] = useState(username);
     const [localEmail] = useState(email);
