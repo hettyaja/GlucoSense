@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TextInput, FlatList } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { db } from '../../../firebase'; // Import the Firestore instance
 import { collection, getDocs } from 'firebase/firestore';
@@ -80,20 +80,6 @@ const PartnerSA = () => {
           keyExtractor={(item) => item.username}
         />
       )}
-      <View style={styles.footer}>
-        <TouchableOpacity style={styles.footerButton}>
-          <Text style={styles.footerButtonText}>Insight</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.footerButton}>
-          <Text style={styles.footerButtonText}>Users</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.footerButton}>
-          <Text style={styles.footerButtonText}>Partners</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.footerButton}>
-          <Text style={styles.footerButtonText}>Setting</Text>
-        </TouchableOpacity>
-      </View>
     </View>
   );
 };
@@ -178,20 +164,6 @@ const styles = StyleSheet.create({
   noPartnersText: {
     fontSize: 18,
     color: '#ccc',
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingVertical: 16,
-    borderTopWidth: 1,
-    borderColor: '#ccc',
-  },
-  footerButton: {
-    alignItems: 'center',
-  },
-  footerButtonText: {
-    fontSize: 16,
-    color: '#D9A37E',
   },
 });
 
