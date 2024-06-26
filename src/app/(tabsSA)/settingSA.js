@@ -1,10 +1,17 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { Button, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
+import { useAuth } from '../context/authContext'
 
 const settingSA = () => {
+    const { logout } = useAuth()
+    
+    const handleSignOut = async () => {
+        await logout()
+      }
+
   return (
     <View>
-      <Text>settingSA</Text>
+      <Button title="Logout" onPress={handleSignOut} />
     </View>
   )
 }
