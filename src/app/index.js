@@ -1,30 +1,43 @@
 import { StyleSheet, Text, View, ActivityIndicator, Button } from 'react-native';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link, Redirect, router } from 'expo-router';
 import { useAuth } from './context/authContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Notifications from 'expo-notifications';
+
+// Notifications.setNotificationHandler({
+//   handleNotification: async () => ({
+//     shouldShowAlert: true,
+//     shouldPlaySound: false,
+//     shouldSetBadge: false,
+//   }),
+// });
+
 
 const Index = () => {
   const { isAuthenticated, userType, resetAuth } = useAuth();
   console.log(isAuthenticated);
 
-  // if (isAuthenticated === undefined) {
-  //   return (
-  //     <View style={styles.container}>
-  //       <ActivityIndicator size="large" color="#0000ff" />
-  //     </View>
-  //   );
-  // }
+  // useEffect(() => {
+  //   const requestPermissions = async () => {
+  //     const { status } = await Notifications.requestPermissionsAsync();
+  //     if (status !== 'granted') {
+  //       alert('Permission to access notifications was denied');
+  //     }
+  //   };
+  //   requestPermissions();
+  // }, []);
 
-  // if (isAuthenticated) {
-  //   if (userType === 'free') {
-  //     return <Redirect href="home" />;
-  //   } else if (userType === 'business') {
-  //     return <Redirect href="homeBP" />;
-  //   }
-  // } else if (isAuthenticated == false) {
-  //   return <Redirect href="getStartedPage_1" />;
-  // }
+  // const triggerTestNotification = async () => {
+  //   await Notifications.scheduleNotificationAsync({
+  //     content: {
+  //       title: "Test Notification",
+  //       body: "This is a test notification to verify your setup.",
+  //     },
+  //     trigger: { seconds: 1 },
+  //   });
+  // };
+
 
   const clearAsync = async () => {
     try {
@@ -40,6 +53,7 @@ const Index = () => {
     // <Redirect href="home" />
     <View style={styles.container}>
       <Button title="Clear Storage" onPress={clearAsync} />
+      {/* <Button title="Trigger Test Notification" onPress={triggerTestNotification} /> */}
       <ActivityIndicator size="large" color="#0000ff" />
     </View>
   );
