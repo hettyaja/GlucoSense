@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'firebase/auth';
-import { doc, getDoc, setDoc, collection, deleteDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, collection, deleteDoc, Timestamp } from 'firebase/firestore';
 import { auth, db } from '../../../firebase';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -65,19 +65,25 @@ export const AuthProvider = ({ children }) => {
             const user = userCredential.user;
             const { userType, username, name, UEN, NRIC, entityName } = additionalData;
 
+            const registerTime = Timestamp.fromDate(new Date());
+
             if (userType === 'free') {
                 await setDoc(doc(db, 'users', user.uid), {
                     username,
                     name,
                     email: user.email,
-                    subscriptionType: 'free'
+                    subscriptionType: 'free',
+                    registerTime,
+                    status: 'active'
                 });
             } else if (userType === 'businessPartner') {
                 await setDoc(doc(db, 'businessPartner', user.uid), {
                     entityName,
                     email: user.email,
                     UEN,
-                    NRIC
+                    NRIC,
+                    registerTime,
+                    status: 'pending'
                 });
             }
             return user;
