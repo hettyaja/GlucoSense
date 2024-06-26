@@ -16,7 +16,6 @@ import { useAuth } from '../context/authContext'
 const setting = () => {
   const { logout } = useAuth()
   const { name, user } = useAuth()
-  const uid = user.uid
   const { deleteUser } = useAuth()
   const { profileData } =  useProfile()
   const [isModalVisible, setModalVisible] = useState(false)
@@ -41,6 +40,7 @@ const setting = () => {
         text: 'Delete',
         onPress: async () => {
           try {
+            const uid = user.uid
             await deleteUser(uid, 'users');  
             router.push('welcomePage');    
           } catch (error) {

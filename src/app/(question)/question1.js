@@ -10,7 +10,6 @@ import { useAuth } from '../context/authContext';
 export default function UserProfile() {
   const { setBodyProfile } = useAuth();
   const { user } = useAuth();
-  const uid = user.uid;
   const [gender, setGender] = useState('Male');
   const [birthdate, setBirthdate] = useState(new Date(2002, 8, 9));
   const [weight, setWeight] = useState('');
@@ -41,6 +40,7 @@ export default function UserProfile() {
     }
 
     try {
+      const uid = user.uid;
       await setBodyProfile(uid, gender, birthdate.toISOString(), weight, height);
     } catch (error) {
       alert(error.message);
