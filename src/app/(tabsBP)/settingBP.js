@@ -1,6 +1,6 @@
 // settingBP.js
 import React from 'react';
-import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, Image, StyleSheet, Alert} from 'react-native';
 import { useRouter } from 'expo-router';
 import { useBPProfile } from '../context/BPProfileContext';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -12,7 +12,9 @@ import { useAuth } from '../context/authContext';
 
 
 const settingBP = () => {
-    const { logout } = useAuth();
+    const { logout, deleteUser, user } = useAuth();
+    const uid = user.uid;
+
     const router = useRouter();
     const { BPProfileData } = useBPProfile();
 
