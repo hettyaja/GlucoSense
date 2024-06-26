@@ -45,7 +45,10 @@ const PartnerSA = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerText}>Pending Account</Text>
+        <Text style={styles.headerText}>Business Partner</Text>
+        <TouchableOpacity style={styles.pendingBox}>
+          <Text style={styles.pendingBoxText}>Pending</Text>
+        </TouchableOpacity>
       </View>
       <View style={styles.searchBar}>
         <TextInput
@@ -109,6 +112,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     backgroundColor: '#D9A37E',
     padding: 16,
   },
@@ -117,6 +123,18 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#fff',
     textAlign: 'center',
+  },
+  pendingBox: {
+    backgroundColor: '#fff',
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: '#ccc',
+  },
+  pendingBoxText: {
+    color: '#D9A37E',
+    fontWeight: 'bold',
   },
   searchBar: {
     flexDirection: 'row',
