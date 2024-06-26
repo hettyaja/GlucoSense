@@ -29,6 +29,7 @@ const BusinessRegister= () => {
                 userType: 'businessPartner'
             }
             const user = await register(email, password, additionalData)
+            router.push('/homeBP');
         } catch (error) {
             alert(error.message)
         }

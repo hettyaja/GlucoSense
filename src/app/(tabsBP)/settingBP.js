@@ -1,6 +1,6 @@
 // settingBP.js
 import React from 'react';
-import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, Image, StyleSheet, Alert} from 'react-native';
 import { useRouter } from 'expo-router';
 import { useBPProfile } from '../context/BPProfileContext';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -12,14 +12,35 @@ import { useAuth } from '../context/authContext';
 
 
 const settingBP = () => {
-    const { logout } = useAuth();
+    const { logout, deleteUser, user } = useAuth();
+    const uid = user.uid;
+
     const router = useRouter();
     const { BPProfileData } = useBPProfile();
 
     const handleSignOut = async () => {
       await logout()
     }
-  
+    const createTwoButtonAlert = () =>
+    Alert.alert('Delete account', 'Are you sure you want to delete?', [
+      {
+        text: 'Cancel',
+        onPress: () => console.log('Cancel Pressed'),
+        style: 'cancel',
+      },
+      {
+        text: 'Delete',
+        onPress: async () => {
+          try {
+            await deleteUser(uid, 'businessPartner');  
+            router.push('welcomePage');    
+          } catch (error) {
+            console.error('Error deleting user profile:', error);
+            alert('Error deleting user profile: ' + error.message);
+          }
+        },
+      },
+    ]);
 
 
     return (
@@ -58,7 +79,7 @@ const settingBP = () => {
                 <MaterialIcons name='logout' size={24} style={styles.icon}/>
                 <Text style={styles.optionButtonText}>Log out</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.optionButton}>
+            <TouchableOpacity style={styles.optionButton} onPress = {() => createTwoButtonAlert()}>
                 <AntDesign name='deleteuser' size={24} color='#E04530' style={styles.icon}/>
                 <Text style={styles.deleteButtonText}>Delete business account</Text>
             </TouchableOpacity>

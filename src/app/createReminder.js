@@ -1,14 +1,14 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
-const InsightSA = () => {
+const createReminder = () => {
   return (
     <View>
-      <Text>InsightSA</Text>
+      <Text>createReminder</Text>
     </View>
   )
 }
 
-export default InsightSA
+export default createReminder
 
 const styles = StyleSheet.create({})

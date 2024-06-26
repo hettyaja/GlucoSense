@@ -68,19 +68,25 @@ export const AuthProvider = ({ children }) => {
             const user = userCredential.user;
             const { userType, username, name, UEN, NRIC, entityName } = additionalData;
 
+            const registerTime = Timestamp.fromDate(new Date());
+
             if (userType === 'free') {
                 await setDoc(doc(db, 'users', user.uid), {
                     username,
                     name,
                     email: user.email,
-                    subscriptionType: 'free'
+                    subscriptionType: 'free',
+                    registerTime,
+                    status: 'active'
                 });
             } else if (userType === 'businessPartner') {
                 await setDoc(doc(db, 'businessPartner', user.uid), {
                     entityName,
                     email: user.email,
                     UEN,
-                    NRIC
+                    NRIC,
+                    registerTime,
+                    status: 'pending'
                 });
             }
             return user;
@@ -150,7 +156,7 @@ export const AuthProvider = ({ children }) => {
             throw error; // Rethrow the error to handle it elsewhere in your application
         }
     };
-    const deleteUser = async (uid) => {
+    const deleteUser = async (uid, roles) => {
         try {
           // Construct the document reference for the user
           const userDocRef = doc(db, 'users', uid);

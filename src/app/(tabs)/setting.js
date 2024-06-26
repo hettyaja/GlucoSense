@@ -41,7 +41,7 @@ const setting = () => {
         text: 'Delete',
         onPress: async () => {
           try {
-            await deleteUser(uid);  
+            await deleteUser(uid, 'users');  
             router.push('welcomePage');    
           } catch (error) {
             console.error('Error deleting user profile:', error);
