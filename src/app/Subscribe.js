@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Button, Alert} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign'
 
 const Subscribe = () => {
@@ -9,45 +9,45 @@ const Subscribe = () => {
                 <Text style={styles.title}> Simplify Your {"\n"} Blood Glucose Tracking </Text>
             </View>
           
-          <View style={styles.subtitle}>
-            <Text style={styles.h3}>Unlock Exclusive Features in Our Diabetes Management App!</Text>
-          </View>
-          <View style={styles.list}>
-            <AntDesign name='checkcircleo' size={24} color='#E04530' style={styles.icon}/>
-            <Text style={styles.text}> Generate Detailed Reports: Export your {"\n"} data to PDF or CSV for easy sharing.  </Text>
-          </View>
+            <View style={styles.subtitle}>
+                <Text style={styles.h3}>Unlock Exclusive Features in Our Diabetes Management App!</Text>
+            </View>
+            
+            <View style={styles.list}>
+                <AntDesign name='checkcircleo' size={24} color='#E04530' style={styles.icon}/>
+                <Text style={styles.text}> Generate Detailed Reports: Export your {"\n"} data to PDF or CSV for easy sharing.  </Text>
+            </View>
 
-          <View style={styles.list}>
-            <AntDesign name='checkcircleo' size={24} color='#E04530' style={styles.icon}/>
-            <Text style={styles.text}> Order Diet Plans: Get diet plan tailored to your needs.  </Text>
-          </View>
+            <View style={styles.list}>
+                <AntDesign name='checkcircleo' size={24} color='#E04530' style={styles.icon}/>
+                <Text style={styles.text}> Order Diet Plans: Get diet plan tailored to your needs.  </Text>
+            </View>
 
-          <View style={styles.list}>
-            <AntDesign name='checkcircleo' size={24} color='#E04530' style={styles.icon}/>
-            <Text style={styles.text}> Quick Food Logging: Scan barcodes to {"\n"} effortlessly track your meals.  </Text>
-          </View>
+            <View style={styles.list}>
+                <AntDesign name='checkcircleo' size={24} color='#E04530' style={styles.icon}/>
+                <Text style={styles.text}> Quick Food Logging: Scan barcodes to {"\n"} effortlessly track your meals.  </Text>
+            </View>
 
-          <View style={styles.list}>
-            <AntDesign name='checkcircleo' size={24} color='#E04530' style={styles.icon}/>
-            <Text style={styles.text}> Insightful Graphs: Visualize the {"\n"} correlation between your diet and glucose levels.  </Text>
-          </View>
+            <View style={styles.list}>
+                <AntDesign name='checkcircleo' size={24} color='#E04530' style={styles.icon}/>
+                <Text style={styles.text}> Insightful Graphs: Visualize the {"\n"} correlation between your diet and glucose levels.  </Text>
+            </View>
 
-          <View style={styles.list}>
-            <AntDesign name='checkcircleo' size={24} color='#E04530' style={styles.icon}/>
-            <Text style={styles.text}> Automatically Input edit aing  </Text>
-          </View>
+            <View style={styles.list}>
+                <AntDesign name='checkcircleo' size={24} color='#E04530' style={styles.icon}/>
+                <Text style={styles.text}> Insulin Estimation: Get accurate metrics on influence of insulin injection. </Text>
+            </View>
 
-          <View style={styles.price}>
-            <Text style={styles.tag}>Only $4.00 per month</Text>
-            <TouchableOpacity
-                style={styles.button}
-                onPress={() => Alert.alert('Button pressed')}
-            >
-          <Text style={styles.buttonText}>Get Started</Text>
-        </TouchableOpacity>
-          </View>
+            <View style={styles.price}>
+                <Text style={styles.tag}>Only $4.00 per month</Text>
+                <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => Alert.alert('Button pressed')}
+                >
+                    <Text style={styles.buttonText}>Get Started</Text>
+                </TouchableOpacity>
+            </View>
         </View>
-
     );
 };
 
@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontWeight: 'bold',
         color: 'white',
-        paddingTop:40
+        paddingTop:30
     },
 
     list:{
@@ -80,11 +80,11 @@ const styles = StyleSheet.create({
     },
 
     text:{
-      fontSize:16,
-      fontWeight:600,
-      textAlign:'left',
-      paddingRight:50,
-      fontFamily: "Poppins-Medium",
+        fontSize:16,
+        fontWeight: '600', // Changed to string
+        textAlign:'left',
+        paddingRight:50,
+        fontFamily: "Poppins-Light",
     },
 
     icon:{
@@ -102,18 +102,18 @@ const styles = StyleSheet.create({
     }, 
     price:{
         backgroundColor:'#ffff',
-        marginTop:80,
-        paddingTop:30,
+        
+        marginTop:10,
         paddingBottom:100,
         borderRadius:20,
         alignItems:'center',
         justifyContent:'center',
 
-         // Adding shadow for iOS
+        // Adding shadow for iOS
         shadowColor: '#000',
         shadowOffset: {
-         width: 0,
-        height: 2,
+            width: 0,
+            height: 2,
         },
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
@@ -126,26 +126,20 @@ const styles = StyleSheet.create({
         textAlign:"center"
     },
     button: {
-        marginTop:20,
+        marginTop:10,
         backgroundColor: '#D96B41',
         paddingVertical: 15,
         paddingHorizontal: 25,
         borderRadius: 8,
         width:'80%',
-
-       
-        
-        
-      },
-      buttonText: {
+    },
+    buttonText: {
         color: '#fff',
         fontSize: 16,
-        fontWeight: '600', // Semi-bold
+        fontWeight: '600', // Changed to string
         textAlign: 'center',
         fontFamily:'Poppins-Bold'
-        
-      },
-    
-
+    },
 })
-export default Subscribe
+
+export default Subscribe;
