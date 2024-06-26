@@ -1,4 +1,3 @@
-// userSA.js
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, FlatList } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
@@ -29,16 +28,22 @@ const userSA = () => {
 
   const filteredUsers = users.filter(user => {
     return (
-      (filter ? user.userType === filter : true) &&
+      (filter ? user.subscriptionType === filter : true) &&
       (searchQuery ? user.username.toLowerCase().includes(searchQuery.toLowerCase()) : true)
     );
   });
+
+  const formatDate = (timestamp) => {
+    if (!timestamp || !timestamp.seconds) return "";
+    const date = new Date(timestamp.seconds * 1000);
+    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+  };
 
   const renderUserItem = ({ item }) => (
     <View style={styles.userRow}>
       <Text style={styles.userCell}>{item.username}</Text>
       <Text style={styles.userCell}>{item.subscriptionType}</Text>
-      <Text style={styles.userCell}>{item.register}</Text>
+      <Text style={styles.userCell}>{formatDate(item.registerTime)}</Text>
       <Text style={styles.userCell}>{item.status}</Text>
     </View>
   );
@@ -63,7 +68,6 @@ const userSA = () => {
           <Picker.Item label="All users" value="" />
           <Picker.Item label="Free user" value="free" />
           <Picker.Item label="Premium user" value="premium" />
-          <Picker.Item label="Seller" value="Seller" />
         </Picker>
       </View>
       <View style={styles.tableHeader}>
