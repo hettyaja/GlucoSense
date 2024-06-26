@@ -46,9 +46,6 @@ const PartnerSA = () => {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerText}>Business Partner</Text>
-        <TouchableOpacity style={styles.pendingBox}>
-          <Text style={styles.pendingBoxText}>Pending</Text>
-        </TouchableOpacity>
       </View>
       <View style={styles.searchBar}>
         <TextInput
@@ -57,15 +54,10 @@ const PartnerSA = () => {
           value={searchQuery}
           onChangeText={(text) => setSearchQuery(text)}
         />
-        <Picker
-          selectedValue={filter}
-          style={styles.dropdown}
-          onValueChange={(itemValue) => setFilter(itemValue)}
-        >
-          <Picker.Item label="All" value="" />
-          <Picker.Item label="Pending" value="Pending" />
-          <Picker.Item label="Active" value="Active" />
-        </Picker>
+        <View style={styles.pendingContainer}>
+          <View style={styles.pendingSquare} />
+          <Text style={styles.pendingText}>Pending</Text>
+        </View>
       </View>
       <View style={styles.tableHeader}>
         <Text style={styles.tableHeaderCell}>Username</Text>
@@ -112,9 +104,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
     backgroundColor: '#D9A37E',
     padding: 16,
   },
@@ -123,18 +112,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#fff',
     textAlign: 'center',
-  },
-  pendingBox: {
-    backgroundColor: '#fff',
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    borderRadius: 4,
-    borderWidth: 1,
-    borderColor: '#ccc',
-  },
-  pendingBoxText: {
-    color: '#D9A37E',
-    fontWeight: 'bold',
   },
   searchBar: {
     flexDirection: 'row',
@@ -150,9 +127,20 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     borderRadius: 4,
   },
-  dropdown: {
-    marginLeft: 8,
-    flex: 1,
+  pendingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 16,
+  },
+  pendingSquare: {
+    width: 20,
+    height: 20,
+    backgroundColor: '#ccc',
+    marginRight: 8,
+  },
+  pendingText: {
+    color: '#000',
+    fontWeight: 'bold',
   },
   tableHeader: {
     flexDirection: 'row',
