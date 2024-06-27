@@ -149,7 +149,7 @@ const preReg = () => {
             <Text style={styles.buttonText}>Search</Text>
             <Fontisto name="search" size={24} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity style={styles.button}  onPress={() => router.push('/Subscribe')}>
             <Text style={styles.buttonText}>Scan</Text>
             <MaterialCommunityIcons name='barcode-scan' size={32} />
           </TouchableOpacity>

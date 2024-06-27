@@ -1,11 +1,20 @@
 import React from "react";
+import ImageButton from '../components/ImageButton';
 import { View, Text, StyleSheet, TouchableOpacity, Alert} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign'
 
-const Subscribe = () => {
+const Subscribe = () => 
+    {
+    const navigation = useNavigation();
     return (
         <View style={styles.container}>
             <View style={styles.header}>
+                <ImageButton
+                    source={require("../assets/back.png")}
+                    imageSize={{ width: 24, height: 24 }}
+                    onPress={() => navigation.goBack()}
+                />
                 <Text style={styles.title}> Simplify Your {"\n"} Blood Glucose Tracking </Text>
             </View>
           
@@ -58,18 +67,16 @@ const styles = StyleSheet.create({
     },
     header:{
         backgroundColor: '#E58B68',
-        paddingTop:80,
-        paddingBottom:50,
-        borderRadius:8,  
+        paddingBottom:30, 
         padding: 24      
     },
 
     title:{
         fontSize:32,
+        paddingTop:50,
         textAlign: 'center',
         fontWeight: 'bold',
         color: 'white',
-        paddingTop:30
     },
 
     list:{
