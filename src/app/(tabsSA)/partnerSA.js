@@ -1,3 +1,4 @@
+// partnerSA.js
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from 'react-native';
 import { db } from '../../../firebase'; // Import the Firestore instance
