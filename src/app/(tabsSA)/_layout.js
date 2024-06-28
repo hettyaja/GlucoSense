@@ -8,7 +8,6 @@ const _layout = () => {
       <Tabs.Screen name='partnerSA' options={{headerShown:false}}/>
       <Tabs.Screen name='settingSA' options={{headerShown:false}} />
       <Tabs.Screen name='userSA' options={{headerShown:false}}/>
-      <Stack.Screen name='exportReport' options={{headerShown:false}} />
     </Tabs>
   );
 };
