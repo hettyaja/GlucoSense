@@ -1,13 +1,19 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { useAuth } from '../context/authContext';
+import { useRouter } from 'expo-router';
 import Divider from '../components/Divider'; // Adjust the import path according to your project structure
 
 const SettingSA = () => {
   const { logout } = useAuth();
+  const router = useRouter();
   
   const handleSignOut = async () => {
     await logout();
+  };
+
+  const handleExportReport = () => {
+    router.push('exportReport');
   };
 
   return (
@@ -26,7 +32,7 @@ const SettingSA = () => {
         </View>
       </View>
       <Divider withMargin />
-      <TouchableOpacity style={styles.optionContainer}>
+      <TouchableOpacity style={styles.optionContainer} onPress={handleExportReport}>
         <Text style={styles.optionText}>Export Report</Text>
       </TouchableOpacity>
       <Divider withMargin />
