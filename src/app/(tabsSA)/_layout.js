@@ -14,7 +14,6 @@ const _layout = () => {
           <Stack>
             <Stack.Screen name="partnerSA" component={PartnerSA} options={{ headerShown: false }} />
             <Stack.Screen name="pendingAccountList" component={PendingAccountList} options={{ headerShown: false }} />
-            <Stack.Screen name="pendingAccountDetails" component={PendingAccountDetails} options={{ headerShown: false }} />
           </Stack>
         )}
       </Tabs.Screen>
