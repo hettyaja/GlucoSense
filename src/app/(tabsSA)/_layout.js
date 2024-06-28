@@ -1,10 +1,10 @@
 // _layout.js
-import { StyleSheet } from 'react-native';
-import React from 'react';
-import { Tabs, Stack } from 'expo-router';
 import PartnerSA from './partnerSA';
 import PendingAccountList from './pendingAccountList';
 import PendingAccountDetails from './pendingAccountDetails';
+import React from 'react';
+import { StyleSheet } from 'react-native';
+import { Tabs, Stack } from 'expo-router';
 
 const _layout = () => {
   return (
@@ -13,7 +13,7 @@ const _layout = () => {
       <Tabs.Screen name="partnerSA" options={{ headerShown: false }}>
         {() => (
           <Stack>
-            <Stack.Screen name="partnerSA" component={PartnerSA} options={{ headerShown: false }} />
+            <Stack.Screen name="index" component={PartnerSA} options={{ headerShown: false }} />
             <Stack.Screen name="pendingAccountList" component={PendingAccountList} options={{ headerShown: false }} />
             <Stack.Screen name="pendingAccountDetails" component={PendingAccountDetails} options={{ headerShown: false }} />
           </Stack>
@@ -25,6 +25,6 @@ const _layout = () => {
   );
 };
 
-export default _layout;
-
 const styles = StyleSheet.create({});
+
+export default _layout;
