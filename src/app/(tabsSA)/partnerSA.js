@@ -4,7 +4,6 @@ import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from 'r
 import { db } from '../../../firebase'; // Import the Firestore instance
 import { collection, getDocs } from 'firebase/firestore';
 import { useRouter } from 'expo-router';
-import Divider from '../components/Divider'; // Adjust the path to where your Divider component is located
 
 const PartnerSA = () => {
   const [filter, setFilter] = useState('');
