@@ -1,16 +1,14 @@
-// partnerSA.js
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from 'react-native';
-import { db } from '../../../firebase';
+import { View, Text, StyleSheet, TextInput, FlatList } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
+import { db } from '../../../firebase'; // Import the Firestore instance
 import { collection, getDocs } from 'firebase/firestore';
-import { useRouter } from 'expo-router';
 
 const PartnerSA = () => {
   const [filter, setFilter] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [businessPartner, setBusinessPartner] = useState([]);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
 
   useEffect(() => {
     const fetchBusinessPartners = async () => {
@@ -36,12 +34,12 @@ const PartnerSA = () => {
   });
 
   const renderBusinessPartnerItem = ({ item }) => (
-    <TouchableOpacity style={styles.partnerRow} onPress={() => router.push(`/partnerSA/pendingAccountList?partner=${encodeURIComponent(JSON.stringify(item))}`)}>
+    <View style={styles.partnerRow}>
       <Text style={styles.partnerCell}>{item.username}</Text>
       <Text style={styles.partnerCell}>{item.stallName}</Text>
       <Text style={styles.partnerCell}>{new Date(item.registered.seconds * 1000).toLocaleDateString()}</Text>
       <Text style={[styles.partnerCell, item.status === 'Active' ? styles.activeStatus : styles.pendingStatus]}>{item.status}</Text>
-    </TouchableOpacity>
+    </View>
   );
 
   return (
