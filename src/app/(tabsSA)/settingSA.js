@@ -2,7 +2,6 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { useAuth } from '../context/authContext';
 import { useRouter } from 'expo-router';
-import Divider from '../components/Divider'; // Adjust the import path according to your project structure
 
 const SettingSA = () => {
   const { logout } = useAuth();
@@ -31,11 +30,9 @@ const SettingSA = () => {
           <Text style={styles.profileRole}>System Admin</Text>
         </View>
       </View>
-      <Divider withMargin />
       <TouchableOpacity style={styles.optionContainer} onPress={handleExportReport}>
         <Text style={styles.optionText}>Export Report</Text>
       </TouchableOpacity>
-      <Divider withMargin />
       <TouchableOpacity style={styles.optionContainer} onPress={handleSignOut}>
         <Text style={styles.optionText}>Log out</Text>
       </TouchableOpacity>
