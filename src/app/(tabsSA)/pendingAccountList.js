@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from 'r
 import { db } from '../../../firebase'; // Import the Firestore instance
 import { collection, getDocs } from 'firebase/firestore';
 import { useRouter } from 'expo-router';
-import Divider from '../components/Divider'; // Adjust the path to where your Divider component is located
 
 const PendingAccountList = () => {
   const [filter, setFilter] = useState('');
@@ -38,9 +37,8 @@ const PendingAccountList = () => {
   const renderBusinessPartnerItem = ({ item }) => (
     <TouchableOpacity style={styles.partnerRow} onPress={() => router.push(`/partnerSA/pendingAccountDetails?partner=${encodeURIComponent(JSON.stringify(item))}`)}>
       <Text style={styles.partnerCell}>{item.username}</Text>
-      <Text style={styles.partnerCell}>{item.stallName}</Text>
       <Text style={styles.partnerCell}>{new Date(item.registered.seconds * 1000).toLocaleDateString()}</Text>
-      <Text style={[styles.partnerCell, item.status === 'Active' ? styles.activeStatus : styles.pendingStatus]}>{item.status}</Text>
+      <Text style={[styles.partnerCell, item.status === 'Pending' ? styles.pendingStatus : styles.activeStatus]}>{item.status}</Text>
     </TouchableOpacity>
   );
 
