@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, FlatList } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
+import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from 'react-native';
 import { db } from '../../../firebase'; // Import the Firestore instance
 import { collection, getDocs } from 'firebase/firestore';
+import { useRouter } from 'expo-router';
+import Divider from '../components/Divider'; // Adjust the path to where your Divider component is located
 
-const PartnerSA = () => {
+const PendingAccountList = () => {
   const [filter, setFilter] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [businessPartner, setBusinessPartner] = useState([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchBusinessPartners = async () => {
@@ -34,11 +36,12 @@ const PartnerSA = () => {
   });
 
   const renderBusinessPartnerItem = ({ item }) => (
-    <View style={styles.partnerRow}>
+    <TouchableOpacity style={styles.partnerRow} onPress={() => router.push(`/partnerSA/pendingAccountDetails?partner=${encodeURIComponent(JSON.stringify(item))}`)}>
       <Text style={styles.partnerCell}>{item.username}</Text>
+      <Text style={styles.partnerCell}>{item.stallName}</Text>
       <Text style={styles.partnerCell}>{new Date(item.registered.seconds * 1000).toLocaleDateString()}</Text>
       <Text style={[styles.partnerCell, item.status === 'Active' ? styles.activeStatus : styles.pendingStatus]}>{item.status}</Text>
-    </View>
+    </TouchableOpacity>
   );
 
   return (
@@ -53,15 +56,10 @@ const PartnerSA = () => {
           value={searchQuery}
           onChangeText={(text) => setSearchQuery(text)}
         />
-        <Picker
-          selectedValue={filter}
-          style={styles.dropdown}
-          onValueChange={(itemValue) => setFilter(itemValue)}
-        >
-          <Picker.Item label="All" value="" />
-          <Picker.Item label="Pending" value="Pending" />
-          <Picker.Item label="Active" value="Active" />
-        </Picker>
+        <View style={styles.pendingContainer}>
+          <View style={styles.pendingSquare} />
+          <Text style={styles.pendingText}>Pending</Text>
+        </View>
       </View>
       <View style={styles.tableHeader}>
         <Text style={styles.tableHeaderCell}>Username</Text>
@@ -116,9 +114,20 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     borderRadius: 4,
   },
-  dropdown: {
-    marginLeft: 8,
-    width: 40, // Adjust width as needed to match the design
+  pendingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 16,
+  },
+  pendingSquare: {
+    width: 20,
+    height: 20,
+    backgroundColor: '#ccc',
+    marginRight: 8,
+  },
+  pendingText: {
+    color: '#000',
+    fontWeight: 'bold',
   },
   tableHeader: {
     flexDirection: 'row',
@@ -159,4 +168,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PartnerSA;
+export default PendingAccountList;
