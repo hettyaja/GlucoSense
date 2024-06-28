@@ -66,7 +66,7 @@ export const AuthProvider = ({ children }) => {
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
-            const { userType, username, name, UEN, NRIC, entityName } = additionalData;
+            const { userType, username, name, UEN, City, entityName, address, postal, phoneNum } = additionalData;
 
             const registerTime = Timestamp.fromDate(new Date());
 
@@ -83,10 +83,9 @@ export const AuthProvider = ({ children }) => {
                 await setDoc(doc(db, 'businessPartner', user.uid), {
                     entityName,
                     email: user.email,
+                    City,
                     UEN,
-                    NRIC,
-                    registerTime,
-                    status: 'pending'
+                    NRIC
                 });
             }
             return user;
@@ -156,6 +155,7 @@ export const AuthProvider = ({ children }) => {
             throw error; // Rethrow the error to handle it elsewhere in your application
         }
     };
+
     const deleteUser = async (uid, roles) => {
         try {
           // Construct the document reference for the user

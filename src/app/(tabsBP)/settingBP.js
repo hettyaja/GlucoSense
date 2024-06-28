@@ -1,22 +1,48 @@
 // settingBP.js
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, Image, StyleSheet, Alert} from 'react-native';
 import { useRouter } from 'expo-router';
-import { useBPProfile } from '../context/BPProfileContext';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import Octicons from 'react-native-vector-icons/Octicons'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import { useAuth } from '../context/authContext';
+import { fetchBPProfile } from '../service/profileBPService'; 
+
 
 
 const settingBP = () => {
+  
     const { logout, deleteUser, user } = useAuth();
     const uid = user.uid;
 
     const router = useRouter();
-    const { BPProfileData } = useBPProfile();
+  
+    const [photoUri, setPhotoUri] = useState('');
+    const [shopName, setShopName] = useState('');
+    const [location, setLocation] = useState('');
+    const [description, setDescription] = useState('');
+
+    useEffect(() => {
+      const getBPProfile = async () => {
+        if (uid) {
+          try {
+            const data = await fetchBPProfile(uid);
+            if (data) {
+              setPhotoUri(data.photoUri || '');
+              setShopName(data.entityName || '');
+              setLocation(data.address || '');
+              setDescription(data.description || '');
+            }
+          } catch (error) {
+            console.error('Error fetching profile data:', error);
+          }
+        }
+      };
+  
+      getBPProfile();
+    }, [uid]);
 
     const handleSignOut = async () => {
       await logout()
@@ -50,14 +76,13 @@ const settingBP = () => {
             <TouchableOpacity onPress={() => router.push('/profileBP')}>
             <View style={styles.profileCard}>
                 <Image 
-                    source={{ uri: BPProfileData.photoUri || 'photoUri'}} // Use actual photo URI
+                    source={{ uri:  'photoUri'}} // Use actual photo URI
                     style={styles.profilePhoto}
                 />
                 <View style={styles.profileInfo}>
-                    <Text style={styles.profileName}>{BPProfileData.shopName || 'Shop Name'}</Text>
-                    <Text style={styles.profileUsername}>{BPProfileData.username || 'Username'}</Text>
-                    <Text style={styles.profileLocation}>{BPProfileData.location || 'Location'}</Text>
-                    <Text style={styles.profileDescription}>{BPProfileData.description || 'Description'}</Text>
+                    <Text style={styles.profileName}>{shopName || 'Shop Name'}</Text>
+                    <Text style={styles.profileLocation}>{location || 'Location'}</Text>
+                    <Text style={styles.profileDescription}>{description || 'Description'}</Text>
                 </View>
                
                 <FontAwesome name='angle-right' size={24} color="#00000"/> 
@@ -80,8 +105,8 @@ const settingBP = () => {
                 <Text style={styles.optionButtonText}>Log out</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.optionButton} onPress = {() => createTwoButtonAlert()}>
-                <AntDesign name='deleteuser' size={24} color='#E04530' style={styles.icon}/>
-                <Text style={styles.deleteButtonText}>Delete business account</Text>
+                <AntDesign name='deleteuser' size={24} style={styles.icon}/>
+                <Text style={styles.optionButtonText}>Delete business account</Text>
             </TouchableOpacity>
         </View>
 
@@ -174,10 +199,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Medium',
     fontSize: 14,
   },
-  deleteButtonText: {
-    fontFamily: 'Poppins-Medium',
-    color: '#E04530',
-  },
+  
   icon: {
     paddingRight:24
   }

@@ -22,9 +22,7 @@ const _layout = () => {
           }}/>
         <Stack.Screen
           name="registerBP"
-          options={{
-            headerShown:false
-          }}/>
+          />
     </Stack>
   )
 }

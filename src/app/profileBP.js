@@ -1,21 +1,43 @@
-// app/profileBP.js
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter, Stack } from 'expo-router';
 import ImageButton from '../components/ImageButton';
-import { useBPProfile } from './context/BPProfileContext';
+import { fetchBPProfile } from './service/profileBPService'; // Adjust the import according to your file structure
+import { useAuth } from './context/authContext'; // Adjust the import according to your file structure
+import { ScrollView } from 'react-native-gesture-handler';
 
 const profileBP = () => {
   const router = useRouter();
-  const { BPProfileData, setBPProfileData } = useBPProfile();
+  const { user } = useAuth();
+  const uid = user.uid;
+  
+  const [photoUri, setPhotoUri] = useState('');
+  const [shopName, setShopName] = useState('');
+  const [username, setUsername] = useState('');
+  const [address, setAddress] = useState('');
+  const [description, setDescription] = useState('');
 
-  const [photoUri, setPhotoUri] = useState(BPProfileData.photoUri);
-  const [shopName, setShopName] = useState(BPProfileData.shopName);
-  const [username, setUsername] = useState(BPProfileData.username);
-  const [location, setLocation] = useState(BPProfileData.location);
-  const [description, setDescription] = useState(BPProfileData.description);
+  useEffect(() => {
+    const getBPProfile = async () => {
+      if (uid) {
+        try {
+          const data = await fetchBPProfile(uid);
+          if (data) {
+            setPhotoUri(data.photoUri || '');
+            setShopName(data.entityName || '');
+            setUsername(data.NR || '');
+            setAddress(data.address || '');
+            setDescription(data.description || '');
+          }
+        } catch (error) {
+          console.error('Error fetching profile data:', error);
+        }
+      }
+    };
+
+    getBPProfile();
+  }, [uid]);
 
   const addImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -36,9 +58,14 @@ const profileBP = () => {
     }
   };
 
-  const saveProfile = () => {
-    setBPProfileData({ photoUri, shopName, username, location, description });
-    router.back('/(tabsBP)/settingBP');
+  const saveProfile = async () => {
+    try {
+      const docRef = doc(db, 'businessPartner', uid);
+      await setDoc(docRef, { photoUri, shopName, username, location, description }, { merge: true });
+      router.back('/(tabsBP)/settingBP');
+    } catch (error) {
+      console.error('Error saving profile data:', error);
+    }
   };
 
   return (
@@ -52,34 +79,33 @@ const profileBP = () => {
             source={require("../assets/back.png")}
             imageSize={{width:24, height:24}}
             customStyle={{paddingLeft:10}}
-            onPress={() => router.back('/profileBP')} //Perbaiki 
+            onPress={() => router.back('/profileBP')}
           />
         ),
         headerRight: () => (
-          <TouchableOpacity style={styles.button}
-            onPress={saveProfile}>
+          <TouchableOpacity style={styles.button} onPress={saveProfile}>
             <Text style={{padding:2, marginHorizontal:8, fontFamily: 'Poppins-Regular', fontSize:14, color:'white'}}>Save</Text>
           </TouchableOpacity>
         ),
-        headerTitle: 'Edit profile',
+        headerTitle: 'Profile',
         headerTitleAlign: 'center',
       }}/>
-      <View style={styles.container}>
-        {/* Profile Photo Section */}
+      {/* <View style={styles.container}> */}
         <View style={styles.photoSection}>
           <Image 
-            source={photoUri ? { uri: photoUri } : { uri: '' }} // Use selected image or placeholder
+            source={photoUri ? { uri: photoUri } : { uri: '' }}
             style={styles.profilePhoto}
-            resizeMode="cover" // Ensure the image covers the placeholder
+            resizeMode="cover"
           />
           <TouchableOpacity style={styles.changePhotoButton} onPress={addImage}>
             <Text>Change photo</Text>
           </TouchableOpacity>
         </View>
 
-        {/* Form Fields */}
+    
+      
+        <Text style={styles.subheader}>Business Information</Text>
         <View style={styles.section}>
-
           <View style={styles.item}>
             <Text style={styles.text}>Shop name</Text>
             <TextInput style={styles.text}
@@ -89,19 +115,19 @@ const profileBP = () => {
           </View>
 
           <View style={styles.item}>
-            <Text style={styles.text}>Username</Text>
+            <Text style={styles.text}>Address</Text>
             <TextInput style={styles.text}
-              placeholder = 'Add username'
+              placeholder='Add Address'
               value={username}
-              onChangeText={setUsername}
+              onChangeText={setAddress}
               editable={false}
             />
           </View>
-
+        </View>
           <View style={styles.item}>
             <Text style={styles.text}>Description</Text>
             <TextInput style={styles.text}
-              placeholder = 'Add a brief description'
+              placeholder='Add a brief description'
               value={description}
               onChangeText={setDescription}/>
           </View>
@@ -109,17 +135,15 @@ const profileBP = () => {
           <View style={styles.item}>
             <Text style={styles.text}>Phone number</Text>
             <TextInput style={styles.text}
-              placeholder = 'Add phone number'
+              placeholder='Add phone number'
               keyboardType="numeric" 
             />
           </View>
 
           <View style={styles.item}>
-            <Text style={styles.text}>Shop address</Text>
+            <Text style={styles.text}>Name</Text>
             <TextInput style={styles.text}
-              placeholder = 'Add shop address'
-              value={location}
-             onChangeText={setLocation}/>
+              />
           </View>
 
           <View style={styles.item}>
@@ -127,18 +151,18 @@ const profileBP = () => {
               <Text style={styles.resetPasswordText}>Reset Password</Text>
             </TouchableOpacity>
           </View>
-        </View>
-      </View>
+      
+     
+      {/* </View> */}
     </>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-  },
- 
+  // container: {
+  //   backgroundColor: '#f5f5f5',
+  // },
+
   photoSection: {
     alignItems: 'center',
     marginTop: 20,
@@ -153,8 +177,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   changePhotoText: {
-    color: '#f28b54', // Adjust color as needed
-    
+    color: '#f28b54',
   },
   form: {
     marginTop: 20,
@@ -166,28 +189,35 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginVertical: 10,
   },
- 
   resetPasswordText: {
     fontFamily: 'Poppins-Regular',
-    fontSize:14,
+    fontSize: 14,
     color: 'red'
   },
   section: {
-    backgroundColor:'white',
-    marginTop:24,
-    // margin:,
+    backgroundColor: 'white',
+    marginTop: 24,
+    paddingHorizontal: 10,
+    marginBottom: 10,
   },
+
   item: {
-    flexDirection:'row',
-    padding:16,
-    justifyContent:'space-between',
+    flexDirection: 'row',
+    paddingBottom: 100,
+    justifyContent: 'space-between',
     borderBottomColor: '#ccc',
     borderBottomWidth: 0.5
   },
   text: {
     fontFamily: 'Poppins-Regular',
-    fontSize:14
-  }
+    fontSize: 14
+  },
+  subheader:{
+    paddingHorizontal: 16,
+    marginTop: 24,
+    fontSize: 10,
+    fontFamily: "Poppins-Regular"
+}
 });
 
 export default profileBP;

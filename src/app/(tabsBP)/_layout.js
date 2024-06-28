@@ -4,11 +4,7 @@ import { router, Stack, Tabs } from 'expo-router'
 import { useFonts } from 'expo-font'
 import Octicons from 'react-native-vector-icons/Octicons'
 import AntDesign from 'react-native-vector-icons/AntDesign'
-import { SimpleLineIcons } from '@expo/vector-icons';
-import { images } from '../../constants/images';
-import BottomSheetModal from '../(tabs)/add';
-import ImageButton from '../../components/ImageButton';
-import { BPProfileProvider } from '../context/BPProfileContext';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 const _layout = () => {
   return (
@@ -46,7 +42,8 @@ const _layout = () => {
                 headerStyle: { backgroundColor: '#E58B68' },
                 headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold'},
                 tabBarIcon: () => (
-                    <AntDesign name='setting' size={24} color='#E58B68'/>
+                    <MaterialCommunityIcons name="clipboard-text-outline" size={24} color="#E58B68" />
+                 
                 ),
                 tabBarLabel: ({ focused }) => (
                   <Text style={{ fontFamily: focused ? 'Poppins-SemiBold' : 'Poppins-Regular', color: '#E58B68' }}>

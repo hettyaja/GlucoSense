@@ -9,6 +9,7 @@ import { RecipeProvider } from './context/RecipeContext';
 import { AuthProvider, useAuth } from './context/authContext';
 import { MenuProvider } from 'react-native-popup-menu';
 
+
 const RootLayout = () => {
   const { isAuthenticated, userType } = useAuth();
 

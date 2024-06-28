@@ -1,17 +1,21 @@
 import React, {useState} from 'react';
-import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import { images } from '../../constants/images';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import { useAuth } from '../context/authContext'
+import Header from '../../components/Header';
 
 const BusinessRegister= () => {
     const { register } = useAuth()
     const [entityName, setEntityName] = useState('')
     const [UEN, setUEN] = useState('')
-    const [NRIC, setNRIC] = useState('')
+    const [City, setCity] = useState('')
+    const [address, setAddress] = useState('')
+    const [postal, setPostal] = useState('')
     const [email, setEmail] = useState('')
+    const [phoneNum, setPhoneNum] = useState('')
+    const [name, setName] = useState('')
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
 
@@ -25,7 +29,11 @@ const BusinessRegister= () => {
             const additionalData = {
                 entityName,
                 UEN,
-                NRIC,
+                City,
+                address, 
+                postal,
+                name,
+                phoneNum,
                 userType: 'businessPartner'
             }
             const user = await register(email, password, additionalData)
@@ -36,26 +44,24 @@ const BusinessRegister= () => {
     }
 
     return (
-    <SafeAreaView style={styles.safeArea}>
-      <Image source={images.header} style={{position:"absolute", width:430, height:275}}/>
-      <View style={{alignItems:'flex-start', width:"100%", paddingHorizontal:16}}>
-        <TouchableOpacity onPress={() => router.back('/preReg')}>
-            <Ionicons name='chevron-back' size={32} color='white'/>
-        </TouchableOpacity>
+        <>
+          <Header
+            title="Registration"
+            leftButton='Back'
+            onLeftButtonPress={() => router.back('/welcomePage')}
+          />
 
-        <Text style={{fontFamily:"Poppins-Bold", fontSize: 24, paddingLeft: 25, paddingTop: 50, color: 'white'}}>Business{'\n'}registration{'\n'}details</Text>
-      </View>
-      <View style={{paddingTop:50}}>
-        <Text style={{
-            fontFamily: 'Poppins-Medium',
-            fontSize: 14,
-            fontWeight: '500',
-            color: '#333',
-            paddingLeft: 12
-            }}>
+
+<ScrollView style={styles.safeArea}>
+    
+    <Text style={styles.subheader}>
+        Business Information
+    </Text>
+    <View style={styles.container1}>
+        <Text style={styles.textStyle}>
             Entity Name
         </Text>
-        <View style={{ paddingLeft: 10, paddingRight: 10, flexDirection:'row', paddingBottom:2, marginBottom: 15}}>
+        <View style={styles.boxStyle}>
             <TextInput
                 style={styles.input}
                 keyboardType="default"
@@ -63,96 +69,128 @@ const BusinessRegister= () => {
                 onChangeText={text => setEntityName(text)}
             />
         </View>
-
-        <Text style={{
-            fontFamily: 'Poppins-Medium',
-            fontSize: 14,
-            fontWeight: '500',
-            color: '#333',
-            paddingLeft: 12
-            }}>
+        <Text style={styles.textStyle}>
             Unique Entity Number (UEN)
         </Text>
-        <View style={{ paddingLeft: 10, paddingRight: 10, flexDirection:'row', paddingBottom:2, marginBottom: 15}}>
+        <View style={styles.boxStyle}>
             <TextInput
                 style={styles.input}
                 value={UEN}
                 onChangeText={text => setUEN(text)}
             />
         </View>
+    </View>
 
-        <Text style={{
-            fontFamily: 'Poppins-Medium',
-            fontSize: 14,
-            fontWeight: '500',
-            color: '#333',
-            paddingLeft: 12
-            }}>
-            Contract Signee NRIC
+    <Text style={styles.subheader}>
+        Enterprise Address
+    </Text>
+    <View style={styles.container1}>
+        <Text style={styles.textStyle}>
+            City/Town
         </Text>
-        <View style={{ paddingLeft: 10, paddingRight: 10, flexDirection:'row', paddingBottom:2, marginBottom:15}}>
+        <View style={styles.boxStyle}>
             <TextInput
                 style={styles.input}
-                value={NRIC}
-                onChangeText={text => setNRIC(text)}
+                value={City}
+                onChangeText={text => setCity(text)}
+            />
+        </View>
+        <Text style={styles.textStyle}>
+            Address
+        </Text>
+        <View style={styles.boxStyle}>
+            <TextInput
+                style={styles.input}
+                value={address}
+                onChangeText={text => setAddress(text)}
+                autoCapitalize="none"
+                keyboardType="email-address"
+            />
+        </View>
+        <Text style={styles.textStyle}>
+            Postal Code
+        </Text>
+       
+        <View style={styles.boxStyle}>
+            <TextInput
+                style={styles.input}
+                value={postal}
+                onChangeText={Number => setPostal(Number)}
+                maxLength={6}
+                keyboardType="numeric" 
+            />
+        </View>
+    </View>
+
+    
+    <Text style={styles.subheader}>
+        Personal Information
+    </Text>
+    <View style={styles.container1}>
+        <Text style={styles.textStyle}>
+            Full Name
+        </Text>
+        <View style={styles.boxStyle}>
+            <TextInput
+                style={styles.input}
+                value={name}
+                onChangeText={Text => setName(Text)}
             />
         </View>
 
-        <Text style={{
-            fontFamily: 'Poppins-Medium',
-            fontSize: 14,
-            fontWeight: '500',
-            color: '#333',
-            paddingLeft: 12
-            }}>
-            Email
+        <Text style={styles.textStyle}>
+            Phone Number
         </Text>
-        <View style={{ paddingLeft: 10, paddingRight: 10, flexDirection:'row', paddingBottom:2, marginBottom:15}}>
+        <View style={styles.boxStyle}>
+            <TextInput
+                 style={styles.input}
+                 value={phoneNum}
+                 onChangeText={Number => setPhoneNum(Number)}
+            />
+        </View>
+    </View>
+
+    <Text style={styles.subheader}>
+        Other Information
+    </Text>
+    <View style={styles.container1}>
+        <Text style={styles.textStyle}>
+            Email 
+        </Text>
+        <View style={styles.boxStyle}>
             <TextInput
                 style={styles.input}
                 value={email}
-                onChangeText={text => setEmail(text)}
+                onChangeText={Text => setEmail(Text)}
             />
         </View>
 
-        <Text style={{
-            fontFamily: 'Poppins-Medium',
-            fontSize: 14,
-            fontWeight: '500',
-            color: '#333',
-            paddingLeft: 12
-            }}>
+        <Text style={styles.textStyle}>
             Password
         </Text>
-        </View>
-        <View style={{ paddingLeft: 10, paddingRight: 10, flexDirection:'row', paddingBottom:2, marginBottom:15}}>
+        <View style={styles.boxStyle}>
             <TextInput
-                style={styles.input}
-                secureTextEntry={true}
-                value={password}
-                onChangeText={text => setPassword(text)}
+                 style={styles.input}
+                 value={password}
+                 secureTextEntry = 'true'
+                 onChangeText={Text => setPassword(Text)}
             />
         </View>
 
-        <Text style={{
-            fontFamily: 'Poppins-Medium',
-            fontSize: 14,
-            fontWeight: '500',
-            color: '#333',
-            paddingLeft: 12
-            }}>
-            Confirm Password
+        <Text style={styles.textStyle}>
+            Confirmation Password
         </Text>
-        <View style={{ paddingLeft: 10, paddingRight: 10, flexDirection:'row',paddingBottom:2, marginBottom: 25}}>
+        <View style={styles.boxStyle}>
             <TextInput
-                style={styles.input}
-                secureTextEntry={true}
-                value={confirmPassword}
-                onChangeText={text => setConfirmPassword(text)}
+                 style={styles.input}
+                 value={confirmPassword}
+                 onChangeText={Text => setConfirmPassword(Text)}
             />
         </View>
+    </View>
+
         
-        <View style={{ paddingBottom:10, alignItems:'center'}}>
+        <View style={{ paddingBottom:10, alignItems:'center', marginTop:24}}>
         <TouchableOpacity onPress={() => handleSignUp()} style={styles.registerButtonContainer}>
             <Text style={styles.registerButtonText}> Register </Text>
         </TouchableOpacity>
@@ -168,13 +206,15 @@ const BusinessRegister= () => {
             <Text style={{ alignItems:'center', fontFamily: 'Poppins-Medium', fontSize: 14, paddingBottom: 35, color: '#0044CC', justifyContent: 'center', textAlign: 'center', fontFamily:'Poppins-Medium'}}> Log In </Text>
         </TouchableOpacity> 
         </View>
-    </SafeAreaView>
+    </ScrollView>
+        </>
+    
     );
 };
 
     const styles = StyleSheet.create({
-        container: {flex: 1, alignItems: 'center'},
-        safeArea: {flex: 1, backgroundColor:'white'},
+        // container: {flex: 1, alignItems: 'center'},
+        safeArea: {flex: 1, backgroundColor:'#F5F5F5'},
         registerButtonContainer: {
             elevation: 5,
             backgroundColor: "#E58B68",
@@ -185,13 +225,15 @@ const BusinessRegister= () => {
             paddingVertical: 8,
             paddingHorizontal: 65,
         },
-        image: {
-            paddingBottom: 500,
-            alignItems:'center',
-            resizeMode:  "contain",
-        },
-        input: {
+        textStyle: {
             fontFamily: 'Poppins-Medium',
+            fontSize: 14,
+            color: '#333',
+            paddingLeft: 16,
+        },
+       
+        input: {
+            fontFamily: 'Poppins-Normal',
             flex:1,
             width: 300,
             height: 40,
@@ -211,16 +253,30 @@ const BusinessRegister= () => {
             alignSelf: 'center',
             alignItems:'center'
         },
-        back: {
-            flex: 1,
-            width: 50,
-            height: 100,
-            size: 30,
-            color: '#FAF5E1',
-            paddingLeft: 30,
-            justifyContent: 'left',
-            alignItems: 'left',
+
+        boxStyle:{ 
+            paddingHorizontal: 16,
+            flexDirection:'row',
+            marginBottom: 8
+        },
+
+        items:{
+            paddingVertical: 16,
+        },
+
+        container1:{
+            marginTop: 8,
+            paddingVertical: 16,
+            backgroundColor: '#ffff',
+        },
+        
+        subheader:{
+            paddingHorizontal: 16,
+            marginTop: 24,
+            fontSize: 10,
+            fontFamily: "Poppins-Regular"
         }
+    
     });
 
 export default BusinessRegister;
