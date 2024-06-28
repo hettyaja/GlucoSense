@@ -26,3 +26,28 @@ export const fetchReminders = async (userId) => {
         throw error;
     }
 };
+
+export const updateReminder = async (userId, reminderData) => {
+    try {
+      const reminderRef = doc(db, 'users', userId, 'reminders', reminderData.id);
+      await updateDoc(reminderRef, {
+        time: reminderData.time,
+        day: reminderData.day,
+        type: reminderData.type,
+      });
+      console.log('Reminder updated successfully:', reminderData);
+    } catch (error) {
+      console.error('Error updating reminder:', error);
+      throw error;
+    }
+  };
+
+export const deleteReminder = async (userId, reminderData) => {
+try {
+    const reminderRef = doc(db, 'users', userId, 'reminders', reminderData.id);
+    await deleteDoc(reminderRef);
+} catch (error) {
+    console.error('Error deleting reminder:', error);
+    throw error;
+}
+};

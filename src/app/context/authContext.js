@@ -85,7 +85,9 @@ export const AuthProvider = ({ children }) => {
                     email: user.email,
                     City,
                     UEN,
-                    NRIC
+                    address,
+                    postal,
+                    phoneNum
                 });
             }
             return user;

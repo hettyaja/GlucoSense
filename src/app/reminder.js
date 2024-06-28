@@ -38,6 +38,10 @@ const reminder = () => {
     router.push('/createReminder')
   }
 
+  const handleEdit = (item) => {
+    router.push({pathname: 'editReminder', params: {reminderData: JSON.stringify(item)}})
+  }
+
   return (
     <>
       <Header
@@ -51,9 +55,9 @@ const reminder = () => {
     <ScrollView style={styles.container}>
       {reminders.length > 0 ? (
             reminders.map((reminder) => (
-              <TouchableOpacity key={reminder.id} style={styles.reminderItem}>
-                <Text style={styles.reminderText}>{reminder.type}</Text>
-                <Text style={styles.reminderText}>{reminder.day} - {reminder.time}</Text>
+              <TouchableOpacity key={reminder.id} style={styles.reminderItem} onPress={() => handleEdit(reminder)}>
+                <Text style={styles.reminderText1}>{reminder.type}</Text>
+                <Text style={styles.reminderText2}>{reminder.day} - {reminder.time}</Text>
               </TouchableOpacity>
             ))
           ) : (
@@ -73,7 +77,13 @@ const styles = StyleSheet.create({
     borderBottomWidth:0.5,
     padding:16
   },
-  reminderText: {
+  reminderText1: {
+    fontFamily:'Poppins-SemiBold',
+    fontSize:14
+  },
+  reminderText2: {
+    fontFamily:'Poppins-Regular',
+    fontSize:14
   },
   noRemindersText: {
     fontSize: 16,
