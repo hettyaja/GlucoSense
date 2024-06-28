@@ -1,31 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, FlatList } from 'react-native';
+import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, Modal, Button } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { db } from '../../../firebase'; // Import the Firestore instance
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
 
 const userSA = () => {
   const [filter, setFilter] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const usersCollection = await getDocs(collection(db, 'users'));
-        const usersData = usersCollection.docs.map(doc => doc.data());
-        setUsers(usersData);
-      } catch (error) {
-        console.error("Error fetching users: ", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchUsers();
   }, []);
 
+  const fetchUsers = async () => {
+    try {
+      const usersCollection = await getDocs(collection(db, 'users'));
+      const usersData = usersCollection.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+      setUsers(usersData);
+    } catch (error) {
+      console.error("Error fetching users: ", error);
+    } finally {
+      setLoading(false);
+    }
+  };
   const filteredUsers = users.filter(user => {
     return (
       (filter ? user.subscriptionType === filter : true) &&
@@ -39,13 +40,40 @@ const userSA = () => {
     return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
   };
 
+  const handleSuspend = async () => {
+    if (selectedUser && selectedUser.status !== 'suspended') {
+      try {
+        await updateDoc(doc(db, 'users', selectedUser.id),
+        { status: 'suspended' });
+        fetchUsers(); // Refresh the user list
+        setModalVisible(false); // Close the modal
+      } catch (error) {
+        console.error("Error suspending user: ", error);
+      }
+    }
+  };
+
+  const handleUnsuspend = async () => {
+    if (selectedUser && selectedUser.status === 'suspended') {
+      try {
+        await updateDoc(doc(db, 'users', selectedUser.id), { status: 'active' });
+        fetchUsers(); // Refresh the user list
+        setModalVisible(false); // Close the modal
+      } catch (error) {
+        console.error("Error unsuspending user: ", error);
+      }
+    }
+  };
+
   const renderUserItem = ({ item }) => (
-    <View style={styles.userRow}>
-      <Text style={styles.userCell}>{item.username}</Text>
-      <Text style={styles.userCell}>{item.subscriptionType}</Text>
-      <Text style={styles.userCell}>{formatDate(item.registerTime)}</Text>
-      <Text style={styles.userCell}>{item.status}</Text>
-    </View>
+    <TouchableOpacity onPress={() => { setSelectedUser(item); setModalVisible(true); }}>
+      <View style={styles.userRow}>
+        <Text style={styles.userCell}>{item.username}</Text>
+        <Text style={styles.userCell}>{item.subscriptionType}</Text>
+        <Text style={styles.userCell}>{formatDate(item.registerTime)}</Text>
+        <Text style={styles.userCell}>{item.status}</Text>
+      </View>
+    </TouchableOpacity>
   );
 
   return (
@@ -88,8 +116,39 @@ const userSA = () => {
         <FlatList
           data={filteredUsers}
           renderItem={renderUserItem}
-          keyExtractor={(item) => item.username}
+          keyExtractor={(item) => item.id}
         />
+      )}
+
+      {selectedUser && (
+        <Modal
+          visible={modalVisible}
+          animationType="slide"
+          transparent={true}
+          onRequestClose={() => setModalVisible(false)}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>Account Details</Text>
+              <Text>Username: {selectedUser.username}</Text>
+              <Text>Type: {selectedUser.subscriptionType}</Text>
+              <Text>Registered: {formatDate(selectedUser.registerTime)}</Text>
+              <View style={styles.modalButtons}>
+                <Button
+                  title="Suspend"
+                  onPress={handleSuspend}
+                  disabled={selectedUser.status === 'suspended'}
+                />
+                <Button
+                  title="Unsuspend"
+                  onPress={handleUnsuspend}
+                  disabled={selectedUser.status !== 'suspended'}
+                />
+              </View>
+              <Button title="Close" onPress={() => setModalVisible(false)} />
+            </View>
+          </View>
+        </Modal>
       )}
     </View>
   );
@@ -156,6 +215,29 @@ const styles = StyleSheet.create({
   noUsersText: {
     fontSize: 18,
     color: '#ccc',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  modalContent: {
+    width: '80%',
+    padding: 20,
+    backgroundColor: 'white',
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 10,
   },
 });
 
