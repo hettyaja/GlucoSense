@@ -7,7 +7,8 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Feather from 'react-native-vector-icons/Feather';
 import { useAuth } from '../context/authContext';
 import Header from '../../components/Header';
-import { fetchLogs, deleteLog, calculateAverageGlucose } from '../service/diaryService';
+import A1CComponent from '../../components/A1C'; // Ensure this import is correct
+import { fetchLogs, deleteLog } from '../service/diaryService';
 import PopupMenu from '../../components/PopupMenu';
 import Divider from '../../components/Divider';
 
@@ -194,8 +195,11 @@ const home = () => {
             </View>
           </View>
           <View style={{ flexDirection: 'row-reverse' }}>
-            <TouchableOpacity style={{ borderColor: 'white', borderWidth: 1, borderRadius: 8, width: '20%', paddingHorizontal: 8 }} onPress={() => router.push('Subscribe')}>
-              <Text style={styles.titleText}>A1C: ~</Text>
+            <TouchableOpacity 
+              style={{ borderColor: 'white', borderWidth: 1, borderRadius: 8, width: '20%', paddingHorizontal: 8 }} 
+              onPress={() => router.push('Subscribe')}
+            >
+              <A1CComponent user={user} />
             </TouchableOpacity>
           </View>
         </View>

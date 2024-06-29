@@ -202,23 +202,28 @@ export const updateMedicineLog = async (userId, medicineLog) => {
   }
 };
 
-export const calculateAverageGlucose = async (userId) => {
+export const calculateA1C = async (userId) => {
+  // Set the date to three months ago
   const threeMonthsAgo = new Date();
   threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
 
   try {
+    // Reference to the glucose logs collection for the user
     const glucoseLogsRef = collection(db, 'users', userId, 'glucoseLogs');
+
+    // Query to get glucose logs from the past three months
     const q = query(glucoseLogsRef, where('timestamp', '>=', threeMonthsAgo));
     const querySnapshot = await getDocs(q);
 
     if (querySnapshot.empty) {
       console.log('No matching documents.');
-      return 0; // return 0 if there are no logs
+      return 0; // Return 0 if there are no logs
     }
 
     let totalGlucose = 0;
     let count = 0;
 
+    // Iterate over the query results
     querySnapshot.forEach((doc) => {
       const data = doc.data();
       const glucoseValue = parseFloat(data.glucoseValue);
@@ -228,13 +233,17 @@ export const calculateAverageGlucose = async (userId) => {
       }
     });
 
+    // Calculate the average glucose level
     const averageGlucose = count > 0 ? totalGlucose / count : 0;
-    console.log(`Average Glucose over the past three months: ${averageGlucose.toFixed(2)} mmol/L`);
+
+    // Convert average glucose level from mmol/L to mg/dL
     const averageBloodGlucoseMgDl = averageGlucose * 18;
+
+    // Calculate the A1C value using the formula
     const a1c = (averageBloodGlucoseMgDl + 46.7) / 28.7;
     return a1c.toFixed(2);
   } catch (error) {
     console.error('Error fetching documents: ', error);
-    return 0; // return 0 in case of error
+    return 0; // Return 0 in case of error
   }
 };
