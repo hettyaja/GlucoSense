@@ -1,5 +1,5 @@
 import { db } from '../../../firebase'; 
-import { collection, doc, addDoc, getDocs, query, where, orderBy, limit, deleteDoc, updateDoc } from 'firebase/firestore';
+import { collection, doc, addDoc, getDocs, query, where, orderBy, limit, deleteDoc, updateDoc} from 'firebase/firestore';
 
 // Add a new meal log
 export const addMealLog = async (userId, mealLog) => {
@@ -199,5 +199,42 @@ export const updateMedicineLog = async (userId, medicineLog) => {
   } catch (error) {
     console.error('Error updating medicine log:', error);
     throw error;
+  }
+};
+
+export const calculateAverageGlucose = async (userId) => {
+  const threeMonthsAgo = new Date();
+  threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+
+  try {
+    const glucoseLogsRef = collection(db, 'users', userId, 'glucoseLogs');
+    const q = query(glucoseLogsRef, where('timestamp', '>=', threeMonthsAgo));
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+      console.log('No matching documents.');
+      return 0; // return 0 if there are no logs
+    }
+
+    let totalGlucose = 0;
+    let count = 0;
+
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      const glucoseValue = parseFloat(data.glucoseValue);
+      if (!isNaN(glucoseValue)) {
+        totalGlucose += glucoseValue;
+        count++;
+      }
+    });
+
+    const averageGlucose = count > 0 ? totalGlucose / count : 0;
+    console.log(`Average Glucose over the past three months: ${averageGlucose.toFixed(2)} mmol/L`);
+    const averageBloodGlucoseMgDl = averageGlucose * 18;
+    const a1c = (averageBloodGlucoseMgDl + 46.7) / 28.7;
+    return a1c.toFixed(2);
+  } catch (error) {
+    console.error('Error fetching documents: ', error);
+    return 0; // return 0 in case of error
   }
 };

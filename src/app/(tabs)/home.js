@@ -7,7 +7,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Feather from 'react-native-vector-icons/Feather';
 import { useAuth } from '../context/authContext';
 import Header from '../../components/Header';
-import { fetchLogs, deleteLog } from '../service/diaryService';
+import { fetchLogs, deleteLog, calculateAverageGlucose } from '../service/diaryService';
 import PopupMenu from '../../components/PopupMenu';
 import Divider from '../../components/Divider';
 
