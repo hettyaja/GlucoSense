@@ -73,15 +73,15 @@ const profileBP = () => {
   const toggleEdit = async () => {
     if (isEditable) {
       const updatedDetails = {
-        name: name,
-        email: email,
-        phoneNum: phoneNum,
-        address: address,
-        description: description,
-        shopName: shopName,
-        UEN : UEN,
-        postal: postal,
-        city: city,
+        name,
+        email,
+        phoneNum,
+        address,
+        description,
+        shopName,
+        UEN ,
+        postal,
+        city,
       };
         if (!name) {
             Alert.alert("Empty Field", "Name cannot be empty.");

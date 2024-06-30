@@ -1,4 +1,4 @@
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../../../firebase'; // Adjust the import according to your file structure
 
 export const fetchBPProfile = async (uid) => {
