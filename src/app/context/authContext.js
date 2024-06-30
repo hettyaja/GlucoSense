@@ -87,7 +87,8 @@ export const AuthProvider = ({ children }) => {
                     UEN,
                     address,
                     postal,
-                    phoneNum
+                    phoneNum,
+                    name
                 });
             }
             return user;

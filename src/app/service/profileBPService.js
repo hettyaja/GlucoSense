@@ -16,3 +16,13 @@ export const fetchBPProfile = async (uid) => {
     throw error;
   }
 };
+
+export const updateProfile = async(uid, profileData)=>{
+  try{
+    const profileRef = doc(db,'businessPartner', uid);
+      await updateDoc(profileRef, profileData)
+      console.log("Profile updated sucessfully");
+  }catch(error){
+      console.error("Error updating profile", error);
+  }
+};
