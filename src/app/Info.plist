@@ -2,3 +2,5 @@
 <string>We need your permission to use bluetooth to connect to devices</string>
 <key>NSLocationWhenInUseUsageDescription</key>
 <string>We need your permission to access location</string>
+<key>NSCameraUsageDescription</key>
+<string>We need your permission to use the camera</string>
