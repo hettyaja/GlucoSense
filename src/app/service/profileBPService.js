@@ -1,4 +1,4 @@
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../../../firebase'; // Adjust the import according to your file structure
 
 export const fetchBPProfile = async (uid) => {
@@ -14,5 +14,15 @@ export const fetchBPProfile = async (uid) => {
   } catch (error) {
     console.error('Error fetching profile data:', error);
     throw error;
+  }
+};
+
+export const updateProfile = async(uid, profileData)=>{
+  try{
+    const profileRef = doc(db,'businessPartner', uid);
+      await updateDoc(profileRef, profileData)
+      console.log("Profile updated sucessfully");
+  }catch(error){
+      console.error("Error updating profile", error);
   }
 };

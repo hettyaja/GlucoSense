@@ -87,7 +87,10 @@ export const AuthProvider = ({ children }) => {
                     UEN,
                     address,
                     postal,
-                    phoneNum
+                    phoneNum,
+                    name,
+                    registerTime,
+                    status: 'pending'
                 });
             }
             return user;

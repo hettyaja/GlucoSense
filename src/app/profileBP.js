@@ -1,22 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Alert, ScrollView } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter, Stack } from 'expo-router';
 import ImageButton from '../components/ImageButton';
-import { fetchBPProfile } from './service/profileBPService'; // Adjust the import according to your file structure
+import { fetchBPProfile, updateProfile } from './service/profileBPService'; // Adjust the import according to your file structure
 import { useAuth } from './context/authContext'; // Adjust the import according to your file structure
-import { ScrollView } from 'react-native-gesture-handler';
+
+
 
 const profileBP = () => {
   const router = useRouter();
   const { user } = useAuth();
   const uid = user.uid;
-  
   const [photoUri, setPhotoUri] = useState('');
   const [shopName, setShopName] = useState('');
-  const [username, setUsername] = useState('');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('')
+  const [phoneNum, setPhoneNum] = useState('');
   const [address, setAddress] = useState('');
+  const [UEN, setUEN] = useState('');
   const [description, setDescription] = useState('');
+  const [postal, setPostal] = useState('');
+  const [city, setCity] = useState('');
+  const [isEditable, setIsEditable] = useState(false);
+  
 
   useEffect(() => {
     const getBPProfile = async () => {
@@ -25,10 +32,15 @@ const profileBP = () => {
           const data = await fetchBPProfile(uid);
           if (data) {
             setPhotoUri(data.photoUri || '');
+            setName(data.name || '');
+            setPhoneNum(data.phoneNum || '');
+            setEmail(data.email || '');
             setShopName(data.entityName || '');
-            setUsername(data.NR || '');
+            setUEN(data.UEN ||'');
             setAddress(data.address || '');
             setDescription(data.description || '');
+            setCity(data.City || '');
+            setPostal(data.postal || '');
           }
         } catch (error) {
           console.error('Error fetching profile data:', error);
@@ -58,15 +70,52 @@ const profileBP = () => {
     }
   };
 
-  const saveProfile = async () => {
-    try {
-      const docRef = doc(db, 'businessPartner', uid);
-      await setDoc(docRef, { photoUri, shopName, username, location, description }, { merge: true });
-      router.back('/(tabsBP)/settingBP');
-    } catch (error) {
-      console.error('Error saving profile data:', error);
+  const toggleEdit = async () => {
+    if (isEditable) {
+      const updatedDetails = {
+        name,
+        email,
+        phoneNum,
+        address,
+        description,
+        shopName,
+        UEN ,
+        postal,
+        city,
+      };
+        if (!name) {
+            Alert.alert("Empty Field", "Name cannot be empty.");
+            return;
+        } else if (!email) {
+            Alert.alert("Empty Field", "Email cannot be empty.");
+            return;
+        }else if(!phoneNum){
+            Alert.alert("Empty Field", "Phone number cannot be empty");
+            return;
+        }else if(!address){
+            Alert.alert("Empty Field", "Address not be empty");
+            return;
+        }
+        try {
+          await updateProfile(uid, updatedDetails)
+          console.log('Profile updated successfully!');
+        } catch (error) {
+            alert(error.message);
+        }
     }
-  };
+    setIsEditable(!isEditable);
+};
+
+
+  // const saveProfile = async () => {
+  //   try {
+  //     const docRef = doc(db, 'businessPartner', uid);
+  //     await setDoc(docRef, { photoUri, shopName, username, location, description }, { merge: true });
+  //     router.back('/(tabsBP)/settingBP');
+  //   } catch (error) {
+  //     console.error('Error saving profile data:', error);
+  //   }
+  // };
 
   return (
     <>
@@ -83,14 +132,18 @@ const profileBP = () => {
           />
         ),
         headerRight: () => (
-          <TouchableOpacity style={styles.button} onPress={saveProfile}>
-            <Text style={{padding:2, marginHorizontal:8, fontFamily: 'Poppins-Regular', fontSize:14, color:'white'}}>Save</Text>
+          <TouchableOpacity style={styles.button} onPress={toggleEdit}>
+            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 14, color: 'white' }}>
+                            {isEditable ? 'Save' : 'Edit'}
+            </Text>
+  
           </TouchableOpacity>
         ),
         headerTitle: 'Profile',
         headerTitleAlign: 'center',
       }}/>
       {/* <View style={styles.container}> */}
+      <ScrollView>
         <View style={styles.photoSection}>
           <Image 
             source={photoUri ? { uri: photoUri } : { uri: '' }}
@@ -104,56 +157,112 @@ const profileBP = () => {
 
     
       
-        <Text style={styles.subheader}>Business Information</Text>
+        <Text style={styles.subheader}>Personal Information</Text>
         <View style={styles.section}>
           <View style={styles.item}>
-            <Text style={styles.text}>Shop name</Text>
+            <Text style={styles.text}>Name</Text>
             <TextInput style={styles.text}
-              placeholder='Add Shop Name'
-              value={shopName}
-              onChangeText={setShopName}/>
+              placeholder='Add Name'
+              value={name}
+              onChangeText={setName}
+              editable = {isEditable}/>
+             
           </View>
 
           <View style={styles.item}>
-            <Text style={styles.text}>Address</Text>
+            <Text style={styles.text}>Phone Number</Text>
             <TextInput style={styles.text}
-              placeholder='Add Address'
-              value={username}
-              onChangeText={setAddress}
-              editable={false}
+              placeholder='Add Phone Number'
+              value={phoneNum}
+              onChangeText={setPhoneNum}
+              editable = {isEditable}
+            />
+          </View>
+
+          <View style={styles.item}>
+            <Text style={styles.text}>Email</Text>
+            <TextInput style={styles.text}
+              placeholder='Add Email'
+              value={email}
+              onChangeText={setEmail}
+              
             />
           </View>
         </View>
+
+        <Text style={styles.subheader}> Business Information </Text>
+        
+        <View style={styles.section}>
+         <View style={styles.item}>
+            <Text style={styles.text}>Shop Name</Text>
+            <TextInput style={styles.text}
+              placeholder='Add shop name'
+              value = {shopName}
+              onChangeText={setShopName}
+              editable = {isEditable}
+            />
+          </View>
+
+          <View style={styles.item}>
+            <Text style={styles.text}>UEN</Text>
+            <TextInput style={styles.text}
+              value = {UEN}
+              editable = {false}
+            />
+          </View>
+
           <View style={styles.item}>
             <Text style={styles.text}>Description</Text>
             <TextInput style={styles.text}
               placeholder='Add a brief description'
               value={description}
-              onChangeText={setDescription}/>
+              onChangeText={setDescription}
+              editable = {isEditable}
+              />
           </View>
+        </View>
 
+        <Text style={styles.subheader}> Address Information </Text>          
+        <View style={styles.section}>
           <View style={styles.item}>
-            <Text style={styles.text}>Phone number</Text>
+            <Text style={styles.text}>City/Town</Text>
             <TextInput style={styles.text}
-              placeholder='Add phone number'
-              keyboardType="numeric" 
-            />
-          </View>
-
-          <View style={styles.item}>
-            <Text style={styles.text}>Name</Text>
-            <TextInput style={styles.text}
+              value = {city}
+              editable = {false}
               />
           </View>
 
           <View style={styles.item}>
-            <TouchableOpacity onPress={()=> router.push('resetPwd1')}>
-              <Text style={styles.resetPasswordText}>Reset Password</Text>
-            </TouchableOpacity>
+            <Text style={styles.text}>Address</Text>
+            <TextInput style={styles.text}
+              placeholder='Add address'
+              value={address}
+              onChangeText={setAddress}
+              />
           </View>
+
+          <View style={styles.item}>
+            <Text style={styles.text}>Postal Code</Text>
+            <TextInput style={styles.text}
+              placeholder = 'Add postal code'
+              value = {postal}
+              onChangeText={Number => setPostal(Number)}
+              />
+          </View>
+
+         
+        </View>
+        <View style={styles.section}>
+          <View style={styles.item}>
+              <TouchableOpacity onPress={()=> router.push('resetPwd1')}>
+                <Text style={styles.resetPasswordText}>Reset Password</Text>
+              </TouchableOpacity>
+          </View>
+        </View>
+        
       
+        </ScrollView>
      
-      {/* </View> */}
     </>
   );
 };
@@ -196,14 +305,14 @@ const styles = StyleSheet.create({
   },
   section: {
     backgroundColor: 'white',
-    marginTop: 24,
+    marginTop: 8,
     paddingHorizontal: 10,
     marginBottom: 10,
   },
 
   item: {
     flexDirection: 'row',
-    paddingBottom: 100,
+    paddingVertical: 16,
     justifyContent: 'space-between',
     borderBottomColor: '#ccc',
     borderBottomWidth: 0.5
@@ -213,7 +322,7 @@ const styles = StyleSheet.create({
     fontSize: 14
   },
   subheader:{
-    paddingHorizontal: 16,
+    paddingHorizontal: 8,
     marginTop: 24,
     fontSize: 10,
     fontFamily: "Poppins-Regular"

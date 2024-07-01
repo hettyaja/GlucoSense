@@ -31,7 +31,7 @@ const Profile = () => {
 
     const toggleEdit = async () => {
         
-        if (isEditable) {
+        if (isEditable) {b
             if (!localName) {
                 Alert.alert("Empty Field", "Name cannot be empty.");
                 return;
