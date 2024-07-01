@@ -64,12 +64,12 @@ const Login = () => {
       />
       
       <View style={{backgroundColor:"white", flexDirection: 'row-reverse', justifyContent:"space-between", width:'100%', paddingHorizontal:50}}>
-        <TouchableOpacity onPress={() => router.push('/(resetPwd)/resetPwd1')}>
+        <TouchableOpacity onPress={() => router.push('Boundary/resetPwd1')}>
             <Text style={{ alignItems:'center', fontFamily: 'Poppins-Medium', fontSize: 12, paddingBottom: 35, color: '#808080', justifyContent: 'center', textAlign: 'center', fontFamily:'Poppins-Medium'}}>Forgot Password?</Text>
         </TouchableOpacity> 
       </View>
 
-      <TouchableOpacity onPress={handleLogin} style={{paddingTop:90, paddingVertical:30}}>
+      <TouchableOpacity onPress={handleLogin} style={{marginVertical:40}}>
         <View style={styles.button}>
           <Text style={styles.buttonText}>Login</Text>
         </View>
@@ -77,7 +77,7 @@ const Login = () => {
       
 
       <Text style={{ fontFamily: "Poppins-Medium", fontSize: 12}}>Don't have an account?</Text>
-      <TouchableOpacity onPress={() => router.push('/preReg')}>
+      <TouchableOpacity onPress={() => router.push('Boundary/preReg')}>
             <Text style={{ alignItems:'center', fontFamily: 'Poppins-Medium', fontSize: 12, paddingBottom: 35, color: '#0044CC', justifyContent: 'center', textAlign: 'center', fontFamily:'Poppins-Medium'}}> Sign Up </Text>
       </TouchableOpacity> 
 

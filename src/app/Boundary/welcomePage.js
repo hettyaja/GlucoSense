@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import React from 'react'
 
-import { images } from '../constants/images'
+import { images } from '../../constants/images'
 import { router } from 'expo-router'
 
 const welcomePage = () => {
@@ -28,7 +28,7 @@ const welcomePage = () => {
         </Text>
 
         <TouchableOpacity
-            onPress={() => router.push("/preReg")}
+            onPress={() => router.push("Boundary/preReg")}
             style={[{
             marginTop: 20,
             backgroundColor:"#26513A",
@@ -42,7 +42,7 @@ const welcomePage = () => {
         </TouchableOpacity>
 
         <TouchableOpacity
-            onPress={() => router.push("/loginPage")}
+            onPress={() => router.push("Boundary/loginPage")}
             style={[{
             marginTop: 20,
             backgroundColor:"#E58B68",

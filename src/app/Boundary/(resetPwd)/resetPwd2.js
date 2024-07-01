@@ -35,7 +35,7 @@ const preReg = () => {
       <Header
           title="OTP Verification"
           leftButton='Back'
-          onLeftButtonPress={() => router.back('/loginPage')}
+          onLeftButtonPress={() => router.back('Boundary/resetPwd1')}
         />
     <View style={{flex: 1, backgroundColor: '#ffffff'}}>
       <Text style = {{fontFamily: 'Poppins-Bold', fontSize: 20, marginLeft: 30, marginTop: 35}}>Get your code</Text>
@@ -58,7 +58,7 @@ const preReg = () => {
             <Text style={{ fontSize: 10, fontFamily: "Poppins-Medium", textAlign: 'center', color: '#808080' }}>Didn't receive the code? </Text>
             <Link href="login/viewDiary" style={{ fontSize: 10, fontFamily: "Poppins-Bold", textAlign: 'center', color: '#000000' }}>Resend Code</Link>
         </View>
-        <TouchableOpacity style={{ alignItems: 'center', marginTop: 93 }} onPress = {() => router.push('/resetPwd3')}>
+        <TouchableOpacity style={{ alignItems: 'center', marginTop: 93 }} onPress = {() => router.push('Boundary/resetPwd3')}>
         <View style={{ backgroundColor: "#D96B41", width: 164, height: 42, borderRadius: 8, justifyContent: 'center' }}>
           <Text style={{ fontSize: 16, fontFamily: "Poppins-Medium", textAlign: 'center', color: '#FAF5E1' }}>Verify</Text>
       </View>

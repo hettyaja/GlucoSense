@@ -1,9 +1,8 @@
-import { View, Text, Image} from 'react-native'
+import { View, Text, Image, TouchableOpacity} from 'react-native'
 import React from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import { router, Stack } from 'expo-router'
 import { images } from '../../../constants/images';
-import ImageButton from '../../../components/ImageButton';
+import Ionicons from 'react-native-vector-icons/Ionicons'
 
 const getStartedPage_3 = () => {
   return (
@@ -14,12 +13,12 @@ const getStartedPage_3 = () => {
           }}
         />
     <View style={{flex:1}}>
-        <SafeAreaView style={{
-          flex:6,
+        <View style={{
+          flex:7,
           backgroundColor:"#E58B68",
           alignItems:"center"
         }}>
-        </SafeAreaView>
+        </View>
 
         <View style={{
           flex:3,
@@ -57,11 +56,11 @@ const getStartedPage_3 = () => {
           alignItems:"center"
         }}>
 
-            <Image source={ images.welcome3 }/>
+          <Image source={ images.welcome3 } style={{width:70, height:10}}/>
 
-            <ImageButton
-            source={require("../../../assets/next.png")}
-            onPress={() => router.push('welcomePage')}/>
+          <TouchableOpacity  onPress={() => router.push('Boundary/welcomePage')} >
+            <Ionicons name='chevron-forward-circle' size={56} color='#E58B68'/>
+          </TouchableOpacity>
         </View>
     </View>
     </>

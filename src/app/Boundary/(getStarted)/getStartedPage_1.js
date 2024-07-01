@@ -1,39 +1,31 @@
-import { View, Text, Image} from 'react-native'
+import { View, Text, Image, TouchableOpacity} from 'react-native'
 import React from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import {router, Stack } from 'expo-router'
-
+import Ionicons from 'react-native-vector-icons/Ionicons'
 import { images } from '../../../constants/images';
 import ImageButton from '../../../components/ImageButton'
 
 const getStartedPage_1 = () => {
   return (
     <>
-     <Stack.Screen
-          options={{
-            headerShown:false
-          }}
-        />
-        <View style={{flex:1}}>
-        <SafeAreaView style={{
-          flex:6,
-          backgroundColor:"#E58B68"
-        }}>
-        </SafeAreaView>
+      <Stack.Screen options={{headerShown:false}}/>
+      <View style={{flex:1}}>
+      <View style={{
+        flex:7,
+        backgroundColor:"#E58B68"
+      }}>
+      </View>
 
-        <View style={{
-          flex:3,
-          backgroundColor:"white",
-          alignItems:"center",
-          paddingTop:24
-        }}>
+      <View style={{
+        flex:3,
+        backgroundColor:"white",
+        alignItems:"center",
+        paddingTop:24
+      }}>
 
-          <Text style={{
-            fontFamily:"Poppins-Bold",
-            fontSize:16
-          }}>
-            Seamless Glucose Monitoring
-          </Text>
+      <Text style={{fontFamily:"Poppins-Bold", fontSize:16}}>
+        Seamless Glucose Monitoring
+      </Text>
 
           <Text style={{
             fontFamily:"Poppins-Regular",
@@ -56,13 +48,12 @@ const getStartedPage_1 = () => {
           paddingBottom:50,
           alignItems:"center"
         }}>
-            
-            <Image source={ images.welcome1 }/>
+          
+          <Image source={ images.welcome1 } style={{width:70, height:10}}/>
 
-            <ImageButton
-              source={require("../../../assets/next.png")}
-              onPress={() => router.push('/getStartedPage_2')}
-            />
+          <TouchableOpacity  onPress={() => router.push('Boundary/getStartedPage_2')} >
+            <Ionicons name='chevron-forward-circle' size={56} color='#E58B68'/>
+          </TouchableOpacity>
         </View>
     </View>
   

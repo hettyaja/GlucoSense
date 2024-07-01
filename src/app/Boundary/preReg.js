@@ -15,9 +15,9 @@ const preReg = () => {
 
   const handleNextPress = () => {
     if (selectedButton === 1) {
-      router.push('/registerPage'); // Navigate to the user registration page
+      router.push('Boundary/registerPage'); // Navigate to the user registration page
     } else if (selectedButton === 2) {
-      router.push('/getStartedBP'); // Navigate to the business partner registration page
+      router.push('Boundary/getStartedBP'); // Navigate to the business partner registration page
     }
   };
 
