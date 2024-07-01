@@ -52,22 +52,25 @@ const profileBP = () => {
   }, [uid]);
 
   const addImage = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert('Permission required', 'Sorry, we need camera roll permissions to make this work!');
-      return;
+    if (isEditable) {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permission required', 'Sorry, we need camera roll permissions to make this work!');
+        return;
+      }
+  
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+  
+      if (!result.canceled) {
+        setPhotoUri(result.assets[0].uri);
+      }
     }
 
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      setPhotoUri(result.assets[0].uri);
-    }
   };
 
   const toggleEdit = async () => {
@@ -82,6 +85,7 @@ const profileBP = () => {
         UEN ,
         postal,
         city,
+        photoUri
       };
         if (!name) {
             Alert.alert("Empty Field", "Name cannot be empty.");
@@ -145,13 +149,13 @@ const profileBP = () => {
       {/* <View style={styles.container}> */}
       <ScrollView>
         <View style={styles.photoSection}>
+          <TouchableOpacity style={styles.changePhotoButton} onPress={addImage} editable={isEditable}>
           <Image 
             source={photoUri ? { uri: photoUri } : { uri: '' }}
             style={styles.profilePhoto}
             resizeMode="cover"
+            
           />
-          <TouchableOpacity style={styles.changePhotoButton} onPress={addImage}>
-            <Text>Change photo</Text>
           </TouchableOpacity>
         </View>
 
@@ -166,7 +170,6 @@ const profileBP = () => {
               value={name}
               onChangeText={setName}
               editable = {isEditable}/>
-             
           </View>
 
           <View style={styles.item}>
@@ -286,7 +289,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   changePhotoText: {
-    color: '#f28b54',
+    color: 'blue',
   },
   form: {
     marginTop: 20,

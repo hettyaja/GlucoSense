@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
     changePhotoText: {
         fontFamily: 'Poppins-Medium',
         fontSize: 14,
-        color: '#E58B68',
+        color: 'blue',
         marginTop: 8,
     },
     sectionText: {

@@ -31,7 +31,7 @@ const settingBP = () => {
             const data = await fetchBPProfile(uid);
             if (data) {
               setPhotoUri(data.photoUri || '');
-              setShopName(data.entityName || '');
+              setShopName(data.shopName || '');
               setLocation(data.address || '');
               setDescription(data.description || '');
             }
@@ -76,7 +76,7 @@ const settingBP = () => {
             <TouchableOpacity onPress={() => router.push('/profileBP')}>
             <View style={styles.profileCard}>
                 <Image 
-                    source={{ uri:  'photoUri'}} // Use actual photo URI
+                    source={{ uri: photoUri}} // Use actual photo URI
                     style={styles.profilePhoto}
                 />
                 <View style={styles.profileInfo}>

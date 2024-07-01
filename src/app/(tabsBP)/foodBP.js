@@ -27,7 +27,6 @@ const foodBP = () => {
     setModalVisible(false);
   };
 
-
   const filteredRecipes = recipes.filter(recipe =>
     recipe.title && recipe.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -35,10 +34,10 @@ const foodBP = () => {
   return (
     <>
     <Tabs.Screen options={{
-        title: 'Menu & Recipe Management',
+        title: 'Menu Management',
         headerStyle: { backgroundColor: '#E58B68' },
         headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold'},
-        headerTitle: 'Menu & Recipe Management',
+        headerTitle: 'Menu Management',
         headerTitleAlign: 'center',
         headerRight: () => (
           <TouchableOpacity onPress={() => router.push('CreateRecipePage')} style={{marginRight:16}}>
@@ -49,10 +48,10 @@ const foodBP = () => {
     <View style={{ flex: 1 }}>
       <View style={styles.tabContainer}>
         <TouchableOpacity
-          style={[styles.tabButton, currentSection === 'Recipe' && styles.activeTabButton]}
+          style={[styles.tabButton, currentSection === 'Menu' && styles.activeTabButton]}
           onPress={() => setCurrentSection('Recipe')}
         >
-          <Text style={[styles.tabButtonText, currentSection === 'Recipe' && styles.activeTabButtonText]}>Recipe</Text>
+          <Text style={[styles.tabButtonText, currentSection === 'Menu' && styles.activeTabButtonText]}>Menu</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.tabButton, currentSection === 'Draft' && styles.activeTabButton]}
@@ -62,7 +61,7 @@ const foodBP = () => {
         </TouchableOpacity>
         </View>
 
-        {currentSection === 'Recipe' ? (
+        {currentSection === 'Menu' ? (
           <>
             <View style={styles.searchContainer}>
               <TextInput
