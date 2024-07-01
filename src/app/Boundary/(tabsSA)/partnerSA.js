@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, FlatList } from 'react-native';
-import { db } from '../../../firebase'; // Import the Firestore instance
+import { db } from '../../../../firebase'; // Import the Firestore instance
 import { collection, getDocs } from 'firebase/firestore';
 
 const PartnerSA = () => {

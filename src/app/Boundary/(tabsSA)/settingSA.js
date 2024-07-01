@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { useAuth } from '../Controller/authController';
+import { useAuth } from '../../Controller/authController';
 import { useRouter } from 'expo-router';
 
 const SettingSA = () => {

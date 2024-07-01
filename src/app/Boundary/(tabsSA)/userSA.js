@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, Modal, Button } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import { db } from '../../../firebase'; // Import the Firestore instance
+import { db } from '../../../../firebase'; // Import the Firestore instance
 import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
 
 const userSA = () => {
