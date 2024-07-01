@@ -1,8 +1,9 @@
 // app/recipePage.js
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Image, Button } from 'react-native';
 import { router } from 'expo-router';
 import { fetchRecipes } from './service/spoonacularAPI';
+import Header from '../components/Header';
 
 const recipePage = () => {
   const [recipes, setRecipes] = useState([]);
@@ -21,33 +22,54 @@ const recipePage = () => {
     fetchData();
   }, [query]);
 
+  const handleSearch = async () => {
+    try {
+      const recipeList = await fetchRecipes(query);
+      setRecipes(recipeList);
+    } catch (error) {
+      console.error('Error fetching recipes:', error);
+    }
+  };
+
+  const handleBackButton = () => {
+    router.back()
+  }
+
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.header}>
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search Recipe"
-          value={query}
-          onChangeText={setQuery}
-        />
-      </View>
-      <Text style={styles.title}>Recommended for you</Text>
-      <View style={styles.recipeList}>
-        {recipes.map((recipe) => (
-          <TouchableOpacity
-            key={recipe.id}
-            style={styles.recipeItem}
-            onPress={() => router.push({
-              pathname: '/recipeDetails',
-              params: { recipeId: recipe.id }
-            })}
-          >
-            <Image source={{ uri: recipe.image }} style={styles.recipeImage} />
-            <Text style={styles.recipeTitle}>{recipe.title}</Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-    </ScrollView>
+    <>
+      <Header
+        title='Recipe'
+        leftButton='Back'
+        onLeftButtonPress={() => handleBackButton()}
+      />
+      <ScrollView style={styles.container}>
+        <View style={styles.header}>
+            <TextInput
+            style={styles.searchInput}
+            placeholder="Search Recipe"
+            value={query}
+            onChangeText={setQuery}
+            />
+            <Button title="Search" onPress={handleSearch} />
+        </View>
+        <Text style={styles.title}>Recommended for you</Text>
+        <View style={styles.recipeList}>
+            {recipes.map((recipe) => (
+            <TouchableOpacity
+                key={recipe.id}
+                style={styles.recipeItem}
+                onPress={() => router.push({
+                pathname: '/recipeDetails',
+                params: { recipeId: recipe.id }
+                })}
+            >
+                <Image source={{ uri: recipe.image }} style={styles.recipeImage} />
+                <Text style={styles.recipeTitle}>{recipe.title}</Text>
+            </TouchableOpacity>
+            ))}
+        </View>
+      </ScrollView>
+    </>
   );
 };
 

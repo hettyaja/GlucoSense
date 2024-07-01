@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { fetchRecipeDetails } from './service/spoonacularAPI';
+import Header from '../components/Header';
 
 const RecipeDetails = () => {
   const { recipeId } = useLocalSearchParams();
@@ -26,6 +27,10 @@ const RecipeDetails = () => {
   }
 
   return (
+    <>
+    <Header
+        title='Recipe details'
+    />
     <ScrollView style={styles.container}>
       <Image source={{ uri: recipe.image }} style={styles.image} />
       <Text style={styles.title}>{recipe.title}</Text>
@@ -38,6 +43,8 @@ const RecipeDetails = () => {
         <Text key={index} style={styles.text}>{index + 1}. {step.step}</Text>
       ))}
     </ScrollView>
+    </>
+    
   );
 };
 
