@@ -4,30 +4,38 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { Link, router} from 'expo-router'
 import { images } from '../../constants/images';
 import { Picker } from '@react-native-picker/picker';
+import Header from '../../components/Header';
+
 
 const preReg = () => {
   const handleButtonPress = (buttonIndex) => {
     setSelectedButton(buttonIndex === selectedButton ? null : buttonIndex);
   }
   return (
-    <View style={{flex: 1, backgroundColor: '#ffffff'}}>
-      <Text style = {{fontFamily: 'Poppins-Bold', fontSize: 20, marginLeft: 30, marginTop: 35}}>Email address here</Text>
-      <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 14, marginLeft: 30, marginRight: 100, color: '#808080'}}>Please enter your email address associated with your account.</Text>
-      <Text style={{fontFamily: 'Poppins-Medium', fontSize: 14,marginLeft: 30, marginTop: 15}}>Email</Text>
-      <TextInput style={[styles.input, {color: "black", marginLeft: 30}]}/>
-      <TouchableOpacity style={{ alignItems: 'center', marginTop: 125 }} onPress = {() => router.push('/resetPwd2')}>
-        <View style={{ backgroundColor: "#D96B41", width: 164, height: 42, borderRadius: 8, justifyContent: 'center' }}>
-          <Text style={{ fontSize: 16, fontFamily: "Poppins-Medium", textAlign: 'center', color: '#FAF5E1' }}>Send</Text>
+    <>
+      <Header
+        title="Reset Password"
+        leftButton='Back'
+        onLeftButtonPress={() => router.back('/loginPage')}
+      />
+      <View style={{flex: 1, backgroundColor: '#ffffff'}}>
+        <Text style = {{fontFamily: 'Poppins-Bold', fontSize: 20, marginLeft: 16, marginTop: 35}}>Email address here</Text>
+        <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 14, marginLeft: 16, marginRight: 100, color: '#808080'}}>Please enter your email address associated with your account.</Text>
+        <Text style={{fontFamily: 'Poppins-Medium', fontSize: 14,marginLeft: 16, marginTop: 16}}>Email</Text>
+        <TextInput style={[styles.input, {color: "black"}]}/>
+        <TouchableOpacity style={{ alignItems: 'center', marginTop: 125 }} onPress = {() => router.push('/resetPwd2')}>
+          <View style={{ backgroundColor: "#D96B41", width: 164, height: 42, borderRadius: 8, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 16, fontFamily: "Poppins-Medium", textAlign: 'center', color: '#FAF5E1' }}>Send</Text>
+        </View>
+        </TouchableOpacity>
       </View>
-      </TouchableOpacity>
-    </View>
-    
+    </>
   )
 }
 const styles = StyleSheet.create({
   input: {
-  height: 36,
-  width: 336,
+  margin:16,
+  marginTop: 8,
   borderWidth: 1,
   padding: 10,
   opacity: 0.5,

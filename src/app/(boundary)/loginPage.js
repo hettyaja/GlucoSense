@@ -1,10 +1,10 @@
 import React, {useState} from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Link, router } from 'expo-router';
+import { Link, router, Stack } from 'expo-router';
 import { images } from '../../constants/images';
 import ImageButton from '../../components/ImageButton'
-import { useAuth } from '../context/authContext'
+import { useAuth } from '../Controller/authController'
 
 const Login = () => {
   const { login } = useAuth()
@@ -20,6 +20,13 @@ const Login = () => {
   }
 
   return (
+    <>
+         <Stack.Screen
+          options={{
+            headerShown:false
+          }}
+        />
+
     <SafeAreaView style={{flex:1, backgroundColor:"white", alignItems:"center"}}>
       <View style={{backgroundColor:"white", alignItems:'flex-start', width:"100%", paddingHorizontal:20}}>
         <ImageButton
@@ -75,6 +82,7 @@ const Login = () => {
       </TouchableOpacity> 
 
     </SafeAreaView>
+    </>
   )
 }
 

@@ -1,8 +1,9 @@
 import { View, Text, StyleSheet, Image, Button, TouchableOpacity, SafeAreaView, Platform} from 'react-native'
 import React, { useState } from 'react';
-import { router } from 'expo-router';
-import ImageButton from '../../components/ImageButton';
-import { images } from '../../constants/images'
+import { router, Stack } from 'expo-router';
+import ImageButton from '../../../components/ImageButton';
+import { images } from '../../../constants/images'
+import Ionicons from 'react-native-vector-icons/Ionicons'
 
 const preReg = () => {
   const [selectedButton, setSelectedButton] = useState(null);
@@ -10,16 +11,23 @@ const preReg = () => {
   const handleButtonPress = (buttonIndex) => {
     setSelectedButton(buttonIndex === selectedButton ? null : buttonIndex);
   }
+
+  const handleContinuePress = () => {
+    if (selectedButton !== null) {
+      router.push('/question3');
+    }
+  };
+
   return (
-    
+    <>
+    <Stack.Screen options={{ headerShown:false}}/>
+
     <SafeAreaView style={styles.safeArea}>
       <View style={{flexDirection:'row'}}>
         <View style={{width:'25%', alignItems:'flex-start', paddingLeft:20, justifyContent:'center'}}>
-          <ImageButton
-            source={require("../../assets/back(2).png")}
-            imageSize={{width:24, height:24}}
-            onPress={() => router.back('/question1')}
-          />
+        <TouchableOpacity onPress={() => router.back()}>
+            <Ionicons name='chevron-back' size={32} color='black'/>
+          </TouchableOpacity>
         </View>
         <View style={{width:'50%', alignItems:'center', justifyContent:'center'}}>
         <Text style={[styles.titleText, {paddingBottom:5}]}>User profiling</Text>
@@ -79,13 +87,14 @@ const preReg = () => {
           </TouchableOpacity>
         </View>
       </View>
-      <TouchableOpacity style={{ alignItems: 'center', paddingTop: 60 }} onPress={() => router.push('/question3')}>
-        <View style={{ backgroundColor: "#D96B41", width: 312, height: 50, borderRadius: 8, justifyContent: 'center', marginTop: 50 }}>
+      <TouchableOpacity style={{ alignItems: 'center', paddingTop: 60 }} onPress={handleContinuePress}
+          disabled={selectedButton === null}>
+        <View style={{  backgroundColor: selectedButton === null ? '#ccc' : '#D96B41' , width: 312, height: 50, borderRadius: 8, justifyContent: 'center', marginTop: 50 }}>
           <Text style={{ fontSize: 16, fontFamily: "Poppins-Medium", textAlign: 'center', color: '#FAF5E1' }}>Continue</Text>
       </View>
       </TouchableOpacity>
     </SafeAreaView>
-    
+    </>
   )
 }
 const styles = StyleSheet.create({

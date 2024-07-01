@@ -4,6 +4,8 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { Link, router} from 'expo-router'
 import { images } from '../../constants/images';
 import { Picker } from '@react-native-picker/picker';
+import Header from '../../components/Header';
+
 
 const preReg = () => {
   const handleButtonPress = (buttonIndex) => {
@@ -29,6 +31,12 @@ const preReg = () => {
   };
   let inputs = [];
   return (
+    <>
+      <Header
+          title="OTP Verification"
+          leftButton='Back'
+          onLeftButtonPress={() => router.back('/loginPage')}
+        />
     <View style={{flex: 1, backgroundColor: '#ffffff'}}>
       <Text style = {{fontFamily: 'Poppins-Bold', fontSize: 20, marginLeft: 30, marginTop: 35}}>Get your code</Text>
       <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 14, marginLeft: 30, marginRight: 100, color: '#808080'}}>Please enter the 6 digit code that you receive on your email address.</Text>
@@ -56,6 +64,7 @@ const preReg = () => {
       </View>
       </TouchableOpacity>
     </View>
+    </>
     
   )
 }

@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, SafeAreaView, Platform, Image, Alert } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import ImageButton from '../../components/ImageButton';
-import { router } from 'expo-router';
-import { images } from '../../constants/images';
-import { useAuth } from '../context/authContext';
+import ImageButton from '../../../components/ImageButton';
+import { router, Stack } from 'expo-router';
+import { images } from '../../../constants/images';
+import { useAuth } from '../../Controller/authController';
+import Ionicons from 'react-native-vector-icons/Ionicons'
 
 export default function UserProfile() {
   const { setBodyProfile } = useAuth();
@@ -50,14 +51,11 @@ export default function UserProfile() {
   };
 
   return (
+    <>
+      <Stack.Screen options={{ headerShown:false}}/>
     <SafeAreaView style={styles.safeArea}>
       <View style={{ flexDirection: 'row' }}>
         <View style={{ width: '25%', alignItems: 'flex-start', paddingLeft: 20, justifyContent: 'center' }}>
-          <ImageButton
-            source={require("../../assets/back(2).png")}
-            imageSize={{ width: 24, height: 24 }}
-            onPress={() => router.back('/registerPage')}
-          />
         </View>
         <View style={{ width: '50%', alignItems: 'center', justifyContent: 'center' }}>
           <Text style={[styles.titleText, { paddingBottom: 5 }]}>User profiling</Text>
@@ -132,6 +130,7 @@ export default function UserProfile() {
         <Text style={styles.buttonText}>Continue</Text>
       </TouchableOpacity>
     </SafeAreaView>
+    </>
   );
 }
 

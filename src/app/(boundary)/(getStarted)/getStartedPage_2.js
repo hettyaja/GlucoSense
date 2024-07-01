@@ -1,14 +1,19 @@
 import { View, Text, Image} from 'react-native'
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { router } from 'expo-router'
-
-import { images } from '../../constants/images';
-import ImageButton from '../../components/ImageButton'
+import { router, Stack } from 'expo-router'
+import { images } from '../../../constants/images';
+import ImageButton from '../../../components/ImageButton'
 
 const getStartedPage_2 = () => {
   return (
-    <View style={{flex:1}}>
+    <>
+    <Stack.Screen
+          options={{
+            headerShown:false
+          }}
+        />
+        <View style={{flex:1}}>
         <SafeAreaView style={{
           flex:6,
           backgroundColor:"#E58B68",
@@ -55,10 +60,13 @@ const getStartedPage_2 = () => {
             <Image source={ images.welcome2 }/>
 
             <ImageButton
-            source={require("../../assets/next.png")}
+            source={require("../../../assets/next.png")}
             onPress={() => router.push('/getStartedPage_3')}/>
         </View>
     </View>
+    
+    </>
+    
   )
 }
 

@@ -7,11 +7,11 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import Fontisto from 'react-native-vector-icons/Fontisto'
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
-import { images } from '../../constants/images'
+import { images } from '../../../constants/images'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import AntDesign from 'react-native-vector-icons/AntDesign'
-import { useProfile } from '../context/ProfileContext'
-import { useAuth } from '../context/authContext'
+import { useProfile } from '../../context/ProfileContext'
+import { useAuth } from '../../Controller/authController'
 
 const setting = () => {
   const { logout } = useAuth()

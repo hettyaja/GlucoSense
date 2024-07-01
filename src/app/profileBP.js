@@ -4,7 +4,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { useRouter, Stack } from 'expo-router';
 import ImageButton from '../components/ImageButton';
 import { fetchBPProfile, updateProfile } from './service/profileBPService'; // Adjust the import according to your file structure
-import { useAuth } from './context/authContext'; // Adjust the import according to your file structure
+import { useAuth } from './Controller/authController'; // Adjust the import according to your file structure
 
 
 

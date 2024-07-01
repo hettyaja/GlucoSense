@@ -1,18 +1,23 @@
 import { View, Text, Image} from 'react-native'
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { router } from 'expo-router'
+import {router, Stack } from 'expo-router'
 
-import { images } from '../../constants/images';
-import ImageButton from '../../components/ImageButton';
+import { images } from '../../../constants/images';
+import ImageButton from '../../../components/ImageButton'
 
-const getStartedPage_3 = () => {
+const getStartedPage_1 = () => {
   return (
-    <View style={{flex:1}}>
+    <>
+     <Stack.Screen
+          options={{
+            headerShown:false
+          }}
+        />
+        <View style={{flex:1}}>
         <SafeAreaView style={{
           flex:6,
-          backgroundColor:"#E58B68",
-          alignItems:"center"
+          backgroundColor:"#E58B68"
         }}>
         </SafeAreaView>
 
@@ -27,7 +32,7 @@ const getStartedPage_3 = () => {
             fontFamily:"Poppins-Bold",
             fontSize:16
           }}>
-            Customized Diet, Delivered!
+            Seamless Glucose Monitoring
           </Text>
 
           <Text style={{
@@ -37,7 +42,7 @@ const getStartedPage_3 = () => {
             paddingTop:12,
             color:"#808080"
           }}>
-              {'Order personalized plans and\nhealthy meals for easy,\nnutritious eating.'}
+            {'Bluetooth and camera scans\nfor precise tracking,\nensuring peace of mind.'}
           </Text>
         </View>
 
@@ -51,15 +56,18 @@ const getStartedPage_3 = () => {
           paddingBottom:50,
           alignItems:"center"
         }}>
-
-            <Image source={ images.welcome3 }/>
+            
+            <Image source={ images.welcome1 }/>
 
             <ImageButton
-            source={require("../../assets/next.png")}
-            onPress={() => router.push('welcomePage')}/>
+              source={require("../../../assets/next.png")}
+              onPress={() => router.push('/getStartedPage_2')}
+            />
         </View>
     </View>
-  )
+  
+    </>
+  )  
 }
 
-export default getStartedPage_3
+export default getStartedPage_1

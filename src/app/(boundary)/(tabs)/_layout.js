@@ -3,9 +3,9 @@ import {React, Image, View, Modal, TouchableOpacity, Text, StyleSheet} from 'rea
 import { router, Tabs } from 'expo-router'
 import { useFonts } from 'expo-font'
 import { Octicons } from '@expo/vector-icons';
-import { images } from '../../constants/images';
+import { images } from '../../../constants/images';
 import BottomSheetModal from './add';
-import ImageButton from '../../components/ImageButton';
+import ImageButton from '../../../components/ImageButton';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons'
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import AntDesign from 'react-native-vector-icons/AntDesign'
@@ -28,6 +28,7 @@ const _layout = () => {
     <>
       <Tabs>
         <Tabs.Screen name='home' options={{
+            headerShown:false,
             title:'Home',
             tabBarIcon: () => (
                 <Octicons name='home' size={24} color='#E58B68'/>

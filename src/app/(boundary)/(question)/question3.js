@@ -1,8 +1,9 @@
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Platform, Image} from 'react-native';
 import React, { useState } from 'react';
-import { router } from 'expo-router';
-import ImageButton from '../../components/ImageButton';
-import { images } from '../../constants/images'
+import { router, Stack } from 'expo-router';
+import ImageButton from '../../../components/ImageButton';
+import { images } from '../../../constants/images'
+import Ionicons from 'react-native-vector-icons/Ionicons'
 
 const PreReg = () => {
   const [selectedButtons, setSelectedButtons] = useState([]);
@@ -18,14 +19,15 @@ const PreReg = () => {
   };
 
   return (
+    <>
+        <Stack.Screen options={{ headerShown:false}}/>
+
     <SafeAreaView style={styles.safeArea}>
       <View style={{flexDirection:'row'}}>
         <View style={{width:'25%', alignItems:'flex-start', paddingLeft:20, justifyContent:'center'}}>
-          <ImageButton
-            source={require("../../assets/back(2).png")}
-            imageSize={{width:24, height:24}}
-            onPress={() => router.back('/question2')}
-          />
+        <TouchableOpacity onPress={() => router.back()}>
+            <Ionicons name='chevron-back' size={32} color='black'/>
+          </TouchableOpacity>
         </View>
         <View style={{width:'50%', alignItems:'center', justifyContent:'center'}}>
         <Text style={[styles.titleText, {paddingBottom:5}]}>User profiling</Text>
@@ -91,6 +93,7 @@ const PreReg = () => {
         </View>
       </TouchableOpacity>
     </SafeAreaView>
+    </>
   );
 };
 

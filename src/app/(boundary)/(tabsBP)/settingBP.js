@@ -7,8 +7,8 @@ import Octicons from 'react-native-vector-icons/Octicons'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
-import { useAuth } from '../context/authContext';
-import { fetchBPProfile } from '../service/profileBPService'; 
+import { useAuth } from '../../Controller/authController';
+import { fetchBPProfile } from '../../service/profileBPService'; 
 
 
 

@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, Image, Button, TouchableOpacity} from 'react-native'
 import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { router } from 'expo-router'
+import { router, Stack } from 'expo-router'
 import { images } from '../../constants/images';
 import ImageButton from '../../components/ImageButton'
 import Ionicons from 'react-native-vector-icons/Ionicons'
@@ -22,6 +22,13 @@ const preReg = () => {
   };
 
   return (
+    <>
+     <Stack.Screen
+          options={{
+            headerShown:false
+          }}
+        />
+    
     <SafeAreaView style={{flex:1, backgroundColor:"white"}}>
       <Image source={images.header} style={{position:"absolute", width:430, height:275}}/>
       <View style={{alignItems:'flex-start', width:"100%", paddingHorizontal:16}}>
@@ -69,7 +76,7 @@ const preReg = () => {
       </View>
       </TouchableOpacity>
     </SafeAreaView>
-    
+    </>
   )
 }
 const styles = StyleSheet.create({

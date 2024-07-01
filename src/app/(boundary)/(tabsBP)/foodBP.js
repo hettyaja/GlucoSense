@@ -2,8 +2,8 @@ import React, { useContext, useState } from 'react';
 import { router, Tabs } from 'expo-router';
 import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, Modal, TextInput, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { RecipeContext } from '../context/RecipeContext';
-import RecipeCard from '../RecipeCard';
+import { RecipeContext } from '../../context/RecipeContext';
+import RecipeCard from '../../RecipeCard';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import Feather from 'react-native-vector-icons/Feather'
 

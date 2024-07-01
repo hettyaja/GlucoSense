@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, ActivityIndicator, Button } from 'react-native';
 import React, { useEffect } from 'react';
 import { Link, Redirect, router } from 'expo-router';
-import { useAuth } from './context/authContext';
+import { useAuth } from './Controller/authController';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Notifications from 'expo-notifications';
 

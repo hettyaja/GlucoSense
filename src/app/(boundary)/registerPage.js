@@ -3,7 +3,7 @@ import { Image, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, Vie
 import { images } from '../../constants/images'
 import { router } from 'expo-router'
 import ImageButton from '../../components/ImageButton'
-import { useAuth } from '../context/authContext'
+import { useAuth } from '../Controller/authController'
 
 const FreemiumRegister= () => {
     const {register} = useAuth()
@@ -26,11 +26,12 @@ const FreemiumRegister= () => {
                 userType: 'free'
             }
             const user = await register(email, password, additionalData)
+            router.push('question1');
 
         } catch (error) {
             alert(error.message)
         }
-        router.push('/(question)/question1');
+        
         
     }
     return (

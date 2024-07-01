@@ -4,7 +4,7 @@ import Header from '../components/Header';
 import { router } from 'expo-router';
 import { Picker } from '@react-native-picker/picker';
 import RNNPickerSelect from 'react-native-picker-select';
-import { useAuth } from './context/authContext';
+import { useAuth } from './Controller/authController';
 import { addMedicine } from './service/diaryService';
 
 
