@@ -24,6 +24,7 @@ export const fetchRecipeDetails = async (id) => {
     const response = await axios.get(`https://api.spoonacular.com/recipes/${id}/information`, {
       params: {
         apiKey: SPOONACULAR_API_KEY,
+        includeNutrition: true
       }
     });
     return response.data;

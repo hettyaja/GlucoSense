@@ -18,7 +18,7 @@ const RootLayout = () => {
 
     if (isAuthenticated) {
       if (userType === 'user') {
-        router.replace('question2')
+        router.replace('food')
       } else if (userType === 'businessPartner') {
         router.replace('homeBP')
       } else if (userType === 'systemAdmin') {

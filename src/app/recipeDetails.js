@@ -1,4 +1,3 @@
-// app/recipeDetails.js
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
@@ -26,25 +25,51 @@ const RecipeDetails = () => {
     return <Text>Loading...</Text>;
   }
 
+  const getNutrient = (name) => {
+    const nutrient = recipe.nutrition.nutrients.find(n => n.name.toLowerCase() === name.toLowerCase());
+    return nutrient ? `${nutrient.amount} ${nutrient.unit}` : 'N/A';
+  };
+
   return (
     <>
-    <Header
+      <Header
         title='Recipe details'
-    />
-    <ScrollView style={styles.container}>
-      <Image source={{ uri: recipe.image }} style={styles.image} />
-      <Text style={styles.title}>{recipe.title}</Text>
-      <Text style={styles.sectionTitle}>Ingredients:</Text>
-      {recipe.extendedIngredients.map((ingredient) => (
-        <Text key={ingredient.id} style={styles.text}>{ingredient.original}</Text>
-      ))}
-      <Text style={styles.sectionTitle}>Instructions:</Text>
-      {recipe.analyzedInstructions[0]?.steps.map((step, index) => (
-        <Text key={index} style={styles.text}>{index + 1}. {step.step}</Text>
-      ))}
-    </ScrollView>
+        leftButton='Back'
+      />
+      <ScrollView style={styles.container}>
+        <Image source={{ uri: recipe.image }} style={styles.image} />
+        <View style={styles.body}>
+          <Text style={styles.title}>{recipe.title}</Text>
+          <View style={styles.nutritionSection}>
+            <View style={styles.nutritionItem}>
+              <Text style={styles.sectionTitle}>Protein</Text>
+              <Text style={styles.text}>{getNutrient('Protein')}</Text>
+            </View>
+            <View style={styles.nutritionItem}>
+              <Text style={styles.sectionTitle}>Calorie</Text>
+              <Text style={styles.text}>{getNutrient('Calories')}</Text>
+            </View>
+            <View style={styles.nutritionItem}>
+              <Text style={styles.sectionTitle}>Fat</Text>
+              <Text style={styles.text}>{getNutrient('Fat')}</Text>
+            </View>
+            <View style={styles.nutritionItem}>
+              <Text style={styles.sectionTitle}>Carbs</Text>
+              <Text style={styles.text}>{getNutrient('Carbohydrates')}</Text>
+            </View>
+          </View>
+          <Text style={styles.sectionTitle}>Ingredients:</Text>
+          {recipe.extendedIngredients.map((ingredient, index) => (
+            <Text key={ingredient.id} style={styles.text}>{index + 1}. {ingredient.original}</Text>
+          ))}
+          <Text style={styles.sectionTitle}>Instructions:</Text>
+          {recipe.analyzedInstructions[0]?.steps.map((step, index) => (
+            <Text key={index} style={styles.text}>{index + 1}. {step.step}</Text>
+          ))}
+
+        </View>
+      </ScrollView>
     </>
-    
   );
 };
 
@@ -53,18 +78,25 @@ export default RecipeDetails;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
     backgroundColor: '#fff',
   },
   image: {
     width: '100%',
-    height: 200,
-    borderRadius: 10,
+    height: 200
+  },
+  body: {
+    padding: 16
+  },
+  nutritionSection: {
+    flexDirection:'row',
+    justifyContent:'space-between'
+  },
+  nutritionItem: {
+    alignItems:'center'
   },
   title: {
-    fontSize: 24,
-    fontFamily: 'Poppins-Bold',
-    marginTop: 10,
+    fontSize: 20,
+    fontFamily: 'Poppins-Bold'
   },
   sectionTitle: {
     fontSize: 18,

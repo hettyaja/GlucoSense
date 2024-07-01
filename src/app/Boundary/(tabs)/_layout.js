@@ -28,7 +28,6 @@ const _layout = () => {
     <>
       <Tabs>
         <Tabs.Screen name='home' options={{
-            headerShown:false,
             title:'Home',
             tabBarIcon: () => (
                 <Octicons name='home' size={24} color='#E58B68'/>
