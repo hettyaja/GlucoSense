@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, FlatList } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
 import { db } from '../../../firebase'; // Import the Firestore instance
 import { collection, getDocs } from 'firebase/firestore';
 
@@ -13,8 +12,8 @@ const PartnerSA = () => {
   useEffect(() => {
     const fetchBusinessPartners = async () => {
       try {
-        const businessPartnersCollection = await getDocs(collection(db, 'businessPartners'));
-        const businessPartnersData = businessPartnersCollection.docs.map(doc => doc.data());
+        const businessPartnersCollection = await getDocs(collection(db, 'businessPartner'));
+        const businessPartnersData = businessPartnersCollection.docs.map(doc => ({ ...doc.data(), id: doc.id }));
         setBusinessPartner(businessPartnersData);
       } catch (error) {
         console.error("Error fetching business partners: ", error);
@@ -36,8 +35,8 @@ const PartnerSA = () => {
   const renderBusinessPartnerItem = ({ item }) => (
     <View style={styles.partnerRow}>
       <Text style={styles.partnerCell}>{item.username}</Text>
-      <Text style={styles.partnerCell}>{item.stallName}</Text>
-      <Text style={styles.partnerCell}>{new Date(item.registered.seconds * 1000).toLocaleDateString()}</Text>
+      <Text style={styles.partnerCell}>{item.shopName}</Text>
+      <Text style={styles.partnerCell}>{item.registered ? new Date(item.registered.seconds * 1000).toLocaleDateString() : 'N/A'}</Text>
       <Text style={[styles.partnerCell, item.status === 'Active' ? styles.activeStatus : styles.pendingStatus]}>{item.status}</Text>
     </View>
   );
@@ -77,7 +76,7 @@ const PartnerSA = () => {
         <FlatList
           data={filteredBusinessPartners}
           renderItem={renderBusinessPartnerItem}
-          keyExtractor={(item) => item.username}
+          keyExtractor={(item) => item.id}
         />
       )}
     </View>
