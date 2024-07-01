@@ -2,9 +2,9 @@ import { View, Text, StyleSheet, Image, Button, TouchableOpacity, Touchable, Tex
 import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Link, router} from 'expo-router'
-import { images } from '../../constants/images';
+import { images } from '../../../constants/images';
 import { Picker } from '@react-native-picker/picker';
-import Header from '../../components/Header';
+import Header from '../../../components/Header';
 
 
 const preReg = () => {
