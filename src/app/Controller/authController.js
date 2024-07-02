@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'firebase/auth';
-import { doc, getDoc, setDoc, collection, deleteDoc, Timestamp } from 'firebase/firestore';
+import { doc, getDoc, setDoc, deleteDoc, Timestamp } from 'firebase/firestore';
 import { deleteUser as firebaseDeleteUser } from 'firebase/auth';
 import { auth, db } from '../../../firebase';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -23,33 +23,62 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         const unsub = onAuthStateChanged(auth, async (user) => {
             if (user) {
-                const userDoc = await getDoc(doc(db, 'users', user.uid));
-                if (userDoc.exists()) {
-                    setUserType('user');
-                    setUsername(userDoc.data().username);
-                    setName(userDoc.data().name);
-                    setEmail(userDoc.data().email);
-                    setGender(userDoc.data().gender);
-                    setBirthdate(userDoc.data().birthdate);
-                    setWeight(userDoc.data().weight);
-                    setHeight(userDoc.data().height);
-                    setStatus(userDoc.data().status);
-                } else {
+                try {
+                    const userDoc = await getDoc(doc(db, 'users', user.uid));
                     const businessDoc = await getDoc(doc(db, 'businessPartner', user.uid));
-                    if (businessDoc.exists()) {
-                        setUserType('businessPartner');
-                        setUsername(businessDoc.data().username);
-                        setStatus(businessDoc.data().status);
+                    const adminDoc = await getDoc(doc(db, 'systemAdmin', user.uid));
+    
+                    if (userDoc.exists() && userDoc.data().status === 'suspended') {
+                        alert("Your account is suspended.");
+                        await auth.signOut();
+                        setIsAuthenticated(false);
+                        setUser(null);
+                        setUserType(null);
+                        setUsername(null);
+                        setName(null);
+                        setEmail(null);
+                        setGender(null);
+                        setBirthdate(null);
+                        setWeight(null);
+                        setHeight(null);
+                        setStatus(null);
                     } else {
-                        const adminDoc = await getDoc(doc(db, 'systemAdmin', user.uid));
-                        if (adminDoc.exists()) {
+                        if (userDoc.exists()) {
+                            setUserType('user');
+                            setUsername(userDoc.data().username);
+                            setName(userDoc.data().name);
+                            setEmail(userDoc.data().email);
+                            setGender(userDoc.data().gender);
+                            setBirthdate(userDoc.data().birthdate);
+                            setWeight(userDoc.data().weight);
+                            setHeight(userDoc.data().height);
+                            setStatus(userDoc.data().status);
+                        } else if (businessDoc.exists()) {
+                            setUserType('businessPartner');
+                            setUsername(businessDoc.data().username);
+                            setStatus(businessDoc.data().status);
+                        } else if (adminDoc.exists()) {
                             setUserType('systemAdmin');
                             setUsername(adminDoc.data().username);
                         }
+    
+                        setUser(user);
+                        setIsAuthenticated(true);
                     }
+                } catch (error) {
+                    console.error("Error fetching user data: ", error);
+                    setIsAuthenticated(false);
+                    setUser(null);
+                    setUserType(null);
+                    setUsername(null);
+                    setName(null);
+                    setEmail(null);
+                    setGender(null);
+                    setBirthdate(null);
+                    setWeight(null);
+                    setHeight(null);
+                    setStatus(null);
                 }
-                setUser(user);
-                setIsAuthenticated(true);
             } else {
                 setIsAuthenticated(false);
                 setUser(null);
@@ -60,9 +89,11 @@ export const AuthProvider = ({ children }) => {
                 setGender(null);
                 setBirthdate(null);
                 setWeight(null);
+                setHeight(null);
                 setStatus(null);
             }
         });
+    
         return () => unsub();
     }, []);
 
@@ -115,92 +146,67 @@ export const AuthProvider = ({ children }) => {
 
     const setBodyProfile = async (uid, gender, birthdate, weight, height) => {
         try {
-            // Construct the document reference for the user
             const userDocRef = doc(db, 'users', uid);
-
-            // Set the fields gender, birthdate, and weight in the user document
             await setDoc(userDocRef, {
                 gender,
                 birthdate,
                 weight,
                 height
-            }, { merge: true }); // Using merge: true ensures existing fields are not overwritten
-
-            // Update local state
+            }, { merge: true });
             setGender(gender);
             setBirthdate(birthdate);
             setWeight(weight);
             setHeight(height);
-
-            // Return the updated user document or whatever you need
             return { uid, gender, birthdate, weight, height };
-
         } catch (error) {
-            throw error; // Rethrow the error to handle it elsewhere in your application
+            throw error;
         }
     };
 
     const setAccountProfile = async (uid, name, email, username) => {
         try {
-            // Construct the document reference for the user
             const userDocRef = doc(db, 'users', uid);
-
-            // Set the fields gender, birthdate, and weight in the user document
             await setDoc(userDocRef, {
                 name,
                 email,
                 username
-            }, { merge: true }); // Using merge: true ensures existing fields are not overwritten
-
-            // Update local state
+            }, { merge: true });
             setName(name);
             setEmail(email);
             setUsername(username);
-
-            // Return the updated user document or whatever you need
             return { uid, name, email, username };
-
         } catch (error) {
-            throw error; // Rethrow the error to handle it elsewhere in your application
+            throw error;
         }
     };
 
     const deleteUser = async (uid, roles) => {
         try {
-          // Construct the document reference for the user
-          const userDocRef = doc(db, 'users', uid);
-      
-          // Delete the user document from Firestore
-          await deleteDoc(userDocRef);
-      
-          // Clear local storage
-          await AsyncStorage.clear();
-      
-          // Delete the authenticated user
-          const currentUser = auth.currentUser;
-          if (currentUser) {
-            await firebaseDeleteUser(currentUser);
-          } else {
-            throw new Error('No user is currently signed in');
-          }
-      
-          // Additional cleanup if necessary (e.g., related documents or storage)
-          
-          return true;
+            const userDocRef = doc(db, 'users', uid);
+            await deleteDoc(userDocRef);
+            await AsyncStorage.clear();
+            const currentUser = auth.currentUser;
+            if (currentUser) {
+                await firebaseDeleteUser(currentUser);
+            } else {
+                throw new Error('No user is currently signed in');
+            }
+            return true;
         } catch (error) {
-          console.error('Error deleting user profile:', error);
-          throw error; // Rethrow the error to handle it elsewhere in your application
+            console.error('Error deleting user profile:', error);
+            throw error;
         }
-      };
-    
+    };
+
     const login = async (email, password) => {
         try {
-            await signInWithEmailAndPassword(auth, email, password);
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
         } catch (error) {
-            if (error.code === 'auth/invalid-credential') {
+            if (error.code === 'auth/wrong-password') {
                 throw new Error('The password is wrong. Please try again.');
             } else if (error.code === 'auth/invalid-email') {
-                throw new Error('Please input valid email.');
+                throw new Error('Please input a valid email.');
             } else {
                 throw new Error(error.message);
             }
@@ -221,7 +227,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, isAuthenticated, userType, name, username, email, gender, birthdate, weight, height, status, deleteUser, login, register, logout, resetAuth, setBodyProfile, setAccountProfile}}>
+        <AuthContext.Provider value={{ user, isAuthenticated, userType, name, username, email, gender, birthdate, weight, height, status, deleteUser, login, register, logout, resetAuth, setBodyProfile, setAccountProfile }}>
             {children}
         </AuthContext.Provider>
     );
