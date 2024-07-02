@@ -16,7 +16,7 @@ export default function App() {
     return (
       <View style={styles.container}>
         <Text style={{ textAlign: 'center' }}>We need your permission to show the camera</Text>
-        <Button onPress={requestPermission} title="grant permission" />
+        <Button onPress={requestPermission} title="Grant Permission" />
       </View>
     );
   }
@@ -25,9 +25,19 @@ export default function App() {
     setFacing(current => (current === 'back' ? 'front' : 'back'));
   }
 
+  function handleBarcodeScanned({ type, data }) {
+    console.log('ew');
+    alert(`Barcode scanned!\n Type: ${type}\n Data: ${data}`);
+  }
+
   return (
     <View style={styles.container}>
-      <CameraView style={styles.camera} facing={facing}>
+      <CameraView
+        style={styles.camera}
+        facing={facing}
+        //barcodeScannerSettings={{ barcodeTypes: ['upc_a', 'ean13', 'ean8']}}
+        onBarCodeScanned={handleBarcodeScanned}
+      >
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
             <Text style={styles.text}>Flip Camera</Text>
