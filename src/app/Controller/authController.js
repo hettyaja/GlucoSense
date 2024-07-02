@@ -23,33 +23,62 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         const unsub = onAuthStateChanged(auth, async (user) => {
             if (user) {
-                const userDoc = await getDoc(doc(db, 'users', user.uid));
-                if (userDoc.exists()) {
-                    setUserType('user');
-                    setUsername(userDoc.data().username);
-                    setName(userDoc.data().name);
-                    setEmail(userDoc.data().email);
-                    setGender(userDoc.data().gender);
-                    setBirthdate(userDoc.data().birthdate);
-                    setWeight(userDoc.data().weight);
-                    setHeight(userDoc.data().height);
-                    setStatus(userDoc.data().status);
-                } else {
+                try {
+                    const userDoc = await getDoc(doc(db, 'users', user.uid));
                     const businessDoc = await getDoc(doc(db, 'businessPartner', user.uid));
-                    if (businessDoc.exists()) {
-                        setUserType('businessPartner');
-                        setUsername(businessDoc.data().username);
-                        setStatus(businessDoc.data().status);
+                    const adminDoc = await getDoc(doc(db, 'systemAdmin', user.uid));
+    
+                    if (userDoc.exists() && userDoc.data().status === 'suspended') {
+                        alert("Your account is suspended.");
+                        await auth.signOut();
+                        setIsAuthenticated(false);
+                        setUser(null);
+                        setUserType(null);
+                        setUsername(null);
+                        setName(null);
+                        setEmail(null);
+                        setGender(null);
+                        setBirthdate(null);
+                        setWeight(null);
+                        setHeight(null);
+                        setStatus(null);
                     } else {
-                        const adminDoc = await getDoc(doc(db, 'systemAdmin', user.uid));
-                        if (adminDoc.exists()) {
+                        if (userDoc.exists()) {
+                            setUserType('user');
+                            setUsername(userDoc.data().username);
+                            setName(userDoc.data().name);
+                            setEmail(userDoc.data().email);
+                            setGender(userDoc.data().gender);
+                            setBirthdate(userDoc.data().birthdate);
+                            setWeight(userDoc.data().weight);
+                            setHeight(userDoc.data().height);
+                            setStatus(userDoc.data().status);
+                        } else if (businessDoc.exists()) {
+                            setUserType('businessPartner');
+                            setUsername(businessDoc.data().username);
+                            setStatus(businessDoc.data().status);
+                        } else if (adminDoc.exists()) {
                             setUserType('systemAdmin');
                             setUsername(adminDoc.data().username);
                         }
+    
+                        setUser(user);
+                        setIsAuthenticated(true);
                     }
+                } catch (error) {
+                    console.error("Error fetching user data: ", error);
+                    setIsAuthenticated(false);
+                    setUser(null);
+                    setUserType(null);
+                    setUsername(null);
+                    setName(null);
+                    setEmail(null);
+                    setGender(null);
+                    setBirthdate(null);
+                    setWeight(null);
+                    setHeight(null);
+                    setStatus(null);
                 }
-                setUser(user);
-                setIsAuthenticated(true);
             } else {
                 setIsAuthenticated(false);
                 setUser(null);
@@ -60,9 +89,11 @@ export const AuthProvider = ({ children }) => {
                 setGender(null);
                 setBirthdate(null);
                 setWeight(null);
+                setHeight(null);
                 setStatus(null);
             }
         });
+    
         return () => unsub();
     }, []);
 
@@ -171,11 +202,6 @@ export const AuthProvider = ({ children }) => {
         try {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
-            const userDoc = await getDoc(doc(db, 'users', user.uid));
-            if (userDoc.exists() && userDoc.data().status === 'suspended') {
-                await signOut(auth);
-                throw new Error('Your account is suspended. Please contact support.');
-            }
         } catch (error) {
             if (error.code === 'auth/wrong-password') {
                 throw new Error('The password is wrong. Please try again.');

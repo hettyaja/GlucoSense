@@ -11,11 +11,10 @@ import { MenuProvider } from 'react-native-popup-menu';
 
 
 const RootLayout = () => {
-  const { isAuthenticated, userType, status } = useAuth();
+  const { isAuthenticated, userType, status, logout } = useAuth();
 
   useEffect(() => {
     if (typeof isAuthenticated === 'undefined') return;
-
     
     if (isAuthenticated) {
       if (userType === 'user') {
