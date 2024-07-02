@@ -18,6 +18,7 @@ export const AuthProvider = ({ children }) => {
     const [height, setHeight] = useState(null);
     const [gender, setGender] = useState(null);
     const [birthdate, setBirthdate] = useState(null);
+    const [status, setStatus] = useState(null)
 
     useEffect(() => {
         const unsub = onAuthStateChanged(auth, async (user) => {
@@ -32,11 +33,13 @@ export const AuthProvider = ({ children }) => {
                     setBirthdate(userDoc.data().birthdate);
                     setWeight(userDoc.data().weight);
                     setHeight(userDoc.data().height);
+                    setStatus(userDoc.data().status);
                 } else {
                     const businessDoc = await getDoc(doc(db, 'businessPartner', user.uid));
                     if (businessDoc.exists()) {
                         setUserType('businessPartner');
                         setUsername(businessDoc.data().username);
+                        setStatus(businessDoc.data().status);
                     } else {
                         const adminDoc = await getDoc(doc(db, 'systemAdmin', user.uid));
                         if (adminDoc.exists()) {
@@ -57,6 +60,7 @@ export const AuthProvider = ({ children }) => {
                 setGender(null);
                 setBirthdate(null);
                 setWeight(null);
+                setStatus(null);
             }
         });
         return () => unsub();
@@ -217,7 +221,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, isAuthenticated, userType, name, username, email, gender, birthdate, weight, height, deleteUser, login, register, logout, resetAuth, setBodyProfile, setAccountProfile}}>
+        <AuthContext.Provider value={{ user, isAuthenticated, userType, name, username, email, gender, birthdate, weight, height, status, deleteUser, login, register, logout, resetAuth, setBodyProfile, setAccountProfile}}>
             {children}
         </AuthContext.Provider>
     );

@@ -11,11 +11,12 @@ import { MenuProvider } from 'react-native-popup-menu';
 
 
 const RootLayout = () => {
-  const { isAuthenticated, userType } = useAuth();
+  const { isAuthenticated, userType, status } = useAuth();
 
   useEffect(() => {
     if (typeof isAuthenticated === 'undefined') return;
 
+    
     if (isAuthenticated) {
       if (userType === 'user') {
         router.replace('Boundary/food')

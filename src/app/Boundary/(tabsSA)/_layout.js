@@ -54,7 +54,7 @@ const _layout = () => {
         ),
         tabBarLabel: ({ focused }) => (
           <Text style={{ fontFamily: focused ? 'Poppins-SemiBold' : 'Poppins-Regular', color: '#E58B68' }}>
-              Users
+              Setting
           </Text>
         ),
         }} />
