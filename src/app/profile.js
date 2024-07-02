@@ -6,7 +6,7 @@ import { Picker } from '@react-native-picker/picker';
 import * as ImagePicker from 'expo-image-picker';
 import { useProfile } from './context/ProfileContext';
 import ImageButton from '../components/ImageButton';
-import { useAuth } from './context/authContext';
+import { useAuth } from './Controller/authController';
 
 const Profile = () => {
     const { setAccountProfile, setBodyProfile, name, email, username, weight, gender, birthdate, height } = useAuth();
@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
     changePhotoText: {
         fontFamily: 'Poppins-Medium',
         fontSize: 14,
-        color: '#E58B68',
+        color: 'blue',
         marginTop: 8,
     },
     sectionText: {

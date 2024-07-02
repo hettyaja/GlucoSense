@@ -2,7 +2,7 @@ import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-nati
 import React, { useEffect, useState } from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { getMedicine } from './service/diaryService';
-import { useAuth } from './context/authContext';
+import { useAuth } from './Controller/authController';
 import Checkbox from 'expo-checkbox';
 import PopupMenu from '../components/PopupMenu';
 import Header from '../components/Header';

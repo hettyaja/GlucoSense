@@ -1,7 +1,7 @@
 // app/service/spoonacularApi.js
 import axios from 'axios';
 
-const SPOONACULAR_API_KEY = 'b7fefb7d8bbf445f94b1c451e3c517aa';
+const SPOONACULAR_API_KEY = '4e1c338b376a418da960c802f1c27069';
 
 export const fetchRecipes = async (query) => {
   try {
@@ -24,6 +24,7 @@ export const fetchRecipeDetails = async (id) => {
     const response = await axios.get(`https://api.spoonacular.com/recipes/${id}/information`, {
       params: {
         apiKey: SPOONACULAR_API_KEY,
+        includeNutrition: true
       }
     });
     return response.data;

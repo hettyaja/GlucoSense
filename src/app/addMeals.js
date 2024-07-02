@@ -8,7 +8,7 @@ import Fontisto from 'react-native-vector-icons/Fontisto';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import { useAuth } from './context/authContext';
+import { useAuth } from './Controller/authController';
 import { addMealLog } from './service/diaryService';
 import Feather from 'react-native-vector-icons/Feather'
 

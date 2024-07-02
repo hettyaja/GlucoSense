@@ -8,7 +8,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import Header from '../components/Header';
-import { useAuth } from './context/authContext';
+import { useAuth } from './Controller/authController';
 import { fetchReminders } from './service/reminderService';
 
 

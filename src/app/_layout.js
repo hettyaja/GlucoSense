@@ -6,26 +6,27 @@ import { BPProfileProvider } from './context/BPProfileContext';
 import { ProfileProvider } from './context/ProfileContext';
 import { DietPlanProvider } from './context/DietPlanContext';
 import { RecipeProvider } from './context/RecipeContext';
-import { AuthProvider, useAuth } from './context/authContext';
+import { AuthProvider, useAuth } from './Controller/authController';
 import { MenuProvider } from 'react-native-popup-menu';
 
 
 const RootLayout = () => {
-  const { isAuthenticated, userType } = useAuth();
+  const { isAuthenticated, userType, status } = useAuth();
 
   useEffect(() => {
     if (typeof isAuthenticated === 'undefined') return;
 
+    
     if (isAuthenticated) {
       if (userType === 'user') {
-        router.replace('food')
+        router.replace('Boundary/food')
       } else if (userType === 'businessPartner') {
-        router.replace('homeBP')
+        router.replace('Boundary/homeBP')
       } else if (userType === 'systemAdmin') {
-        router.replace('insightSA')
+        router.replace('Boundary/insightSA')
       }
     } else if (isAuthenticated == false) {
-      router.replace('/getStartedPage_1');
+      router.replace('Boundary/getStartedPage_1');
     }
   }, [isAuthenticated, userType]);
 
@@ -33,15 +34,12 @@ const RootLayout = () => {
     <Stack>
       {/* Define your stack screens here */}
       <Stack.Screen name="index" options={{ headerShown: false}}/>
-      <Stack.Screen name="(getStarted)" options={{ headerShown: false }} />
-      <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-      <Stack.Screen name="welcomePage" options={{ headerShown: false }} />
-      <Stack.Screen name="getStartedBP" options={{ headerShown: false }} />
-      <Stack.Screen name="(question)" options={{ headerShown: false }} />
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen name="(tabsBP)" options={{ headerShown: false }} />
-      <Stack.Screen name="(tabsSA)" options={{ headerShown: false }} />
-      <Stack.Screen name="(resetPwd)" options={{ headerShown: false }} />
+      <Stack.Screen name="Boundary/welcomePage" options={{ headerShown: false }} />
+      <Stack.Screen name="Boundary/getStartedBP" options={{ headerShown: false }} />
+      <Stack.Screen name="Boundary/(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen name="Boundary/(tabsBP)" options={{ headerShown: false }} />
+      <Stack.Screen name="Boundary/(tabsSA)" options={{ headerShown: false }} />
+      <Stack.Screen name="Boundary/registerPage" options={{ headerShown: false }} />
       <Stack.Screen name="addMeds" />
       <Stack.Screen name="addGlucose" />
       <Stack.Screen name="EditRecipePage" />

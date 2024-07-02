@@ -5,7 +5,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Stack } from 'expo-router';
-import { useAuth } from '../app/context/authContext';
+import { useAuth } from '../app/Controller/authController';
 
 const Header = ({ title, leftButton, onLeftButtonPress, rightButton, onRightButtonPress}) => {
     const { username } = useAuth()

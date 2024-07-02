@@ -6,7 +6,7 @@ import RNNPickerSelect from 'react-native-picker-select';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import * as Notifications from 'expo-notifications';
 import { setReminder } from './service/reminderService';
-import { useAuth } from './context/authContext';
+import { useAuth } from './Controller/authController';
 
 
 const createReminder = () => {

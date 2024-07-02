@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import { useAuth } from './context/authContext';
+import { useAuth } from './Controller/authController';
 import { updateMedicineLog, deleteLog } from './service/diaryService';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
