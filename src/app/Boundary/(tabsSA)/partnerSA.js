@@ -34,9 +34,9 @@ const PartnerSA = () => {
 
   const renderBusinessPartnerItem = ({ item }) => (
     <View style={styles.partnerRow}>
-      <Text style={styles.partnerCell}>{item.username}</Text>
-      <Text style={styles.partnerCell}>{item.shopName}</Text>
-      <Text style={styles.partnerCell}>{item.registered ? new Date(item.registered.seconds * 1000).toLocaleDateString() : 'N/A'}</Text>
+      <Text style={styles.partnerCell}>{item.name}</Text>
+      <Text style={styles.partnerCell}>{item.entityName}</Text>
+      <Text style={styles.partnerCell}>{item.registerTime ? new Date(item.registerTime.seconds * 1000).toLocaleDateString() : 'N/A'}</Text>
       <Text style={[styles.partnerCell, item.status === 'Active' ? styles.activeStatus : styles.pendingStatus]}>{item.status}</Text>
     </View>
   );
@@ -59,7 +59,7 @@ const PartnerSA = () => {
         </View>
       </View>
       <View style={styles.tableHeader}>
-        <Text style={styles.tableHeaderCell}>Username</Text>
+        <Text style={styles.tableHeaderCell}>Name</Text>
         <Text style={styles.tableHeaderCell}>Stall Name</Text>
         <Text style={styles.tableHeaderCell}>Registered</Text>
         <Text style={styles.tableHeaderCell}>Status</Text>
