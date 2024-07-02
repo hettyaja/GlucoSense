@@ -47,7 +47,7 @@ export default function UserProfile() {
       alert(error.message);
     }
     // Navigate to the next screen
-    router.push('/question2');
+    router.push('Boundary/question2');
   };
 
   return (

@@ -14,7 +14,7 @@ const preReg = () => {
 
   const handleContinuePress = () => {
     if (selectedButton !== null) {
-      router.push('/question3');
+      router.push('Boundary/question3');
     }
   };
 
@@ -87,9 +87,9 @@ const preReg = () => {
           </TouchableOpacity>
         </View>
       </View>
-      <TouchableOpacity style={{ alignItems: 'center', paddingTop: 60 }} onPress={handleContinuePress}
+      <TouchableOpacity style={{ alignItems: 'center', marginTop:100}} onPress={handleContinuePress}
           disabled={selectedButton === null}>
-        <View style={{  backgroundColor: selectedButton === null ? '#ccc' : '#D96B41' , width: 312, height: 50, borderRadius: 8, justifyContent: 'center', marginTop: 50 }}>
+        <View style={{  opacity: selectedButton === null ? 0.5 : 1, backgroundColor: '#D96B41', width: 312, height: 50, borderRadius: 8, justifyContent: 'center'}}>
           <Text style={{ fontSize: 16, fontFamily: "Poppins-Medium", textAlign: 'center', color: '#FAF5E1' }}>Continue</Text>
       </View>
       </TouchableOpacity>

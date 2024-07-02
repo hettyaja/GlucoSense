@@ -12,6 +12,13 @@ const preReg = () => {
   const handleButtonPress = (buttonIndex) => {
     setSelectedButton(buttonIndex === selectedButton ? null : buttonIndex);
   }
+
+  const handleContinuePress = () => {
+    if (selectedButton !== null) {
+      router.push('Boundary/question5');
+    }
+  };
+
   return (
     <>
       <Stack.Screen options={{ headerShown:false}}/>
@@ -79,8 +86,9 @@ const preReg = () => {
           </TouchableOpacity>
         </View>
       </View>
-      <TouchableOpacity style={{ alignItems: 'center', paddingTop: 100 }} onPress={() => router.push('/question5')}>
-        <View style={{ backgroundColor: "#D96B41", width: 312, height: 50, borderRadius: 8, justifyContent: 'center', marginTop: 50 }}>
+      <TouchableOpacity style={{ alignItems: 'center', marginTop: 100 }} onPress={handleContinuePress}
+          disabled={selectedButton === null}>
+        <View style={{ backgroundColor: "#D96B41", width: 312, height: 50, borderRadius: 8, justifyContent: 'center', opacity: selectedButton === null ? 0.5 : 1 }}>
           <Text style={{ fontSize: 16, fontFamily: "Poppins-Medium", textAlign: 'center', color: '#FAF5E1' }}>Continue</Text>
       </View>
       </TouchableOpacity>

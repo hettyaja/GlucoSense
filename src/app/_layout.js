@@ -25,7 +25,7 @@ const RootLayout = () => {
         router.replace('Boundary/insightSA')
       }
     } else if (isAuthenticated == false) {
-      router.replace('Boundary/getStartedPage_1');
+      router.replace('Boundary/question1');
     }
   }, [isAuthenticated, userType]);
 
