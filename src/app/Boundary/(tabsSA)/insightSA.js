@@ -1,7 +1,39 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../../../../firebase'; // Ensure this path is correct
 
 const InsightSA = () => {
+  const [totalUsers, setTotalUsers] = useState(0);
+  const [totalActiveUsers, setTotalActiveUsers] = useState(0);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const collections = ['users', 'businessPartner', 'systemAdmin'];
+        let usersCount = 0;
+        let activeUsersCount = 0;
+
+        for (const collectionName of collections) {
+          const querySnapshot = await getDocs(collection(db, collectionName));
+          querySnapshot.forEach((doc) => {
+            usersCount++;
+            if (doc.data().status === 'active') {
+              activeUsersCount++;
+            }
+          });
+        }
+
+        setTotalUsers(usersCount);
+        setTotalActiveUsers(activeUsersCount);
+      } catch (error) {
+        console.error('Error fetching user data: ', error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -10,11 +42,11 @@ const InsightSA = () => {
       <View style={styles.cardsContainer}>
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Total Users</Text>
-          <Text style={styles.cardValue}>1,200</Text>
+          <Text style={styles.cardValue}>{totalUsers}</Text>
         </View>
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Total Active Users</Text>
-          <Text style={styles.cardValue}>1,000</Text>
+          <Text style={styles.cardValue}>{totalActiveUsers}</Text>
         </View>
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Total Revenue</Text>
