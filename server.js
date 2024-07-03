@@ -48,20 +48,18 @@ async function searchFoods(keyword) {
 
 const searchFoodByBarcode = async (barcode) => {
   try {
-    const response = await axios.get('https://api.edamam.com/api/food-database/v2/nutrients', {
+    const response = await instance.get('', {
       params: {
-        app_id: APP_ID,
-        app_key: APP_KEY,
-        upc: barcode, // The barcode to search for
+        upc: barcode, 
       },
     });
 
     return response.data;
   } catch (error) {
-    console.error('Error searching for food by barcode:', error);
+    console.error('Error searching for food:', error);
     throw error;
   }
 };
 
 
-export { searchFood };
+export { searchFood, searchFoodByBarcode };
