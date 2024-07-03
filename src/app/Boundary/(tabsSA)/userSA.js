@@ -27,10 +27,11 @@ const userSA = () => {
       setLoading(false);
     }
   };
+
   const filteredUsers = users.filter(user => {
     return (
       (filter ? user.subscriptionType === filter : true) &&
-      (searchQuery ? user.username.toLowerCase().includes(searchQuery.toLowerCase()) : true)
+      (searchQuery ? user.username?.toLowerCase().includes(searchQuery.toLowerCase()) : true)
     );
   });
 
@@ -43,8 +44,7 @@ const userSA = () => {
   const handleSuspend = async () => {
     if (selectedUser && selectedUser.status !== 'suspended') {
       try {
-        await updateDoc(doc(db, 'users', selectedUser.id),
-        { status: 'suspended' });
+        await updateDoc(doc(db, 'users', selectedUser.id), { status: 'suspended' });
         fetchUsers(); // Refresh the user list
         setModalVisible(false); // Close the modal
       } catch (error) {
