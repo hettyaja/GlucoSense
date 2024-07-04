@@ -1,198 +1,101 @@
-import React, { useContext, useState } from 'react';
+//Food BP 
+import React, { useState, useEffect } from 'react';
 import { router, Tabs } from 'expo-router';
-import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, Modal, TextInput, Alert } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { RecipeContext } from '../../context/RecipeContext';
-import RecipeCard from '../../RecipeCard';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
+import { View, Text, ScrollView, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import MenuCard from '../../../components/MenuCard';
+import { db } from '../../../../firebase';  // Adjust the path as necessary
+import {fetchMenuData} from '../../service/menuService';
+import { useAuth } from '../../Controller/authController';
 import Feather from 'react-native-vector-icons/Feather'
+import Divider from '../../../components/Divider';
+
+
 
 const foodBP = () => {
-  const { recipes, removeRecipe } = useContext(RecipeContext);
+  const {user} = useAuth()
   const [searchQuery, setSearchQuery] = useState('');
-  const [currentSection, setCurrentSection] = useState('Recipe');
-  const [selectedRecipe, setSelectedRecipe] = useState(null);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedMenu, setSelectedMenu] = useState('');
+  const [modalVisible ,setModalVisible] = useState('');
+  const [menuData, setMenuData] = useState([]);
 
-  const handleEdit = (recipe) => {
-    setModalVisible(false);
-    router.push({
-      pathname: 'EditRecipePage',
-      params: recipe,
-    });
-  };
+  useEffect(() => {
+    const menuItem = async () => {
+      if(user){
+      try {
+        const menuCollection = await fetchMenuData( user.uid);
+        setMenuData(menuCollection);
+      } catch (error) {
+        console.error('Error fetching menu data:', error);
+      }
+    }
+    };
+    menuItem();
+  }, [user]);
 
-  const handleDelete = (recipeId) => {
-    removeRecipe(recipeId);
-    setModalVisible(false);
-  };
-
-  const filteredRecipes = recipes.filter(recipe =>
-    recipe.title && recipe.title.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredMenu = menuData.filter(menu =>
+    menu.title && menu.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
     <>
-    <Tabs.Screen options={{
+      <Tabs.Screen options={{
         title: 'Menu Management',
         headerStyle: { backgroundColor: '#E58B68' },
-        headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold'},
+        headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold' },
         headerTitle: 'Menu Management',
         headerTitleAlign: 'center',
         headerRight: () => (
-          <TouchableOpacity onPress={() => router.push('CreateRecipePage')} style={{marginRight:16}}>
-            <MaterialIcons name='add' size={32} color='white'/>
+          <TouchableOpacity onPress={() => router.push('createMenuPage')} style={{ marginRight: 16 }}>
+            <MaterialIcons name='add' size={32} color='white' />
           </TouchableOpacity>
         )
-      }}/>
-    <View style={{ flex: 1 }}>
-      <View style={styles.tabContainer}>
-        <TouchableOpacity
-          style={[styles.tabButton, currentSection === 'Menu' && styles.activeTabButton]}
-          onPress={() => setCurrentSection('Recipe')}
-        >
-          <Text style={[styles.tabButtonText, currentSection === 'Menu' && styles.activeTabButtonText]}>Menu</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.tabButton, currentSection === 'Draft' && styles.activeTabButton]}
-          onPress={() => setCurrentSection('Draft')}
-        >
-          <Text style={[styles.tabButtonText, currentSection === 'Draft' && styles.activeTabButtonText]}>Draft</Text>
-        </TouchableOpacity>
+      }} />
+
+      <View style={{ flex: 1 }}>
+        
+        <View style={styles.searchContainer}>
+          <View style={styles.searchBar}>
+            <FontAwesome name="search" size={20} color="#666" style={styles.icon} />
+            <TextInput
+              style={styles.input}
+              placeholder="Search menu"
+              placeholderTextColor="#999"
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+            />
+          </View>
         </View>
 
-        {currentSection === 'Menu' ? (
-          <>
-            <View style={styles.searchContainer}>
-              <TextInput
-                style={styles.searchBox}
-                placeholder="Search Menu"
-                value={searchQuery}
-                onChangeText={setSearchQuery}
-              ></TextInput>
+        <ScrollView contentContainerStyle={{ padding: 20 }}>
+          {menuData.map((menu) => (
+            <View key={menu.id} style={styles.menuCard}>
+              <TouchableOpacity
+                style={styles.editButton}
+                onPress={() => {
+                  setSelectedMenu(menuData);
+                  setModalVisible(true);
+                }}
+              >
+                <Feather name='more-vertical' size={24} />
+              </TouchableOpacity>
+              <MenuCard menu={menu} />
             </View>
-
-      <ScrollView contentContainerStyle={{ padding: 20}}>
-        {filteredRecipes.map((recipe) => (
-          <View key={recipe.id} style={styles.recipeCard}>
-            <TouchableOpacity
-              style={styles.editButton}
-              onPress={() => {
-                setSelectedRecipe(recipe);
-                setModalVisible(true);
-              }}
-            >
-              <Feather name='more-vertical' size={24}/>
-            </TouchableOpacity>
-            <RecipeCard recipe={recipe} />
-          </View>
-        ))}
-        {selectedRecipe && (
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => {
-              setModalVisible(!modalVisible);
-            }}
-          >
-            <View style={styles.modalContainer}>
-              <View style={styles.modalContent}>
-                <TouchableOpacity
-                  style={styles.modalButton}
-                  onPress={() => handleEdit(selectedRecipe)}
-                >
-                  <Text style={styles.modalButtonText}>Edit</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.modalButton}
-                  onPress={() => handleDelete(selectedRecipe.id)}
-                >
-                  <Text style={styles.modalButtonText}>Delete this recipe</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.modalCancelButton}
-                  onPress={() => setModalVisible(false)}
-                >
-                  <Text style={styles.modalCancelButtonText}>Cancel</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </Modal>
-        )}
-      </ScrollView>
-          </>
-        ) : (
-          <>
-            <View style={styles.searchContainer}>
-              <TextInput
-                style={styles.searchBox}
-                placeholder="Search Menu"
-                value={searchQuery}
-                onChangeText={setSearchQuery}
-              />
-            </View>
-            <ScrollView contentContainerStyle={{ padding: 20}}>
-        {filteredRecipes.map((recipe) => (
-          <View key={recipe.id} style={styles.recipeCard}>
-            <TouchableOpacity
-              style={styles.editButton}
-              onPress={() => {
-                setSelectedRecipe(recipe);
-                setModalVisible(true);
-              }}
-            >
-              <Feather name='more-vertical' size={24}/>
-            </TouchableOpacity>
-            <RecipeCard recipe={recipe} />
-          </View>
-        ))}
-        {selectedRecipe && (
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => {
-              setModalVisible(!modalVisible);
-            }}
-          >
-            <View style={styles.modalContainer}>
-              <View style={styles.modalContent}>
-                <TouchableOpacity
-                  style={styles.modalButton}
-                  onPress={() => handleEdit(selectedRecipe)}
-                >
-                  <Text style={styles.modalButtonText}>Edit</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.modalButton}
-                  onPress={() => handleDelete(selectedRecipe.id)}
-                >
-                  <Text style={styles.modalButtonText}>Delete this recipe</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.modalCancelButton}
-                  onPress={() => setModalVisible(false)}
-                >
-                  <Text style={styles.modalCancelButtonText}>Cancel</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </Modal>
-        )}
-      </ScrollView>
-          </>
-        )}
-    </View>
+          ))}
+        </ScrollView>
+      </View>
     </>
   );
 };
 
+
+
+
+
+
+
 const styles = StyleSheet.create({
-  tabContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center'
-  },
   tabButton: {
     flex: 1,
     paddingVertical: 10,
@@ -213,15 +116,26 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#f28b54',
   },
-  searchContainer: {
-    padding: 15,
+  searchBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f1f1f1',
+    borderRadius: 10,
+    paddingHorizontal: 16,
+    height: 40,
+    marginVertical: 10,
+    marginHorizontal: 11,
   },
-  searchBox: {
-    backgroundColor: '#fff',
-    padding: 10,
-    borderRadius: 5,
-    borderColor: '#ccc',
-    borderWidth: 1,
+  searchContainer: {
+    backgroundColor: 'white',
+  },
+  icon: {
+    marginRight: 10,
+  },
+  input: {
+    flex: 1,
+    fontSize: 16,
+    color: '#333',
   },
   recipeCard: {
     marginBottom: 20,
@@ -235,43 +149,6 @@ const styles = StyleSheet.create({
   threeDots: {
     width: 20,
     height: 20,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    width: '80%',
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 20,
-    alignItems: 'center',
-  },
-  modalButton: {
-    backgroundColor: '#f28b54',
-    padding: 15,
-    borderRadius: 10,
-    width: '100%',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  modalButtonText: {
-    color: '#fff',
-    fontSize: 16,
-  },
-  modalCancelButton: {
-    padding: 15,
-    borderRadius: 10,
-    width: '100%',
-    alignItems: 'center',
-    borderColor: '#f28b54',
-    borderWidth: 1,
-  },
-  modalCancelButtonText: {
-    color: '#f28b54',
-    fontSize: 16,
   },
 });
 

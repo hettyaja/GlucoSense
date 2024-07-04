@@ -1,13 +1,16 @@
 import { View, Text, Image} from 'react-native'
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import {router } from 'expo-router'
+import {router, Stack } from 'expo-router'
 
-import { images } from '../../constants/images';
-import ImageButton from '../../components/ImageButton'
+import { images } from '../../../constants/images';
+import ImageButton from '../../../components/ImageButton'
 
 const getStartedPage_1 = () => {
   return (
+    <>
+    <Stack.Screen options={{headerShown:false}}/>
+
     <View style={{flex:1}}>
         <SafeAreaView style={{
           flex:6,
@@ -52,11 +55,13 @@ const getStartedPage_1 = () => {
         }}>
         
             <ImageButton
-              source={require("../../assets/next.png")}
+              source={require("../../../assets/next.png")}
               onPress={() => router.push('Boundary/registerBP')}
             />
         </View>
     </View>
+    </>
+    
   )
 }
 

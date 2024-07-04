@@ -3,7 +3,7 @@ import React from 'react';
 import { SafeAreaView, ScrollView, View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import Header from '../../../components/Header';
-
+import MenuCard from '../../../components/MenuCard';
 const food= () => {
 
   return (

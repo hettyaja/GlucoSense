@@ -1,6 +1,5 @@
 import { View, Text, StyleSheet, Alert, Button, TouchableOpacity, ScrollView, TextInput } from 'react-native';
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
 import { images } from '../constants/images';
 import { Picker } from '@react-native-picker/picker';

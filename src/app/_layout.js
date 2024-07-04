@@ -34,7 +34,6 @@ const RootLayout = () => {
       {/* Define your stack screens here */}
       <Stack.Screen name="index" options={{ headerShown: false}}/>
       <Stack.Screen name="Boundary/welcomePage" options={{ headerShown: false }} />
-      <Stack.Screen name="Boundary/getStartedBP" options={{ headerShown: false }} />
       <Stack.Screen name="Boundary/(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="Boundary/(tabsBP)" options={{ headerShown: false }} />
       <Stack.Screen name="Boundary/(tabsSA)" options={{ headerShown: false }} />
@@ -42,7 +41,7 @@ const RootLayout = () => {
       <Stack.Screen name="addMeds" />
       <Stack.Screen name="addGlucose" />
       <Stack.Screen name="EditRecipePage" />
-      <Stack.Screen name="CreateRecipePage" />
+      <Stack.Screen name="createMenuPage" />
       <Stack.Screen name="ViewAndSearchDietPlan" />
       <Stack.Screen name="CreateDietPlan" />
       <Stack.Screen name="searchFood" />
