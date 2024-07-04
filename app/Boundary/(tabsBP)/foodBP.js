@@ -9,7 +9,7 @@ import { db } from '../../../firebase';  // Adjust the path as necessary
 import {fetchMenuData} from '../../service/menuService';
 import { useAuth } from '../../Controller/authController';
 import Feather from 'react-native-vector-icons/Feather'
-import Divider from '../../../components/Divider';
+import Divider from '../../components/Divider';
 
 
 

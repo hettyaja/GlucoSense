@@ -3,8 +3,8 @@ import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import {router, Stack } from 'expo-router'
 
-import { images } from '../../../constants/images';
-import ImageButton from '../../../components/ImageButton'
+import { images } from '../../constants/images';
+import ImageButton from '../../components/ImageButton'
 
 const getStartedPage_1 = () => {
   return (
@@ -55,7 +55,7 @@ const getStartedPage_1 = () => {
         }}>
         
             <ImageButton
-              source={require("../../../assets/next.png")}
+              source={require("../../assets/next.png")}
               onPress={() => router.push('Boundary/registerBP')}
             />
         </View>
