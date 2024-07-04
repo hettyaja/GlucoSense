@@ -50,16 +50,21 @@ const searchFoodByBarcode = async (barcode) => {
   try {
     const response = await instance.get('', {
       params: {
-        upc: barcode, 
+        upc: barcode,
       },
     });
 
-    return response.data;
+    if (response.data.hints && response.data.hints.length > 0) {
+      return response.data.hints[0].food; // Return the food object
+    } else {
+      throw new Error('No food data found for this barcode');
+    }
   } catch (error) {
     console.error('Error searching for food:', error);
     throw error;
   }
 };
+
 
 
 export { searchFood, searchFoodByBarcode };
