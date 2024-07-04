@@ -1,20 +1,105 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Platform, Alert } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { useRouter } from 'expo-router';
-import DatePicker from 'react-native-date-picker';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import * as FileSystem from 'expo-file-system';
+import * as MediaLibrary from 'expo-media-library';
+import XLSX from 'xlsx';
+import { db } from '../firebase'; // Update the path to your firebase.js
+import { collection, getDocs } from 'firebase/firestore';
 
 const ExportReportSA = () => {
   const router = useRouter();
   const [data, setData] = useState('Users');
-  const [format, setFormat] = useState('PDF Report');
+  const [format, setFormat] = useState('Microsoft Excel');
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
-  const [openStartDatePicker, setOpenStartDatePicker] = useState(false);
-  const [openEndDatePicker, setOpenEndDatePicker] = useState(false);
+  const [showStartDatePicker, setShowStartDatePicker] = useState(false);
+  const [showEndDatePicker, setShowEndDatePicker] = useState(false);
+  const [hasPermission, setHasPermission] = useState(null);
 
-  const handleExport = () => {
-    // Implement export logic here
+  useEffect(() => {
+    const getPermissions = async () => {
+      const { status } = await MediaLibrary.requestPermissionsAsync();
+      setHasPermission(status === 'granted');
+    };
+    getPermissions();
+  }, []);
+
+  const handleExport = async () => {
+    if (format === 'Microsoft Excel') {
+      const dataToExport = await fetchData();
+      if (dataToExport.length === 0) {
+        Alert.alert('No data available for export.');
+        return;
+      }
+
+      const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Data');
+      const excelFile = XLSX.write(workbook, { type: 'base64', bookType: 'xlsx' });
+
+      if (hasPermission) {
+        try {
+          const fileUri = FileSystem.documentDirectory + 'export.xlsx';
+          await FileSystem.writeAsStringAsync(fileUri, excelFile, {
+            encoding: FileSystem.EncodingType.Base64,
+          });
+
+          const asset = await MediaLibrary.createAssetAsync(fileUri);
+          const album = await MediaLibrary.getAlbumAsync('Download');
+          if (album == null) {
+            await MediaLibrary.createAlbumAsync('Download', asset, false);
+          } else {
+            await MediaLibrary.addAssetsToAlbumAsync([asset], album, false);
+          }
+
+          Alert.alert('Export Successful', 'File saved to Downloads folder.');
+        } catch (error) {
+          console.log('Error creating asset:', error);
+          Alert.alert('Export Failed', 'There was an error saving the file.');
+        }
+      } else {
+        Alert.alert('Permission Denied', 'Permission to access storage was denied.');
+      }
+    }
+  };
+
+  const fetchData = async () => {
+    let dataToExport = [];
+    if (data === 'Users') {
+      const usersCollection = await getDocs(collection(db, 'users'));
+      dataToExport = usersCollection.docs.map(doc => doc.data());
+    } else if (data === 'Business Partner') {
+      const partnersCollection = await getDocs(collection(db, 'businessPartner'));
+      dataToExport = partnersCollection.docs.map(doc => doc.data());
+    }
+    return dataToExport;
+  };
+
+  const onStartDateChange = (event, selectedDate) => {
+    const currentDate = selectedDate || startDate;
+    setShowStartDatePicker(false);
+    setStartDate(currentDate);
+  };
+
+  const onEndDateChange = (event, selectedDate) => {
+    const currentDate = selectedDate || endDate;
+    setShowEndDatePicker(false);
+    setEndDate(currentDate);
+  };
+
+  const showStartPicker = () => {
+    setShowStartDatePicker(true);
+  };
+
+  const showEndPicker = () => {
+    setShowEndDatePicker(true);
+  };
+
+  const formatDate = (date) => {
+    return new Intl.DateTimeFormat('en-GB').format(date);
   };
 
   return (
@@ -55,37 +140,31 @@ const ExportReportSA = () => {
           <Text style={styles.sectionTitle}>Period</Text>
           <View style={styles.row}>
             <Text style={styles.label}>Start Date</Text>
-            <TouchableOpacity onPress={() => setOpenStartDatePicker(true)} style={styles.datePicker}>
-              <Text>{startDate.toLocaleDateString()}</Text>
+            <TouchableOpacity onPress={showStartPicker} style={styles.datePicker}>
+              <Text>{formatDate(startDate)}</Text>
             </TouchableOpacity>
-            <DatePicker
-              modal
-              open={openStartDatePicker}
-              date={startDate}
-              mode="date"
-              onConfirm={(date) => {
-                setOpenStartDatePicker(false);
-                setStartDate(date);
-              }}
-              onCancel={() => setOpenStartDatePicker(false)}
-            />
+            {showStartDatePicker && (
+              <DateTimePicker
+                value={startDate}
+                mode="date"
+                display="default"
+                onChange={onStartDateChange}
+              />
+            )}
           </View>
           <View style={styles.row}>
             <Text style={styles.label}>End Date</Text>
-            <TouchableOpacity onPress={() => setOpenEndDatePicker(true)} style={styles.datePicker}>
-              <Text>{endDate.toLocaleDateString()}</Text>
+            <TouchableOpacity onPress={showEndPicker} style={styles.datePicker}>
+              <Text>{formatDate(endDate)}</Text>
             </TouchableOpacity>
-            <DatePicker
-              modal
-              open={openEndDatePicker}
-              date={endDate}
-              mode="date"
-              onConfirm={(date) => {
-                setOpenEndDatePicker(false);
-                setEndDate(date);
-              }}
-              onCancel={() => setOpenEndDatePicker(false)}
-            />
+            {showEndDatePicker && (
+              <DateTimePicker
+                value={endDate}
+                mode="date"
+                display="default"
+                onChange={onEndDateChange}
+              />
+            )}
           </View>
         </View>
         <TouchableOpacity style={styles.exportButton} onPress={handleExport}>
