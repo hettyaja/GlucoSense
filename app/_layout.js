@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Stack, router, useSegments } from 'expo-router';
 import { useFonts } from 'expo-font';
-import ImageButton from './components/ImageButton';
+import ImageButton from '../components/ImageButton';
 import { BPProfileProvider } from './context/BPProfileContext';
 import { ProfileProvider } from './context/ProfileContext';
 import { DietPlanProvider } from './context/DietPlanContext';
@@ -34,7 +34,6 @@ const RootLayout = () => {
       {/* Define your stack screens here */}
       <Stack.Screen name="index" options={{ headerShown: false}}/>
       <Stack.Screen name="Boundary/welcomePage" options={{ headerShown: false }} />
-      <Stack.Screen name="Boundary/getStartedBP" options={{ headerShown: false }} />
       <Stack.Screen name="Boundary/(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="Boundary/(tabsBP)" options={{ headerShown: false }} />
       <Stack.Screen name="Boundary/(tabsSA)" options={{ headerShown: false }} />
@@ -42,7 +41,7 @@ const RootLayout = () => {
       <Stack.Screen name="addMeds" />
       <Stack.Screen name="addGlucose" />
       <Stack.Screen name="EditRecipePage" />
-      <Stack.Screen name="CreateRecipePage" />
+      <Stack.Screen name="createMenuPage" />
       <Stack.Screen name="ViewAndSearchDietPlan" />
       <Stack.Screen name="CreateDietPlan" />
       <Stack.Screen name="searchFood" />
@@ -52,7 +51,7 @@ const RootLayout = () => {
         headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold' },
         headerLeft: () => (
           <ImageButton
-            source={require("./assets/back.png")}
+            source={require("../assets/back.png")}
             imageSize={{ width: 24, height: 24 }}
             customStyle={{ paddingLeft: 10 }}
             onPress={() => router.back('/registerPage')}
@@ -71,7 +70,7 @@ const RootLayout = () => {
         headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold' },
         headerLeft: () => (
           <ImageButton
-            source={require("./assets/back.png")}
+            source={require("../assets/back.png")}
             imageSize={{ width: 24, height: 24 }}
             customStyle={{ paddingLeft: 10 }}
             onPress={() => router.back('/registerPage')}
@@ -86,7 +85,7 @@ const RootLayout = () => {
         headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold' },
         headerLeft: () => (
           <ImageButton
-            source={require("./assets/back.png")}
+            source={require("../assets/back.png")}
             imageSize={{ width: 24, height: 24 }}
             customStyle={{ paddingLeft: 10 }}
             onPress={() => router.back('/settingBP')}
@@ -103,15 +102,15 @@ const RootLayout = () => {
 
 const _layout = () => {
   const [fontsLoaded] = useFonts({
-    "Poppins-Black": require("./assets/fonts/Poppins-Black.ttf"),
-    "Poppins-Bold": require("./assets/fonts/Poppins-Bold.ttf"),
-    "Poppins-ExtraBold": require("./assets/fonts/Poppins-ExtraBold.ttf"),
-    "Poppins-ExtraLight": require("./assets/fonts/Poppins-ExtraLight.ttf"),
-    "Poppins-Light": require("./assets/fonts/Poppins-Light.ttf"),
-    "Poppins-Medium": require("./assets/fonts/Poppins-Medium.ttf"),
-    "Poppins-Regular": require("./assets/fonts/Poppins-Regular.ttf"),
-    "Poppins-SemiBold": require("./assets/fonts/Poppins-SemiBold.ttf"),
-    "Poppins-Thin": require("./assets/fonts/Poppins-Thin.ttf"),
+    "Poppins-Black": require("../assets/fonts/Poppins-Black.ttf"),
+    "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
+    "Poppins-ExtraBold": require("../assets/fonts/Poppins-ExtraBold.ttf"),
+    "Poppins-ExtraLight": require("../assets/fonts/Poppins-ExtraLight.ttf"),
+    "Poppins-Light": require("../assets/fonts/Poppins-Light.ttf"),
+    "Poppins-Medium": require("../assets/fonts/Poppins-Medium.ttf"),
+    "Poppins-Regular": require("../assets/fonts/Poppins-Regular.ttf"),
+    "Poppins-SemiBold": require("../assets/fonts/Poppins-SemiBold.ttf"),
+    "Poppins-Thin": require("../assets/fonts/Poppins-Thin.ttf"),
   });
 
   if (!fontsLoaded) {

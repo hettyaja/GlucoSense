@@ -1,5 +1,5 @@
 import { doc, getDocs, updateDoc, collection, query} from 'firebase/firestore';
-import { db } from '../../../firebase'; // Adjust the import according to your file structure
+import { db } from '../../firebase'; // Adjust the import according to your file structure
 
 export const fetchMenuData= async (uid) => {
   try {
