@@ -12,7 +12,7 @@ const SettingSA = () => {
   };
 
   const handleExportReport = () => {
-    router.push('exportReport');
+    router.push('/exportReportSA');
   };
 
   return (
