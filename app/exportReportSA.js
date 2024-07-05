@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Platform, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Platform, Alert, PermissionsAndroid } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { useRouter } from 'expo-router';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -17,13 +17,31 @@ const ExportReportSA = () => {
   const [endDate, setEndDate] = useState(new Date());
   const [showStartDatePicker, setShowStartDatePicker] = useState(false);
   const [showEndDatePicker, setShowEndDatePicker] = useState(false);
-  const [hasPermission, setHasPermission] = useState(null);
+  const [hasPermission, setHasPermission] = useState(false);
 
   useEffect(() => {
     const getPermissions = async () => {
-      const { status } = await MediaLibrary.requestPermissionsAsync();
-      setHasPermission(status === 'granted');
+      const mediaLibraryPermission = await MediaLibrary.requestPermissionsAsync();
+      let storagePermission = { status: 'granted' };
+
+      if (Platform.OS === 'android') {
+        storagePermission = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+          {
+            title: 'Storage Permission Required',
+            message: 'This app needs access to your storage to save the exported files.',
+            buttonPositive: 'OK',
+          }
+        );
+      }
+
+      if (mediaLibraryPermission.status === 'granted' && storagePermission === PermissionsAndroid.RESULTS.GRANTED) {
+        setHasPermission(true);
+      } else {
+        Alert.alert('Permission required', 'This app needs storage access to save the exported files.');
+      }
     };
+
     getPermissions();
   }, []);
 
@@ -42,7 +60,7 @@ const ExportReportSA = () => {
 
       if (hasPermission) {
         try {
-          const fileUri = FileSystem.documentDirectory + 'export.xlsx';
+          const fileUri = `${FileSystem.documentDirectory}export.xlsx`;
           await FileSystem.writeAsStringAsync(fileUri, excelFile, {
             encoding: FileSystem.EncodingType.Base64,
           });
@@ -58,7 +76,7 @@ const ExportReportSA = () => {
           Alert.alert('Export Successful', 'File saved to Downloads folder.');
         } catch (error) {
           console.log('Error creating asset:', error);
-          Alert.alert('Export Failed', 'There was an error saving the file.');
+          Alert.alert('Export Failed', `There was an error saving the file: ${error.message}`);
         }
       } else {
         Alert.alert('Permission Denied', 'Permission to access storage was denied.');
