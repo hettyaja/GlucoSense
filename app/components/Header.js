@@ -5,10 +5,10 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Stack } from 'expo-router';
-import { useAuth } from '../Controller/authController';
+import { useAuth } from '../service/AuthContext';
 
-const Header = ({ title, leftButton, onLeftButtonPress, rightButton, onRightButtonPress}) => {
-    const { username } = useAuth()
+const Header = ({ title, leftButton, onLeftButtonPress, rightButton, onRightButtonPress, headerShown}) => {
+  const { user } = useAuth()
   const renderLeftButton = () => {
     switch (leftButton) {
       case 'Back':
@@ -27,7 +27,7 @@ const Header = ({ title, leftButton, onLeftButtonPress, rightButton, onRightButt
         return (
           <View style={{ flexDirection: 'row', marginLeft: 16 }}>
             <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 16, color: 'white' }}>Welcome, </Text>
-            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 16, color: 'white' }}>{username}</Text>
+            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 16, color: 'white' }}>{user.username}</Text>
           </View>
         );
       default:
@@ -70,6 +70,7 @@ const Header = ({ title, leftButton, onLeftButtonPress, rightButton, onRightButt
     <Stack.Screen
       options={{
         title: title,
+        headerShown: headerShown,
         headerStyle: { backgroundColor: '#E58B68' },
         headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold' },
         headerLeft: renderLeftButton,

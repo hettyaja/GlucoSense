@@ -10,14 +10,12 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import { images } from '../../constants/images'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import AntDesign from 'react-native-vector-icons/AntDesign'
-import { useProfile } from '../../context/ProfileContext'
-import { useAuth } from '../../Controller/authController'
+import LogoutController from '../../Controller/LogoutController'
+import { useAuth } from '../../service/AuthContext'
+import DeleteUserController from '../../Controller/DeleteUserController'
 
 const setting = () => {
-  const { logout } = useAuth()
-  const { name, user } = useAuth()
-  const { deleteUser } = useAuth()
-  const { profileData } =  useProfile()
+  const { user } = useAuth()
   const [isModalVisible, setModalVisible] = useState(false)
   const [glucoseUnit, setGlucoseUnit] = useState('mmoL/L')
   const [weightUnit, setWeightUnit] = useState('kgs')
@@ -25,7 +23,7 @@ const setting = () => {
   const [photoUri, setPhotoUri] = useState('https://reactnative.dev/img/tiny_logo.png')
   
   const handleSignOut = async () => {
-    await logout()
+    await LogoutController.logout()
   }
 
 
@@ -40,12 +38,10 @@ const setting = () => {
         text: 'Delete',
         onPress: async () => {
           try {
-            const uid = user.uid
-            await deleteUser(uid, 'users');  
-            router.push('welcomePage');    
+            await DeleteUserController.deleteUser(user.uid);
+            router.replace('Boundary/welcomePage');
           } catch (error) {
             console.error('Error deleting user profile:', error);
-            alert('Error deleting user profile: ' + error.message);
           }
         },
       },
@@ -90,10 +86,10 @@ const setting = () => {
     <ScrollView style={styles.safeArea}>
       <TouchableOpacity style={[styles.profileCard, Platform.OS === 'ios' && styles.shadow]} onPress={() => router.push('profile')}>
         <View style={{flexDirection:'row',alignItems:'center', padding:24}}>
-         <Image style={styles.profileImage} source={{uri: profileData.photoUri}}/>
+         <Image style={styles.profileImage} source={{uri: photoUri}}/>
           <View>
             <Text style={{fontFamily:'Poppins-Bold', fontSize:16}}>
-              {name}
+              {user.name}
             </Text>
             <Text style={{fontFamily:'Poppins-Regular', fontSize:14}}>
               Free User

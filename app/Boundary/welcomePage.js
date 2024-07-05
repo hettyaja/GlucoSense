@@ -25,7 +25,7 @@ const welcomePage = () => {
         </TouchableOpacity>
 
         <TouchableOpacity
-          onPress={() => router.push("Boundary/loginPage")}
+          onPress={() => router.push("Boundary/LoginUI")}
           style={[styles.button, styles.signInButton]}>
           <Text style={styles.buttonText}>{"Sign in"}</Text>
         </TouchableOpacity>

@@ -1,12 +1,12 @@
 import React, {useState} from 'react';
 import { Image, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, Platform } from 'react-native';
-import { images } from '../constants/images'
+import { images } from '../../constants/images'
 import { router } from 'expo-router'
-import ImageButton from '../components/ImageButton'
-import { useAuth } from '../Controller/authController'
+import ImageButton from '../../components/ImageButton'
+import RegisterController from '../../Controller/RegisterUserController';
+import Header from '../../components/Header';
 
-const FreemiumRegister= () => {
-    const {register} = useAuth()
+const RegisterUserUI= () => {
     const [username ,setUsername] = useState('')
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
@@ -14,33 +14,22 @@ const FreemiumRegister= () => {
     const [confirmPassword, setConfirmPassword] = useState('')
 
     const handleSignUp = async () => {
-        if(password !== confirmPassword) {
-            alert('Password do not match!')
-            return;
-        }
-
         try {
-            const additionalData = {
-                username,
-                name,
-                userType: 'free'
-            }
-            const user = await register(email, password, additionalData)
-            router.push('question1');
-
+            const additionalData = {username, name };
+            await RegisterController.register(email, password, confirmPassword, additionalData);
         } catch (error) {
-            alert(error.message)
+            alert(error.message);
         }
-        
-        
-    }
+    };
+
     return (
-    
+    <>
+    <Header headerShown={false}/>
     <SafeAreaView style={styles.safeArea}>
         <Image source={images.header} style={{position:"absolute", width:430, height:275}}/>
         <View style={{alignItems:'flex-start', width:"100%", paddingHorizontal:20, paddingTop: Platform.OS === 'ios' ? 0 : 50}}>
         <ImageButton
-            source={require("../assets/back.png")}
+            source={require("../../assets/back.png")}
             imageSize={{width:24, height:24}}
             onPress={() => router.back('/welcomePage')}
         />
@@ -161,6 +150,7 @@ const FreemiumRegister= () => {
         </TouchableOpacity> 
         </View>
     </SafeAreaView>
+    </>
     );
 };
 
@@ -222,4 +212,4 @@ const FreemiumRegister= () => {
         }
 });
 
-export default FreemiumRegister;
+export default RegisterUserUI;

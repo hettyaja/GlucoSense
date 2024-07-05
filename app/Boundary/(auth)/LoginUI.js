@@ -2,18 +2,17 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Link, router, Stack } from 'expo-router';
-import { images } from '../constants/images';
-import ImageButton from '../components/ImageButton';
-import { useAuth } from '../Controller/authController';
+import { images } from '../../constants/images';
+import ImageButton from '../../components/ImageButton';
+import LoginController from '../../Controller/LoginController';
 
 const Login = () => {
-  const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleLogin = async () => {
     try {
-      await login(email, password);
+      await LoginController.login(email, password);
     } catch (error) {
       // Show alert and stay on the login page
       Alert.alert('Login Failed', error.message);
@@ -27,7 +26,7 @@ const Login = () => {
       <SafeAreaView style={{ flex: 1, backgroundColor: 'white', alignItems: 'center' }}>
         <View style={{ backgroundColor: 'white', alignItems: 'flex-start', width: '100%', paddingHorizontal: 20 }}>
           <ImageButton
-            source={require('../assets/back(2).png')}
+            source={require('../../assets/back(2).png')}
             imageSize={{ width: 24, height: 24 }}
             onPress={() => router.back('/welcomePage')}
           />

@@ -3,11 +3,10 @@ import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View, ScrollView 
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, Stack } from 'expo-router';
 import Ionicons from 'react-native-vector-icons/Ionicons'
-import { useAuth } from '../Controller/authController'
-import Header from '../components/Header';
+import Header from '../../components/Header';
+import RegisterBPController from '../../Controller/RegisterBPController';
 
-const BusinessRegister= () => {
-    const { register } = useAuth()
+const RegisetrBPUI= () => {
     const [entityName, setEntityName] = useState('')
     const [UEN, setUEN] = useState('')
     const [City, setCity] = useState('')
@@ -277,4 +276,4 @@ const BusinessRegister= () => {
     
     });
 
-export default BusinessRegister;
+export default RegisetrBPUI;

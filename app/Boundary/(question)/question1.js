@@ -5,11 +5,10 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import ImageButton from '../../components/ImageButton';
 import { router, Stack } from 'expo-router';
 import { images } from '../../constants/images';
-import { useAuth } from '../../Controller/authController';
-import Ionicons from 'react-native-vector-icons/Ionicons'
+import { useAuth } from '../../service/AuthContext';
+import CreateBodyProfileController from '../../Controller/CreateBodyProfileController';
 
 export default function UserProfile() {
-  const { setBodyProfile } = useAuth();
   const { user } = useAuth();
   const [gender, setGender] = useState('Male');
   const [birthdate, setBirthdate] = useState(new Date(2002, 8, 9));
@@ -40,9 +39,16 @@ export default function UserProfile() {
       return;
     }
 
+    const bodyProfileData = {
+      gender,
+      birthdate: birthdate.toISOString(),
+      weight,
+      height
+    };
+    
     try {
-      const uid = user.uid;
-      await setBodyProfile(uid, gender, birthdate.toISOString(), weight, height);
+      await CreateBodyProfileController.createBodyProfile(user.uid, bodyProfileData)
+      // await setBodyProfile(user.uid, gender, birthdate.toISOString(), weight, height);
     } catch (error) {
       alert(error.message);
     }

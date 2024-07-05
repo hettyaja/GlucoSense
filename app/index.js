@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, ActivityIndicator, Button } from 'react-native';
 import React, { useEffect } from 'react';
 import { Link, Redirect, router } from 'expo-router';
-import { useAuth } from './Controller/authController';
+import { useAuth } from './service/AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Notifications from 'expo-notifications';
 
@@ -15,8 +15,7 @@ import * as Notifications from 'expo-notifications';
 
 
 const Index = () => {
-  const { isAuthenticated, userType, resetAuth } = useAuth();
-  console.log(isAuthenticated);
+  const { resetAuth } = useAuth();
 
   // useEffect(() => {
   //   const requestPermissions = async () => {
@@ -43,7 +42,6 @@ const Index = () => {
     try {
       await AsyncStorage.clear();
       console.log('AsyncStorage cleared');
-      resetAuth(); // Optionally reset the auth state
     } catch (error) {
       console.error('Error clearing AsyncStorage:', error);
     }

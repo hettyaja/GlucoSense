@@ -5,7 +5,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Feather from 'react-native-vector-icons/Feather';
-import { useAuth } from '../../Controller/authController';
+import { useAuth } from '../../service/AuthContext';
 import Header from '../../components/Header';
 import A1CComponent from '../../components/A1C'; // Ensure this import is correct
 import { fetchLogs, deleteLog } from '../../service/diaryService';

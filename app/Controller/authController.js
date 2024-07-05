@@ -97,53 +97,6 @@ export const AuthProvider = ({ children }) => {
         return () => unsub();
     }, []);
 
-    const register = async (email, password, additionalData) => {
-        try {
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            const user = userCredential.user;
-            const { userType, username, name, UEN, City, entityName, address, postal, phoneNum } = additionalData;
-
-            const registerTime = Timestamp.fromDate(new Date());
-
-            if (userType === 'free') {
-                await setDoc(doc(db, 'users', user.uid), {
-                    username,
-                    name,
-                    email: user.email,
-                    subscriptionType: 'free',
-                    registerTime,
-                    status: 'active'
-                });
-            } else if (userType === 'businessPartner') {
-                await setDoc(doc(db, 'businessPartner', user.uid), {
-                    entityName,
-                    email: user.email,
-                    City,
-                    UEN,
-                    address,
-                    postal,
-                    phoneNum,
-                    name,
-                    registerTime,
-                    status: 'pending'
-                });
-            }
-            return user;
-        } catch (error) {
-            if (error.code === 'auth/email-already-in-use') {
-                throw new Error('This email is already in use. Please use a different email.');
-            } else if (error.code === 'auth/weak-password') {
-                throw new Error('Password should be at least 6 characters.');
-            } else if (error.code === 'auth/missing-password') {
-                throw new Error('The password field cannot be empty.');
-            } else if (error.code === 'auth/invalid-email') {
-                throw new Error('Please input valid email.');
-            } else {
-                throw new Error(error.message);
-            }
-        }
-    };
-
     const setBodyProfile = async (uid, gender, birthdate, weight, height) => {
         try {
             const userDocRef = doc(db, 'users', uid);

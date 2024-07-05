@@ -6,28 +6,28 @@ import { BPProfileProvider } from './context/BPProfileContext';
 import { ProfileProvider } from './context/ProfileContext';
 import { DietPlanProvider } from './context/DietPlanContext';
 import { RecipeProvider } from './context/RecipeContext';
-import { AuthProvider, useAuth } from './Controller/authController';
+import { AuthProvider, useAuth } from './service/AuthContext';
 import { MenuProvider } from 'react-native-popup-menu';
 
 
 const RootLayout = () => {
-  const { isAuthenticated, userType, status, logout } = useAuth();
+  const { user, userType } = useAuth();
 
   useEffect(() => {
-    if (typeof isAuthenticated === 'undefined') return;
-    
-    if (isAuthenticated) {
-      if (userType === 'user') {
+    if (user) {
+      if (userType === 'user' && !user.bodyProfileComplete) {
+        router.replace('Boundary/question1')
+      } else if (userType === 'user') {
         router.replace('Boundary/food')
       } else if (userType === 'businessPartner') {
         router.replace('Boundary/homeBP')
       } else if (userType === 'systemAdmin') {
         router.replace('Boundary/insightSA')
       }
-    } else if (isAuthenticated == false) {
+    } else if (user == false) {
       router.replace('Boundary/getStartedPage_1');
     }
-  }, [isAuthenticated, userType]);
+  }, [user, userType]);
 
   return (
     <Stack>
@@ -37,7 +37,6 @@ const RootLayout = () => {
       <Stack.Screen name="Boundary/(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="Boundary/(tabsBP)" options={{ headerShown: false }} />
       <Stack.Screen name="Boundary/(tabsSA)" options={{ headerShown: false }} />
-      <Stack.Screen name="Boundary/registerPage" options={{ headerShown: false }} />
       <Stack.Screen name="addMeds" />
       <Stack.Screen name="addGlucose" />
       <Stack.Screen name="EditRecipePage" />
