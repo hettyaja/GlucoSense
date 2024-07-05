@@ -1,4 +1,4 @@
-import User from '../Entity/User';
+import BusinessPartner from '../Entity/BusinessPartner';
 
 class RegisterBPController {
   static async register(email, password, confirmPassword, additionalData) {
@@ -7,7 +7,7 @@ class RegisterBPController {
       this.validateInputs(email, password, confirmPassword, additionalData);
 
       // Proceed with user registration
-      return await User.register(email, password, additionalData);
+      return await BusinessPartner.register(email, password, additionalData);
     } catch (error) {
       if (error.code === 'auth/email-already-in-use') {
         throw new Error('This email is already in use. Please use a different email.');
@@ -24,12 +24,12 @@ class RegisterBPController {
   }
 
   static validateInputs(email, password, confirmPassword, additionalData) {
-    if (!additionalData.username || additionalData.username.trim() === '') {
-      throw new Error('Username cannot be empty');
+    if (!additionalData.entityName || additionalData.entityName.trim() === '') {
+      throw new Error('Entity name cannot be empty');
     }
 
-    if (!additionalData.name || additionalData.name.trim() === '') {
-      throw new Error('Name cannot be empty');
+    if (!additionalData.UEN || additionalData.UEN.trim() === '') {
+      throw new Error('UEN cannot be empty');
     }
 
     if (!email || email.trim() === '') {

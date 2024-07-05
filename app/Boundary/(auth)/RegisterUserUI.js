@@ -15,7 +15,7 @@ const RegisterUserUI= () => {
 
     const handleSignUp = async () => {
         try {
-            const additionalData = {username, name };
+            const additionalData = {username, name};
             await RegisterController.register(email, password, confirmPassword, additionalData);
         } catch (error) {
             alert(error.message);

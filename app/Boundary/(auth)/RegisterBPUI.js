@@ -9,34 +9,27 @@ import RegisterBPController from '../../Controller/RegisterBPController';
 const RegisetrBPUI= () => {
     const [entityName, setEntityName] = useState('')
     const [UEN, setUEN] = useState('')
-    const [City, setCity] = useState('')
+    const [city, setCity] = useState('')
     const [address, setAddress] = useState('')
     const [postal, setPostal] = useState('')
-    const [email, setEmail] = useState('')
-    const [phoneNum, setPhoneNum] = useState('')
     const [name, setName] = useState('')
+    const [phoneNum, setPhoneNum] = useState('')
+    const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
 
     const handleSignUp = async () => {
-        if(password !== confirmPassword) {
-            alert('Password do not match!')
-            return;
-        }
-
         try {
             const additionalData = {
                 entityName,
                 UEN,
-                City,
+                city,
                 address, 
                 postal,
                 name,
-                phoneNum,
-                userType: 'businessPartner'
+                phoneNum
             }
-            const user = await register(email, password, additionalData)
-            router.push('/homeBP');
+            await RegisterBPController.register(email, password, confirmPassword, additionalData)
         } catch (error) {
             alert(error.message)
         }
@@ -88,7 +81,7 @@ const RegisetrBPUI= () => {
             <View style={styles.boxStyle}>
                 <TextInput
                     style={styles.input}
-                    value={City}
+                    value={city}
                     onChangeText={text => setCity(text)}
                 />
             </View>
@@ -101,7 +94,6 @@ const RegisetrBPUI= () => {
                     value={address}
                     onChangeText={text => setAddress(text)}
                     autoCapitalize="none"
-                    keyboardType="email-address"
                 />
             </View>
             <Text style={styles.textStyle}>

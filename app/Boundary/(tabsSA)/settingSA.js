@@ -1,14 +1,13 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { useAuth } from '../../Controller/authController';
 import { useRouter } from 'expo-router';
+import LogoutController from '../../Controller/LogoutController';
 
 const SettingSA = () => {
-  const { logout } = useAuth();
   const router = useRouter();
   
   const handleSignOut = async () => {
-    await logout();
+    await LogoutController.logout();
   };
 
   const handleExportReport = () => {

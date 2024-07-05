@@ -6,13 +6,14 @@ import Octicons from 'react-native-vector-icons/Octicons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import { useAuth } from '../../Controller/authController';
 import { fetchBPProfile } from '../../service/profileBPService';
 import { useFocusEffect } from '@react-navigation/native';
+import LogoutController from '../../Controller/LogoutController';
+import { useAuth } from '../../service/AuthContext';
+import DeleteBPController from '../../Controller/DeleteBPController';
 
 const settingBP = () => {
-  const { logout, deleteUser, user } = useAuth();
-  const uid = user.uid;
+  const { user } = useAuth();
 
   const router = useRouter();
 
@@ -22,9 +23,9 @@ const settingBP = () => {
   const [description, setDescription] = useState('');
 
   const getBPProfile = async () => {
-    if (uid) {
+    if (user) {
       try {
-        const data = await fetchBPProfile(uid);
+        const data = await fetchBPProfile(user.uid);
         if (data) {
           setPhotoUri(data.photoUri || '');
           setShopName(data.shopName || '');
@@ -40,11 +41,11 @@ const settingBP = () => {
   useFocusEffect(
     useCallback(() => {
       getBPProfile();
-    }, [uid])
+    }, [user.uid])
   );
 
   const handleSignOut = async () => {
-    await logout();
+    await LogoutController.logout();
   };
 
   const createTwoButtonAlert = () =>
@@ -58,8 +59,8 @@ const settingBP = () => {
         text: 'Delete',
         onPress: async () => {
           try {
-            await deleteUser(uid, 'businessPartner');
-            router.push('welcomePage');
+            await DeleteBPController.deleteBP(user.uid);
+            router.replace('Boundary/welcomePage');
           } catch (error) {
             console.error('Error deleting user profile:', error);
             alert('Error deleting user profile: ' + error.message);

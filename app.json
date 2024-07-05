@@ -19,7 +19,9 @@
       "bundleIdentifier": "com.anonymous.GlucoSense",
       "infoPlist": {
         "NSBluetoothAlwaysUsageDescription": "Bluetooth is used to connect to glucose monitoring devices.",
-        "NSLocationWhenInUseUsageDescription": "Location data is required for Bluetooth functionality."
+        "NSLocationWhenInUseUsageDescription": "Location data is required for Bluetooth functionality.",
+        "NSPhotoLibraryUsageDescription": "This app needs access to your photo library to save exported files.",
+        "NSPhotoLibraryAddUsageDescription": "This app needs access to add photos to your library."
       }
     },
     "android": {

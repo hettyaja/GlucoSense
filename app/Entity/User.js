@@ -5,7 +5,7 @@ import { deleteUser as firebaseDeleteUser } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 class User {
-  constructor(id, username, name, email, userType, registerTime, status) {
+  constructor(id, username, name, email, userType, registerTime, status, bodyProfileComplete) {
     this.id = id;
     this.username = username;
     this.name = name;
@@ -13,6 +13,7 @@ class User {
     this.userType = userType;
     this.registerTime = registerTime;
     this.status = status
+    this.bodyProfileComplete = bodyProfileComplete
   }
 
   static async register(email, password, additionalData) {
@@ -30,7 +31,7 @@ class User {
         status: 'active',
         bodyProfileComplete: false
       });
-      return new User(user.uid, additionalData.username, additionalData.name, email, 'free', registerTime, 'active');
+      return new User(user.uid, additionalData.username, additionalData.name, email, 'free', registerTime, 'active', false);
     } catch (error) {
       throw new Error(error.message);
     }
