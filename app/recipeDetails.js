@@ -4,7 +4,6 @@ import { useLocalSearchParams } from 'expo-router';
 import { router } from 'expo-router';
 import { fetchRecipeDetails } from './service/spoonacularAPI';
 import Header from './components/Header';
-import { router } from 'expo-router/build';
 
 const RecipeDetails = () => {
   const { recipeId } = useLocalSearchParams();
