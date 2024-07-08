@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, Modal, Button } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import { db } from '../../../firebase'; // Import the Firestore instance
-import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
+import FetchUsersController from '../../Controller/FetchUsersController';
+import SuspendUserController from '../../Controller/SuspendUserController';
+import UnsuspendUserController from '../../Controller/UnsuspendUserController';
 
-const userSA = () => {
+const UserSA = () => {
   const [filter, setFilter] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [users, setUsers] = useState([]);
@@ -18,8 +19,7 @@ const userSA = () => {
 
   const fetchUsers = async () => {
     try {
-      const usersCollection = await getDocs(collection(db, 'users'));
-      const usersData = usersCollection.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+      const usersData = await FetchUsersController.fetchUsers();
       setUsers(usersData);
     } catch (error) {
       console.error("Error fetching users: ", error);
@@ -44,9 +44,9 @@ const userSA = () => {
   const handleSuspend = async () => {
     if (selectedUser && selectedUser.status !== 'suspended') {
       try {
-        await updateDoc(doc(db, 'users', selectedUser.id), { status: 'suspended' });
-        fetchUsers(); // Refresh the user list
-        setModalVisible(false); // Close the modal
+        await SuspendUserController.suspendUser(selectedUser.id);
+        fetchUsers();
+        setModalVisible(false);
       } catch (error) {
         console.error("Error suspending user: ", error);
       }
@@ -56,9 +56,9 @@ const userSA = () => {
   const handleUnsuspend = async () => {
     if (selectedUser && selectedUser.status === 'suspended') {
       try {
-        await updateDoc(doc(db, 'users', selectedUser.id), { status: 'active' });
-        fetchUsers(); // Refresh the user list
-        setModalVisible(false); // Close the modal
+        await UnsuspendUserController.unsuspendUser(selectedUser.id);
+        fetchUsers();
+        setModalVisible(false);
       } catch (error) {
         console.error("Error unsuspending user: ", error);
       }
@@ -241,4 +241,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default userSA;
+export default UserSA;

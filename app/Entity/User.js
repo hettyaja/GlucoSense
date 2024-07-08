@@ -1,6 +1,6 @@
 import { auth, db } from '../../firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
-import { doc, setDoc, deleteDoc, Timestamp } from 'firebase/firestore';
+import { doc, setDoc, deleteDoc, getDocs, updateDoc, Timestamp, collection } from 'firebase/firestore';
 import { deleteUser as firebaseDeleteUser } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -12,8 +12,8 @@ class User {
     this.email = email;
     this.userType = userType;
     this.registerTime = registerTime;
-    this.status = status
-    this.bodyProfileComplete = bodyProfileComplete
+    this.status = status;
+    this.bodyProfileComplete = bodyProfileComplete;
   }
 
   static async register(email, password, additionalData) {
@@ -36,24 +36,23 @@ class User {
       throw new Error(error.message);
     }
   }
-  
-  static async login (email, password) {
+
+  static async login(email, password) {
     try {
       await signInWithEmailAndPassword(auth, email, password);
     } catch (error) {
       throw new Error(error.message);
-
     }
-  };
+  }
 
   static async logout() {
     try {
-        await signOut(auth);
-        await AsyncStorage.clear();
+      await signOut(auth);
+      await AsyncStorage.clear();
     } catch (error) {
       throw new Error('No user is currently signed in');
     }
-  };
+  }
 
   static async deleteUser(uid) {
     try {
@@ -62,14 +61,14 @@ class User {
       await AsyncStorage.clear();
       const currentUser = auth.currentUser;
       if (currentUser) {
-          await firebaseDeleteUser(currentUser);
+        await firebaseDeleteUser(currentUser);
       } else {
-          throw new Error('No user is currently signed in');
+        throw new Error('No user is currently signed in');
       }
       return true;
     } catch (error) {
-        console.error('Error deleting user profile:', error);
-        throw error;
+      console.error('Error deleting user profile:', error);
+      throw error;
     }
   }
 
@@ -77,17 +76,41 @@ class User {
     try {
       const bodyProfileRef = doc(db, 'users', uid);
       await setDoc(bodyProfileRef, {
-        gender : bodyProfileData.gender,
+        gender: bodyProfileData.gender,
         birthdate: bodyProfileData.birthdate,
         weight: bodyProfileData.weight,
         height: bodyProfileData.height,
         bodyProfileComplete: true
-      }, { merge: true }); // Use merge: true to update the document if it exists
+      }, { merge: true });
     } catch (error) {
       throw new Error(`Error creating body profile: ${error.message}`);
     }
   }
 
+  static async fetchUsers() {
+    try {
+      const usersCollection = await getDocs(collection(db, 'users'));
+      return usersCollection.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+    } catch (error) {
+      throw new Error('Failed to fetch users.');
+    }
+  }
+
+  static async suspend(userId) {
+    try {
+      await updateDoc(doc(db, 'users', userId), { status: 'suspended' });
+    } catch (error) {
+      throw new Error('Failed to suspend user.');
+    }
+  }
+
+  static async unsuspend(userId) {
+    try {
+      await updateDoc(doc(db, 'users', userId), { status: 'active' });
+    } catch (error) {
+      throw new Error('Failed to unsuspend user.');
+    }
+  }
 }
 
 export default User;
