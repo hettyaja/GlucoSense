@@ -7,9 +7,10 @@ import Fontisto from 'react-native-vector-icons/Fontisto';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import { useAuth } from './Controller/authController';
 import { addMealLog } from './service/diaryService';
 import Feather from 'react-native-vector-icons/Feather'
+import { useAuth } from './service/AuthContext';
+import CreateMealController from './Controller/CreateMealController';
 
 const preReg = () => {
   const { user } = useAuth();
@@ -37,22 +38,21 @@ const preReg = () => {
 
     if (user) {
       const newMealLog = {
-        label: parsedMealData.label,
-        category: parsedMealData.category,
+        time: selectedDate,
+        period: selectedValue,
+        mealName: parsedMealData.label,
         servings: parsedMealData.servings,
         calories: parsedMealData.calories,
+        carbs: parsedMealData.carbs,
         fat: parsedMealData.fat,
         protein: parsedMealData.protein,
-        carbs: parsedMealData.carbs,
-        notes,
-        timestamp: selectedDate,
-        period: selectedValue,
+        notes: notes
       };
 
       try {
-        await addMealLog(user.uid, newMealLog);
+        await CreateMealController.createMeal(user.uid, newMealLog);
         console.log('Meal log saved:', newMealLog);
-        router.replace('/home')
+        router.replace('Boundary/home')
       } catch (error) {
         console.error('Error saving meal log:', error);
       }

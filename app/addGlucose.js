@@ -7,7 +7,7 @@ import { Picker } from '@react-native-picker/picker';
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import Feather from 'react-native-vector-icons/Feather'
-import { useAuth } from './Controller/authController';
+import { useAuth } from './service/AuthContext';
 import { addGlucoseLog } from './service/diaryService';
 
 
@@ -42,7 +42,7 @@ const preReg = () => {
 
     if (user) {
       const newGlucoseLog = {
-        timestamp: selectedDate,
+        time: selectedDate,
         period: selectedValue,
         glucoseValue: glucoseValue
       }

@@ -1,17 +1,6 @@
 import { db } from '../../firebase'; 
 import { collection, doc, addDoc, getDocs, query, where, orderBy, limit, deleteDoc, updateDoc} from 'firebase/firestore';
 
-// Add a new meal log
-export const addMealLog = async (userId, mealLog) => {
-  try {
-    const mealLogsRef = collection(db, 'users', userId, 'mealLogs');
-    await addDoc(mealLogsRef, mealLog);
-  } catch (error) {
-    console.error('Error adding meal log:', error);
-    throw error;
-  }
-};
-
 // Add a new glucose log
 export const addGlucoseLog = async (userId, glucoseLog) => {
   try {
@@ -130,7 +119,7 @@ export const addMedicine = async (userId, medicine) => {
 export const fetchLogs = async (userId, logType, limitCount = 10) => {
   try {
     const logsRef = collection(db, 'users', userId, logType);
-    const logsQuery = query(logsRef, orderBy('timestamp', 'desc'), limit(limitCount));
+    const logsQuery = query(logsRef, orderBy('time', 'desc'), limit(limitCount));
     const querySnapshot = await getDocs(logsQuery);
     const logs = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     return logs;
@@ -212,7 +201,7 @@ export const calculateA1C = async (userId) => {
     const glucoseLogsRef = collection(db, 'users', userId, 'glucoseLogs');
 
     // Query to get glucose logs from the past three months
-    const q = query(glucoseLogsRef, where('timestamp', '>=', threeMonthsAgo));
+    const q = query(glucoseLogsRef, where('time', '>=', threeMonthsAgo));
     const querySnapshot = await getDocs(q);
 
     if (querySnapshot.empty) {

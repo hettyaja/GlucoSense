@@ -6,7 +6,7 @@ import { Picker } from '@react-native-picker/picker';
 import * as ImagePicker from 'expo-image-picker';
 import { useProfile } from './context/ProfileContext';
 import ImageButton from './components/ImageButton';
-import { useAuth } from './Controller/authController';
+import { useAuth } from './service/AuthContext';
 
 const Profile = () => {
     const { setAccountProfile, setBodyProfile, name, email, username, weight, gender, birthdate, height } = useAuth();
@@ -31,7 +31,7 @@ const Profile = () => {
 
     const toggleEdit = async () => {
         
-        if (isEditable) {b
+        if (isEditable) {
             if (!localName) {
                 Alert.alert("Empty Field", "Name cannot be empty.");
                 return;

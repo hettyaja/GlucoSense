@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { fetchRecipeDetails } from './service/spoonacularAPI';
 import Header from './components/Header';
+import { router } from 'expo-router/build';
 
 const RecipeDetails = () => {
   const { recipeId } = useLocalSearchParams();
@@ -30,11 +31,16 @@ const RecipeDetails = () => {
     return nutrient ? `${nutrient.amount} ${nutrient.unit}` : 'N/A';
   };
 
+  const handleBackButton = () => {
+    router.back()
+  }
+
   return (
     <>
       <Header
         title='Recipe details'
         leftButton='Back'
+        onLeftButtonPress={() => handleBackButton()}
       />
       <ScrollView style={styles.container}>
         <Image source={{ uri: recipe.image }} style={styles.image} />
