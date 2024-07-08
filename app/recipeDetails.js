@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
+import { router } from 'expo-router';
 import { fetchRecipeDetails } from './service/spoonacularAPI';
 import Header from './components/Header';
 import { router } from 'expo-router/build';
@@ -8,6 +9,10 @@ import { router } from 'expo-router/build';
 const RecipeDetails = () => {
   const { recipeId } = useLocalSearchParams();
   const [recipe, setRecipe] = useState(null);
+
+  const handleBackButton = () => {
+    router.back()
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -23,7 +28,17 @@ const RecipeDetails = () => {
   }, [recipeId]);
 
   if (!recipe) {
-    return <Text>Loading...</Text>;
+    return (<View style={styles.containerGif}>
+      <Image
+        source={require('../app/assets/loadingFood.gif')}
+        style={styles.imageGif}
+      />
+    </View>)
+    
+    // return <Image source={require('../app/assets/loadingFood.gif')}
+    //         style={{width:100, height: 100, flex:1, justifyContent: 'center', alignItems: 'center'}}
+    //       />
+    // return <Text>Loading...</Text>;
   }
 
   const getNutrient = (name) => {
@@ -31,15 +46,13 @@ const RecipeDetails = () => {
     return nutrient ? `${nutrient.amount} ${nutrient.unit}` : 'N/A';
   };
 
-  const handleBackButton = () => {
-    router.back()
-  }
+
 
   return (
     <>
       <Header
         title='Recipe details'
-        leftButton='Back'
+        leftButton='Back' 
         onLeftButtonPress={() => handleBackButton()}
       />
       <ScrollView style={styles.container}>
@@ -82,13 +95,25 @@ const RecipeDetails = () => {
 export default RecipeDetails;
 
 const styles = StyleSheet.create({
+  containerGif: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  imageGif: {
+    width: 100,
+    height: 100,
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',
+    padding : 16,
   },
   image: {
     width: '100%',
-    height: 200
+    height: 300,
+    borderRadius:10,
+    marginBottom:20,
   },
   body: {
     padding: 16
@@ -102,7 +127,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    fontFamily: 'Poppins-Bold'
+    fontFamily: 'Poppins-Bold',
   },
   sectionTitle: {
     fontSize: 18,
@@ -113,5 +138,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'Poppins-Regular',
     marginTop: 5,
+    paddingVertical: 5,
   },
 });
