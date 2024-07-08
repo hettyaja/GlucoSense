@@ -3,7 +3,12 @@ import ImageButton from './components/ImageButton';
 import { View, Text, StyleSheet, TouchableOpacity, Alert} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign'
+import { router } from "expo-router";
 
+
+ const handleBackButton = () => {
+    router.back()
+  }
 const Subscribe = () => 
     {
     const navigation = useNavigation();
@@ -13,7 +18,7 @@ const Subscribe = () =>
                 <ImageButton
                     source={require("./assets/back.png")}
                     imageSize={{ width: 24, height: 24 }}
-                    onPress={() => navigation.goBack()}
+                    onPress={() => handleBackButton()}
                 />
                 <Text style={styles.title}> Simplify Your {"\n"} Blood Glucose Tracking </Text>
             </View>
@@ -24,27 +29,27 @@ const Subscribe = () =>
             
             <View style={styles.list}>
                 <AntDesign name='checkcircleo' size={24} color='#E04530' style={styles.icon}/>
-                <Text style={styles.text}> Generate Detailed Reports: Export your {"\n"} data to PDF or CSV for easy sharing.  </Text>
+                <Text style={styles.text}>Generate Detailed Reports: Export your data to PDF or CSV for easy sharing.  </Text>
             </View>
 
             <View style={styles.list}>
                 <AntDesign name='checkcircleo' size={24} color='#E04530' style={styles.icon}/>
-                <Text style={styles.text}> Order Diet Plans: Get diet plan tailored to your needs.  </Text>
+                <Text style={styles.text}>Order Diet Plans: Get diet plan tailored to your needs.  </Text>
             </View>
 
             <View style={styles.list}>
                 <AntDesign name='checkcircleo' size={24} color='#E04530' style={styles.icon}/>
-                <Text style={styles.text}> Quick Food Logging: Scan barcodes to {"\n"} effortlessly track your meals.  </Text>
+                <Text style={styles.text}>Quick Food Logging: Scan barcodes to effortlessly track your meals.  </Text>
             </View>
 
             <View style={styles.list}>
                 <AntDesign name='checkcircleo' size={24} color='#E04530' style={styles.icon}/>
-                <Text style={styles.text}> Insightful Graphs: Visualize the {"\n"} correlation between your diet and glucose levels.  </Text>
+                <Text style={styles.text}>Insightful Graphs: Visualize the correlation between your diet and glucose levels.  </Text>
             </View>
 
             <View style={styles.list}>
                 <AntDesign name='checkcircleo' size={24} color='#E04530' style={styles.icon}/>
-                <Text style={styles.text}> Insulin Estimation: Get accurate metrics on influence of insulin injection. </Text>
+                <Text style={styles.text}>Insulin Estimation: Get accurate metrics on influence of insulin injection. </Text>
             </View>
 
             <View style={styles.price}>
@@ -68,11 +73,12 @@ const styles = StyleSheet.create({
     header:{
         backgroundColor: '#E58B68',
         paddingBottom:30, 
-        padding: 24      
+        padding: 24 ,  
+        paddingTop: 70,   
     },
 
     title:{
-        fontSize:32,
+        fontSize:30,
         paddingTop:50,
         textAlign: 'center',
         fontWeight: 'bold',
@@ -80,13 +86,14 @@ const styles = StyleSheet.create({
     },
 
     list:{
-        paddingLeft:16,
+        paddingLeft:24,
         paddingTop:30,
         backgroundColor:"white",
         flexDirection:'row',
     },
 
     text:{
+        
         fontSize:16,
         fontWeight: '600', // Changed to string
         textAlign:'left',
@@ -95,7 +102,7 @@ const styles = StyleSheet.create({
     },
 
     icon:{
-        paddingRight:8
+        paddingRight:16
     },
 
     subtitle:{
@@ -109,8 +116,7 @@ const styles = StyleSheet.create({
     }, 
     price:{
         backgroundColor:'#ffff',
-        
-        marginTop:10,
+        marginTop:100,
         paddingBottom:100,
         borderRadius:20,
         alignItems:'center',
@@ -130,7 +136,8 @@ const styles = StyleSheet.create({
     tag:{
         fontSize:12,
         fontFamily: "Poppins-Regular",
-        textAlign:"center"
+        textAlign:"center",
+        padding : 10,
     },
     button: {
         marginTop:10,
