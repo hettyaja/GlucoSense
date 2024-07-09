@@ -7,7 +7,7 @@ import { Picker } from '@react-native-picker/picker';
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import Feather from 'react-native-vector-icons/Feather'
-import { useAuth } from './Controller/authController';
+import { useAuth } from './service/AuthContext';
 import { addGlucoseLog } from './service/diaryService';
 
 
@@ -119,7 +119,7 @@ const preReg = () => {
             </View>
           </View>
           <View style={{alignItems:'center'}}>
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity style={styles.button}  onPress={() => router.push('/glucoseScanner')}>
               <Feather name="camera" size={24}/>
               <Text style={{fontFamily:'Poppins-Medium', fontSize:14}}>Camera</Text>
             </TouchableOpacity>

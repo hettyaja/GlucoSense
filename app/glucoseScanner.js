@@ -1,31 +1,35 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Camera } from 'expo-camera';
+import { RNCamera } from 'react-native-camera';
 import TextRecognition from 'react-native-text-recognition';
 
 const GlucoseScanner = () => {
   const [hasPermission, setHasPermission] = useState(null);
-  const [cameraRef, setCameraRef] = useState(null);
   const [result, setResult] = useState('');
+  const cameraRef = useRef(null);
 
   useEffect(() => {
     (async () => {
-      const { status } = await Camera.requestPermissionsAsync();
+      const { status } = await RNCamera.perm();
       setHasPermission(status === 'granted');
     })();
   }, []);
 
   const handleCapture = async () => {
-    if (cameraRef) {
-      let photo = await cameraRef.takePictureAsync();
-      extractTextFromImage(photo.uri);
+    if (cameraRef.current) {
+      const options = { quality: 0.5, base64: true };
+      const data = await cameraRef.current.takePictureAsync(options);
+      console.log('Photo URI:', data.uri); // Debug log
+      extractTextFromImage(data.uri);
     }
   };
 
   const extractTextFromImage = async (imageUri) => {
     try {
-      const result = await TextRecognition.recognize(imageUri);
-      setResult(result.join(' '));
+      const recognizedText = await TextRecognition.recognize(imageUri);
+      console.log('OCR result:', recognizedText); // Debug log
+      const numbers = recognizedText.filter(item => !isNaN(item));
+      setResult(numbers.join(' '));
     } catch (err) {
       console.error('Error performing OCR:', err);
       setResult('Error reading text');
@@ -35,24 +39,23 @@ const GlucoseScanner = () => {
   if (hasPermission === null) {
     return <View />;
   }
-
   if (hasPermission === false) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.text}>Camera permission not granted</Text>
-      </View>
-    );
+    return <Text>No access to camera</Text>;
   }
 
   return (
     <View style={styles.container}>
-      <Camera style={styles.camera} ref={ref => setCameraRef(ref)}>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={handleCapture}>
-            <Text style={styles.buttonText}>Capture</Text>
-          </TouchableOpacity>
-        </View>
-      </Camera>
+      <RNCamera
+        ref={cameraRef}
+        style={styles.camera}
+        type={RNCamera.Constants.Type.back}
+        captureAudio={false}
+      />
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.button} onPress={handleCapture}>
+          <Text style={styles.buttonText}>Capture</Text>
+        </TouchableOpacity>
+      </View>
       {result ? <Text style={styles.resultText}>Result: {result}</Text> : null}
     </View>
   );
@@ -74,6 +77,9 @@ const styles = StyleSheet.create({
   button: {
     alignSelf: 'center',
     marginBottom: 20,
+    padding: 10,
+    backgroundColor: 'blue',
+    borderRadius: 5,
   },
   buttonText: {
     fontSize: 18,
