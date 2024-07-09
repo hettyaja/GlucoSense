@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, PermissionsAndroid, Platform, Alert } from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import TextRecognition from 'react-native-text-recognition';
 
@@ -9,10 +9,30 @@ const GlucoseScanner = () => {
   const cameraRef = useRef(null);
 
   useEffect(() => {
-    (async () => {
-      const { status } = await RNCamera.perm();
-      setHasPermission(status === 'granted');
-    })();
+    const requestCameraPermission = async () => {
+      if (Platform.OS === 'android') {
+        try {
+          const granted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.CAMERA,
+            {
+              title: "Camera Permission",
+              message: "App needs camera permission",
+              buttonNeutral: "Ask Me Later",
+              buttonNegative: "Cancel",
+              buttonPositive: "OK"
+            }
+          );
+          setHasPermission(granted === PermissionsAndroid.RESULTS.GRANTED);
+        } catch (err) {
+          console.warn(err);
+          setHasPermission(false);
+        }
+      } else {
+        setHasPermission(true);
+      }
+    };
+
+    requestCameraPermission();
   }, []);
 
   const handleCapture = async () => {
