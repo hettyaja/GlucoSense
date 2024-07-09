@@ -12,8 +12,8 @@ import { fetchLogs, deleteLog } from '../../service/diaryService';
 import PopupMenu from '../../components/PopupMenu';
 import Divider from '../../components/Divider';
 
-const formatDate = (timestamp) => {
-  const date = new Date(timestamp.seconds * 1000);
+const formatDate = (time) => {
+  const date = new Date(time.seconds * 1000);
   const today = new Date();
   const yesterday = new Date(today);
   yesterday.setDate(today.getDate() - 1);
@@ -29,7 +29,7 @@ const formatDate = (timestamp) => {
 
 const groupLogsByDate = (logs) => {
   return logs.reduce((groups, log) => {
-    const date = formatDate(log.timestamp);
+    const date = formatDate(log.time);
     if (!groups[date]) {
       groups[date] = [];
     }
@@ -58,7 +58,7 @@ const home = () => {
             ...mealLogs.map(log => ({ ...log, type: 'meal' })),
             ...glucoseLogs.map(log => ({ ...log, type: 'glucose' })),
             ...medicineLogs.map(log => ({ ...log, type: 'medicine' })),
-          ].sort((a, b) => b.timestamp.seconds - a.timestamp.seconds); // Sort logs by timestamp
+          ].sort((a, b) => b.time.seconds - a.time.seconds); // Sort logs by timestamp
 
           setLogs(combinedLogs);
           setFilteredLogs(combinedLogs);
@@ -149,7 +149,7 @@ const home = () => {
                 {item.type === 'meal' && `${item.carbs} Carbs`}
               </Text>
             )}
-            <Text style={styles.buttonText2}>{new Date(item.timestamp.seconds * 1000).toLocaleTimeString()}</Text>
+            <Text style={styles.buttonText2}>{new Date(item.time.seconds * 1000).toLocaleTimeString()}</Text>
           </View>
           <View style={{ paddingRight: 16 }}>
             <PopupMenu

@@ -22,7 +22,7 @@ const TabIcon = ({ icon, size, color}) => {
   };
 
 const _layout = () => {
-    const [isModalVisible, setModalVisible] = useState(false);
+  const [isModalVisible, setModalVisible] = useState(false);
 
   return (
     <>

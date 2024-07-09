@@ -5,17 +5,19 @@ import Fontisto from 'react-native-vector-icons/Fontisto';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import { useAuth } from './Controller/authController';
+import { useAuth } from './service/AuthContext';
 import { updateMealLog, deleteLog } from './service/diaryService';
 import Feather from 'react-native-vector-icons/Feather'
 import { Picker } from '@react-native-picker/picker';
+import UpdateMealController from './Controller/UpdateMealController';
+import DeleteMealController from './Controller/DeleteMealController';
 
 const editMeals = () => {
   const { user } = useAuth();
   const { mealData } = useLocalSearchParams();
   const [parsedMealData, setParsedMealData] = useState(mealData ? JSON.parse(mealData) : null);
 
-  const [selectedDate, setSelectedDate] = useState(new Date(parsedMealData.timestamp.seconds * 1000));
+  const [selectedDate, setSelectedDate] = useState(new Date(parsedMealData.time.seconds * 1000));
   const [selectedValue, setSelectedValue] = useState(parsedMealData.period);
   const [calories, setCalories] = useState(parsedMealData.calories);
   const [fat, setFat] = useState(parsedMealData.fat);
@@ -25,24 +27,25 @@ const editMeals = () => {
 
   const saveMeals = async () => {
     if (user) {
+      console.log(parsedMealData)
       const updatedMealLog = {
         id: parsedMealData.id,
-        label: parsedMealData.label,
-        category: parsedMealData.category,
+        mealName: parsedMealData.mealName,
         servings: parsedMealData.servings,
         calories,
         fat,
         protein,
         carbs,
         notes,
-        timestamp: selectedDate,
+        time: selectedDate,
         period: selectedValue,
       };
+      console.log(updatedMealLog)
 
       try {
-        await updateMealLog(user.uid, updatedMealLog);
+        await UpdateMealController.updateMealLogs(user.uid, updatedMealLog);
         console.log('Meal log updated:', updatedMealLog);
-        router.replace('/home');
+        router.replace('Boundary/home');
       } catch (error) {
         console.error('Error updating meal log:', error);
       }
@@ -104,8 +107,8 @@ const editMeals = () => {
 
   const handleDelete = async () => {
     try {
-      await deleteLog(user.uid, 'mealLogs', parsedMealData.id);
-      router.replace('home')
+      await DeleteMealController.deleteMealLogs(user.uid, parsedMealData.id);
+      router.replace('Boundary/home')
     } catch (error) {
       console.error('Error deleting log:', error);
     }
@@ -131,6 +134,7 @@ const editMeals = () => {
       }} />
 
       <ScrollView style={{ flex: 1, backgroundColor: '#f5f5f5' }}>
+        
         <View style={styles.section}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16 }}>
             <Text style={{ fontSize: 16, fontFamily: 'Poppins-Medium' }}>Time</Text>
@@ -158,7 +162,7 @@ const editMeals = () => {
         </View>
         {parsedMealData && (
           <View style={{flexDirection:'row', borderRadius:8, backgroundColor:'white',marginHorizontal:24, marginTop:16, padding:16, justifyContent:'space-between'}}>
-            <Text style={styles.itemTitle}>{parsedMealData.label}</Text>
+            <Text style={styles.itemTitle}>{parsedMealData.mealName}</Text>
             <View style={{flexDirection:'row', alignItems:'center'}}>
               <Text style={[styles.itemTitle, {paddingRight:8}]}>{parsedMealData.servings} Serving</Text>
               {/* this clicked and will be an option to delete */}

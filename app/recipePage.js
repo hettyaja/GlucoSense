@@ -7,7 +7,7 @@ import Header from './components/Header';
 
 const recipePage = () => {
   const [recipes, setRecipes] = useState([]);
-  const [query, setQuery] = useState('pizza');
+  const [query, setQuery] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -31,6 +31,9 @@ const recipePage = () => {
     }
   };
 
+
+
+
   const handleBackButton = () => {
     router.back()
   }
@@ -50,7 +53,7 @@ const recipePage = () => {
             value={query}
             onChangeText={setQuery}
             />
-            <Button title="Search" onPress={handleSearch} />
+            {/* <Button title="Search" onPress={handleSearch} /> */}
         </View>
         <Text style={styles.title}>Recommended for you</Text>
         <View style={styles.recipeList}>

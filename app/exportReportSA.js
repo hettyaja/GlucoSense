@@ -1,13 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Platform, Alert, PermissionsAndroid } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Platform, Alert } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { useRouter } from 'expo-router';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import * as FileSystem from 'expo-file-system';
-import * as MediaLibrary from 'expo-media-library';
-import XLSX from 'xlsx';
-import { db } from '../firebase'; // Update the path to your firebase.js
-import { collection, getDocs } from 'firebase/firestore';
+import ExportReportController from './Controller/ExportReportController';
 
 const ExportReportSA = () => {
   const router = useRouter();
@@ -20,80 +16,26 @@ const ExportReportSA = () => {
   const [hasPermission, setHasPermission] = useState(false);
 
   useEffect(() => {
-    const getPermissions = async () => {
-      const mediaLibraryPermission = await MediaLibrary.requestPermissionsAsync();
-      let storagePermission = { status: 'granted' };
-
-      if (Platform.OS === 'android') {
-        storagePermission = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-          {
-            title: 'Storage Permission Required',
-            message: 'This app needs access to your storage to save the exported files.',
-            buttonPositive: 'OK',
-          }
-        );
-      }
-
-      if (mediaLibraryPermission.status === 'granted' && storagePermission === PermissionsAndroid.RESULTS.GRANTED) {
-        setHasPermission(true);
-      } else {
-        Alert.alert('Permission required', 'This app needs storage access to save the exported files.');
-      }
-    };
-
-    getPermissions();
+    ExportReportController.getPermissions(setHasPermission, Alert);
   }, []);
 
   const handleExport = async () => {
-    if (format === 'Microsoft Excel') {
-      const dataToExport = await fetchData();
-      if (dataToExport.length === 0) {
-        Alert.alert('No data available for export.');
-        return;
-      }
-
-      const worksheet = XLSX.utils.json_to_sheet(dataToExport);
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, 'Data');
-      const excelFile = XLSX.write(workbook, { type: 'base64', bookType: 'xlsx' });
-
-      if (hasPermission) {
-        try {
-          const fileUri = `${FileSystem.documentDirectory}export.xlsx`;
-          await FileSystem.writeAsStringAsync(fileUri, excelFile, {
-            encoding: FileSystem.EncodingType.Base64,
-          });
-
-          const asset = await MediaLibrary.createAssetAsync(fileUri);
-          const album = await MediaLibrary.getAlbumAsync('Download');
-          if (album == null) {
-            await MediaLibrary.createAlbumAsync('Download', asset, false);
-          } else {
-            await MediaLibrary.addAssetsToAlbumAsync([asset], album, false);
-          }
-
-          Alert.alert('Export Successful', 'File saved to Downloads folder.');
-        } catch (error) {
-          console.log('Error creating asset:', error);
-          Alert.alert('Export Failed', `There was an error saving the file: ${error.message}`);
-        }
-      } else {
-        Alert.alert('Permission Denied', 'Permission to access storage was denied.');
-      }
+    if (!hasPermission) {
+      Alert.alert('Permission Denied', 'Permission to access storage was denied.');
+      return;
     }
-  };
-
-  const fetchData = async () => {
-    let dataToExport = [];
-    if (data === 'Users') {
-      const usersCollection = await getDocs(collection(db, 'users'));
-      dataToExport = usersCollection.docs.map(doc => doc.data());
-    } else if (data === 'Business Partner') {
-      const partnersCollection = await getDocs(collection(db, 'businessPartner'));
-      dataToExport = partnersCollection.docs.map(doc => doc.data());
+    
+    try {
+      await ExportReportController.handleExport({
+        format,
+        data,
+        startDate,
+        endDate,
+        hasPermission,
+      });
+    } catch (error) {
+      Alert.alert('Export Failed', error.message);
     }
-    return dataToExport;
   };
 
   const onStartDateChange = (event, selectedDate) => {

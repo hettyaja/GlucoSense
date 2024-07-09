@@ -1,6 +1,6 @@
 import { auth, db } from '../../firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
-import { doc, setDoc, deleteDoc, Timestamp } from 'firebase/firestore';
+import { doc, setDoc, deleteDoc, getDocs, Timestamp, collection } from 'firebase/firestore';
 import { deleteUser as firebaseDeleteUser } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -65,6 +65,14 @@ class BusinessPartner {
     }
   }
 
+  static async export() {
+    try {
+      const partnersCollection = await getDocs(collection(db, 'businessPartner'));
+      return partnersCollection.docs.map(doc => doc.data());
+    } catch (error) {
+      throw new Error('Failed to fetch business partners.');
+    }
+  }
 }
 
-export default BusinessPartner
+export default BusinessPartner;

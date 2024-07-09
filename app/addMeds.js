@@ -4,7 +4,7 @@ import { Stack, router, useLocalSearchParams } from 'expo-router';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { useAuth } from './Controller/authController';
+import { useAuth } from './service/AuthContext';
 import { addMedicineLog, getMedicineByName } from './service/diaryService';
 
 const preReg = () => {
@@ -50,7 +50,7 @@ const preReg = () => {
 
     if (user) {
       const newMedicineLog = {
-        timestamp: selectedDate,
+        time: selectedDate,
         medicine: medicineAmount,
         notes: notes
       };

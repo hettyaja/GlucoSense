@@ -42,7 +42,7 @@ const preReg = () => {
 
     if (user) {
       const newGlucoseLog = {
-        timestamp: selectedDate,
+        time: selectedDate,
         period: selectedValue,
         glucoseValue: glucoseValue
       }
