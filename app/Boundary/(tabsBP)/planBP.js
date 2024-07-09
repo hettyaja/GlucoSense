@@ -8,7 +8,7 @@ import moment from 'moment';
 import { Tabs, router } from 'expo-router';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 
-const orderBP = () => {
+const planBP = () => {
   const { dietPlans } = useContext(DietPlanContext);
   const navigation = useNavigation();
 
@@ -68,4 +68,4 @@ const styles = StyleSheet.create({
   searchInput: { borderWidth: 1, borderColor: '#ccc', borderRadius: 15, paddingHorizontal: 10, height: 40 },
 });
 
-export default orderBP;
+export default planBP;

@@ -36,8 +36,8 @@ const _layout = () => {
                   </Text>
               ),
             }}/>
-            <Tabs.Screen name='orderBP' options={{
-                title: 'Order',
+            <Tabs.Screen name='planBP' options={{
+                title: 'Plan',
                 headerTitleAlign: 'center',
                 headerStyle: { backgroundColor: '#E58B68' },
                 headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold'},
@@ -47,10 +47,11 @@ const _layout = () => {
                 ),
                 tabBarLabel: ({ focused }) => (
                   <Text style={{ fontFamily: focused ? 'Poppins-SemiBold' : 'Poppins-Regular', color: '#E58B68' }}>
-                      Order
+                      Plan
                   </Text>
               ),
             }}/>
+          
             <Tabs.Screen name='settingBP' options={{
                 title: 'Setting',
                 headerTitleAlign: 'center',
