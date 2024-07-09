@@ -111,6 +111,15 @@ class User {
       throw new Error('Failed to unsuspend user.');
     }
   }
+
+  static async export() {
+    try {
+      const usersCollection = await getDocs(collection(db, 'users'));
+      return usersCollection.docs.map(doc => doc.data());
+    } catch (error) {
+      throw new Error('Failed to fetch users.');
+    }
+  }
 }
 
 export default User;
