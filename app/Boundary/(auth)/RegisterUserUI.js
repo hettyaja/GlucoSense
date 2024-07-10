@@ -3,7 +3,7 @@ import { Image, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, Vie
 import { images } from '../../constants/images'
 import { router } from 'expo-router'
 import ImageButton from '../../components/ImageButton'
-import RegisterController from '../../Controller/RegisterUserController';
+import RegisterUserController from '../../Controller/RegisterUserController';
 import Header from '../../components/Header';
 
 const RegisterUserUI= () => {
@@ -16,7 +16,7 @@ const RegisterUserUI= () => {
     const handleSignUp = async () => {
         try {
             const additionalData = {username, name};
-            await RegisterController.register(email, password, confirmPassword, additionalData);
+            await RegisterUserController.register(email, password, confirmPassword, additionalData);
         } catch (error) {
             alert(error.message);
         }

@@ -1,6 +1,6 @@
 import MealLogs from "../Entity/MealLogs";
 
-class UpdateMealController {
+class UpdateMealLogsController {
     static async updateMealLogs(uid, mealData) {
         try {
             return await MealLogs.updateMealLogs(uid, mealData)
@@ -10,4 +10,4 @@ class UpdateMealController {
     }
 }
 
-export default UpdateMealController
+export default UpdateMealLogsController

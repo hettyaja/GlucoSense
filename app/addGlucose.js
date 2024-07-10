@@ -9,6 +9,7 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import Feather from 'react-native-vector-icons/Feather'
 import { useAuth } from './service/AuthContext';
 import { addGlucoseLog } from './service/diaryService';
+import CreateGlucoseLogsController from './Controller/CreateGlucoseLogsController';
 
 
 const preReg = () => {
@@ -44,13 +45,13 @@ const preReg = () => {
       const newGlucoseLog = {
         time: selectedDate,
         period: selectedValue,
-        glucoseValue: glucoseValue
+        glucose: glucoseValue
       }
 
       try {
-        await addGlucoseLog(user.uid, newGlucoseLog)
+        await CreateGlucoseLogsController.createGlucoseLogs(user.uid, newGlucoseLog)
         console.log('Meal log saved:', newGlucoseLog);
-        router.replace('home')
+        router.replace('Boundary/home')
       } catch (error) {
         console.error('Error saving meal log:', error);
       }

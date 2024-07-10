@@ -1,9 +1,9 @@
 import MealLogs from "../Entity/MealLogs";
 
-class DeleteMealController {
+class DeleteMealLogsController {
     static async deleteMealLogs(uid, mealLogId) {
         return await MealLogs.deleteMealLogs(uid, mealLogId)
     }
 }
 
-export default DeleteMealController
+export default DeleteMealLogsController

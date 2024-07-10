@@ -43,6 +43,10 @@ const home = () => {
   const [dateType, setDateType] = useState('Today');
   const [logs, setLogs] = useState([]);
   const [filteredLogs, setFilteredLogs] = useState([]);
+  const [averageGlucose, setAverageGlucose] = useState(null);
+  const [lowestGlucose, setLowestGlucose] = useState(null);
+  const [highestGlucose, setHighestGlucose] = useState(null);
+  const [logsLoaded, setLogsLoaded] = useState(false);
 
   useEffect(() => {
     const fetchAllLogs = async () => {
@@ -62,6 +66,7 @@ const home = () => {
 
           setLogs(combinedLogs);
           setFilteredLogs(combinedLogs);
+          setLogsLoaded(true); // Set logs loaded to true
         } catch (error) {
           console.error('Error fetching logs:', error);
         }
@@ -70,6 +75,65 @@ const home = () => {
 
     fetchAllLogs();
   }, [user]);
+
+  useEffect(() => {
+    if (logsLoaded) {
+      calculateGlucoseStatsByDate('Today'); // Show today's statistics after logs are loaded
+    }
+  }, [logsLoaded]);
+
+  const calculateGlucoseStats = (glucoseLogs) => {
+    if (glucoseLogs.length === 0) {
+      setAverageGlucose(null);
+      setLowestGlucose(null);
+      setHighestGlucose(null);
+      return;
+    }
+
+    const glucoseValues = glucoseLogs.map(log => parseFloat(log.glucose));
+    const average = glucoseValues.reduce((sum, value) => sum + value, 0) / glucoseValues.length;
+    const lowest = Math.min(...glucoseValues);
+    const highest = Math.max(...glucoseValues);
+
+    setAverageGlucose(average.toFixed(2));
+    setLowestGlucose(lowest);
+    setHighestGlucose(highest);
+  };
+
+  const calculateGlucoseStatsByDate = (filterSelected) => {
+    const now = new Date();
+    let startDate;
+    switch (filterSelected) {
+      case 'Today':
+        startDate = new Date(now.setHours(0, 0, 0, 0));
+        break;
+      case '3D':
+        startDate = new Date(now.setDate(now.getDate() - 3));
+        break;
+      case '7D':
+        startDate = new Date(now.setDate(now.getDate() - 7));
+        break;
+      case '30D':
+        startDate = new Date(now.setDate(now.getDate() - 30));
+        break;
+      default:
+        startDate = new Date(0);
+        break;
+    }
+
+    const glucoseLogs = logs.filter(log => log.type === 'glucose');
+    const filteredGlucoseLogs = glucoseLogs.filter(log => {
+      const logDate = new Date(log.time.seconds * 1000);
+      return logDate >= startDate;
+    });
+
+    calculateGlucoseStats(filteredGlucoseLogs);
+  };
+
+  const handleGlucoseFilter = (filterSelected) => {
+    calculateGlucoseStatsByDate(filterSelected);
+    setDateType(filterSelected);
+  };
 
   const filterLogs = (type) => {
     if (type === 'Display all') {
@@ -103,7 +167,7 @@ const home = () => {
     } else if (item.type === 'medicine') {
       router.push({ pathname: 'editMeds', params: { medicineData: JSON.stringify(item) } });
     } else if (item.type === 'glucose') {
-      router.push({ pathname: 'editGlucose', params: { log: JSON.stringify(item) } });
+      router.push({ pathname: 'editGlucose', params: { glucoseData: JSON.stringify(item) } });
     }
   };
 
@@ -124,7 +188,14 @@ const home = () => {
   const handleDelete = async (item) => {
     try {
       await deleteLog(user.uid, item.type === 'meal' ? 'mealLogs' : item.type === 'medicine' ? 'medicineLogs' : 'glucoseLogs', item.id);
-      setFilteredLogs(filteredLogs.filter(log => log.id !== item.id));
+      const updatedLogs = filteredLogs.filter(log => log.id !== item.id);
+      setFilteredLogs(updatedLogs);
+      setLogs(updatedLogs);
+
+      if (item.type === 'glucose') {
+        const updatedGlucoseLogs = updatedLogs.filter(log => log.type === 'glucose');
+        calculateGlucoseStats(updatedGlucoseLogs);
+      }
     } catch (error) {
       console.error('Error deleting log:', error);
     }
@@ -145,7 +216,7 @@ const home = () => {
               renderMedicineDetails(item.medicine)
             ) : (
               <Text style={styles.buttonText}>
-                {item.type === 'glucose' && `${item.glucoseValue} mmol/L`}
+                {item.type === 'glucose' && `${item.glucose} mmol/L`}
                 {item.type === 'meal' && `${item.carbs} Carbs`}
               </Text>
             )}
@@ -175,28 +246,32 @@ const home = () => {
         <View style={styles.headerArea}>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
             <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 18, color: 'white' }}>Blood Glucose</Text>
-            <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => setDateModalVisible(true)}>
-              <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 14, color: 'white' }}>{dateType} </Text>
-              <AntDesign name='caretdown' size={8} color='white' />
-            </TouchableOpacity>
+            <PopupMenu
+              type='glucoseFilter'
+              onToday={() => handleGlucoseFilter('Today')}
+              on3D={() => handleGlucoseFilter('3D')}
+              on7D={() => handleGlucoseFilter('7D')}
+              on30D={() => handleGlucoseFilter('30D')}
+              color='white'
+            />
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', padding: 16, justifyContent: 'space-evenly' }}>
             <View style={{ justifyContent: 'center', alignItems: 'center' }}>
               <Text style={styles.titleText}>Avg</Text>
-              <Text style={styles.subTitleText}>---</Text>
+              <Text style={styles.subTitleText}>{averageGlucose !== null ? averageGlucose : '---'}</Text>
             </View>
             <View style={{ justifyContent: 'center', alignItems: 'center' }}>
               <Text style={styles.titleText}>Low</Text>
-              <Text style={styles.subTitleText}>---</Text>
+              <Text style={styles.subTitleText}>{lowestGlucose !== null ? lowestGlucose : '---'}</Text>
             </View>
             <View style={{ justifyContent: 'center', alignItems: 'center' }}>
               <Text style={styles.titleText}>High</Text>
-              <Text style={styles.subTitleText}>---</Text>
+              <Text style={styles.subTitleText}>{highestGlucose !== null ? highestGlucose : '---'}</Text>
             </View>
           </View>
           <View style={{ flexDirection: 'row-reverse' }}>
             <TouchableOpacity 
-              style={{ borderColor: 'white', borderWidth: 1, borderRadius: 8, width: '20%', paddingHorizontal: 8 }} 
+              style={{ borderColor: 'white', borderWidth: 1, borderRadius: 8, width: '25%', paddingHorizontal: 8, alignItems:'center' }} 
               onPress={() => router.push('Subscribe')}
             >
               <A1CComponent user={user} />

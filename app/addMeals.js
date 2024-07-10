@@ -10,7 +10,7 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { addMealLog } from './service/diaryService';
 import Feather from 'react-native-vector-icons/Feather'
 import { useAuth } from './service/AuthContext';
-import CreateMealController from './Controller/CreateMealController';
+import CreateMealController from './Controller/CreateMealLogsController';
 
 const preReg = () => {
   const { user } = useAuth();

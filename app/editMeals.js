@@ -9,8 +9,8 @@ import { useAuth } from './service/AuthContext';
 import { updateMealLog, deleteLog } from './service/diaryService';
 import Feather from 'react-native-vector-icons/Feather'
 import { Picker } from '@react-native-picker/picker';
-import UpdateMealController from './Controller/UpdateMealController';
-import DeleteMealController from './Controller/DeleteMealController';
+import UpdateMealController from './Controller/UpdateMealLogsController';
+import DeleteMealController from './Controller/DeleteMealLogsController';
 
 const editMeals = () => {
   const { user } = useAuth();

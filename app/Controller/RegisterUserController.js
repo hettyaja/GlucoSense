@@ -1,6 +1,6 @@
 import User from '../Entity/User';
 
-class RegisterController {
+class RegisterUserController {
   static async register(email, password, confirmPassword, additionalData) {
     try {
       // Validate inputs
@@ -47,4 +47,4 @@ class RegisterController {
   }
 }
 
-export default RegisterController;
+export default RegisterUserController;

@@ -1,31 +1,22 @@
-import { View, Text, StyleSheet, Image, Button, TouchableOpacity, TextInput, ScrollView, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Alert } from 'react-native';
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
-import { images } from './constants/images';
-import { Picker } from '@react-native-picker/picker';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import Feather from 'react-native-vector-icons/Feather';
 import { useAuth } from './service/AuthContext';
-import { updateGlucoseLog, deleteLog } from './service/diaryService'; // Update service
+import { deleteLog } from './service/diaryService'; // Update service
+import UpdateGlucoseLogsController from './Controller/UpdateGlucoseLogsController';
+import { Picker } from '@react-native-picker/picker';
+import DeleteGlucoseLogsController from './Controller/DeleteGlucoseLogsController';
 
 const editGlucose = () => {
   const { user } = useAuth();
-  const { log } = useLocalSearchParams();
-  const [selectedButton, setSelectedButton] = useState(null);
-  const [selectedValue, setSelectedValue] = useState("Breakfast");
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [glucoseValue, setGlucoseValue] = useState('');
-
-  useEffect(() => {
-    if (log) {
-      const parsedLog = JSON.parse(log);
-      setSelectedDate(new Date(parsedLog.timestamp.seconds * 1000));
-      setSelectedValue(parsedLog.period);
-      setGlucoseValue(parsedLog.glucoseValue.toString());
-    }
-  }, [log]);
+  const { glucoseData } = useLocalSearchParams();
+  const [parsedGlucoseData, setParsedGlucoseData] = useState(glucoseData ? JSON.parse(glucoseData) : null);
+  const [selectedDate, setSelectedDate] = useState(new Date(parsedGlucoseData.time.seconds * 1000));
+  const [selectedValue, setSelectedValue] = useState(parsedGlucoseData.period);
+  const [glucoseValue, setGlucoseValue] = useState(parsedGlucoseData.glucose.toString());
 
   const handleChange = (text) => {
     // Allow only numbers and a single decimal point
@@ -42,16 +33,16 @@ const editGlucose = () => {
   const saveGlucose = async () => {
     if (user) {
       const updatedGlucoseLog = {
-        id: JSON.parse(log).id,
-        timestamp: selectedDate,
+        id: parsedGlucoseData.id,
+        time: selectedDate,
         period: selectedValue,
-        glucoseValue: glucoseValue
+        glucose: glucoseValue
       }
 
       try {
-        await updateGlucoseLog(user.uid, updatedGlucoseLog);
+        await UpdateGlucoseLogsController.updateGlucoseLogs(user.uid, updatedGlucoseLog);
         console.log('Glucose log updated:', updatedGlucoseLog);
-        router.replace('home');
+        router.replace('Boundary/home');
       } catch (error) {
         console.error('Error updating glucose log:', error);
       }
@@ -90,8 +81,8 @@ const editGlucose = () => {
 
   const handleDelete = async () => {
     try {
-      await deleteLog(user.uid, 'glucoseLogs', JSON.parse(log).id);
-      router.replace('home')
+      await DeleteGlucoseLogsController.deleteGlucoseLogs(user.uid, parsedGlucoseData.id);
+      router.replace('Boundary/home');
     } catch (error) {
       console.error('Error deleting log:', error);
     }
@@ -153,7 +144,15 @@ const editGlucose = () => {
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16 }}>
             <Text style={{ fontSize: 16, fontFamily: 'Poppins-Medium' }}>Glucose</Text>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <TextInput style={{ fontFamily: 'Poppins-Medium', fontSize: 16, marginRight: 16 }} value={glucoseValue} placeholder='000' onChangeText={handleChange} keyboardType="numeric" maxLength={5} color="#808080"></TextInput>
+              <TextInput
+                style={{ fontFamily: 'Poppins-Medium', fontSize: 16, marginRight: 16 }}
+                value={glucoseValue}
+                placeholder='000'
+                onChangeText={handleChange}
+                keyboardType="numeric"
+                maxLength={5}
+                color="#808080"
+              />
               <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 12 }}>mmol/L</Text>
             </View>
           </View>
@@ -161,14 +160,14 @@ const editGlucose = () => {
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16 }}>
             <Text style={{ fontSize: 16, fontFamily: 'Poppins-Medium' }}>Notes</Text>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <TextInput style={{ fontFamily: 'Poppins-Medium', fontSize: 16 }} placeholder={'Add your notes'}></TextInput>
+              <TextInput style={{ fontFamily: 'Poppins-Medium', fontSize: 16 }} placeholder={'Add your notes'} />
             </View>
           </View>
         </View>
 
         <View style={styles.section}>
-        <TouchableOpacity style={{padding: 16, alignItems: 'center' }} onPress={() => confirmDelete()}>
-            <Text style={{ fontFamily: 'Poppins-Medium', fontSize:16, color:'red'}}>Delete</Text>
+          <TouchableOpacity style={{ padding: 16, alignItems: 'center' }} onPress={() => confirmDelete()}>
+            <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 16, color: 'red' }}>Delete</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -179,8 +178,9 @@ const editGlucose = () => {
         onCancel={hideDatePicker}
       />
     </>
-  )
-}
+  );
+};
+
 const styles = StyleSheet.create({
   container: {
     justifyContent: 'space-around',
@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
     borderColor: '#808080',
     borderTopWidth: 1,
     borderBottomWidth: 1,
-    marginVertical: 24
+    marginVertical: 24,
   },
   picker: {
     fontFamily: 'Poppins-Regular',
@@ -221,7 +221,8 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: 'Poppins-Regular',
     height: 36,
-    marginHorizontal: 16
+    marginHorizontal: 16,
   },
 });
+
 export default editGlucose;

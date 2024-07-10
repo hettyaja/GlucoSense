@@ -5,8 +5,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { useAuth } from './service/AuthContext';
 import { updateMedicineLog, deleteLog } from './service/diaryService';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import Feather from 'react-native-vector-icons/Feather';
+
 
 const editMeds = () => {
   const { user } = useAuth();
