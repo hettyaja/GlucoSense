@@ -11,6 +11,9 @@ import A1CComponent from '../../components/A1C'; // Ensure this import is correc
 import { fetchLogs, deleteLog } from '../../service/diaryService';
 import PopupMenu from '../../components/PopupMenu';
 import Divider from '../../components/Divider';
+import ViewGlucoseLogsController from '../../Controller/ViewGlucoseLogsController';
+import ViewMedicineLogsController from '../../Controller/ViewMedicineLogsController';
+import ViewMealLogsController from '../../Controller/ViewMealLogsController';
 
 const formatDate = (time) => {
   const date = new Date(time.seconds * 1000);
@@ -53,9 +56,9 @@ const home = () => {
       if (user) {
         try {
           const [mealLogs, glucoseLogs, medicineLogs] = await Promise.all([
-            fetchLogs(user.uid, 'mealLogs', 10),
-            fetchLogs(user.uid, 'glucoseLogs', 10),
-            fetchLogs(user.uid, 'medicineLogs', 10),
+            ViewMealLogsController.viewMealLogs(user.uid),
+            ViewGlucoseLogsController.viewGlucoseLogs(user.uid),
+            ViewMedicineLogsController.viewMedicineLogs(user.uid),
           ]);
 
           const combinedLogs = [

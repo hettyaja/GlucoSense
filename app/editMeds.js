@@ -5,6 +5,8 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { useAuth } from './service/AuthContext';
 import { updateMedicineLog, deleteLog } from './service/diaryService';
+import UpdateMedicineLogsController from './Controller/UpdateMedicineLogsController';
+import DeleteMedicineLogsController from './Controller/DeleteMedicineLogsController';
 
 
 const editMeds = () => {
@@ -12,7 +14,7 @@ const editMeds = () => {
   const { medicineData } = useLocalSearchParams();
   const [parsedMedicineData, setParsedMedicineData] = useState(medicineData ? JSON.parse(medicineData) : null);
 
-  const [selectedDate, setSelectedDate] = useState(new Date(parsedMedicineData.timestamp.seconds * 1000));
+  const [selectedDate, setSelectedDate] = useState(new Date(parsedMedicineData.time.seconds * 1000));
   const [medicineAmount, setMedicineAmount] = useState(parsedMedicineData.medicine || {});
   const [notes, setNotes] = useState(parsedMedicineData.notes);
 
@@ -27,15 +29,15 @@ const editMeds = () => {
     if (user) {
       const updatedMedicineLog = {
         id: parsedMedicineData.id,
-        timestamp: selectedDate,
+        time: selectedDate,
         medicine: medicineAmount,
         notes: notes
       };
 
       try {
-        await updateMedicineLog(user.uid, updatedMedicineLog);
+        await UpdateMedicineLogsController.updateMedicineLogs(user.uid, updatedMedicineLog);
         console.log('Medicine log updated:', updatedMedicineLog);
-        router.replace('/home');
+        router.replace('Boundary/home');
       } catch (error) {
         console.error('Error updating medicine log:', error);
       }
@@ -74,8 +76,8 @@ const editMeds = () => {
 
   const handleDelete = async () => {
     try {
-      await deleteLog(user.uid, 'medicineLogs', parsedMedicineData.id);
-      router.replace('home')
+      await DeleteMedicineLogsController.deleteMedicineLogs(user.uid, parsedMedicineData.id);
+      router.replace('Boundary/home')
     } catch (error) {
       console.error('Error deleting log:', error);
     }
@@ -88,7 +90,7 @@ const editMeds = () => {
         headerStyle: { backgroundColor: '#E58B68' },
         headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold' },
         headerLeft: () => (
-          <TouchableOpacity onPress={() => router.back('/home')}>
+          <TouchableOpacity onPress={() => router.back('Boundary/home')}>
             <AntDesign name='close' size={24} color='white' />
           </TouchableOpacity>
         ), headerRight: () => (

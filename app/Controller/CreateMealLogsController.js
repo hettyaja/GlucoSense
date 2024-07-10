@@ -1,7 +1,7 @@
 import MealLogs from "../Entity/MealLogs";
 
 class CreateMealLogsController {
-    static async createMeal(uid, mealData) {
+    static async createMealLogs(uid, mealData) {
         try {
             return await MealLogs.createMealLogs(uid, mealData)
         } catch(error) {

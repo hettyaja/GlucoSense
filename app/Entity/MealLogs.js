@@ -1,5 +1,5 @@
 import { db } from '../../firebase';
-import { doc, setDoc, deleteDoc, addDoc, collection, updateDoc} from 'firebase/firestore';
+import { collection, doc, addDoc, getDocs, query, where, orderBy, limit, deleteDoc, updateDoc} from 'firebase/firestore';
 
 class MealLogs {
     constructor(id, time, period, mealName, servings, calories, carbs, fat, protein, notes) {
@@ -51,6 +51,19 @@ class MealLogs {
         await deleteDoc(logRef);
       } catch (error) {
         console.error('Error deleting log:', error);
+        throw error;
+      }
+    }
+
+    static async fetchMealLogs(uid) {
+      try {
+        const logsRef = collection(db, 'users', uid, 'mealLogs');
+        const logsQuery = query(logsRef, orderBy('time', 'desc'), limit(10));
+        const querySnapshot = await getDocs(logsQuery);
+        const logs = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        return logs;
+      } catch (error) {
+        console.error(`Error fetching meal logs:`, error);
         throw error;
       }
     }

@@ -1,13 +1,14 @@
-import MedicineLogs from "../Entity/MealLogs";
+import MedicineLogs from "../Entity/MedicineLogs"
 
-class CreateMealLogsController {
-    static async createMeal(uid, mealData) {
+
+class CreateMedicineLogsController {
+    static async createMedicineLogs(uid, medicineData) {
         try {
-            return await MealLogs.createMealLogs(uid, mealData)
+            return await MedicineLogs.createMedicineLogs(uid, medicineData)
         } catch(error) {
             throw new Error(error.message)
         }
     }
 }
 
-export default CreateMealLogsController
+export default CreateMedicineLogsController

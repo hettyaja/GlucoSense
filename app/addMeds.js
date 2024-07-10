@@ -6,6 +6,7 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useAuth } from './service/AuthContext';
 import { addMedicineLog, getMedicineByName } from './service/diaryService';
+import CreateMedicineLogsController from './Controller/CreateMedicineLogsController';
 
 const preReg = () => {
   const { user } = useAuth();
@@ -56,9 +57,9 @@ const preReg = () => {
       };
 
       try {
-        await addMedicineLog(user.uid, newMedicineLog);
+        await CreateMedicineLogsController.createMedicineLogs(user.uid, newMedicineLog);
         console.log('Medicine log saved:', newMedicineLog);
-        router.replace('home');
+        router.replace('Boundary/home');
       } catch (error) {
         console.error('Error saving medicine log:', error);
       }

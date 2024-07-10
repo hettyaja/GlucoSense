@@ -95,7 +95,7 @@ const editGlucose = () => {
         headerStyle: { backgroundColor: '#E58B68' },
         headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold' },
         headerLeft: () => (
-          <TouchableOpacity onPress={() => router.back('/home')}>
+          <TouchableOpacity onPress={() => router.back('Boundary/home')}>
             <AntDesign name='close' size={24} color='white' />
           </TouchableOpacity>
         ),
