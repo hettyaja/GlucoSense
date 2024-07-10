@@ -1,20 +1,35 @@
 // MenuCard.js
 import React from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Text, Image, StyleSheet, Alert } from 'react-native';
 import PropTypes from 'prop-types';
+import { router } from 'expo-router';
+import PopupMenu from './PopupMenu';
+import DeleteMenuController from '../Controller/DeleteMenuController';
+import { useAuth } from '../service/AuthContext';
 
-const MenuCard = ({ menu }) => {
+ 
+const MenuCard = ({ menu, onDelete , onEdit}) => {
+
+  const {user} = useAuth()
+
+
+
+
   return (
     <View style={styles.card}>
       {menu.image && <Image source={{ uri: menu.image }} style={styles.image} />}
       <View style={styles.infoContainer}>
-        
         <Text style={styles.title}>{menu.foodName}</Text>
         <Text style={styles.price}>${menu.price}</Text>
         <Text style={styles.sold}>Sold: {menu.status}</Text>
         {menu.isSoldOut && <Text style={styles.soldOut}>Sold Out</Text>}
-        {/* Render additional details if needed */}
       </View>
+      <View style={{ paddingTop: 10, marginLeft:20, paddingRight:8}}>
+        <PopupMenu 
+          onEdit={()=> onEdit(menu)}
+          onDelete={()=> onDelete(menu.id)}
+        />
+        </View>
     </View>
   );
 };
@@ -27,6 +42,8 @@ MenuCard.propTypes = {
     sold: PropTypes.number.isRequired,
     isSoldOut: PropTypes.bool,
   }).isRequired,
+  onDelete: PropTypes.func.isRequired,
+  onEdit : PropTypes.func.isRequired
 };
 
 const styles = StyleSheet.create({
@@ -66,6 +83,12 @@ const styles = StyleSheet.create({
     marginTop: 5,
     fontWeight: 'bold',
   },
+  editButton: {
+    position: 'absolute',
+    top: 80,
+    right: 10,
+    zIndex: 1,
+  }
 });
 
 export default MenuCard;

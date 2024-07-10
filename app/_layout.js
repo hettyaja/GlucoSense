@@ -39,7 +39,7 @@ const RootLayout = () => {
       <Stack.Screen name="Boundary/(tabsSA)" options={{ headerShown: false }} />
       <Stack.Screen name="addMeds" />
       <Stack.Screen name="addGlucose" />
-      <Stack.Screen name="EditRecipePage" />
+      <Stack.Screen name="EditMenuPage" />
       <Stack.Screen name="ViewAndSearchDietPlan" />
       <Stack.Screen name="CreateDietPlan" />
       <Stack.Screen name="searchFood" />
@@ -58,7 +58,7 @@ const RootLayout = () => {
         headerTitle: 'Details',
         headerTitleAlign: 'center',
       }} />
-      <Stack.Screen name="Subscribe" options={{ headerShown: false }} />
+      {/* <Stack.Screen name="Subscribe" options={{ headerShown: false }} /> */}
       <Stack.Screen name="profileBP" />
       <Stack.Screen name="addMeals" />
       <Stack.Screen name="selectMedicine" />

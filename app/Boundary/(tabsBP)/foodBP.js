@@ -1,16 +1,14 @@
 //Food BP 
 import React, { useState, useEffect } from 'react';
 import { router, Tabs } from 'expo-router';
-import { View, Text, ScrollView, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, TextInput, StyleSheet, Alert } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MenuCard from '../../components/MenuCard';
 import { db } from '../../../firebase';  // Adjust the path as necessary
 import {fetchMenuData} from '../../service/menuService';
 import { useAuth } from '../../service/AuthContext';
-import Feather from 'react-native-vector-icons/Feather'
-import Divider from '../../components/Divider';
-
+import DeleteMenuController from '../../Controller/DeleteMenuController';
 
 
 const foodBP = () => {
@@ -21,6 +19,7 @@ const foodBP = () => {
   const [menuData, setMenuData] = useState([]);
 
   useEffect(() => {
+
     const menuItem = async () => {
       if(user){
       try {
@@ -37,6 +36,33 @@ const foodBP = () => {
   const filteredMenu = menuData.filter(menu =>
     menu.title && menu.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const handleEdit = (menu) =>{
+    router.push({pathname: 'EditMenuPage', params: {menuData: JSON.stringify(menu)}})
+  }
+
+  const confirmDelete = (menu) => {
+    Alert.alert(
+      "Delete Log",
+      "Are you sure you want to delete this menu?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+        { text: "OK", onPress: () => handleDelete(menu) }
+      ]
+    );
+  };
+
+  const handleDelete = async (menuItem) => {
+    try {
+      await DeleteMenuController.deleteMenu(user.uid, menuItem.id);
+      setMenuData(menuData.filter(menu => menu.id !== menuItem.id));
+    } catch (error) {
+      console.error('Error deleting menu: asdad', error);
+    }
+  };
 
   return (
     <>
@@ -71,16 +97,7 @@ const foodBP = () => {
         <ScrollView contentContainerStyle={{ padding: 20 }}>
           {menuData.map((menu) => (
             <View key={menu.id} style={styles.menuCard}>
-              <TouchableOpacity
-                style={styles.editButton}
-                onPress={() => {
-                  setSelectedMenu(menuData);
-                  setModalVisible(true);
-                }}
-              >
-                <Feather name='more-vertical' size={24} />
-              </TouchableOpacity>
-              <MenuCard menu={menu} />
+              <MenuCard menu={menu} onDelete={()=> confirmDelete(menu)} onEdit={() => hafndleEdit(menu)} />
             </View>
           ))}
         </ScrollView>
