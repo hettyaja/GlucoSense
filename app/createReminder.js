@@ -6,7 +6,8 @@ import RNNPickerSelect from 'react-native-picker-select';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import * as Notifications from 'expo-notifications';
 import { setReminder } from './service/reminderService';
-import { useAuth } from './Controller/authController';
+import { useAuth } from './service/AuthContext';
+import CreateReminderController from './Controller/CreateReminderController';
 
 
 const createReminder = () => {
@@ -40,7 +41,7 @@ const createReminder = () => {
       };
 
       try {
-        await setReminder(user.uid, reminderData);
+        await CreateReminderController.createReminder(user.uid, reminderData);
         scheduleNotification(reminderData);
         router.replace('reminder');
       } catch (error) {
