@@ -5,7 +5,6 @@ import ImageButton from './components/ImageButton';
 import { BPProfileProvider } from './context/BPProfileContext';
 import { ProfileProvider } from './context/ProfileContext';
 import { DietPlanProvider } from './context/DietPlanContext';
-import { RecipeProvider } from './context/RecipeContext';
 import { AuthProvider, useAuth } from './service/AuthContext';
 import { MenuProvider } from 'react-native-popup-menu';
 
@@ -118,7 +117,6 @@ const _layout = () => {
   return (
     <MenuProvider>
       <AuthProvider>
-        <RecipeProvider>
           <DietPlanProvider>
             <ProfileProvider>
               <BPProfileProvider>
@@ -126,7 +124,6 @@ const _layout = () => {
               </BPProfileProvider>
             </ProfileProvider>
           </DietPlanProvider>
-        </RecipeProvider>
       </AuthProvider>
     </MenuProvider>
   );
