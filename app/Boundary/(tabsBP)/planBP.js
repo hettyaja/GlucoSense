@@ -8,7 +8,7 @@ import { Tabs, useRouter } from 'expo-router';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const planBP = () => {
-  const { dietPlans } = useContext(DietPlanContext);
+  const { dietPlans, removeDietPlan } = useContext(DietPlanContext);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const router = useRouter();
@@ -23,6 +23,13 @@ const planBP = () => {
       return `${moment(startDate).format('DD/MM/YYYY')} - ${moment(endDate).format('DD/MM/YYYY')}`;
     }
     return 'Select date range';
+  };
+
+  const handleEdit = (dietPlan) => {
+    router.push({
+      pathname: '/EditDietPlan',
+      params: { dietPlan: JSON.stringify(dietPlan) },
+    });
   };
 
   return (
@@ -46,7 +53,7 @@ const planBP = () => {
         </View>
         <Calendar onConfirm={handleConfirm} />
         {dietPlans.map((dietPlan) => (
-          <DietPlanCard key={dietPlan.id} dietPlan={dietPlan} />
+          <DietPlanCard key={dietPlan.id} dietPlan={dietPlan} onEdit={handleEdit} onDelete={removeDietPlan} />
         ))}
       </ScrollView>
     </>
