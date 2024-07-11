@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, PermissionsAndroid, Platform, Alert } from 'react-native';
-import { RNCamera } from 'react-native-camera';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Camera, CameraView } from 'expo-camera';
 import TextRecognition from 'react-native-text-recognition';
 
 const GlucoseScanner = () => {
@@ -9,38 +9,17 @@ const GlucoseScanner = () => {
   const cameraRef = useRef(null);
 
   useEffect(() => {
-    const requestCameraPermission = async () => {
-      if (Platform.OS === 'android') {
-        try {
-          const granted = await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.CAMERA,
-            {
-              title: "Camera Permission",
-              message: "App needs camera permission",
-              buttonNeutral: "Ask Me Later",
-              buttonNegative: "Cancel",
-              buttonPositive: "OK"
-            }
-          );
-          setHasPermission(granted === PermissionsAndroid.RESULTS.GRANTED);
-        } catch (err) {
-          console.warn(err);
-          setHasPermission(false);
-        }
-      } else {
-        setHasPermission(true);
-      }
-    };
-
-    requestCameraPermission();
+    (async () => {
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      setHasPermission(status === 'granted');
+    })();
   }, []);
 
   const handleCapture = async () => {
     if (cameraRef.current) {
-      const options = { quality: 0.5, base64: true };
-      const data = await cameraRef.current.takePictureAsync(options);
-      console.log('Photo URI:', data.uri); // Debug log
-      extractTextFromImage(data.uri);
+      const photo = await cameraRef.current.takePictureAsync();
+      console.log('Photo URI:', photo.uri); // Debug log
+      extractTextFromImage(photo.uri);
     }
   };
 
@@ -65,11 +44,10 @@ const GlucoseScanner = () => {
 
   return (
     <View style={styles.container}>
-      <RNCamera
+      <CameraView
         ref={cameraRef}
         style={styles.camera}
-        type={RNCamera.Constants.Type.back}
-        captureAudio={false}
+        
       />
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.button} onPress={handleCapture}>
