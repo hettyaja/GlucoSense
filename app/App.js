@@ -4,7 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import CreateDietPlan from './CreateDietPlan';
 import ViewAndSearchDietPlan from './ViewAndSearchDietPlan';
-import Subscribe from './Subscribe';
+import Subscribe from './Boundary/Subscribe';
 import { MenuProvider } from 'react-native-popup-menu';
 
 const Stack = createStackNavigator();

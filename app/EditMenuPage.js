@@ -1,40 +1,22 @@
 import React, { useState, useContext, useEffect } from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-  Image,
-  ScrollView,
-  Modal,
-  Button,
-  FlatList,
-} from 'react-native';
+import {SafeAreaView,StyleSheet,Text,TextInput, TouchableOpacity,View,Image,ScrollView,Modal,Button,FlatList,} from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import { Picker } from '@react-native-picker/picker';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { RecipeContext } from './context/RecipeContext';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { router, useLocalSearchParams, Stack } from 'expo-router';
 
-const EditRecipePage = () => {
-  const { updateRecipe } = useContext(RecipeContext);
+const EditMenuPage = () => {
+  const { user } = useAuth();
+  const { menuData } = useLocalSearchParams;
+  const [parsedMenuData, setParsedMenuData] = useState (menuData ? JSON.parse(mealData) : null);
+  
   const [image, setImage] = useState(null);
   const [title, setTitle] = useState('');
   const [price, setPrice] = useState('');
-  const [serves, setServes] = useState(1);
-  const [selectedHour, setSelectedHour] = useState('0');
-  const [selectedMinute, setSelectedMinute] = useState('0');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [ingredients, setIngredients] = useState([]);
-  const [methods, setMethods] = useState([]);
-  const [selectedTime, setSelectedTime] = useState({
-    hours: '0',
-    minutes: '0',
-  });
+  
 
   const navigation = useNavigation();
   const params = useLocalSearchParams();
@@ -45,25 +27,10 @@ const EditRecipePage = () => {
       setImage(recipe.image);
       setTitle(recipe.title);
       setPrice(recipe.price);
-      setServes(recipe.serves);w
-      // setSelectedTime({
-      //   hours: recipe.selectedTime.split(' ')[0],
-      //   minutes: recipe.selectedTime.split(' ')[2],
-      // });
       setIngredients(recipe.ingredients);
-      setMethods(recipe.methods);
+     
     }
   }, [recipe]);
-
-  const decrementServes = () => {
-    if (serves > 1) {
-      setServes(serves - 1);
-    }
-  };
-
-  const incrementServes = () => {
-    setServes(serves + 1);
-  };
 
   const addImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -95,24 +62,13 @@ const EditRecipePage = () => {
     setIngredients(ingredients.filter((item) => item.id !== id));
   };
 
-  const addMethod = () => {
-    setMethods([...methods, { id: methods.length.toString(), text: '' }]);
-  };
-
-  const deleteMethod = (id) => {
-    setMethods(methods.filter((item) => item.id !== id));
-  };
-
   const handleSave = () => {
     const updatedRecipe = {
       id: route.params.recipe.id,
       image,
       title,
       price,
-      serves,
-      selectedTime: `${selectedTime.hours} hour ${selectedTime.minutes} min`,
       ingredients,
-      methods,
       sold: route.params.recipe.sold,
     };
 
@@ -132,29 +88,9 @@ const EditRecipePage = () => {
           setIngredients(updatedIngredients);
         }}
       />
-      <TouchableOpacity onPress={() => deleteIngredient(item.id)}>
-        <AntDesign name="delete" size={24} color="red" />
-      </TouchableOpacity>
     </View>
   );
 
-  const renderMethodItem = ({ item, index }) => (
-    <View style={styles.inputContainer}>
-      <TextInput
-        style={styles.input}
-        placeholder={`Step ${index + 1}`}
-        value={item.text}
-        onChangeText={(text) => {
-          const updatedMethods = [...methods];
-          updatedMethods[index].text = text;
-          setMethods(updatedMethods);
-        }}
-      />
-      <TouchableOpacity onPress={() => deleteMethod(item.id)}>
-        <AntDesign name="delete" size={24} color="red" />
-      </TouchableOpacity>
-    </View>
-  );
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -174,7 +110,7 @@ const EditRecipePage = () => {
             <View style={styles.uploadBtnContainer}>
               <TouchableOpacity onPress={addImage} style={styles.uploadBtn}>
                 <Image source={require('./assets/iconCarrier.png')} style={styles.uploadIcon} />
-                <Text>{image ? 'Edit' : 'Upload'} Recipe photo</Text>
+                <Text>{image ? 'Edit' : 'Upload'} Menu photo</Text>
               </TouchableOpacity>
             </View>
           )}
@@ -198,30 +134,9 @@ const EditRecipePage = () => {
           />
         </View>
 
-        <View style={styles.containerBox}>
-          <View style={styles.servescooktimeContainer}>
-            <Text style={styles.labelText}>Serves</Text>
-            <View style={styles.servesButtonsContainer}>
-              <TouchableOpacity onPress={decrementServes} style={styles.plusminusButton}>
-                <Text style={styles.plusminusSymbol}>-</Text>
-              </TouchableOpacity>
-              <Text style={styles.servesText}>{serves}</Text>
-              <TouchableOpacity onPress={incrementServes} style={styles.plusminusButton}>
-                <Text style={styles.plusminusSymbol}>+</Text>
-              </TouchableOpacity>
-              <Text style={styles.people}>People</Text>
-            </View>
-          </View>
 
           <View style={styles.cooktimeContainer}>
-            <Text style={styles.labelText}>Cooktime</Text>
-            <TouchableOpacity onPress={() => setIsModalVisible(true)} style={styles.selectTimeButton}>
-              <Text style={styles.selectTimeButtonText}>
-                {selectedTime.hours !== '0' || selectedTime.minutes !== '0'
-                  ? ` ${selectedTime.hours} hour ${selectedTime.minutes} min`
-                  : 'Select Time'}
-              </Text>
-            </TouchableOpacity>
+            
 
             <Modal
               animationType="slide"
@@ -232,39 +147,18 @@ const EditRecipePage = () => {
               }}>
               <View style={styles.modalContainer}>
                 <View style={styles.modalContent}>
-                  <View style={styles.pickerContainer}>
-                    <Picker
-                      selectedValue={selectedHour}
-                      style={styles.picker}
-                      onValueChange={(itemValue) => setSelectedHour(itemValue)}>
-                      {Array.from({ length: 24 }, (_, i) => (
-                        <Picker.Item key={i} label={`${i} hr`} value={`${i}`} />
-                      ))}
-                    </Picker>
-                    <Picker
-                      selectedValue={selectedMinute}
-                      style={styles.picker}
-                      onValueChange={(itemValue) => setSelectedMinute(itemValue)}>
-                      {Array.from({ length: 60 }, (_, i) => (
-                        <Picker.Item key={i} label={`${i} min`} value={`${i}`} />
-                      ))}
-                    </Picker>
-                  </View>
                   <Button
                     title="Done"
                     onPress={() => {
                       setIsModalVisible(false);
-                      setSelectedTime({
-                        hours: selectedHour,
-                        minutes: selectedMinute,
-                      });
+                     
                     }}
                   />
                 </View>
               </View>
             </Modal>
           </View>
-        </View>
+        
 
         <View style={styles.containerBox}>
           <Text style={styles.labelText2}>Ingredients</Text>
@@ -279,18 +173,7 @@ const EditRecipePage = () => {
           </TouchableOpacity>
         </View>
 
-        <View style={styles.containerBox}>
-          <Text style={styles.labelText2}>Method</Text>
-          <FlatList
-            data={methods}
-            renderItem={renderMethodItem}
-            keyExtractor={(item) => item.id}
-            extraData={methods}
-          />
-          <TouchableOpacity onPress={addMethod} style={styles.addMethodButton}>
-            <Text style={styles.addMethodButtonText}>+ Step</Text>
-          </TouchableOpacity>
-        </View>
+        
       </ScrollView>
     </SafeAreaView>
   );
@@ -505,4 +388,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EditRecipePage;
+export default EditMenuPage;

@@ -1,8 +1,6 @@
 import { View, Text, StyleSheet, Alert, TouchableOpacity, ScrollView, TextInput} from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
-import Fontisto from 'react-native-vector-icons/Fontisto';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { useAuth } from './service/AuthContext';

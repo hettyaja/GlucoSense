@@ -6,7 +6,9 @@ import RNNPickerSelect from 'react-native-picker-select';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import * as Notifications from 'expo-notifications';
 import { updateReminder, deleteReminder } from './service/reminderService';
-import { useAuth } from './Controller/authController';
+import { useAuth } from './service/AuthContext';
+import UpdateReminderController from './Controller/UpdateReminderController';
+import DeleteReminderController from './Controller/DeleteReminderController';
 
 const editReminder = () => {
   const { user } = useAuth();
@@ -55,7 +57,7 @@ const editReminder = () => {
       };
 
       try {
-        await updateReminder(user.uid, reminderData);
+        await UpdateReminderController.updateReminder(user.uid, reminderData);
         scheduleNotification(reminderData);
         router.replace('reminder');
       } catch (error) {
@@ -104,7 +106,7 @@ const editReminder = () => {
   const handleDelete = async () => {
     try {
         console.log(reminderData.id)
-        await deleteReminder(user.uid, parsedReminderData);
+        await DeleteReminderController.deleteReminder(user.uid, parsedReminderData.id);
         router.replace('reminder')
       } catch (error) {
         console.error('Error deleting reminder:', error);

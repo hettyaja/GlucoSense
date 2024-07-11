@@ -8,8 +8,9 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import Header from './components/Header';
-import { fetchReminders } from './service/reminderService';
 import { useAuth } from './service/AuthContext';
+import ViewReminderController from './Controller/ViewReminderController';
+
 
 
 const reminder = () => {
@@ -20,7 +21,7 @@ const reminder = () => {
     const getReminder = async () => {
       if (user) {
         try {
-          const remindersList = await fetchReminders(user.uid);
+          const remindersList = await ViewReminderController.viewReminder(user.uid);
           setReminders(remindersList);
         } catch (error) {
           console.error('Error fetching reminder:', error);

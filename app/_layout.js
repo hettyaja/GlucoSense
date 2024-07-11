@@ -5,7 +5,6 @@ import ImageButton from './components/ImageButton';
 import { BPProfileProvider } from './context/BPProfileContext';
 import { ProfileProvider } from './context/ProfileContext';
 import { DietPlanProvider } from './context/DietPlanContext';
-import { RecipeProvider } from './context/RecipeContext';
 import { AuthProvider, useAuth } from './service/AuthContext';
 import { MenuProvider } from 'react-native-popup-menu';
 
@@ -39,7 +38,7 @@ const RootLayout = () => {
       <Stack.Screen name="Boundary/(tabsSA)" options={{ headerShown: false }} />
       <Stack.Screen name="addMeds" />
       <Stack.Screen name="addGlucose" />
-      <Stack.Screen name="EditRecipePage" />
+      <Stack.Screen name="EditMenuPage" />
       <Stack.Screen name="ViewAndSearchDietPlan" />
       <Stack.Screen name="CreateDietPlan" />
       <Stack.Screen name="searchFood" />
@@ -58,7 +57,7 @@ const RootLayout = () => {
         headerTitle: 'Details',
         headerTitleAlign: 'center',
       }} />
-      <Stack.Screen name="Subscribe" options={{ headerShown: false }} />
+      {/* <Stack.Screen name="Subscribe" options={{ headerShown: false }} /> */}
       <Stack.Screen name="profileBP" />
       <Stack.Screen name="addMeals" />
       <Stack.Screen name="selectMedicine" />
@@ -118,7 +117,6 @@ const _layout = () => {
   return (
     <MenuProvider>
       <AuthProvider>
-        <RecipeProvider>
           <DietPlanProvider>
             <ProfileProvider>
               <BPProfileProvider>
@@ -126,7 +124,6 @@ const _layout = () => {
               </BPProfileProvider>
             </ProfileProvider>
           </DietPlanProvider>
-        </RecipeProvider>
       </AuthProvider>
     </MenuProvider>
   );

@@ -1,5 +1,5 @@
 import React from "react";
-import ImageButton from './components/ImageButton';
+import ImageButton from '../components/ImageButton';
 import { View, Text, StyleSheet, TouchableOpacity, Alert} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign'
@@ -16,7 +16,7 @@ const Subscribe = () =>
         <View style={styles.container}>
             <View style={styles.header}>
                 <ImageButton
-                    source={require("./assets/back.png")}
+                    source={require("./../assets/back.png")}
                     imageSize={{ width: 24, height: 24 }}
                     onPress={() => handleBackButton()}
                 />
