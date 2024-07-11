@@ -4,13 +4,14 @@ import { DietPlanContext } from '../../context/DietPlanContext';
 import DietPlanCard from '../../DietPlanCard';
 import Calendar from '../../Calendar';
 import moment from 'moment';
-import { Tabs, router } from 'expo-router';
+import { Tabs, useRouter } from 'expo-router';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const planBP = () => {
   const { dietPlans } = useContext(DietPlanContext);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+  const router = useRouter();
 
   const handleConfirm = ({ startDate, endDate }) => {
     setStartDate(startDate);
