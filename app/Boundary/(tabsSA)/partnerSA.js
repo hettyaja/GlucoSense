@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, FlatList } from 'react-native';
-import { db } from '../../../firebase'; // Import the Firestore instance
+import { db } from '../../../firebase'; // Adjust the path according to your project structure
 import { collection, getDocs } from 'firebase/firestore';
 
 const PartnerSA = () => {
   const [filter, setFilter] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
-  const [businessPartner, setBusinessPartner] = useState([]);
+  const [businessPartners, setBusinessPartners] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -14,7 +14,7 @@ const PartnerSA = () => {
       try {
         const businessPartnersCollection = await getDocs(collection(db, 'businessPartner'));
         const businessPartnersData = businessPartnersCollection.docs.map(doc => ({ ...doc.data(), id: doc.id }));
-        setBusinessPartner(businessPartnersData);
+        setBusinessPartners(businessPartnersData);
       } catch (error) {
         console.error("Error fetching business partners: ", error);
       } finally {
@@ -25,11 +25,10 @@ const PartnerSA = () => {
     fetchBusinessPartners();
   }, []);
 
-  const filteredBusinessPartners = businessPartner.filter(partner => {
-    return (
-      (filter ? partner.status === filter : true) &&
-      (searchQuery ? partner.username.toLowerCase().includes(searchQuery.toLowerCase()) : true)
-    );
+  const filteredBusinessPartners = businessPartners.filter(partner => {
+    const matchesStatus = filter ? partner.status === filter : true;
+    const matchesQuery = searchQuery ? partner.username.toLowerCase().includes(searchQuery.toLowerCase()) : true;
+    return matchesStatus && matchesQuery;
   });
 
   const renderBusinessPartnerItem = ({ item }) => (
