@@ -14,7 +14,6 @@ const PartnerSA = () => {
       try {
         const businessPartnersCollection = await getDocs(collection(db, 'businessPartner'));
         const businessPartnersData = businessPartnersCollection.docs.map(doc => ({ ...doc.data(), id: doc.id }));
-        console.log('Fetched Business Partners:', businessPartnersData);
         setBusinessPartners(businessPartnersData);
       } catch (error) {
         console.error("Error fetching business partners: ", error);
@@ -28,7 +27,9 @@ const PartnerSA = () => {
 
   const filteredBusinessPartners = businessPartners.filter(partner => {
     const matchesStatus = filter ? partner.status === filter : true;
-    const matchesQuery = searchQuery ? partner.name.toLowerCase().includes(searchQuery.toLowerCase()) || partner.entityName.toLowerCase().includes(searchQuery.toLowerCase()) : true;
+    const matchesQuery = searchQuery
+      ? (partner.name?.toLowerCase().includes(searchQuery.toLowerCase()) || partner.entityName?.toLowerCase().includes(searchQuery.toLowerCase()))
+      : true;
     return matchesStatus && matchesQuery;
   });
 
@@ -38,8 +39,8 @@ const PartnerSA = () => {
 
   const renderBusinessPartnerItem = ({ item }) => (
     <View style={styles.partnerRow}>
-      <Text style={styles.partnerCell}>{item.name}</Text>
-      <Text style={styles.partnerCell}>{item.entityName}</Text>
+      <Text style={styles.partnerCell}>{item.name || 'N/A'}</Text>
+      <Text style={styles.partnerCell}>{item.entityName || 'N/A'}</Text>
       <Text style={styles.partnerCell}>{item.registerTime ? new Date(item.registerTime.seconds * 1000).toLocaleDateString() : 'N/A'}</Text>
       <Text style={[styles.partnerCell, item.status === 'Active' ? styles.activeStatus : styles.pendingStatus]}>{item.status}</Text>
     </View>
