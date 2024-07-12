@@ -28,12 +28,12 @@ const PartnerSA = () => {
 
   const filteredBusinessPartners = businessPartners.filter(partner => {
     const matchesStatus = filter ? partner.status === filter : true;
-    const matchesQuery = searchQuery ? partner.username.toLowerCase().includes(searchQuery.toLowerCase()) : true;
+    const matchesQuery = searchQuery ? partner.name.toLowerCase().includes(searchQuery.toLowerCase()) || partner.entityName.toLowerCase().includes(searchQuery.toLowerCase()) : true;
     return matchesStatus && matchesQuery;
   });
 
   const handlePendingClick = () => {
-    setFilter('Pending');
+    setFilter(filter === 'Pending' ? '' : 'Pending');
   };
 
   const renderBusinessPartnerItem = ({ item }) => (
@@ -58,9 +58,9 @@ const PartnerSA = () => {
           onChangeText={(text) => setSearchQuery(text)}
         />
         <TouchableOpacity onPress={handlePendingClick} style={styles.pendingContainer}>
-          <View style={styles.pendingSquare} />
+          <View style={[styles.pendingSquare, filter === 'Pending' && styles.pendingSquareActive]} />
+          <Text style={styles.pendingText}>Pending</Text>
         </TouchableOpacity>
-        <Text style={styles.pendingText}>Pending</Text>
       </View>
       <View style={styles.tableHeader}>
         <Text style={styles.tableHeaderCell}>Name</Text>
@@ -120,16 +120,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginLeft: 16,
-    padding: 10,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 4,
   },
   pendingSquare: {
     width: 20,
     height: 20,
     backgroundColor: '#ccc',
     marginRight: 8,
+  },
+  pendingSquareActive: {
+    backgroundColor: '#000',
   },
   pendingText: {
     color: '#000',
