@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from 'react-native';
-import { db } from '../../../firebase'; // Adjust the path according to your project structure
+import { db } from '../../firebase'; // Adjust the path according to your project structure
 import { collection, getDocs } from 'firebase/firestore';
 import { useRouter } from 'expo-router';
 
