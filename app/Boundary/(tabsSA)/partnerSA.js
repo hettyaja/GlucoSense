@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, FlatList } from 'react-native';
+import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from 'react-native';
 import { db } from '../../../firebase'; // Adjust the path according to your project structure
 import { collection, getDocs } from 'firebase/firestore';
 
@@ -31,6 +31,10 @@ const PartnerSA = () => {
     return matchesStatus && matchesQuery;
   });
 
+  const handlePendingClick = () => {
+    setFilter('Pending');
+  };
+
   const renderBusinessPartnerItem = ({ item }) => (
     <View style={styles.partnerRow}>
       <Text style={styles.partnerCell}>{item.name}</Text>
@@ -52,10 +56,10 @@ const PartnerSA = () => {
           value={searchQuery}
           onChangeText={(text) => setSearchQuery(text)}
         />
-        <View style={styles.pendingContainer}>
+        <TouchableOpacity onPress={handlePendingClick} style={styles.pendingContainer}>
           <View style={styles.pendingSquare} />
           <Text style={styles.pendingText}>Pending</Text>
-        </View>
+        </TouchableOpacity>
       </View>
       <View style={styles.tableHeader}>
         <Text style={styles.tableHeaderCell}>Name</Text>
