@@ -5,6 +5,7 @@ import { Link, router, Stack } from 'expo-router';
 import { images } from '../../constants/images';
 import ImageButton from '../../components/ImageButton';
 import LoginController from '../../Controller/LoginController';
+import Ionicons from 'react-native-vector-icons/Ionicons'
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -22,55 +23,51 @@ const Login = () => {
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
-
-      <SafeAreaView style={{ flex: 1, backgroundColor: 'white', alignItems: 'center' }}>
-        <View style={{ backgroundColor: 'white', alignItems: 'flex-start', width: '100%', paddingHorizontal: 20 }}>
-          <ImageButton
-            source={require('../../assets/back(2).png')}
-            imageSize={{ width: 24, height: 24 }}
-            onPress={() => router.back('/welcomePage')}
-          />
+      <SafeAreaView style={{ flex: 1, backgroundColor: 'white', alignItems: 'center', paddingHorizontal:16 }}>
+        <View style={{alignItems: 'flex-start', width: '100%'}}>
+          <TouchableOpacity onPress={() => router.back()}>
+            <Ionicons name='chevron-back' size={32} color='black' />
+          </TouchableOpacity>
         </View>
 
-        <Image source={images.logo} style={{ marginBottom: 60 }} />
+        <Image source={images.logo} style={{width:200, height:200, marginTop:16}}/>
+        <Text style={styles.titleText}>GlucoSense</Text>
 
-        <View style={{ backgroundColor: 'white', alignItems: 'flex-start', width: '100%', paddingHorizontal: 50 }}>
+        <View style={{ backgroundColor: 'white', alignItems: 'flex-start', width: '80%'}}>
           <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 14 }}>Email</Text>
         </View>
 
         <TextInput
           style={[styles.input, { color: 'black' }]}
           placeholder="Enter your email"
-          placeholderTextColor="black"
+          placeholderTextColor="#808080"
           value={email}
           onChangeText={setEmail}
           autoCapitalize="none"
         />
 
-        <View style={{ backgroundColor: 'white', flexDirection: 'row', justifyContent: 'space-between', width: '100%', paddingHorizontal: 50 }}>
+        <View style={{ backgroundColor: 'white', flexDirection: 'row', justifyContent: 'space-between', width: '80%'}}>
           <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 14 }}>Password</Text>
         </View>
 
         <TextInput
           style={[styles.input, { color: 'black' }]}
           placeholder="Enter your password"
-          placeholderTextColor="black"
+          placeholderTextColor="#808080"
           secureTextEntry={true}
           value={password}
           onChangeText={setPassword}
           autoCapitalize="none"
         />
 
-        <View style={{ backgroundColor: 'white', flexDirection: 'row-reverse', justifyContent: 'space-between', width: '100%', paddingHorizontal: 50 }}>
+        <View style={{ backgroundColor: 'white', flexDirection: 'row-reverse', justifyContent: 'space-between', width: '80%'}}>
           <TouchableOpacity onPress={() => router.push('Boundary/resetPwd1')}>
-            <Text style={{ alignItems: 'center', fontFamily: 'Poppins-Medium', fontSize: 12, paddingBottom: 35, color: '#808080', justifyContent: 'center', textAlign: 'center' }}>Forgot Password?</Text>
+            <Text style={{ alignItems: 'center', fontFamily: 'Poppins-Medium', fontSize: 12, paddingBottom: 35, color: 'black', justifyContent: 'center', textAlign: 'center' }}>Forgot Password?</Text>
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity onPress={handleLogin} style={{ marginVertical: 40 }}>
-          <View style={styles.button}>
+        <TouchableOpacity onPress={handleLogin} style={styles.button}>
             <Text style={styles.buttonText}>Login</Text>
-          </View>
         </TouchableOpacity>
 
         <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 12 }}>Don't have an account?</Text>
@@ -83,22 +80,28 @@ const Login = () => {
 }
 
 const styles = StyleSheet.create({
+  titleText: {
+    fontFamily: "Poppins-Black",
+    fontSize: 48,
+    color: "#E58B68",
+    paddingBottom:60
+  },
   input: {
-    height: 36,
-    width: 336,
-    margin: 12,
+    height: 40,
+    width: '80%',
+    margin: 8,
     borderWidth: 1,
     padding: 10,
-    opacity: 0.5,
     borderRadius: 6,
   },
   button: {
     backgroundColor: '#D96B41',
-    width: 164,
-    height: 42,
+    width: '50%',
+    height: 40,
     borderRadius: 8,
     justifyContent: 'center', // Vertically center content
-    alignItems: 'center', // Horizontally center content
+    alignItems: 'center', // Horizontally center content,
+    marginVertical:24
   },
   buttonText: {
     color: '#FFFFFF',

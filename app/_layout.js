@@ -32,6 +32,7 @@ const RootLayout = () => {
     <Stack>
       {/* Define your stack screens here */}
       <Stack.Screen name="index" options={{ headerShown: false}}/>
+      <Stack.Screen name="Boundary/(getStarted)" options={{ headerShown: false}}/>
       <Stack.Screen name="Boundary/welcomePage" options={{ headerShown: false }} />
       <Stack.Screen name="Boundary/(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="Boundary/(tabsBP)" options={{ headerShown: false }} />

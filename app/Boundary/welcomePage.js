@@ -7,9 +7,9 @@ import { router } from 'expo-router'
 
 const welcomePage = () => {
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
-      <ScrollView contentContainerStyle={{ flexGrow: 1, alignItems: "center" }}>
-        <Image source={images.logo} />
+    <SafeAreaView style={{ flex: 1, backgroundColor: "white", alignItems:'center' }}>
+        <Image source={images.logo} style={{width:200, height:200, marginTop:40}}/>
+        <Text style={styles.titleText}>GlucoSense</Text>
         <Text style={styles.welcomeText}>
           Welcome!
         </Text>
@@ -29,7 +29,6 @@ const welcomePage = () => {
           style={[styles.button, styles.signInButton]}>
           <Text style={styles.buttonText}>{"Sign in"}</Text>
         </TouchableOpacity>
-      </ScrollView>
     </SafeAreaView>
   )
 }
@@ -37,6 +36,11 @@ const welcomePage = () => {
 export default welcomePage
 
 const styles = StyleSheet.create({
+  titleText: {
+    fontFamily: "Poppins-Black",
+    fontSize: 48,
+    color: "#E58B68",
+  },
   welcomeText: {
     fontFamily: "Poppins-Black",
     fontSize: 36,

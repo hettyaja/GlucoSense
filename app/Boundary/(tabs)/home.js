@@ -51,31 +51,31 @@ const home = () => {
   const [highestGlucose, setHighestGlucose] = useState(null);
   const [logsLoaded, setLogsLoaded] = useState(false);
 
-  useEffect(() => {
-    const fetchAllLogs = async () => {
-      if (user) {
-        try {
-          const [mealLogs, glucoseLogs, medicineLogs] = await Promise.all([
-            ViewMealLogsController.viewMealLogs(user.uid),
-            ViewGlucoseLogsController.viewGlucoseLogs(user.uid),
-            ViewMedicineLogsController.viewMedicineLogs(user.uid),
-          ]);
+  const fetchAllLogs = async () => {
+    if (user) {
+      try {
+        const [mealLogs, glucoseLogs, medicineLogs] = await Promise.all([
+          ViewMealLogsController.viewMealLogs(user.uid),
+          ViewGlucoseLogsController.viewGlucoseLogs(user.uid),
+          ViewMedicineLogsController.viewMedicineLogs(user.uid),
+        ]);
 
-          const combinedLogs = [
-            ...mealLogs.map(log => ({ ...log, type: 'meal' })),
-            ...glucoseLogs.map(log => ({ ...log, type: 'glucose' })),
-            ...medicineLogs.map(log => ({ ...log, type: 'medicine' })),
-          ].sort((a, b) => b.time.seconds - a.time.seconds); // Sort logs by timestamp
+        const combinedLogs = [
+          ...mealLogs.map(log => ({ ...log, type: 'meal' })),
+          ...glucoseLogs.map(log => ({ ...log, type: 'glucose' })),
+          ...medicineLogs.map(log => ({ ...log, type: 'medicine' })),
+        ].sort((a, b) => b.time.seconds - a.time.seconds); // Sort logs by timestamp
 
-          setLogs(combinedLogs);
-          setFilteredLogs(combinedLogs);
-          setLogsLoaded(true); // Set logs loaded to true
-        } catch (error) {
-          console.error('Error fetching logs:', error);
-        }
+        setLogs(combinedLogs);
+        setFilteredLogs(combinedLogs);
+        setLogsLoaded(true); // Set logs loaded to true
+      } catch (error) {
+        console.error('Error fetching logs:', error);
       }
-    };
+    }
+  };
 
+  useEffect(() => {
     fetchAllLogs();
   }, [user]);
 
@@ -103,7 +103,7 @@ const home = () => {
     setHighestGlucose(highest);
   };
 
-  const calculateGlucoseStatsByDate = (filterSelected) => {
+  const calculateGlucoseStatsByDate = (filterSelected, logsToCalculate = logs) => {
     const now = new Date();
     let startDate;
     switch (filterSelected) {
@@ -124,7 +124,7 @@ const home = () => {
         break;
     }
 
-    const glucoseLogs = logs.filter(log => log.type === 'glucose');
+    const glucoseLogs = logsToCalculate.filter(log => log.type === 'glucose');
     const filteredGlucoseLogs = glucoseLogs.filter(log => {
       const logDate = new Date(log.time.seconds * 1000);
       return logDate >= startDate;
@@ -197,7 +197,7 @@ const home = () => {
 
       if (item.type === 'glucose') {
         const updatedGlucoseLogs = updatedLogs.filter(log => log.type === 'glucose');
-        calculateGlucoseStats(updatedGlucoseLogs);
+        calculateGlucoseStatsByDate(dateType, updatedGlucoseLogs); // Pass updated glucose logs
       }
     } catch (error) {
       console.error('Error deleting log:', error);
@@ -273,8 +273,8 @@ const home = () => {
             </View>
           </View>
           <View style={{ flexDirection: 'row-reverse' }}>
-            <TouchableOpacity 
-              style={{ borderColor: 'white', borderWidth: 1, borderRadius: 8, width: '25%', paddingHorizontal: 8, alignItems:'center' }} 
+            <TouchableOpacity
+              style={{ borderColor: 'white', borderWidth: 1, borderRadius: 8, width: '32%', padding: 8, alignItems:'center' }} 
               onPress={() => router.push('Subscribe')}
             >
               <A1CComponent user={user} />
