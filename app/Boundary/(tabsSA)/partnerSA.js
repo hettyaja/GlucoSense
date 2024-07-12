@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from 'react-native';
-import { db } from '../../../firebase'; // Adjust the path according to your project structure
+import { db } from '../../../firebase'; // Ensure the path is correct
 import { collection, getDocs } from 'firebase/firestore';
 
 const PartnerSA = () => {
@@ -14,6 +14,7 @@ const PartnerSA = () => {
       try {
         const businessPartnersCollection = await getDocs(collection(db, 'businessPartner'));
         const businessPartnersData = businessPartnersCollection.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+        console.log('Fetched Business Partners:', businessPartnersData);
         setBusinessPartners(businessPartnersData);
       } catch (error) {
         console.error("Error fetching business partners: ", error);
@@ -58,8 +59,8 @@ const PartnerSA = () => {
         />
         <TouchableOpacity onPress={handlePendingClick} style={styles.pendingContainer}>
           <View style={styles.pendingSquare} />
-          <Text style={styles.pendingText}>Pending</Text>
         </TouchableOpacity>
+        <Text style={styles.pendingText}>Pending</Text>
       </View>
       <View style={styles.tableHeader}>
         <Text style={styles.tableHeaderCell}>Name</Text>
@@ -119,6 +120,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginLeft: 16,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 4,
   },
   pendingSquare: {
     width: 20,
