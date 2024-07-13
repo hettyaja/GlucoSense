@@ -3,9 +3,9 @@ import { SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, Imag
 import { AntDesign } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { useAuth } from './service/AuthContext';
+import { useAuth } from '../service/AuthContext';
 import { router, useLocalSearchParams, Stack } from 'expo-router';
-import UpdateMenuController from './Controller/UpdateMenuController';
+import UpdateMenuController from '../Controller/UpdateMenuController';
 
 const EditMenuPage = () => {
   const { user } = useAuth();
