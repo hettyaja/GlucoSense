@@ -60,7 +60,7 @@ const EditDietPlan = () => {
       },
     };
     updateDietPlan(updatedDietPlan);
-    router.push('/planBP'); // Ensure this path is correct
+    router.push('Boundary/planBP'); // Ensure this path is correct
   };
 
   return (
