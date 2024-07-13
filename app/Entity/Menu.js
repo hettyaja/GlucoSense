@@ -1,5 +1,5 @@
 // entities/Menu.js
-import {doc, deleteDoc} from 'firebase/firestore';
+import {doc, deleteDoc, updateDoc} from 'firebase/firestore';
 import {db} from '../../firebase';
 class Menu {
     constructor(foodName, price, ingredients, photoURL) {
@@ -19,6 +19,27 @@ class Menu {
     throw error;
   }
 };
+
+  static async updateMenu (userId, menuData){
+    try{
+      const menuRef = doc (db, 'businessPartner', userId, 'menu', menuData.id);
+      await updateDoc(menuRef, {
+        foodName : menuData.foodName,
+        price : menuData.price,
+        status : menuData.status,
+        image : menuData.image,
+        ingredients : menuData.ingredients,
+        description: menuData.description,
+        calories : menuData.calories,
+        fat : menuData.fat,
+        carbs : menuData.carbs
+      });
+      console.log ('Menu updated sucessfully: ', menuData);
+    } catch (error){
+      console.error ('Error updating menu log:', error);
+      throw error;
+    }
+  }
 
   }
   

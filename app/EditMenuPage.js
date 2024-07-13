@@ -1,36 +1,59 @@
-import React, { useState, useContext, useEffect } from 'react';
-import {SafeAreaView,StyleSheet,Text,TextInput, TouchableOpacity,View,Image,ScrollView,Modal,Button,FlatList,} from 'react-native';
+import React, { useState } from 'react';
+import { SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, Image, ScrollView, FlatList, } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import { useNavigation, useRoute } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useAuth } from './service/AuthContext';
 import { router, useLocalSearchParams, Stack } from 'expo-router';
+import UpdateMenuController from './Controller/UpdateMenuController';
 
 const EditMenuPage = () => {
   const { user } = useAuth();
-  const { menuData } = useLocalSearchParams;
-  const [parsedMenuData, setParsedMenuData] = useState (menuData ? JSON.parse(mealData) : null);
-  
-  const [image, setImage] = useState(null);
-  const [title, setTitle] = useState('');
-  const [price, setPrice] = useState('');
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [ingredients, setIngredients] = useState([]);
-  
+  const { menuData } = useLocalSearchParams();
+  const [parsedMenuData, setParsedMenuData] = useState(menuData ? JSON.parse(menuData) : null);
+  const [image, setImage] = useState(parsedMenuData.image);
+  const [foodName, setFoodName] = useState(parsedMenuData.foodName);
+  const [price, setPrice] = useState(parsedMenuData.price.toString());
+  const [description, setDesc] = useState(parsedMenuData.description);
+  const [status, setStatus] = useState(parsedMenuData.status);
+  const [isEditable, setIsEditable] = useState(false);  const [ingredients, setIngredients] = useState(parsedMenuData.ingredients);
+  const [calories, setCal] = useState(parsedMenuData.calories);
+  const [protein, setProtein] = useState(parsedMenuData.protein);
+  const [carbs, setCarbs] = useState(parsedMenuData.carbs);
+  const [fat, setFat] = useState(parsedMenuData.fat);
 
-  const navigation = useNavigation();
-  const params = useLocalSearchParams();
-  const recipe = params;
+  const saveMenu = async () => {
+    if (user) {
+      const updateMenu = {
+        id: parsedMenuData.id,
+        foodName,
+        price,
+        description,
+        image,
+        status,
+        ingredients,
+        calories,
+        protein,
+        carbs,
+        fat
+      };
 
-  useEffect(() => {
-    if (recipe) {
-      setImage(recipe.image);
-      setTitle(recipe.title);
-      setPrice(recipe.price);
-      setIngredients(recipe.ingredients);
-     
+      try {
+        await UpdateMenuController.updateMenu(user.uid, updateMenu);
+        console.log('Menu log updated:', updateMenu);
+        router.replace('Boundary/foodBP');
+      } catch (error) {
+        console.error('Error updating menu:', error);
+      }
     }
-  }, [recipe]);
+  };
+
+  const toggleEdit = () => {
+    if (isEditable) {
+        saveMenu();
+    }
+    setIsEditable(!isEditable);
+};
 
   const addImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -51,131 +74,193 @@ const EditMenuPage = () => {
     }
   };
 
-  const addIngredient = () => {
-    setIngredients([
-      ...ingredients,
-      { id: ingredients.length.toString(), text: '' },
-    ]);
-  };
-
-  const deleteIngredient = (id) => {
-    setIngredients(ingredients.filter((item) => item.id !== id));
-  };
-
-  const handleSave = () => {
-    const updatedRecipe = {
-      id: route.params.recipe.id,
-      image,
-      title,
-      price,
-      ingredients,
-      sold: route.params.recipe.sold,
-    };
-
-    updateRecipe(updatedRecipe);
-    navigation.navigate('MenuRecipeManagementPage');
-  };
-
-  const renderIngredientItem = ({ item, index }) => (
-    <View style={styles.inputContainer}>
-      <TextInput
-        style={styles.input}
-        placeholder={`Ingredient ${index + 1}`}
-        value={item.text}
-        onChangeText={(text) => {
-          const updatedIngredients = [...ingredients];
-          updatedIngredients[index].text = text;
-          setIngredients(updatedIngredients);
-        }}
-      />
-    </View>
-  );
-
-
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <View style={styles.headerContainer}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Ionicons name='chevron-back' size={32} color='white'/>
+    <>
+      <Stack.Screen options={{
+        title: 'Edit menu',
+        headerStyle: { backgroundColor: '#E58B68' },
+        headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold' },
+        headerLeft: () => (
+          <TouchableOpacity onPress={() => router.back('Boundary/foodBP')}>
+            <AntDesign name='close' size={24} color='white' />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Edit Recipe</Text>
-          <TouchableOpacity onPress={handleSave}>
-            <Text style={styles.headerRightText}>Save</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.imageUploadContainer}>
-          {image && <Image source={{ uri: image }} style={styles.image} />}
-          {!image && (
-            <View style={styles.uploadBtnContainer}>
-              <TouchableOpacity onPress={addImage} style={styles.uploadBtn}>
-                <Image source={require('./assets/iconCarrier.png')} style={styles.uploadIcon} />
-                <Text>{image ? 'Edit' : 'Upload'} Menu photo</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-        </View>
+        ), headerRight: () => (
+            <TouchableOpacity style={styles.button}
+                  onPress={toggleEdit}>
+                  <Text style={{fontFamily: 'Poppins-SemiBold', fontSize:14, color:'white'}}>
+                    {isEditable ? 'Save' : 'Edit'}
+                  </Text>
+                </TouchableOpacity>
 
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Title:"
-            value={title}
-            onChangeText={setTitle}
-          />
-        </View>
+          // <TouchableOpacity onPress={() => saveMenu()}>
+          //   <Text style={{ padding: 2, marginHorizontal: 8, fontFamily: 'Poppins-SemiBold', fontSize: 16, color: 'white' }}>Save</Text>
+          // </TouchableOpacity>
+        ),
+        headerTitle: 'Menu',
+        headerTitleAlign: 'center',
+      }} />
 
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Price"
-            value={price}
-            onChangeText={setPrice}
-          />
-        </View>
+      <SafeAreaView style={styles.safeArea}>
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
 
-
-          <View style={styles.cooktimeContainer}>
-            
-
-            <Modal
-              animationType="slide"
-              transparent={true}
-              visible={isModalVisible}
-              onRequestClose={() => {
-                setIsModalVisible(!isModalVisible);
-              }}>
-              <View style={styles.modalContainer}>
-                <View style={styles.modalContent}>
-                  <Button
-                    title="Done"
-                    onPress={() => {
-                      setIsModalVisible(false);
-                     
-                    }}
-                  />
-                </View>
+          <View style={styles.itemContainer}>
+            <View style={styles.fieldSection}>
+              <View style={styles.textBox}>
+                <Text style={styles.title}>Image</Text>
+                <Text style={styles.h3}>Upload image {"\n"}to let the user know </Text>
               </View>
-            </Modal>
+              {image && <Image source={{ uri: image }} style={styles.image} />}
+              {!image && (
+                // Updated button style to align text below the icon
+                <TouchableOpacity onPress={addImage} style={styles.uploadButton}>
+                  <Image source={require('./assets/iconCarrier.png')} />
+                  {/* Updated to style the text below the image icon */}
+                  <Text style={styles.uploadText}>{image ? 'Edit' : 'Upload'} Menu photo</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+
+            <View style={styles.fieldSection}>
+              <Text style={styles.title}>Food Name</Text>
+              {isEditable?(
+                <TextInput
+                  placeholder="Food Name"
+                  value={foodName}
+                  onChangeText={setFoodName}
+                  style={styles.textInput}
+                />
+              ) : (
+                <Text style={styles.textInput}>{foodName}</Text>
+              )}   
+            </View>
+
+            <View style={styles.fieldSection}>
+              <Text style={styles.title}>Price</Text>
+              {isEditable?(
+                <TextInput
+                  placeholder="Price"
+                  value={price}
+                  onChangeText={setPrice}
+                  style={styles.textInput}
+                  editable={isEditable}
+                />
+              ):(
+                <Text style={styles.textInput}>{price}</Text>
+              )}
+            </View>
+
+            <View style={styles.fieldSection}>
+              <Text style={styles.title}>Description</Text>
+              {isEditable?(
+                <TextInput
+                  style={styles.ingredientsInput}
+                  value={description}
+                  placeholder="Add brief description about your food"
+                  onChangeText={setDesc}
+                  multiline
+                  editable={isEditable}
+                />
+              ) : ( 
+                <Text style={styles.ingredientsInput}>{description}</Text>
+              )}
+            </View>
+
+            <View style={styles.fieldSection}>
+              <Text style={styles.title}>Ingredients</Text>
+              {isEditable?(
+                <TextInput
+                  style={styles.ingredientsInput}
+                  value={ingredients}
+                  placeholder='Add your ingredients'
+                  onChangeText={setIngredients}
+                  multiline
+                  editable={isEditable}
+                />
+              ):( 
+                <Text style={styles.ingredientsInput}>{ingredients}</Text>
+              )}
+            </View>
           </View>
-        
 
-        <View style={styles.containerBox}>
-          <Text style={styles.labelText2}>Ingredients</Text>
-          <FlatList
-            data={ingredients}
-            renderItem={renderIngredientItem}
-            keyExtractor={(item) => item.id}
-            extraData={ingredients}
-          />
-          <TouchableOpacity onPress={addIngredient} style={styles.addIngredientButton}>
-            <Text style={styles.addIngredientButtonText}>+ Ingredient</Text>
-          </TouchableOpacity>
+          <View style={styles.factContainer}>
+          <Text style={styles.h1}>Nutrition Fact</Text>
+            <View style={styles.fieldSection}>
+              <Text style={styles.title}>Calories</Text>
+              <View style={styles.infoContainer}>
+                {isEditable? (
+                  <TextInput
+                    value={calories}
+                    placeholder='Add food calorie'
+                    onChangeText={setCal}
+                    keyboardType='numeric'
+                    editable={isEditable}
+                  />
+                ):(
+                  <Text style={styles.textInput}>{calories}</Text>
+                )}
+                <Text style={styles.unit}>cal</Text>
+              </View>
+            </View>
+          
+            <View style={styles.fieldSection}>
+              <Text style={styles.title}>Fat</Text>
+              <View style={styles.infoContainer}>
+              {isEditable? (
+                <TextInput
+                  value={fat}
+                  placeholder='Add food fat'
+                  onChangeText={setFat}
+                  keyboardType='numeric'
+                  editable={isEditable}
+                />
+              ):(
+                <Text style={styles.textInput}>{fat}</Text>
+                )}
+                <Text style={styles.unit}>g</Text>
+              </View>
+            </View>
+
+            <View style={styles.fieldSection}>
+              <Text style={styles.title}>Carbohydrate</Text>
+              <View style={styles.infoContainer}>
+                {isEditable?(
+                  <TextInput
+                    value={carbs}
+                    placeholder='Add food carbohydrate'
+                    onChangeText={setCarbs}
+                    keyboardType='numeric'
+                    editable={isEditable}
+                  />
+                ):(
+                  <Text style={styles.textInput}>{carbs}</Text>
+                )}
+                <Text style={styles.unit}>g</Text>
+              </View>
+            </View>
+
+            <View style={styles.fieldSection}>
+              <Text style={styles.title}>Protein</Text>
+              <View style={styles.infoContainer}>
+                {isEditable?(
+                <TextInput
+                  value={protein}
+                  placeholder='Add food protein'
+                  onChangeText={setProtein}
+                  keyboardType='numeric'
+                  editable = {isEditable}
+                />
+                ):(
+                  <Text style={styles.textInput}>{protein}</Text>
+                )}
+                <Text style={styles.unit}>g</Text>
+              </View>
+            </View>
+
+
         </View>
-
-        
-      </ScrollView>
-    </SafeAreaView>
+        </ScrollView>
+      </SafeAreaView>
+    </>
   );
 };
 
@@ -184,208 +269,76 @@ const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
   },
-  headerContainer: {
+
+  title:{
+    fontSize: 14,
+    paddingHorizontal:10,
+    fontFamily: 'poppins-medium',
+  },
+  
+  h3:{
+    fontSize:14,
+    paddingHorizontal: 10,
+    color: 'gray',
+    marginTop: 8,
+  },
+
+  textBox:{
+    paddingVertical: 10,
+  },
+  
+  fieldSection: {
+    borderBottomColor: '#d9d9d9',
+    borderBottomWidth: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    fontFamily: 'Poppins',
+    paddingVertical: 16,
+    
+    // paddingVertical: 1,
+    // paddingLeft: 10,
+  },
+  
+  itemContainer: {
+    backgroundColor: 'white',
+    paddingHorizontal: 16,
+  },
+
+  ingredientsInput: {
+    borderColor: 'gray',
+    paddingHorizontal: 90,
+    paddingVertical: 5,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+
+  factContainer: {
+    backgroundColor: 'white',
+    paddingHorizontal: 16,
+    marginTop: 20,
+  },
+
+  infoContainer: {
+    flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#E58B68',
-    paddingHorizontal: 15,
-    paddingVertical: 10,
   },
-  headerTitle: {
-    fontSize: 17,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
+
+  h1:{
+    fontFamily: 'poppins-semiBold'
   },
-  headerRightText: {
-    fontFamily: 'Poppins-SemiBold',
+  
+  unit: {
     fontSize: 14,
-    color: 'white',
-  },
-  imageUploadContainer: {
-    alignItems: 'center',
-    height: 200,
-    borderColor: '#000000',
-    borderWidth: 2,
-    borderRadius: 15,
-    borderStyle: 'dotted',
-    marginTop: 10,
-    width: '100%',
+    color: 'gray',
+    paddingHorizontal: 5,
   },
   image: {
-    width: '100%',
-    height: '100%',
-  },
-  uploadBtnContainer: {
-    position: 'absolute',
-    right: 0,
-    bottom: 0,
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  uploadBtn: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  uploadIcon: {
-    width: 30,
-    height: 30,
-    marginBottom: 10,
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    paddingBottom: 2,
+    width: 150,
+    height: 150,
+    borderRadius: 10,
     marginVertical: 10,
-    width: '100%',
-  },
-  input: {
-    fontFamily: 'Poppins',
-    flex: 1,
-    height: 50,
-    backgroundColor: '#fff',
-    paddingVertical: 1,
-    paddingLeft: 5,
-    borderColor: '#E58B68',
-    borderWidth: 1,
-    borderRadius: 15,
-    fontSize: 18,
-    color: 'rgba(0,0,0,0.5)',
-  },
-  containerBox: {
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    paddingHorizontal: 10,
-    marginBottom: 10,
-    borderColor: '#E58B68',
-    borderWidth: 1,
-    borderRadius: 15,
-    width: '100%',
-  },
-  servescooktimeContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 12,
-    marginBottom: 16,
-  },
-  servesButtonsContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginLeft: 64,
-  },
-  labelText: {
-    fontFamily: 'Poppins',
-    fontSize: 18,
-    fontWeight: '500',
-    color: '#000000',
-    marginRight: 10,
-  },
-  labelText2: {
-    fontFamily: 'Poppins',
-    fontSize: 18,
-    color: '#000000',
-    fontWeight: 'bold',
-    marginRight: 10,
-  },
-  servesText: {
-    fontFamily: 'Poppins',
-    fontSize: 16,
-    color: '#333',
-    marginHorizontal: 10,
-    borderWidth: 1,
-    borderColor: '#E58B68',
-    borderRadius: 8,
-    padding: 6,
-  },
-  plusminusSymbol: {
-    fontSize: 25,
-    color: '#FFF',
-    fontWeight: 'bold',
-  },
-  plusminusButton: {
-    backgroundColor: '#E58B68',
-    borderRadius: 8,
-    width: 30,
-    height: 30,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  people: {
-    fontFamily: 'Poppins',
-    fontSize: 16,
-    color: '#333',
-    marginLeft: 10,
-  },
-  cooktimeContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 12,
-    marginBottom: 16,
-  },
-  pickerContainer: {
-    flexDirection: 'row',
-  },
-  picker: {
-    flex: 1,
-    height: 50,
-  },
-  selectTimeButton: {
-    fontFamily: 'Poppins',
-    backgroundColor: '#fff',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-    marginTop: 10,
-    borderColor: '#E58B68',
-    borderWidth: 1,
-    marginLeft: 41,
-  },
-  selectTimeButtonText: {
-    color: '#000000',
-    fontSize: 16,
-    fontFamily: 'Poppins',
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    backgroundColor: '#FFF',
-    padding: 20,
-    borderRadius: 10,
-    elevation: 5,
-    width: '80%',
-  },
-  addIngredientButton: {
-    alignSelf: 'stretch',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 10,
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  addIngredientButtonText: {
-    color: '#333',
-    fontSize: 17,
-    fontFamily: 'Poppins',
-  },
-  addMethodButton: {
-    alignSelf: 'stretch',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 10,
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  addMethodButtonText: {
-    color: '#000000',
-    fontSize: 17,
-    fontFamily: 'Poppins',
-  },
+  }
+
 });
 
 export default EditMenuPage;

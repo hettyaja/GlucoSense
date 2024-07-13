@@ -1,25 +1,21 @@
 //Food BP 
 import React, { useState, useEffect } from 'react';
-import { router, Tabs } from 'expo-router';
+import { router, Tabs, useLocalSearchParams } from 'expo-router';
 import { View, Text, ScrollView, TouchableOpacity, TextInput, StyleSheet, Alert } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MenuCard from '../../components/MenuCard';
-import { db } from '../../../firebase';  // Adjust the path as necessary
 import {fetchMenuData} from '../../service/menuService';
-import { useAuth } from '../../service/AuthContext';
 import DeleteMenuController from '../../Controller/DeleteMenuController';
-
+import { useAuth } from '../../service/AuthContext';
+import UpdateMenuController from '../../Controller/UpdateMenuController';
 
 const foodBP = () => {
   const {user} = useAuth()
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedMenu, setSelectedMenu] = useState('');
-  const [modalVisible ,setModalVisible] = useState('');
   const [menuData, setMenuData] = useState([]);
 
   useEffect(() => {
-
     const menuItem = async () => {
       if(user){
       try {
@@ -97,7 +93,7 @@ const foodBP = () => {
         <ScrollView contentContainerStyle={{ padding: 20 }}>
           {menuData.map((menu) => (
             <View key={menu.id} style={styles.menuCard}>
-              <MenuCard menu={menu} onDelete={()=> confirmDelete(menu)} onEdit={() => hafndleEdit(menu)} />
+              <MenuCard menu={menu} onDelete={()=> confirmDelete(menu)} onEdit={() => handleEdit(menu)} />
             </View>
           ))}
         </ScrollView>
