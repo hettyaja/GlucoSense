@@ -18,7 +18,7 @@ export const DietPlanProvider = ({ children }) => {
   };
 
   return (
-    <DietPlanContext.Provider value={{ dietPlans, addDietPlan, updateDietPlan, removeDietPlan }}>
+    <DietPlanContext.Provider value={{ dietPlans, setDietPlans, addDietPlan, updateDietPlan, removeDietPlan }}>
       {children}
     </DietPlanContext.Provider>
   );

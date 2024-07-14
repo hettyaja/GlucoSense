@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { doc, deleteDoc } from 'firebase/firestore';
+import { db } from '../firebase';
 
 const DietPlanCard = ({ dietPlan, onEdit, onDelete }) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -10,10 +12,28 @@ const DietPlanCard = ({ dietPlan, onEdit, onDelete }) => {
     onEdit(dietPlan);
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     setModalVisible(false);
-    onDelete(dietPlan.id);
+    try {
+      const dietPlanDoc = doc(db, `businessPartner/${dietPlan.userId}/dietplan`, dietPlan.id);
+      await deleteDoc(dietPlanDoc);
+      onDelete(dietPlan.id);
+    } catch (error) {
+      console.error("Error deleting document: ", error);
+    }
   };
+
+  const renderMeal = (meal) => (
+    <View style={styles.meal}>
+      <Text style={styles.mealTitle}>{meal.title || 'No Title'}</Text>
+      {meal.image && <Image source={{ uri: meal.image }} style={styles.mealImage} />}
+      <Text style={styles.mealDetails}>{meal.description || 'No Description'}</Text>
+      <Text style={styles.mealDetails}>{meal.ingredients || 'No Ingredients'}</Text>
+    </View>
+  );
+
+  const lunch = dietPlan.meals?.lunch || {};
+  const dinner = dietPlan.meals?.dinner || {};
 
   return (
     <View style={styles.card}>
@@ -41,20 +61,8 @@ const DietPlanCard = ({ dietPlan, onEdit, onDelete }) => {
           </View>
         </View>
       </Modal>
-      <View style={styles.meal}>
-        <Text style={styles.mealTitle}>Lunch</Text>
-        {dietPlan.meals.lunch.image && <Image source={{ uri: dietPlan.meals.lunch.image }} style={styles.mealImage} />}
-        <Text style={styles.mealDetails}>{dietPlan.meals.lunch.title}</Text>
-        <Text style={styles.mealDetails}>{dietPlan.meals.lunch.description}</Text>
-        <Text style={styles.mealDetails}>{dietPlan.meals.lunch.ingredients}</Text>
-      </View>
-      <View style={styles.meal}>
-        <Text style={styles.mealTitle}>Dinner</Text>
-        {dietPlan.meals.dinner.image && <Image source={{ uri: dietPlan.meals.dinner.image }} style={styles.mealImage} />}
-        <Text style={styles.mealDetails}>{dietPlan.meals.dinner.title}</Text>
-        <Text style={styles.mealDetails}>{dietPlan.meals.dinner.description}</Text>
-        <Text style={styles.mealDetails}>{dietPlan.meals.dinner.ingredients}</Text>
-      </View>
+      {renderMeal(lunch)}
+      {renderMeal(dinner)}
     </View>
   );
 };

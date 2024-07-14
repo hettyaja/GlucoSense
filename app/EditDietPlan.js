@@ -1,13 +1,15 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 import { SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, Image, ScrollView } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { DietPlanContext } from './context/DietPlanContext';
 import { Picker } from '@react-native-picker/picker';
 import { Stack, useRouter, useLocalSearchParams } from 'expo-router';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { doc, updateDoc } from 'firebase/firestore';
+import { db } from '../firebase';
 
 const EditDietPlan = () => {
-  const { dietPlan: dietPlanStr } = useLocalSearchParams();
+  const { dietPlan: dietPlanStr, userId } = useLocalSearchParams();
   const dietPlan = JSON.parse(dietPlanStr);
   const { updateDietPlan } = useContext(DietPlanContext);
   const [day, setDay] = useState(dietPlan.day);
@@ -40,7 +42,7 @@ const EditDietPlan = () => {
     }
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const updatedDietPlan = {
       ...dietPlan,
       day,
@@ -59,8 +61,14 @@ const EditDietPlan = () => {
         },
       },
     };
-    updateDietPlan(updatedDietPlan);
-    router.push('Boundary/planBP'); // Ensure this path is correct
+    try {
+      const dietPlanDoc = doc(db, `businessPartner/${userId}/dietplan`, dietPlan.id);
+      await updateDoc(dietPlanDoc, updatedDietPlan);
+      updateDietPlan(updatedDietPlan);
+      router.push('/Boundary/planBP');
+    } catch (error) {
+      console.error("Error updating document: ", error);
+    }
   };
 
   return (

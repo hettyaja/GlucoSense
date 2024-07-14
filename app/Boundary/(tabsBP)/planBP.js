@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
 import { DietPlanContext } from '../../context/DietPlanContext';
 import DietPlanCard from '../../DietPlanCard';
@@ -6,12 +6,49 @@ import Calendar from '../../Calendar';
 import moment from 'moment';
 import { Tabs, useRouter } from 'expo-router';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { collection, getDocs } from 'firebase/firestore';
+import { db, auth } from '../../../firebase';
+import { onAuthStateChanged } from 'firebase/auth';
 
 const planBP = () => {
-  const { dietPlans, removeDietPlan } = useContext(DietPlanContext);
+  const { dietPlans, setDietPlans, removeDietPlan } = useContext(DietPlanContext);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+  const [userId, setUserId] = useState(null);
   const router = useRouter();
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUserId(user.uid);
+      } else {
+        setUserId(null);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (userId) {
+      const fetchData = async () => {
+        try {
+          const dietPlanCollection = collection(db, `businessPartner/${userId}/dietplan`);
+          const dietPlanSnapshot = await getDocs(dietPlanCollection);
+          const dietPlansData = dietPlanSnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data(),
+            meals: doc.data().meals || { lunch: {}, dinner: {} },
+          }));
+          setDietPlans(dietPlansData);
+        } catch (error) {
+          console.error("Error fetching diet plans: ", error);
+        }
+      };
+
+      fetchData();
+    }
+  }, [userId, setDietPlans]);
 
   const handleConfirm = ({ startDate, endDate }) => {
     setStartDate(startDate);
@@ -28,7 +65,7 @@ const planBP = () => {
   const handleEdit = (dietPlan) => {
     router.push({
       pathname: '/EditDietPlan',
-      params: { dietPlan: JSON.stringify(dietPlan) },
+      params: { dietPlan: JSON.stringify(dietPlan), userId },
     });
   };
 

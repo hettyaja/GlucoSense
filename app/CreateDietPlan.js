@@ -5,6 +5,8 @@ import { DietPlanContext } from './context/DietPlanContext';
 import { Picker } from '@react-native-picker/picker';
 import { Stack, useRouter } from 'expo-router';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { collection, addDoc } from 'firebase/firestore';
+import { db, auth } from '../firebase';
 
 const CreateDietPlan = () => {
   const { addDietPlan } = useContext(DietPlanContext);
@@ -38,9 +40,9 @@ const CreateDietPlan = () => {
     }
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
+    const user = auth.currentUser;
     const newDietPlan = {
-      id: Date.now().toString(),
       day,
       meals: {
         lunch: {
@@ -57,17 +59,25 @@ const CreateDietPlan = () => {
         },
       },
     };
-    addDietPlan(newDietPlan);
-    router.push('Boundary/planBP'); // Ensure this path is correct
+    try {
+      const dietPlanCollection = collection(db, `businessPartner/${user.uid}/dietplan`);
+      const docRef = await addDoc(dietPlanCollection, newDietPlan);
+      newDietPlan.id = docRef.id; // Store the Firestore generated ID
+      newDietPlan.userId = user.uid; // Store the userId in the diet plan
+      addDietPlan(newDietPlan);
+      router.push('/Boundary/planBP'); // Ensure this path is correct
+    } catch (error) {
+      console.error("Error adding document: ", error);
+    }
   };
 
   return (
     <>
       <Stack.Screen options={{
-        title: 'Create Menu & Recipe',
+        title: 'Create diet plan',
         headerStyle: { backgroundColor: '#E58B68' },
         headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold'},
-        headerTitle: 'Create Menu & Recipe',
+        headerTitle: 'Create diet plan',
         headerTitleAlign: 'center',
         headerLeft: () => (
           <TouchableOpacity onPress={() => router.back()}>
