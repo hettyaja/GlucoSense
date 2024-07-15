@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, TextInput } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { DietPlanContext } from './context/DietPlanContext';
-import DietPlanCard from './DietPlanCard';
+import DietPlanCard from './Boundary/DietPlanCard';
 import Calendar from './Calendar';
 import moment from 'moment';
 

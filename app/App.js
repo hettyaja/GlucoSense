@@ -2,7 +2,7 @@ import React from 'react';
 import { DietPlanProvider } from './DietPlanContext';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import CreateDietPlan from './CreateDietPlan';
+import CreateDietPlan from './Boundary/CreateDietPlan';
 import ViewAndSearchDietPlan from './ViewAndSearchDietPlan';
 import Subscribe from './Boundary/Subscribe';
 import { MenuProvider } from 'react-native-popup-menu';

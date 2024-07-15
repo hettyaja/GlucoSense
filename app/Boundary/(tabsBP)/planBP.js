@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
 import { DietPlanContext } from '../../context/DietPlanContext';
-import DietPlanCard from '../../DietPlanCard';
+import DietPlanCard from '../DietPlanCard';
 import Calendar from '../../Calendar';
 import moment from 'moment';
 import { Tabs, useRouter } from 'expo-router';
@@ -64,7 +64,7 @@ const planBP = () => {
 
   const handleEdit = (dietPlan) => {
     router.push({
-      pathname: '/EditDietPlan',
+      pathname: '/Boundary/EditDietPlan',
       params: { dietPlan: JSON.stringify(dietPlan), userId },
     });
   };
@@ -78,7 +78,7 @@ const planBP = () => {
         headerTitle: 'Diet Plan',
         headerTitleAlign: 'center',
         headerRight: () => (
-          <TouchableOpacity onPress={() => router.push('/CreateDietPlan')} style={{ marginRight: 16 }}>
+          <TouchableOpacity onPress={() => router.push('/Boundary/CreateDietPlan')} style={{ marginRight: 16 }}>
             <MaterialIcons name='add' size={32} color='white'/>
           </TouchableOpacity>
         )

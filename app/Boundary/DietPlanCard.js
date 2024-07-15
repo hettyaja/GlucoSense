@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { doc, deleteDoc } from 'firebase/firestore';
-import { db } from '../firebase';
-import { useAuth } from './service/AuthContext';
+import { db } from '../../firebase';
+import { useAuth } from '../service/AuthContext';
 
 const DietPlanCard = ({ dietPlan, onEdit, onDelete }) => {
   const { user } = useAuth()
