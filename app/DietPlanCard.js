@@ -3,8 +3,10 @@ import { View, Text, Image, StyleSheet, TouchableOpacity, Modal } from 'react-na
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { doc, deleteDoc } from 'firebase/firestore';
 import { db } from '../firebase';
+import { useAuth } from './service/AuthContext';
 
 const DietPlanCard = ({ dietPlan, onEdit, onDelete }) => {
+  const { user } = useAuth()
   const [modalVisible, setModalVisible] = useState(false);
 
   const handleEdit = () => {
@@ -15,7 +17,7 @@ const DietPlanCard = ({ dietPlan, onEdit, onDelete }) => {
   const handleDelete = async () => {
     setModalVisible(false);
     try {
-      const dietPlanDoc = doc(db, `businessPartner/${dietPlan.userId}/dietplan`, dietPlan.id);
+      const dietPlanDoc = doc(db, `businessPartner/${user.uid}/dietplan`, dietPlan.id);
       await deleteDoc(dietPlanDoc);
       onDelete(dietPlan.id);
     } catch (error) {
