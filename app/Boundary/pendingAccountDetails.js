@@ -1,65 +1,87 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { db } from '../../firebase'; // Import the Firestore instance
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { db } from '../service/firebase';
 
 const PendingAccountDetails = () => {
-  const { id } = useLocalSearchParams();
+  const { accountId } = useLocalSearchParams();
   const [accountDetails, setAccountDetails] = useState(null);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
     const fetchAccountDetails = async () => {
       try {
-        const accountDoc = await getDoc(doc(db, 'pendingAccounts', id));
-        if (accountDoc.exists()) {
-          setAccountDetails(accountDoc.data());
+        const docRef = doc(db, 'businessPartners', accountId);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setAccountDetails(docSnap.data());
+        } else {
+          console.log("No such document!");
         }
       } catch (error) {
         console.error("Error fetching account details: ", error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchAccountDetails();
-  }, [id]);
-
-  const handleReject = async () => {
-    try {
-      await updateDoc(doc(db, 'pendingAccounts', id), { status: 'Rejected' });
-      router.back();
-    } catch (error) {
-      console.error("Error updating account status: ", error);
-    }
-  };
+  }, [accountId]);
 
   const handleAccept = async () => {
     try {
-      await updateDoc(doc(db, 'pendingAccounts', id), { status: 'Active' });
+      const docRef = doc(db, 'businessPartners', accountId);
+      await updateDoc(docRef, {
+        status: 'Active'
+      });
       router.back();
     } catch (error) {
-      console.error("Error updating account status: ", error);
+      console.error("Error accepting account: ", error);
     }
   };
+
+  const handleReject = async () => {
+    try {
+      const docRef = doc(db, 'businessPartners', accountId);
+      await updateDoc(docRef, {
+        status: 'Rejected'
+      });
+      router.back();
+    } catch (error) {
+      console.error("Error rejecting account: ", error);
+    }
+  };
+
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.loadingText}>Loading...</Text>
+      </View>
+    );
+  }
 
   if (!accountDetails) {
     return (
       <View style={styles.container}>
-        <Text>Loading...</Text>
+        <Text style={styles.loadingText}>No Account Details Found</Text>
       </View>
     );
   }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.headerText}>Account Details</Text>
-      <View style={styles.detailsContainer}>
-        <Text>{`Username: ${accountDetails.username}`}</Text>
-        <Text>{`Registered: ${new Date(accountDetails.registerTime.seconds * 1000).toLocaleDateString()}`}</Text>
-        <Text>{`Status: ${accountDetails.status}`}</Text>
-        {/* Display other account details as needed */}
+      <View style={styles.header}>
+        <Text style={styles.headerText}>Pending Account</Text>
       </View>
-      <View style={styles.buttonsContainer}>
+      <View style={styles.detailsContainer}>
+        <Text style={styles.detailsText}>Username: {accountDetails.username}</Text>
+        <Text style={styles.detailsText}>Stall Name: {accountDetails.stallName}</Text>
+        <Text style={styles.detailsText}>Registered: {new Date(accountDetails.registered.seconds * 1000).toLocaleDateString()}</Text>
+        <Text style={styles.detailsText}>Status: {accountDetails.status}</Text>
+      </View>
+      <View style={styles.actionsContainer}>
         <TouchableOpacity style={styles.rejectButton} onPress={handleReject}>
           <Text style={styles.buttonText}>Reject</Text>
         </TouchableOpacity>
@@ -74,34 +96,55 @@ const PendingAccountDetails = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
     backgroundColor: '#fff',
+  },
+  header: {
+    backgroundColor: '#D9A37E',
+    padding: 16,
   },
   headerText: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 16,
+    color: '#fff',
+    textAlign: 'center',
   },
   detailsContainer: {
-    marginBottom: 32,
+    padding: 16,
   },
-  buttonsContainer: {
+  detailsText: {
+    fontSize: 16,
+    marginBottom: 8,
+  },
+  actionsContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
+    padding: 16,
   },
   rejectButton: {
     backgroundColor: 'red',
     padding: 16,
     borderRadius: 8,
+    alignItems: 'center',
+    flex: 1,
+    marginRight: 8,
   },
   acceptButton: {
     backgroundColor: 'green',
     padding: 16,
     borderRadius: 8,
+    alignItems: 'center',
+    flex: 1,
+    marginLeft: 8,
   },
   buttonText: {
     color: '#fff',
+    fontSize: 16,
     fontWeight: 'bold',
+  },
+  loadingText: {
+    fontSize: 18,
+    textAlign: 'center',
+    marginTop: 20,
   },
 });
 
