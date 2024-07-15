@@ -1,8 +1,11 @@
 import React from 'react';
 import { Tabs, Stack } from 'expo-router';
 import PartnerSA from './(tabsSA)/partnerSA';
-import PendingAccountList from './(tabsSA)/pendingAccountList';
-import PendingAccountDetails from './(tabsSA)/pendingAccountDetails';
+import PendingAccountList from './pendingAccountList';
+import PendingAccountDetails from './pendingAccountDetails';
+import InsightSA from './(tabsSA)/insightSA';
+import SettingSA from './(tabsSA)/settingSA';
+import UserSA from './(tabsSA)/userSA';
 
 const _layout = () => {
   return (
@@ -10,10 +13,10 @@ const _layout = () => {
       <Stack.Screen name="(tabs)" options={{ headerShown: false }}>
         {() => (
           <Tabs>
-            <Tabs.Screen name="insightSA" options={{ headerShown: false }} />
-            <Tabs.Screen name="partnerSA" options={{ headerShown: false }} />
-            <Tabs.Screen name="settingSA" options={{ headerShown: false }} />
-            <Tabs.Screen name="userSA" options={{ headerShown: false }} />
+            <Tabs.Screen name="insightSA" component={InsightSA} options={{ headerShown: false }} />
+            <Tabs.Screen name="partnerSA" component={PartnerSA} options={{ headerShown: false }} />
+            <Tabs.Screen name="settingSA" component={SettingSA} options={{ headerShown: false }} />
+            <Tabs.Screen name="userSA" component={UserSA} options={{ headerShown: false }} />
           </Tabs>
         )}
       </Stack.Screen>
