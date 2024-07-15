@@ -9,12 +9,16 @@ export const DietPlanProvider = ({ children }) => {
     setDietPlans([...dietPlans, dietPlan]);
   };
 
+  const updateDietPlan = (updatedDietPlan) => {
+    setDietPlans(dietPlans.map(dietPlan => dietPlan.id === updatedDietPlan.id ? updatedDietPlan : dietPlan));
+  };
+
   const removeDietPlan = (id) => {
     setDietPlans(dietPlans.filter((dietPlan) => dietPlan.id !== id));
   };
 
   return (
-    <DietPlanContext.Provider value={{ dietPlans, addDietPlan, removeDietPlan }}>
+    <DietPlanContext.Provider value={{ dietPlans, setDietPlans, addDietPlan, updateDietPlan, removeDietPlan }}>
       {children}
     </DietPlanContext.Provider>
   );

@@ -4,6 +4,7 @@ import { Picker } from '@react-native-picker/picker';
 import FetchUsersController from '../../Controller/FetchUsersController';
 import SuspendUserController from '../../Controller/SuspendUserController';
 import UnsuspendUserController from '../../Controller/UnsuspendUserController';
+import Header from '../../components/Header';
 
 const UserSA = () => {
   const [filter, setFilter] = useState('');
@@ -77,10 +78,11 @@ const UserSA = () => {
   );
 
   return (
+    <>
+    <Header
+      title="User Account"
+    />
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>User Account</Text>
-      </View>
       <View style={styles.searchBar}>
         <TextInput
           style={styles.searchInput}
@@ -151,6 +153,7 @@ const UserSA = () => {
         </Modal>
       )}
     </View>
+    </>
   );
 };
 

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../../../firebase'; // Ensure this path is correct
+import Header from '../../components/Header';
 
 const InsightSA = () => {
   const [totalUsers, setTotalUsers] = useState(0);
@@ -35,10 +36,11 @@ const InsightSA = () => {
   }, []);
 
   return (
+    <>
+    <Header
+      title="Insight"
+    />
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Insight</Text>
-      </View>
       <View style={styles.cardsContainer}>
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Total Users</Text>
@@ -54,6 +56,7 @@ const InsightSA = () => {
         </View>
       </View>
     </View>
+    </>
   );
 };
 

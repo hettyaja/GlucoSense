@@ -3,22 +3,24 @@ import { SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, Imag
 import * as ImagePicker from 'expo-image-picker';
 import { DietPlanContext } from './context/DietPlanContext';
 import { Picker } from '@react-native-picker/picker';
-import { Stack, useRouter } from 'expo-router';
+import { Stack, useRouter, useLocalSearchParams } from 'expo-router';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { collection, addDoc } from 'firebase/firestore';
-import { db, auth } from '../firebase';
+import { doc, updateDoc } from 'firebase/firestore';
+import { db } from '../firebase';
 
-const CreateDietPlan = () => {
-  const { addDietPlan } = useContext(DietPlanContext);
-  const [day, setDay] = useState('');
-  const [lunchImage, setLunchImage] = useState(null);
-  const [dinnerImage, setDinnerImage] = useState(null);
-  const [lunchTitle, setLunchTitle] = useState('');
-  const [dinnerTitle, setDinnerTitle] = useState('');
-  const [lunchDescription, setLunchDescription] = useState('');
-  const [dinnerDescription, setDinnerDescription] = useState('');
-  const [lunchIngredients, setLunchIngredients] = useState('');
-  const [dinnerIngredients, setDinnerIngredients] = useState('');
+const EditDietPlan = () => {
+  const { dietPlan: dietPlanStr, userId } = useLocalSearchParams();
+  const dietPlan = JSON.parse(dietPlanStr);
+  const { updateDietPlan } = useContext(DietPlanContext);
+  const [day, setDay] = useState(dietPlan.day);
+  const [lunchImage, setLunchImage] = useState(dietPlan.meals.lunch.image);
+  const [dinnerImage, setDinnerImage] = useState(dietPlan.meals.dinner.image);
+  const [lunchTitle, setLunchTitle] = useState(dietPlan.meals.lunch.title);
+  const [dinnerTitle, setDinnerTitle] = useState(dietPlan.meals.dinner.title);
+  const [lunchDescription, setLunchDescription] = useState(dietPlan.meals.lunch.description);
+  const [dinnerDescription, setDinnerDescription] = useState(dietPlan.meals.dinner.description);
+  const [lunchIngredients, setLunchIngredients] = useState(dietPlan.meals.lunch.ingredients);
+  const [dinnerIngredients, setDinnerIngredients] = useState(dietPlan.meals.dinner.ingredients);
   const router = useRouter();
 
   const addImage = async (setImage) => {
@@ -41,8 +43,8 @@ const CreateDietPlan = () => {
   };
 
   const handleSave = async () => {
-    const user = auth.currentUser;
-    const newDietPlan = {
+    const updatedDietPlan = {
+      ...dietPlan,
       day,
       meals: {
         lunch: {
@@ -60,24 +62,22 @@ const CreateDietPlan = () => {
       },
     };
     try {
-      const dietPlanCollection = collection(db, `businessPartner/${user.uid}/dietplan`);
-      const docRef = await addDoc(dietPlanCollection, newDietPlan);
-      newDietPlan.id = docRef.id; // Store the Firestore generated ID
-      newDietPlan.userId = user.uid; // Store the userId in the diet plan
-      addDietPlan(newDietPlan);
-      router.push('/Boundary/planBP'); // Ensure this path is correct
+      const dietPlanDoc = doc(db, `businessPartner/${userId}/dietplan`, dietPlan.id);
+      await updateDoc(dietPlanDoc, updatedDietPlan);
+      updateDietPlan(updatedDietPlan);
+      router.push('/Boundary/planBP');
     } catch (error) {
-      console.error("Error adding document: ", error);
+      console.error("Error updating document: ", error);
     }
   };
 
   return (
     <>
       <Stack.Screen options={{
-        title: 'Create diet plan',
+        title: 'Edit Diet Plan',
         headerStyle: { backgroundColor: '#E58B68' },
         headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold'},
-        headerTitle: 'Create diet plan',
+        headerTitle: 'Edit Diet Plan',
         headerTitleAlign: 'center',
         headerLeft: () => (
           <TouchableOpacity onPress={() => router.back()}>
@@ -86,7 +86,7 @@ const CreateDietPlan = () => {
         ),
         headerRight: () => (
           <TouchableOpacity onPress={handleSave}>
-            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 14, color: 'white' }}>Publish</Text>
+            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 14, color: 'white' }}>Save</Text>
           </TouchableOpacity>
         ),
       }}/>
@@ -161,4 +161,4 @@ const styles = StyleSheet.create({
   label: { fontSize: 16, marginBottom: 5 },
 });
 
-export default CreateDietPlan;
+export default EditDietPlan;

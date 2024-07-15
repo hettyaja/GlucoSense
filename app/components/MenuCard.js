@@ -1,6 +1,6 @@
 // MenuCard.js
 import React from 'react';
-import { View, Text, Image, StyleSheet, Alert } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import PropTypes from 'prop-types';
 import { router } from 'expo-router';
 import PopupMenu from './PopupMenu';
@@ -12,10 +12,8 @@ const MenuCard = ({ menu, onDelete , onEdit}) => {
 
   const {user} = useAuth()
 
-
-
-
   return (
+    <TouchableOpacity onPress={() => router.push({ pathname: 'Boundary/EditMenuPage', params: { menuData: JSON.stringify(menu) } })}>      
     <View style={styles.card}>
       {menu.image && <Image source={{ uri: menu.image }} style={styles.image} />}
       <View style={styles.infoContainer}>
@@ -24,22 +22,22 @@ const MenuCard = ({ menu, onDelete , onEdit}) => {
         <Text style={styles.sold}>Sold: {menu.status}</Text>
         {menu.isSoldOut && <Text style={styles.soldOut}>Sold Out</Text>}
       </View>
-      <View style={{ paddingTop: 10, marginLeft:20, paddingRight:8}}>
-        <PopupMenu 
-          onEdit={()=> onEdit(menu)}
-          onDelete={()=> onDelete(menu.id)}
+      <View style={{ paddingTop: 10, marginLeft: 20, paddingRight: 8 }}>
+        <PopupMenu
+          onEdit={() => onEdit(menu)}
+          onDelete={() => onDelete(menu.id)}
         />
-        </View>
+      </View>
     </View>
-  );
+  </TouchableOpacity>
+);
 };
 
 MenuCard.propTypes = {
   menu: PropTypes.shape({
     image: PropTypes.string,
-    title: PropTypes.string.isRequired,
+    foodName: PropTypes.string.isRequired,
     price: PropTypes.number.isRequired,
-    sold: PropTypes.number.isRequired,
     isSoldOut: PropTypes.bool,
   }).isRequired,
   onDelete: PropTypes.func.isRequired,

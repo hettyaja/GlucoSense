@@ -1,20 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, FlatList } from 'react-native';
-import { db } from '../../../firebase'; // Import the Firestore instance
-import { collection, getDocs } from 'firebase/firestore';
+import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from 'react-native';
+import { useRouter } from 'expo-router';
+import ViewBusinessPartnerController from '../../Controller/ViewBusinessPartnerController';
+import AntDesign from 'react-native-vector-icons/AntDesign'
+import Header from '../../components/Header';
 
 const PartnerSA = () => {
-  const [filter, setFilter] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [businessPartner, setBusinessPartner] = useState([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchBusinessPartners = async () => {
       try {
-        const businessPartnersCollection = await getDocs(collection(db, 'businessPartner'));
-        const businessPartnersData = businessPartnersCollection.docs.map(doc => ({ ...doc.data(), id: doc.id }));
-        setBusinessPartner(businessPartnersData);
+        const businessPartnerCollection = await ViewBusinessPartnerController.ViewBusinessPartner()
+        setBusinessPartner(businessPartnerCollection);
       } catch (error) {
         console.error("Error fetching business partners: ", error);
       } finally {
@@ -26,10 +27,7 @@ const PartnerSA = () => {
   }, []);
 
   const filteredBusinessPartners = businessPartner.filter(partner => {
-    return (
-      (filter ? partner.status === filter : true) &&
-      (searchQuery ? partner.username.toLowerCase().includes(searchQuery.toLowerCase()) : true)
-    );
+    return searchQuery ? partner.username.toLowerCase().includes(searchQuery.toLowerCase()) : true;
   });
 
   const renderBusinessPartnerItem = ({ item }) => (
@@ -42,10 +40,11 @@ const PartnerSA = () => {
   );
 
   return (
+    <>
+    <Header
+      title="Business Partner"
+    />
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Business Partner</Text>
-      </View>
       <View style={styles.searchBar}>
         <TextInput
           style={styles.searchInput}
@@ -53,13 +52,14 @@ const PartnerSA = () => {
           value={searchQuery}
           onChangeText={(text) => setSearchQuery(text)}
         />
-        <View style={styles.pendingContainer}>
-          <View style={styles.pendingSquare} />
+        <TouchableOpacity style={styles.pendingContainer} onPress={() => router.push('/Boundary/pendingAccountList')}>
+          {/* <View style={styles.pendingSquare} /> */}
+          <AntDesign name="form" size='24'/>
           <Text style={styles.pendingText}>Pending</Text>
-        </View>
+        </TouchableOpacity>
       </View>
       <View style={styles.tableHeader}>
-        <Text style={styles.tableHeaderCell}>Name</Text>
+        <Text style={styles.tableHeaderCell}>Username</Text>
         <Text style={styles.tableHeaderCell}>Stall Name</Text>
         <Text style={styles.tableHeaderCell}>Registered</Text>
         <Text style={styles.tableHeaderCell}>Status</Text>
@@ -76,10 +76,11 @@ const PartnerSA = () => {
         <FlatList
           data={filteredBusinessPartners}
           renderItem={renderBusinessPartnerItem}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.username}
         />
       )}
     </View>
+    </>
   );
 };
 

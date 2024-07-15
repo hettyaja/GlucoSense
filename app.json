@@ -22,7 +22,8 @@
         "NSLocationWhenInUseUsageDescription": "Location data is required for Bluetooth functionality.",
         "NSPhotoLibraryUsageDescription": "This app needs access to your photo library to save exported files.",
         "NSPhotoLibraryAddUsageDescription": "This app needs access to add photos to your library.",
-        "NSCameraUsageDescription": "This app uses the camera to scan glucose meter screens."
+        "NSCameraUsageDescription": "This app uses the camera to scan glucose meter screens.",
+        "NSUserTrackingUsageDescription": "This identifier will be used to deliver personalized ads to you."
       }
     },
     "android": {
@@ -36,9 +37,13 @@
         "android.permission.BLUETOOTH_CONNECT",
         "android.permission.WRITE_EXTERNAL_STORAGE",
         "android.permission.READ_EXTERNAL_STORAGE",
-        "CAMERA"
+        "CAMERA",
+        "android.permission.RECEIVE_BOOT_COMPLETED",
+        "android.permission.VIBRATE",
+        "android.permission.WAKE_LOCK"
       ],
-      "package": "com.anonymous.GlucoSense"
+      "package": "com.anonymous.GlucoSense",
+      "useNextNotificationsApi": true
     },
     "scheme": "GlucoSense",
     "web": {
@@ -55,7 +60,8 @@
           "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
           "recordAudioAndroid": true
         }
-      ]
+      ],
+      "expo-notifications"
     ],
     "extra": {
       "router": {

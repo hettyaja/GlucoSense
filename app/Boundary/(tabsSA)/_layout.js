@@ -1,63 +1,62 @@
 import React from 'react';
-import { Text } from 'react-native'
+import { Text } from 'react-native';
 import { Tabs, Stack } from 'expo-router';
-import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons'
-import Ionicons from 'react-native-vector-icons/Ionicons'
-import Feather from 'react-native-vector-icons/Feather'
-import AntDesign from 'react-native-vector-icons/AntDesign'
+import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import Feather from 'react-native-vector-icons/Feather';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
 const _layout = () => {
   return (
     <Tabs>
-      <Tabs.Screen name='insightSA' options={{
-        headerShown:false,
-        title:'Insight',
+      <Tabs.Screen name="insightSA" options={{
+        headerShown: false,
+        title: 'Insight',
         tabBarIcon: () => (
-          <SimpleLineIcons name='graph' size={24} color='#E58B68'/>
+          <SimpleLineIcons name="graph" size={24} color="#E58B68" />
         ),
         tabBarLabel: ({ focused }) => (
           <Text style={{ fontFamily: focused ? 'Poppins-SemiBold' : 'Poppins-Regular', color: '#E58B68' }}>
-              Insight
+            Insight
           </Text>
         ),
-      }}/>
-      
-      <Tabs.Screen name='userSA' options={{
-        headerShown:false,
-        title:'Users',
+      }} />
+      <Tabs.Screen name="userSA" options={{
+        headerShown: false,
+        title: 'Users',
         tabBarIcon: () => (
-          <Feather name='user' size={24} color='#E58B68'/>
+          <Feather name="user" size={24} color="#E58B68" />
         ),
         tabBarLabel: ({ focused }) => (
           <Text style={{ fontFamily: focused ? 'Poppins-SemiBold' : 'Poppins-Regular', color: '#E58B68' }}>
-              Users
+            Users
           </Text>
         ),
-      }}/>
-      <Tabs.Screen name='partnerSA' options={{
-        headerShown:false,
-        title:'Partners',
+      }} />
+      <Tabs.Screen name="partnerSA" options={{
+        headerShown: false,
+        title: 'Partners',
         tabBarIcon: () => (
-          <Ionicons name='storefront-outline' size={24} color='#E58B68'/>
+          <Ionicons name="storefront-outline" size={24} color="#E58B68" />
         ),
         tabBarLabel: ({ focused }) => (
           <Text style={{ fontFamily: focused ? 'Poppins-SemiBold' : 'Poppins-Regular', color: '#E58B68' }}>
-              Partners
+            Partners
           </Text>
         ),
-        }}/>
-      <Tabs.Screen name='settingSA' options={{
-        headerShown:false,
-        title:'Setting',
+      }} />
+      <Tabs.Screen name="settingSA" options={{
+        headerShown: false,
+        title: 'Setting',
         tabBarIcon: () => (
-          <AntDesign name='setting' size={24} color='#E58B68'/>
+          <AntDesign name="setting" size={24} color="#E58B68" />
         ),
         tabBarLabel: ({ focused }) => (
           <Text style={{ fontFamily: focused ? 'Poppins-SemiBold' : 'Poppins-Regular', color: '#E58B68' }}>
-              Setting
+            Setting
           </Text>
         ),
-        }} />
+      }} />
     </Tabs>
   );
 };

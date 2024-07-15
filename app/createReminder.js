@@ -1,32 +1,41 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Platform, Alert } from 'react-native';
 import Header from './components/Header';
 import { router } from 'expo-router';
 import RNNPickerSelect from 'react-native-picker-select';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import * as Notifications from 'expo-notifications';
-import { setReminder } from './service/reminderService';
 import { useAuth } from './service/AuthContext';
 import CreateReminderController from './Controller/CreateReminderController';
+import { Picker } from '@react-native-picker/picker';
 
+// Request notification permissions
+async function requestNotificationPermissions() {
+  const { status } = await Notifications.requestPermissionsAsync();
+  if (status !== 'granted') {
+    alert('Permission to access notifications was denied');
+  }
+}
+
+// Notification handler
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+});
 
 const createReminder = () => {
   const { user } = useAuth();
   const [selectedType, setSelectedType] = useState(null);
   const [selectedDay, setSelectedDay] = useState(null);
-  const [selectedTime, setselectedTime] = useState(new Date());
+  const [selectedTime, setSelectedTime] = useState(new Date());
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
   useEffect(() => {
     requestNotificationPermissions();
   }, []);
-
-  const requestNotificationPermissions = async () => {
-    const { status } = await Notifications.requestPermissionsAsync();
-    if (status !== 'granted') {
-      alert('Permission to access notifications was denied');
-    }
-  };
 
   const handleLeftButton = () => {
     router.back();
@@ -46,6 +55,7 @@ const createReminder = () => {
         router.replace('reminder');
       } catch (error) {
         console.error('Error saving reminder:', error);
+        Alert.alert('Error', 'An error occurred while saving the reminder.');
       }
     }
   };
@@ -60,13 +70,13 @@ const createReminder = () => {
       };
     } else {
       const dayMap = {
-        Sunday: 0,
-        Monday: 1,
-        Tuesday: 2,
-        Wednesday: 3,
-        Thursday: 4,
-        Friday: 5,
-        Saturday: 6,
+        Sunday: 1,
+        Monday: 2,
+        Tuesday: 3,
+        Wednesday: 4,
+        Thursday: 5,
+        Friday: 6,
+        Saturday: 7,
       };
       trigger = {
         weekday: dayMap[reminder.day],
@@ -96,7 +106,7 @@ const createReminder = () => {
   };
 
   const handleConfirm = (date) => {
-    setselectedTime(date);
+    setSelectedTime(date);
     console.warn("A date has been picked: ", date);
     hideDatePicker();
   };
@@ -130,11 +140,10 @@ const createReminder = () => {
                 onValueChange={(itemValue) => setSelectedType(itemValue)}
                 style={styles.picker}
                 itemStyle={styles.pickerItem}
-                mode='dropdown'
               >
-                <Picker.Item label="Glucose" value='Glucose' />
-                <Picker.Item label="Meal" value='Meal' />
-                <Picker.Item label="Medicine" value='Medicine' />
+                <Picker.Item label="Glucose" value="Glucose" />
+                <Picker.Item label="Meal" value="Meal" />
+                <Picker.Item label="Medicine" value="Medicine" />
               </Picker>
             )}
           </View>
@@ -161,16 +170,15 @@ const createReminder = () => {
                 onValueChange={(itemValue) => setSelectedDay(itemValue)}
                 style={styles.picker}
                 itemStyle={styles.pickerItem}
-                mode='dropdown'
               >
-                <Picker.Item label="Everyday" value='Everyday' />
-                <Picker.Item label="Monday" value='Monday' />
-                <Picker.Item label="Tuesday" value='Tuesday' />
-                <Picker.Item label="Wednesday" value='Wednesday' />
-                <Picker.Item label="Thursday" value='Thursday' />
-                <Picker.Item label="Friday" value='Friday' />
-                <Picker.Item label="Saturday" value='Saturday' />
-                <Picker.Item label="Sunday" value='Sunday' />
+                <Picker.Item label="Everyday" value="Everyday" />
+                <Picker.Item label="Monday" value="Monday" />
+                <Picker.Item label="Tuesday" value="Tuesday" />
+                <Picker.Item label="Wednesday" value="Wednesday" />
+                <Picker.Item label="Thursday" value="Thursday" />
+                <Picker.Item label="Friday" value="Friday" />
+                <Picker.Item label="Saturday" value="Saturday" />
+                <Picker.Item label="Sunday" value="Sunday" />
               </Picker>
             )}
           </View>
@@ -189,7 +197,7 @@ const createReminder = () => {
         onCancel={hideDatePicker}
       />
     </>
-  )
+  );
 }
 
 export default createReminder;
@@ -213,7 +221,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between'
   },
   picker: {
-    height: 55
+    height: 55,
+    width: 150, // Add width to ensure it's displayed properly
   },
   pickerItem: {
     height: 55,

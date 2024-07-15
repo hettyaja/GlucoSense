@@ -58,7 +58,7 @@ const getStartedPage_3 = () => {
 
           <Image source={ images.welcome3 } style={{width:70, height:10}}/>
 
-          <TouchableOpacity  onPress={() => router.push('Boundary/welcomePage')} >
+          <TouchableOpacity  onPress={() => router.replace('Boundary/welcomePage')} >
             <Ionicons name='chevron-forward-circle' size={56} color='#E58B68'/>
           </TouchableOpacity>
         </View>
