@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
-import { fetchPendingAccounts } from '../../controllers/businessController';
+import { db } from '../../firebase'; // Import the Firestore instance
+import { collection, getDocs } from 'firebase/firestore';
 
 const PendingAccountList = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -10,13 +11,19 @@ const PendingAccountList = () => {
   const router = useRouter();
 
   useEffect(() => {
-    const fetchData = async () => {
-      const data = await fetchPendingAccounts();
-      setPendingAccounts(data);
-      setLoading(false);
+    const fetchPendingAccounts = async () => {
+      try {
+        const pendingAccountsCollection = await getDocs(collection(db, 'pendingAccounts'));
+        const pendingAccountsData = pendingAccountsCollection.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+        setPendingAccounts(pendingAccountsData);
+      } catch (error) {
+        console.error("Error fetching pending accounts: ", error);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    fetchData();
+    fetchPendingAccounts();
   }, []);
 
   const filteredPendingAccounts = pendingAccounts.filter(account => {
@@ -53,7 +60,7 @@ const PendingAccountList = () => {
         <FlatList
           data={filteredPendingAccounts}
           renderItem={({ item }) => (
-            <TouchableOpacity style={styles.accountRow} onPress={() => router.push('/pendingAccountDetails', { id: item.id })}>
+            <TouchableOpacity style={styles.accountRow} onPress={() => router.push(`/pendingAccountDetails?id=${item.id}`)}>
               <Text style={styles.accountCell}>{item.username}</Text>
               <Text style={styles.accountCell}>{item.registerTime ? new Date(item.registerTime.seconds * 1000).toLocaleDateString() : 'N/A'}</Text>
               <Text style={[styles.accountCell, styles.pendingStatus]}>{item.status}</Text>
