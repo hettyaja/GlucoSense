@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
-import { fetchBusinessPartners } from '../../controllers/businessController';
+import { db } from '../../firebase'; // Import the Firestore instance
+import { collection, getDocs } from 'firebase/firestore';
 
 const PartnerSA = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -10,13 +11,19 @@ const PartnerSA = () => {
   const router = useRouter();
 
   useEffect(() => {
-    const fetchData = async () => {
-      const data = await fetchBusinessPartners();
-      setBusinessPartner(data);
-      setLoading(false);
+    const fetchBusinessPartners = async () => {
+      try {
+        const businessPartnersCollection = await getDocs(collection(db, 'businessPartners'));
+        const businessPartnersData = businessPartnersCollection.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+        setBusinessPartner(businessPartnersData);
+      } catch (error) {
+        console.error("Error fetching business partners: ", error);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    fetchData();
+    fetchBusinessPartners();
   }, []);
 
   const handlePendingClick = () => {
