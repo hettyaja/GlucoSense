@@ -1,49 +1,43 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from 'react-native';
-import { db } from '../../../firebase'; // Ensure the path is correct
-import { collection, getDocs } from 'firebase/firestore';
+import { useRouter } from 'expo-router';
+import { getBusinessPartners } from '../../controllers/businessPartnerController';
 
 const PartnerSA = () => {
   const [filter, setFilter] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
-  const [businessPartners, setBusinessPartners] = useState([]);
+  const [businessPartner, setBusinessPartner] = useState([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchBusinessPartners = async () => {
       try {
-        const businessPartnersCollection = await getDocs(collection(db, 'businessPartner'));
-        const businessPartnersData = businessPartnersCollection.docs.map(doc => ({ ...doc.data(), id: doc.id }));
-        setBusinessPartners(businessPartnersData);
+        const data = await getBusinessPartners();
+        setBusinessPartner(data);
       } catch (error) {
         console.error("Error fetching business partners: ", error);
       } finally {
         setLoading(false);
       }
     };
-
     fetchBusinessPartners();
   }, []);
 
-  const filteredBusinessPartners = businessPartners.filter(partner => {
-    const matchesStatus = filter ? partner.status === filter : true;
-    const matchesQuery = searchQuery
-      ? (partner.name?.toLowerCase().includes(searchQuery.toLowerCase()) || partner.entityName?.toLowerCase().includes(searchQuery.toLowerCase()))
-      : true;
-    return matchesStatus && matchesQuery;
+  const filteredBusinessPartners = businessPartner.filter(partner => {
+    return (
+      (filter ? partner.status === filter : true) &&
+      (searchQuery ? partner.username.toLowerCase().includes(searchQuery.toLowerCase()) : true)
+    );
   });
 
-  const handlePendingClick = () => {
-    setFilter(filter === 'pending' ? '' : 'pending');
-  };
-
   const renderBusinessPartnerItem = ({ item }) => (
-    <View style={styles.partnerRow}>
-      <Text style={styles.partnerCell}>{item.name || 'N/A'}</Text>
-      <Text style={styles.partnerCell}>{item.entityName || 'N/A'}</Text>
-      <Text style={styles.partnerCell}>{item.registerTime ? new Date(item.registerTime.seconds * 1000).toLocaleDateString() : 'N/A'}</Text>
+    <TouchableOpacity style={styles.partnerRow} onPress={() => router.push('/pendingAccountDetails', { item })}>
+      <Text style={styles.partnerCell}>{item.username}</Text>
+      <Text style={styles.partnerCell}>{item.stallName}</Text>
+      <Text style={styles.partnerCell}>{new Date(item.registered.seconds * 1000).toLocaleDateString()}</Text>
       <Text style={[styles.partnerCell, item.status === 'Active' ? styles.activeStatus : styles.pendingStatus]}>{item.status}</Text>
-    </View>
+    </TouchableOpacity>
   );
 
   return (
@@ -58,13 +52,13 @@ const PartnerSA = () => {
           value={searchQuery}
           onChangeText={(text) => setSearchQuery(text)}
         />
-        <TouchableOpacity onPress={handlePendingClick} style={styles.pendingContainer}>
-          <View style={[styles.pendingSquare, filter === 'Pending' && styles.pendingSquareActive]} />
+        <TouchableOpacity style={styles.pendingContainer} onPress={() => router.push('/pendingAccountList')}>
+          <View style={styles.pendingSquare} />
           <Text style={styles.pendingText}>Pending</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.tableHeader}>
-        <Text style={styles.tableHeaderCell}>Name</Text>
+        <Text style={styles.tableHeaderCell}>Username</Text>
         <Text style={styles.tableHeaderCell}>Stall Name</Text>
         <Text style={styles.tableHeaderCell}>Registered</Text>
         <Text style={styles.tableHeaderCell}>Status</Text>
@@ -127,9 +121,6 @@ const styles = StyleSheet.create({
     height: 20,
     backgroundColor: '#ccc',
     marginRight: 8,
-  },
-  pendingSquareActive: {
-    backgroundColor: '#000',
   },
   pendingText: {
     color: '#000',
