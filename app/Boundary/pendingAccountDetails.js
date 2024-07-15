@@ -1,20 +1,46 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
-import { fetchAccountDetails } from '../../controllers/businessController';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { db } from '../../firebase'; // Import the Firestore instance
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
 
 const PendingAccountDetails = () => {
   const { id } = useLocalSearchParams();
-  const [accountDetails, setAccountDetails] = React.useState(null);
+  const [accountDetails, setAccountDetails] = useState(null);
+  const router = useRouter();
 
-  React.useEffect(() => {
-    const fetchDetails = async () => {
-      const details = await fetchAccountDetails(id);
-      setAccountDetails(details);
+  useEffect(() => {
+    const fetchAccountDetails = async () => {
+      try {
+        const accountDoc = await getDoc(doc(db, 'pendingAccounts', id));
+        if (accountDoc.exists()) {
+          setAccountDetails(accountDoc.data());
+        }
+      } catch (error) {
+        console.error("Error fetching account details: ", error);
+      }
     };
 
-    fetchDetails();
+    fetchAccountDetails();
   }, [id]);
+
+  const handleReject = async () => {
+    try {
+      await updateDoc(doc(db, 'pendingAccounts', id), { status: 'Rejected' });
+      router.back();
+    } catch (error) {
+      console.error("Error updating account status: ", error);
+    }
+  };
+
+  const handleAccept = async () => {
+    try {
+      await updateDoc(doc(db, 'pendingAccounts', id), { status: 'Active' });
+      router.back();
+    } catch (error) {
+      console.error("Error updating account status: ", error);
+    }
+  };
 
   if (!accountDetails) {
     return (
@@ -23,14 +49,6 @@ const PendingAccountDetails = () => {
       </View>
     );
   }
-
-  const handleReject = () => {
-    // Handle reject logic
-  };
-
-  const handleAccept = () => {
-    // Handle accept logic
-  };
 
   return (
     <View style={styles.container}>
