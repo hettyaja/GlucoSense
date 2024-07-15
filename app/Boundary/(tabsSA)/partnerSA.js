@@ -25,12 +25,12 @@ const PartnerSA = () => {
   );
 
   const renderBusinessPartnerItem = ({ item }) => (
-    <TouchableOpacity style={styles.partnerRow} onPress={() => router.push(`/pendingAccountDetails?id=${item.id}`)}>
+    <View style={styles.partnerRow}>
       <Text style={styles.partnerCell}>{item.username}</Text>
       <Text style={styles.partnerCell}>{item.stallName}</Text>
       <Text style={styles.partnerCell}>{item.registered ? new Date(item.registered.seconds * 1000).toLocaleDateString() : 'N/A'}</Text>
       <Text style={[styles.partnerCell, item.status === 'Active' ? styles.activeStatus : styles.pendingStatus]}>{item.status}</Text>
-    </TouchableOpacity>
+    </View>
   );
 
   return (
