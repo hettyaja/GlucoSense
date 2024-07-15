@@ -1,41 +1,34 @@
+// src/app/(tabsSA)/partnerSA.js
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
-import { getBusinessPartners } from '../../controllers/businessPartnerController';
+import { fetchBusinessPartners } from '../../controllers/businessPartnerController';
 
 const PartnerSA = () => {
-  const [filter, setFilter] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [businessPartner, setBusinessPartner] = useState([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
-    const fetchBusinessPartners = async () => {
-      try {
-        const data = await getBusinessPartners();
-        setBusinessPartner(data);
-      } catch (error) {
-        console.error("Error fetching business partners: ", error);
-      } finally {
-        setLoading(false);
-      }
+    const fetchData = async () => {
+      const partners = await fetchBusinessPartners();
+      setBusinessPartner(partners);
+      setLoading(false);
     };
-    fetchBusinessPartners();
+
+    fetchData();
   }, []);
 
-  const filteredBusinessPartners = businessPartner.filter(partner => {
-    return (
-      (filter ? partner.status === filter : true) &&
-      (searchQuery ? partner.username.toLowerCase().includes(searchQuery.toLowerCase()) : true)
-    );
-  });
+  const filteredBusinessPartners = businessPartner.filter(partner => 
+    searchQuery ? partner.username.toLowerCase().includes(searchQuery.toLowerCase()) : true
+  );
 
   const renderBusinessPartnerItem = ({ item }) => (
-    <TouchableOpacity style={styles.partnerRow} onPress={() => router.push('/pendingAccountDetails', { item })}>
+    <TouchableOpacity style={styles.partnerRow} onPress={() => router.push(`/pendingAccountDetails?id=${item.id}`)}>
       <Text style={styles.partnerCell}>{item.username}</Text>
       <Text style={styles.partnerCell}>{item.stallName}</Text>
-      <Text style={styles.partnerCell}>{new Date(item.registered.seconds * 1000).toLocaleDateString()}</Text>
+      <Text style={styles.partnerCell}>{item.registered ? new Date(item.registered.seconds * 1000).toLocaleDateString() : 'N/A'}</Text>
       <Text style={[styles.partnerCell, item.status === 'Active' ? styles.activeStatus : styles.pendingStatus]}>{item.status}</Text>
     </TouchableOpacity>
   );
@@ -52,9 +45,11 @@ const PartnerSA = () => {
           value={searchQuery}
           onChangeText={(text) => setSearchQuery(text)}
         />
-        <TouchableOpacity style={styles.pendingContainer} onPress={() => router.push('/pendingAccountList')}>
-          <View style={styles.pendingSquare} />
-          <Text style={styles.pendingText}>Pending</Text>
+        <TouchableOpacity onPress={() => router.push('/pendingAccountList')}>
+          <View style={styles.pendingContainer}>
+            <View style={styles.pendingSquare} />
+            <Text style={styles.pendingText}>Pending</Text>
+          </View>
         </TouchableOpacity>
       </View>
       <View style={styles.tableHeader}>
@@ -83,86 +78,22 @@ const PartnerSA = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  header: {
-    backgroundColor: '#D9A37E',
-    padding: 16,
-  },
-  headerText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#fff',
-    textAlign: 'center',
-  },
-  searchBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderColor: '#ccc',
-  },
-  searchInput: {
-    flex: 1,
-    padding: 8,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 4,
-  },
-  pendingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginLeft: 16,
-  },
-  pendingSquare: {
-    width: 20,
-    height: 20,
-    backgroundColor: '#ccc',
-    marginRight: 8,
-  },
-  pendingText: {
-    color: '#000',
-    fontWeight: 'bold',
-  },
-  tableHeader: {
-    flexDirection: 'row',
-    backgroundColor: '#f2f2f2',
-    padding: 8,
-  },
-  tableHeaderCell: {
-    flex: 1,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  partnerRow: {
-    flexDirection: 'row',
-    padding: 8,
-    borderBottomWidth: 1,
-    borderColor: '#ccc',
-  },
-  partnerCell: {
-    flex: 1,
-    textAlign: 'center',
-  },
-  activeStatus: {
-    color: 'green',
-    fontWeight: 'bold',
-  },
-  pendingStatus: {
-    color: 'red',
-    fontWeight: 'bold',
-  },
-  noPartners: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  noPartnersText: {
-    fontSize: 18,
-    color: '#ccc',
-  },
+  container: { flex: 1, backgroundColor: '#fff' },
+  header: { backgroundColor: '#D9A37E', padding: 16 },
+  headerText: { fontSize: 18, fontWeight: 'bold', color: '#fff', textAlign: 'center' },
+  searchBar: { flexDirection: 'row', alignItems: 'center', padding: 16, borderBottomWidth: 1, borderColor: '#ccc' },
+  searchInput: { flex: 1, padding: 8, borderWidth: 1, borderColor: '#ccc', borderRadius: 4 },
+  pendingContainer: { flexDirection: 'row', alignItems: 'center', marginLeft: 16 },
+  pendingSquare: { width: 20, height: 20, backgroundColor: '#ccc', marginRight: 8 },
+  pendingText: { color: '#000', fontWeight: 'bold' },
+  tableHeader: { flexDirection: 'row', backgroundColor: '#f2f2f2', padding: 8 },
+  tableHeaderCell: { flex: 1, fontWeight: 'bold', textAlign: 'center' },
+  partnerRow: { flexDirection: 'row', padding: 8, borderBottomWidth: 1, borderColor: '#ccc' },
+  partnerCell: { flex: 1, textAlign: 'center' },
+  activeStatus: { color: 'green', fontWeight: 'bold' },
+  pendingStatus: { color: 'red', fontWeight: 'bold' },
+  noPartners: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  noPartnersText: { fontSize: 18, color: '#ccc' },
 });
 
 export default PartnerSA;
