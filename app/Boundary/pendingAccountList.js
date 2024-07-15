@@ -13,10 +13,10 @@ const PendingAccountList = () => {
   useEffect(() => {
     const fetchPendingAccounts = async () => {
       try {
-        const accountsCollection = await getDocs(collection(db, 'businessPartners'));
+        const accountsCollection = await getDocs(collection(db, 'businessPartner'));
         const pendingAccountsData = accountsCollection.docs
           .map(doc => ({ ...doc.data(), id: doc.id }))
-          .filter(account => account.status === 'Pending');
+          .filter(account => account.status === 'pending');
         setPendingAccounts(pendingAccountsData);
       } catch (error) {
         console.error("Error fetching pending accounts: ", error);
@@ -34,8 +34,8 @@ const PendingAccountList = () => {
 
   const renderPendingAccountItem = ({ item }) => (
     <TouchableOpacity style={styles.accountRow} onPress={() => router.push(`/Boundary/pendingAccountDetails`, { accountId: item.id })}>
-      <Text style={styles.accountCell}>{item.username}</Text>
-      <Text style={styles.accountCell}>{new Date(item.registered.seconds * 1000).toLocaleDateString()}</Text>
+      <Text style={styles.accountCell}>{item.name}</Text>
+      <Text style={styles.accountCell}>{new Date(item.registerTime.seconds * 1000).toLocaleDateString()}</Text>
       <Text style={styles.accountCell}>{item.status}</Text>
     </TouchableOpacity>
   );

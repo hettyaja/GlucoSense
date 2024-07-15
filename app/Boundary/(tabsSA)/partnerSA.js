@@ -13,7 +13,7 @@ const PartnerSA = () => {
   useEffect(() => {
     const fetchBusinessPartners = async () => {
       try {
-        const businessPartnersCollection = await getDocs(collection(db, 'businessPartners'));
+        const businessPartnersCollection = await getDocs(collection(db, 'businessPartner'));
         const businessPartnersData = businessPartnersCollection.docs.map(doc => doc.data());
         setBusinessPartner(businessPartnersData);
       } catch (error) {
@@ -32,9 +32,9 @@ const PartnerSA = () => {
 
   const renderBusinessPartnerItem = ({ item }) => (
     <View style={styles.partnerRow}>
-      <Text style={styles.partnerCell}>{item.username}</Text>
-      <Text style={styles.partnerCell}>{item.stallName}</Text>
-      <Text style={styles.partnerCell}>{item.registered ? new Date(item.registered.seconds * 1000).toLocaleDateString() : 'N/A'}</Text>
+      <Text style={styles.partnerCell}>{item.name}</Text>
+      <Text style={styles.partnerCell}>{item.entityName}</Text>
+      <Text style={styles.partnerCell}>{item.registerTime ? new Date(item.registerTime.seconds * 1000).toLocaleDateString() : 'N/A'}</Text>
       <Text style={[styles.partnerCell, item.status === 'Active' ? styles.activeStatus : styles.pendingStatus]}>{item.status}</Text>
     </View>
   );

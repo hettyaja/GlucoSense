@@ -13,7 +13,7 @@ const PendingAccountDetails = () => {
   useEffect(() => {
     const fetchAccountDetails = async () => {
       try {
-        const docRef = doc(db, 'businessPartners', accountId);
+        const docRef = doc(db, 'businessPartner', accountId);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           setAccountDetails(docSnap.data());
@@ -32,7 +32,7 @@ const PendingAccountDetails = () => {
 
   const handleAccept = async () => {
     try {
-      const docRef = doc(db, 'businessPartners', accountId);
+      const docRef = doc(db, 'businessPartner', accountId);
       await updateDoc(docRef, {
         status: 'Active'
       });
@@ -44,7 +44,7 @@ const PendingAccountDetails = () => {
 
   const handleReject = async () => {
     try {
-      const docRef = doc(db, 'businessPartners', accountId);
+      const docRef = doc(db, 'businessPartner', accountId);
       await updateDoc(docRef, {
         status: 'Rejected'
       });
@@ -76,9 +76,9 @@ const PendingAccountDetails = () => {
         <Text style={styles.headerText}>Pending Account</Text>
       </View>
       <View style={styles.detailsContainer}>
-        <Text style={styles.detailsText}>Username: {accountDetails.username}</Text>
-        <Text style={styles.detailsText}>Stall Name: {accountDetails.stallName}</Text>
-        <Text style={styles.detailsText}>Registered: {new Date(accountDetails.registered.seconds * 1000).toLocaleDateString()}</Text>
+        <Text style={styles.detailsText}>Username: {accountDetails.name}</Text>
+        <Text style={styles.detailsText}>Stall Name: {accountDetails.entityName}</Text>
+        <Text style={styles.detailsText}>Registered: {new Date(accountDetails.registerTime.seconds * 1000).toLocaleDateString()}</Text>
         <Text style={styles.detailsText}>Status: {accountDetails.status}</Text>
       </View>
       <View style={styles.actionsContainer}>
