@@ -215,7 +215,7 @@ export const calculateA1C = async (userId) => {
     // Iterate over the query results
     querySnapshot.forEach((doc) => {
       const data = doc.data();
-      const glucoseValue = parseFloat(data.glucoseValue);
+      const glucoseValue = parseFloat(data.glucose);
       if (!isNaN(glucoseValue)) {
         totalGlucose += glucoseValue;
         count++;

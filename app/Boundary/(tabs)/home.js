@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet, TouchableOpacity, SectionList, Alert } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { router } from 'expo-router';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Fontisto from 'react-native-vector-icons/Fontisto';
@@ -30,6 +31,7 @@ const formatDate = (time) => {
   }
 };
 
+
 const groupLogsByDate = (logs) => {
   return logs.reduce((groups, log) => {
     const date = formatDate(log.time);
@@ -50,6 +52,7 @@ const home = () => {
   const [lowestGlucose, setLowestGlucose] = useState(null);
   const [highestGlucose, setHighestGlucose] = useState(null);
   const [logsLoaded, setLogsLoaded] = useState(false);
+  const [refreshA1C, setRefreshA1C] = useState(false);
 
   useEffect(() => {
     const fetchAllLogs = async () => {
@@ -84,6 +87,13 @@ const home = () => {
       calculateGlucoseStatsByDate('Today'); // Show today's statistics after logs are loaded
     }
   }, [logsLoaded]);
+
+  useFocusEffect(
+    useCallback(() => {
+      // Refresh the A1C component when the screen is focused
+      setRefreshA1C(prevState => !prevState);
+    }, [])
+  );
 
   const calculateGlucoseStats = (glucoseLogs) => {
     if (glucoseLogs.length === 0) {
@@ -277,7 +287,7 @@ const home = () => {
               style={{ borderColor: 'white', borderWidth: 1, borderRadius: 8, width: '25%', paddingHorizontal: 8, alignItems:'center' }} 
               onPress={() => router.push('Subscribe')}
             >
-              <A1CComponent user={user} />
+              <A1CComponent key={refreshA1C} user={user} />
             </TouchableOpacity>
           </View>
         </View>
