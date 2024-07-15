@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../../../firebase';
+import ViewBusinessPartnerController from '../../Controller/ViewBusinessPartnerController';
+import AntDesign from 'react-native-vector-icons/AntDesign'
+import Header from '../../components/Header';
 
 const PartnerSA = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -13,9 +14,8 @@ const PartnerSA = () => {
   useEffect(() => {
     const fetchBusinessPartners = async () => {
       try {
-        const businessPartnersCollection = await getDocs(collection(db, 'businessPartner'));
-        const businessPartnersData = businessPartnersCollection.docs.map(doc => doc.data());
-        setBusinessPartner(businessPartnersData);
+        const businessPartnerCollection = await ViewBusinessPartnerController.ViewBusinessPartner()
+        setBusinessPartner(businessPartnerCollection);
       } catch (error) {
         console.error("Error fetching business partners: ", error);
       } finally {
@@ -40,10 +40,11 @@ const PartnerSA = () => {
   );
 
   return (
+    <>
+    <Header
+      title="Business Partner"
+    />
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Business Partner</Text>
-      </View>
       <View style={styles.searchBar}>
         <TextInput
           style={styles.searchInput}
@@ -52,7 +53,8 @@ const PartnerSA = () => {
           onChangeText={(text) => setSearchQuery(text)}
         />
         <TouchableOpacity style={styles.pendingContainer} onPress={() => router.push('/Boundary/pendingAccountList')}>
-          <View style={styles.pendingSquare} />
+          {/* <View style={styles.pendingSquare} /> */}
+          <AntDesign name="form" size='24'/>
           <Text style={styles.pendingText}>Pending</Text>
         </TouchableOpacity>
       </View>
@@ -78,6 +80,7 @@ const PartnerSA = () => {
         />
       )}
     </View>
+    </>
   );
 };
 

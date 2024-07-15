@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import LogoutController from '../../Controller/LogoutController';
+import Header from '../../components/Header';
 
 const SettingSA = () => {
   const router = useRouter();
@@ -15,10 +16,11 @@ const SettingSA = () => {
   };
 
   return (
+    <>
+    <Header
+      title="Setting"
+    />
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Setting</Text>
-      </View>
       <View style={styles.profileContainer}>
         <Image
           source={{ uri: 'https://via.placeholder.com/150' }} // Replace with actual profile image URL
@@ -36,6 +38,7 @@ const SettingSA = () => {
         <Text style={styles.optionText}>Log out</Text>
       </TouchableOpacity>
     </View>
+    </>
   );
 };
 

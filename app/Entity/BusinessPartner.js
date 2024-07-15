@@ -73,6 +73,22 @@ class BusinessPartner {
       throw new Error('Failed to fetch business partners.');
     }
   }
+
+  static async suspendBusinessPartner() {
+    // Firebase logic
+  }
+
+  static async unsuspendBusinessPartner() {
+    // Firebase logic
+  }
+
+  static async approveBusinessPartner() {
+    // Firebase logic
+  }
+
+  static async rejectBusinessPartner() {
+    // Firebase logic
+  }
 }
 
 export default BusinessPartner;
