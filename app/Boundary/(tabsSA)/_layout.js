@@ -1,11 +1,11 @@
 import React from 'react';
 import { Tabs, Stack } from 'expo-router';
-import PartnerSA from './(tabsSA)/partnerSA';
-import PendingAccountList from './pendingAccountList';
-import PendingAccountDetails from './pendingAccountDetails';
-import InsightSA from './(tabsSA)/insightSA';
-import SettingSA from './(tabsSA)/settingSA';
-import UserSA from './(tabsSA)/userSA';
+import PartnerSA from './partnerSA';
+import PendingAccountList from '../pendingAccountList';
+import PendingAccountDetails from '../pendingAccountDetails';
+import InsightSA from '../insightSA';
+import SettingSA from '../settingSA';
+import UserSA from '../userSA';
 
 const _layout = () => {
   return (
