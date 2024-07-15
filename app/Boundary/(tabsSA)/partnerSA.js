@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
-import { db } from '../../firebase'; // Import the Firestore instance
 import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../../service/firebase';
 
 const PartnerSA = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -14,7 +14,7 @@ const PartnerSA = () => {
     const fetchBusinessPartners = async () => {
       try {
         const businessPartnersCollection = await getDocs(collection(db, 'businessPartners'));
-        const businessPartnersData = businessPartnersCollection.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+        const businessPartnersData = businessPartnersCollection.docs.map(doc => doc.data());
         setBusinessPartner(businessPartnersData);
       } catch (error) {
         console.error("Error fetching business partners: ", error);
@@ -26,13 +26,18 @@ const PartnerSA = () => {
     fetchBusinessPartners();
   }, []);
 
-  const handlePendingClick = () => {
-    router.push('/pendingAccountList');
-  };
-
   const filteredBusinessPartners = businessPartner.filter(partner => {
-    return searchQuery ? partner.username?.toLowerCase().includes(searchQuery.toLowerCase()) : true;
+    return searchQuery ? partner.username.toLowerCase().includes(searchQuery.toLowerCase()) : true;
   });
+
+  const renderBusinessPartnerItem = ({ item }) => (
+    <View style={styles.partnerRow}>
+      <Text style={styles.partnerCell}>{item.username}</Text>
+      <Text style={styles.partnerCell}>{item.stallName}</Text>
+      <Text style={styles.partnerCell}>{item.registered ? new Date(item.registered.seconds * 1000).toLocaleDateString() : 'N/A'}</Text>
+      <Text style={[styles.partnerCell, item.status === 'Active' ? styles.activeStatus : styles.pendingStatus]}>{item.status}</Text>
+    </View>
+  );
 
   return (
     <View style={styles.container}>
@@ -46,13 +51,13 @@ const PartnerSA = () => {
           value={searchQuery}
           onChangeText={(text) => setSearchQuery(text)}
         />
-        <TouchableOpacity style={styles.pendingContainer} onPress={handlePendingClick}>
+        <TouchableOpacity style={styles.pendingContainer} onPress={() => router.push('/Boundary/pendingAccountList')}>
           <View style={styles.pendingSquare} />
           <Text style={styles.pendingText}>Pending</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.tableHeader}>
-        <Text style={styles.tableHeaderCell}>Name</Text>
+        <Text style={styles.tableHeaderCell}>Username</Text>
         <Text style={styles.tableHeaderCell}>Stall Name</Text>
         <Text style={styles.tableHeaderCell}>Registered</Text>
         <Text style={styles.tableHeaderCell}>Status</Text>
@@ -68,15 +73,8 @@ const PartnerSA = () => {
       ) : (
         <FlatList
           data={filteredBusinessPartners}
-          renderItem={({ item }) => (
-            <View style={styles.partnerRow}>
-              <Text style={styles.partnerCell}>{item.name}</Text>
-              <Text style={styles.partnerCell}>{item.entityName}</Text>
-              <Text style={styles.partnerCell}>{item.registerTime ? new Date(item.registerTime.seconds * 1000).toLocaleDateString() : 'N/A'}</Text>
-              <Text style={[styles.partnerCell, item.status === 'Active' ? styles.activeStatus : styles.pendingStatus]}>{item.status}</Text>
-            </View>
-          )}
-          keyExtractor={(item) => item.id}
+          renderItem={renderBusinessPartnerItem}
+          keyExtractor={(item) => item.username}
         />
       )}
     </View>
@@ -116,7 +114,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginLeft: 16,
-    padding: 8,
   },
   pendingSquare: {
     width: 20,
