@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
-import { fetchBusinessPartners } from '../../controllers/businessPartnerController';
+import { fetchBusinessPartners } from '../../controllers/businessController';
 
 const PartnerSA = () => {
   const [searchQuery, setSearchQuery] = useState('');
