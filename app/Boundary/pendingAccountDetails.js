@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { db } from '../service/firebase';
+import { db } from '../../firebase';
 
 const PendingAccountDetails = () => {
   const { accountId } = useLocalSearchParams();

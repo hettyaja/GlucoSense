@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../service/firebase';
+import { db } from '../../firebase';
 
 const PendingAccountList = () => {
   const [searchQuery, setSearchQuery] = useState('');
