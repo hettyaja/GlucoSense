@@ -34,7 +34,7 @@ const foodBP = () => {
   );
 
   const handleEdit = (menu) =>{
-    router.push({pathname: 'EditMenuPage', params: {menuData: JSON.stringify(menu)}})
+    router.push({pathname: 'Boundary/EditMenuPage', params: {menuData: JSON.stringify(menu)}})
   }
 
   const confirmDelete = (menu) => {

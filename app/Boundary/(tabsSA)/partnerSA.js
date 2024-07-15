@@ -34,7 +34,7 @@ const PartnerSA = () => {
   });
 
   const handlePendingClick = () => {
-    setFilter(filter === 'Pending' ? '' : 'Pending');
+    setFilter(filter === 'pending' ? '' : 'pending');
   };
 
   const renderBusinessPartnerItem = ({ item }) => (
