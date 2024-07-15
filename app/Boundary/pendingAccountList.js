@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from 'react-native';
-import { useRouter } from 'expo-router';
-import { db } from '../../firebase'; // Import the Firestore instance
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../service/firebase';
 
 const PendingAccountList = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -13,8 +13,10 @@ const PendingAccountList = () => {
   useEffect(() => {
     const fetchPendingAccounts = async () => {
       try {
-        const pendingAccountsCollection = await getDocs(collection(db, 'pendingAccounts'));
-        const pendingAccountsData = pendingAccountsCollection.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+        const accountsCollection = await getDocs(collection(db, 'businessPartners'));
+        const pendingAccountsData = accountsCollection.docs
+          .map(doc => ({ ...doc.data(), id: doc.id }))
+          .filter(account => account.status === 'Pending');
         setPendingAccounts(pendingAccountsData);
       } catch (error) {
         console.error("Error fetching pending accounts: ", error);
@@ -27,8 +29,16 @@ const PendingAccountList = () => {
   }, []);
 
   const filteredPendingAccounts = pendingAccounts.filter(account => {
-    return searchQuery ? account.username?.toLowerCase().includes(searchQuery.toLowerCase()) : true;
+    return searchQuery ? account.username.toLowerCase().includes(searchQuery.toLowerCase()) : true;
   });
+
+  const renderPendingAccountItem = ({ item }) => (
+    <TouchableOpacity style={styles.accountRow} onPress={() => router.push(`/Boundary/pendingAccountDetails`, { accountId: item.id })}>
+      <Text style={styles.accountCell}>{item.username}</Text>
+      <Text style={styles.accountCell}>{new Date(item.registered.seconds * 1000).toLocaleDateString()}</Text>
+      <Text style={styles.accountCell}>{item.status}</Text>
+    </TouchableOpacity>
+  );
 
   return (
     <View style={styles.container}>
@@ -54,18 +64,12 @@ const PendingAccountList = () => {
         </View>
       ) : filteredPendingAccounts.length === 0 ? (
         <View style={styles.noAccounts}>
-          <Text style={styles.noAccountsText}>NO ACCOUNT FOUND</Text>
+          <Text style={styles.noAccountsText}>NO PENDING ACCOUNTS</Text>
         </View>
       ) : (
         <FlatList
           data={filteredPendingAccounts}
-          renderItem={({ item }) => (
-            <TouchableOpacity style={styles.accountRow} onPress={() => router.push(`/pendingAccountDetails?id=${item.id}`)}>
-              <Text style={styles.accountCell}>{item.username}</Text>
-              <Text style={styles.accountCell}>{item.registerTime ? new Date(item.registerTime.seconds * 1000).toLocaleDateString() : 'N/A'}</Text>
-              <Text style={[styles.accountCell, styles.pendingStatus]}>{item.status}</Text>
-            </TouchableOpacity>
-          )}
+          renderItem={renderPendingAccountItem}
           keyExtractor={(item) => item.id}
         />
       )}
@@ -121,10 +125,6 @@ const styles = StyleSheet.create({
   accountCell: {
     flex: 1,
     textAlign: 'center',
-  },
-  pendingStatus: {
-    color: 'red',
-    fontWeight: 'bold',
   },
   noAccounts: {
     flex: 1,
