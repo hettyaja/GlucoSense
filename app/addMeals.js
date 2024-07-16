@@ -10,7 +10,6 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { addMealLog } from './service/diaryService';
 import Feather from 'react-native-vector-icons/Feather'
 import { useAuth } from './service/AuthContext';
-import CreateGlucoseLogsController from './Controller/CreateMealLogsController';
 import CreateMealLogsController from './Controller/CreateMealLogsController';
 
 const preReg = () => {
@@ -114,7 +113,7 @@ const preReg = () => {
             <Text style={{ padding: 2, marginHorizontal: 8, fontFamily: 'Poppins-SemiBold', fontSize: 16, color: 'white' }}>Save</Text>
           </TouchableOpacity>
         ),
-        headerTitle: 'Add meal',
+        headerTitle: 'Meal',
         headerTitleAlign: 'center',
       }} />
 

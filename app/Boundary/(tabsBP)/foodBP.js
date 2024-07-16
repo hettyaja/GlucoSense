@@ -69,7 +69,7 @@ const foodBP = () => {
         headerTitle: 'Menu Management',
         headerTitleAlign: 'center',
         headerRight: () => (
-          <TouchableOpacity onPress={() => router.push('createMenuPage')} style={{ marginRight: 16 }}>
+          <TouchableOpacity onPress={() => router.push('Boundary/CreateMenuPage')} style={{ marginRight: 16 }}>
             <MaterialIcons name='add' size={32} color='white' />
           </TouchableOpacity>
         )
