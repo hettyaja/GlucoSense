@@ -29,7 +29,7 @@ const PendingAccountList = () => {
   }, []);
 
   const filteredPendingAccounts = pendingAccounts.filter(account => {
-    return searchQuery ? account.username.toLowerCase().includes(searchQuery.toLowerCase()) : true;
+    return searchQuery ? account.name && account.name.toLowerCase().includes(searchQuery.toLowerCase()) : true;
   });
 
   const renderPendingAccountItem = ({ item }) => (

@@ -2,24 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import ViewBusinessPartnerController from '../../Controller/ViewBusinessPartnerController';
-import AntDesign from 'react-native-vector-icons/AntDesign'
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import Header from '../../components/Header';
 
 const PartnerSA = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [businessPartner, setBusinessPartner] = useState([]);
-  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
     const fetchBusinessPartners = async () => {
       try {
-        const businessPartnerCollection = await ViewBusinessPartnerController.ViewBusinessPartner()
+        const businessPartnerCollection = await ViewBusinessPartnerController.ViewBusinessPartner();
         setBusinessPartner(businessPartnerCollection);
       } catch (error) {
         console.error("Error fetching business partners: ", error);
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -27,7 +24,7 @@ const PartnerSA = () => {
   }, []);
 
   const filteredBusinessPartners = businessPartner.filter(partner => {
-    return searchQuery ? partner.username.toLowerCase().includes(searchQuery.toLowerCase()) : true;
+    return searchQuery ? partner.name && partner.name.toLowerCase().includes(searchQuery.toLowerCase()) : true;
   });
 
   const renderBusinessPartnerItem = ({ item }) => (
@@ -41,45 +38,38 @@ const PartnerSA = () => {
 
   return (
     <>
-    <Header
-      title="Business Partner"
-    />
-    <View style={styles.container}>
-      <View style={styles.searchBar}>
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search Account"
-          value={searchQuery}
-          onChangeText={(text) => setSearchQuery(text)}
-        />
-        <TouchableOpacity style={styles.pendingContainer} onPress={() => router.push('/Boundary/pendingAccountList')}>
-          {/* <View style={styles.pendingSquare} /> */}
-          <AntDesign name="form" size='24'/>
-          <Text style={styles.pendingText}>Pending</Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.tableHeader}>
-        <Text style={styles.tableHeaderCell}>Username</Text>
-        <Text style={styles.tableHeaderCell}>Stall Name</Text>
-        <Text style={styles.tableHeaderCell}>Registered</Text>
-        <Text style={styles.tableHeaderCell}>Status</Text>
-      </View>
-      {loading ? (
-        <View style={styles.noPartners}>
-          <Text style={styles.noPartnersText}>Loading...</Text>
+      <Header title="Business Partner" />
+      <View style={styles.container}>
+        <View style={styles.searchBar}>
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search Account"
+            value={searchQuery}
+            onChangeText={(text) => setSearchQuery(text)}
+          />
+          <TouchableOpacity style={styles.pendingContainer} onPress={() => router.push('/Boundary/pendingAccountList')}>
+            <AntDesign name="form" size={24} />
+            <Text style={styles.pendingText}>Pending</Text>
+          </TouchableOpacity>
         </View>
-      ) : filteredBusinessPartners.length === 0 ? (
-        <View style={styles.noPartners}>
-          <Text style={styles.noPartnersText}>NO PARTNER REGISTERED</Text>
+        <View style={styles.tableHeader}>
+          <Text style={styles.tableHeaderCell}>Username</Text>
+          <Text style={styles.tableHeaderCell}>Stall Name</Text>
+          <Text style={styles.tableHeaderCell}>Registered</Text>
+          <Text style={styles.tableHeaderCell}>Status</Text>
         </View>
-      ) : (
-        <FlatList
-          data={filteredBusinessPartners}
-          renderItem={renderBusinessPartnerItem}
-          keyExtractor={(item) => item.username}
-        />
-      )}
-    </View>
+        {filteredBusinessPartners.length === 0 ? (
+          <View style={styles.noPartners}>
+            <Text style={styles.noPartnersText}>NO PARTNER REGISTERED</Text>
+          </View>
+        ) : (
+          <FlatList
+            data={filteredBusinessPartners}
+            renderItem={renderBusinessPartnerItem}
+            keyExtractor={(item) => item.username}
+          />
+        )}
+      </View>
     </>
   );
 };
@@ -112,6 +102,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 4,
+    fontSize: 16, // Ensure fontSize is a number
   },
   pendingContainer: {
     flexDirection: 'row',
@@ -127,6 +118,7 @@ const styles = StyleSheet.create({
   pendingText: {
     color: '#000',
     fontWeight: 'bold',
+    fontSize: 14, // Ensure fontSize is a number
   },
   tableHeader: {
     flexDirection: 'row',
@@ -137,6 +129,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontWeight: 'bold',
     textAlign: 'center',
+    fontSize: 16, // Ensure fontSize is a number
   },
   partnerRow: {
     flexDirection: 'row',
@@ -147,14 +140,17 @@ const styles = StyleSheet.create({
   partnerCell: {
     flex: 1,
     textAlign: 'center',
+    fontSize: 14, // Ensure fontSize is a number
   },
   activeStatus: {
     color: 'green',
     fontWeight: 'bold',
+    fontSize: 14, // Ensure fontSize is a number
   },
   pendingStatus: {
     color: 'red',
     fontWeight: 'bold',
+    fontSize: 14, // Ensure fontSize is a number
   },
   noPartners: {
     flex: 1,
@@ -162,7 +158,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   noPartnersText: {
-    fontSize: 18,
+    fontSize: 18, // Ensure fontSize is a number
     color: '#ccc',
   },
 });

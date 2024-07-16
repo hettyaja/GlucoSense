@@ -39,9 +39,7 @@ const RootLayout = () => {
       <Stack.Screen name="Boundary/(tabsSA)" options={{ headerShown: false }} />
       <Stack.Screen name="addMeds" />
       <Stack.Screen name="addGlucose" />
-      <Stack.Screen name="EditMenuPage" />
       <Stack.Screen name="ViewAndSearchDietPlan" />
-      <Stack.Screen name="CreateDietPlan" />
       <Stack.Screen name="searchFood" />
       <Stack.Screen name="details" options={{
         title: 'Details',
