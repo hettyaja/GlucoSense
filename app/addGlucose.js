@@ -16,9 +16,25 @@ const preReg = () => {
   const { user } = useAuth()
   const [selectedButton, setSelectedButton] = useState(null);
   const [selectedValue, setSelectedValue] = useState("Breakfast");
-  const [selectedDate, setSelectedDate] = useState(new Date())
   const [glucoseValue, setGlucoseValue] = useState('');
 
+  const getSingaporeTime = () => {
+    const now = new Date();
+    const options = { timeZone: 'Asia/Singapore', hour12: false, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+    const formatter = new Intl.DateTimeFormat('en-GB', options);
+    const parts = formatter.formatToParts(now);
+  
+    const singaporeTime = new Date(`${parts.find(p => p.type === 'year').value}-${parts.find(p => p.type === 'month').value}-${parts.find(p => p.type === 'day').value}T${parts.find(p => p.type === 'hour').value}:${parts.find(p => p.type === 'minute').value}:${parts.find(p => p.type === 'second').value}`);
+    
+    if (isNaN(singaporeTime.getTime())) {
+      console.error("Invalid Date generated for Singapore time");
+    }
+    
+    return singaporeTime;
+  };
+  
+  const [selectedDate, setSelectedDate] = useState(getSingaporeTime());
+  
   const handleChange = (text) => {
     // Allow only numbers and a single decimal point
     const newText = text.replace(/[^0-9.]/g, '');
@@ -30,7 +46,7 @@ const preReg = () => {
 
     setGlucoseValue(newText);
   };
-
+  
   const saveGlucose = async () => {
     if (!glucoseValue) {
       Alert.alert(

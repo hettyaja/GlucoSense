@@ -16,7 +16,6 @@ const preReg = () => {
   const { user } = useAuth();
   const [selectedButton, setSelectedButton] = useState(null);
   const [selectedValue, setSelectedValue] = useState("Before breakfast");
-  const [selectedDate, setSelectedDate] = useState(new Date());
   const { mealData } = useLocalSearchParams();
   const [parsedMealData, setParsedMealData] = useState(mealData ? JSON.parse(mealData) : null);
 
@@ -25,6 +24,24 @@ const preReg = () => {
   const [carbs, setCarbs] = useState(parsedMealData?.carbs || 0);
   const [protein, setProtein] = useState(parsedMealData?.protein || 0);
   const [notes, setNotes] = useState('');
+
+  
+  const getSingaporeTime = () => {
+    const now = new Date();
+    const options = { timeZone: 'Asia/Singapore', hour12: false, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+    const formatter = new Intl.DateTimeFormat('en-GB', options);
+    const parts = formatter.formatToParts(now);
+  
+    const singaporeTime = new Date(`${parts.find(p => p.type === 'year').value}-${parts.find(p => p.type === 'month').value}-${parts.find(p => p.type === 'day').value}T${parts.find(p => p.type === 'hour').value}:${parts.find(p => p.type === 'minute').value}:${parts.find(p => p.type === 'second').value}`);
+    
+    if (isNaN(singaporeTime.getTime())) {
+      console.error("Invalid Date generated for Singapore time");
+    }
+    
+    return singaporeTime;
+  };
+
+  const [selectedDate, setSelectedDate] = useState(getSingaporeTime());
 
   const saveMeals = async () => {
     if (!parsedMealData) {

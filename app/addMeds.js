@@ -10,7 +10,6 @@ import CreateMedicineLogsController from './Controller/CreateMedicineLogsControl
 
 const preReg = () => {
   const { user } = useAuth();
-  const [selectedDate, setSelectedDate] = useState(new Date());
   const { selectedMedicineNames } = useLocalSearchParams();
   const [selectedMedicines, setSelectedMedicines] = useState([]);
   const [medicineAmount, setMedicineAmount] = useState({});
@@ -38,6 +37,23 @@ const preReg = () => {
     }));
   };
 
+  const getSingaporeTime = () => {
+    const now = new Date();
+    const options = { timeZone: 'Asia/Singapore', hour12: false, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+    const formatter = new Intl.DateTimeFormat('en-GB', options);
+    const parts = formatter.formatToParts(now);
+  
+    const singaporeTime = new Date(`${parts.find(p => p.type === 'year').value}-${parts.find(p => p.type === 'month').value}-${parts.find(p => p.type === 'day').value}T${parts.find(p => p.type === 'hour').value}:${parts.find(p => p.type === 'minute').value}:${parts.find(p => p.type === 'second').value}`);
+    
+    if (isNaN(singaporeTime.getTime())) {
+      console.error("Invalid Date generated for Singapore time");
+    }
+    
+    return singaporeTime;
+  };
+
+  const [selectedDate, setSelectedDate] = useState(getSingaporeTime());
+  
   const saveMeds = async () => {
     if (!selectedMedicineNames) {
       Alert.alert(
