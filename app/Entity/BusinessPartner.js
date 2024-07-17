@@ -1,7 +1,6 @@
 import { auth, db } from '../../service/firebase'; // Adjust the path according to your project structure
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
-import { doc, setDoc, deleteDoc, getDocs, Timestamp, collection, updateDoc } from 'firebase/firestore';
-import { deleteUser as firebaseDeleteUser } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, deleteUser as firebaseDeleteUser } from 'firebase/auth';
+import { doc, setDoc, deleteDoc, getDocs, getDoc, Timestamp, collection, updateDoc } from 'firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 class BusinessPartner {
