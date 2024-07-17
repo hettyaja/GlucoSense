@@ -1,9 +1,9 @@
-import BusinessPartner from "../Entity/BusinessPartner";
+import BusinessPartner from '../Entity/BusinessPartner';
 
 class RejectBusinessPartnerController {
-  static async reject(uid) {
+  static async reject(accountId) {
     try {
-      return await BusinessPartner.rejectBusinessPartner(uid);
+      return await BusinessPartner.rejectBusinessPartner(accountId);
     } catch (error) {
       console.error('Error rejecting business partner:', error);
       throw new Error('Failed to reject business partner.');
