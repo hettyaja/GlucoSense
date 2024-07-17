@@ -1,6 +1,6 @@
-import { auth, db } from '../../firebase';
+import { auth, db } from '../../service/firebase'; // Adjust the path according to your project structure
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
-import { doc, setDoc, deleteDoc, getDocs, Timestamp, collection } from 'firebase/firestore';
+import { doc, setDoc, deleteDoc, getDocs, Timestamp, collection, updateDoc } from 'firebase/firestore';
 import { deleteUser as firebaseDeleteUser } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -74,20 +74,48 @@ class BusinessPartner {
     }
   }
 
-  static async suspendBusinessPartner() {
-    // Firebase logic
+  static async suspendBusinessPartner(uid) {
+    try {
+      const businessPartnerDocRef = doc(db, 'businessPartner', uid);
+      await updateDoc(businessPartnerDocRef, { status: 'suspended' });
+      return true;
+    } catch (error) {
+      console.error('Error suspending business partner:', error);
+      throw error;
+    }
   }
 
-  static async unsuspendBusinessPartner() {
-    // Firebase logic
+  static async unsuspendBusinessPartner(uid) {
+    try {
+      const businessPartnerDocRef = doc(db, 'businessPartner', uid);
+      await updateDoc(businessPartnerDocRef, { status: 'active' });
+      return true;
+    } catch (error) {
+      console.error('Error unsuspending business partner:', error);
+      throw error;
+    }
   }
 
-  static async approveBusinessPartner() {
-    // Firebase logic
+  static async approveBusinessPartner(uid) {
+    try {
+      const businessPartnerDocRef = doc(db, 'businessPartner', uid);
+      await updateDoc(businessPartnerDocRef, { status: 'approved' });
+      return true;
+    } catch (error) {
+      console.error('Error approving business partner:', error);
+      throw error;
+    }
   }
 
-  static async rejectBusinessPartner() {
-    // Firebase logic
+  static async rejectBusinessPartner(uid) {
+    try {
+      const businessPartnerDocRef = doc(db, 'businessPartner', uid);
+      await updateDoc(businessPartnerDocRef, { status: 'rejected' });
+      return true;
+    } catch (error) {
+      console.error('Error rejecting business partner:', error);
+      throw error;
+    }
   }
 }
 
