@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import ApproveBusinessPartnerController from '../../Controller/ApproveBusinessPartnerController';
-import RejectBusinessPartnerController from '../../Controller/RejectBusinessPartnerController';
-import ViewPendingAccountDetailsController from '../../Controller/ViewPendingAccountDetailsController';
+import ApproveBusinessPartnerController from '../Controller/ApproveBusinessPartnerController';
+import RejectBusinessPartnerController from '../Controller/RejectBusinessPartnerController';
+import ViewPendingAccountDetailsController from '../Controller/ViewPendingAccountDetailsController';
 
 const PendingAccountDetails = () => {
   const { accountId } = useLocalSearchParams();
