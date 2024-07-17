@@ -5,8 +5,8 @@ import { DietPlanContext } from '../context/DietPlanContext';
 import { Picker } from '@react-native-picker/picker';
 import { Stack, useRouter } from 'expo-router';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { collection, addDoc } from 'firebase/firestore';
-import { db, auth } from '../../firebase';
+import CreateDietPlanController from '../Controller/CreateDietPlanController';
+import { auth } from '../../firebase';
 
 const CreateDietPlan = () => {
   const { addDietPlan } = useContext(DietPlanContext);
@@ -60,9 +60,8 @@ const CreateDietPlan = () => {
       },
     };
     try {
-      const dietPlanCollection = collection(db, `businessPartner/${user.uid}/dietplan`);
-      const docRef = await addDoc(dietPlanCollection, newDietPlan);
-      newDietPlan.id = docRef.id; // Store the Firestore generated ID
+      const docId = await CreateDietPlanController.createDietPlan(user.uid, newDietPlan);
+      newDietPlan.id = docId; // Store the Firestore generated ID
       newDietPlan.userId = user.uid; // Store the userId in the diet plan
       addDietPlan(newDietPlan);
       router.push('/Boundary/planBP'); // Ensure this path is correct

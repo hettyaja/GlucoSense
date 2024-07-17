@@ -1,7 +1,7 @@
 import BusinessPartner from '../Entity/BusinessPartner';
 
-class ViewPendingAccountDetailsController {
-  static async getDetails(accountId) {
+class GetPendingAccountDetailsController {
+  static async getPendingAccountDetails(accountId) {
     try {
       return await BusinessPartner.getPendingDetails(accountId);
     } catch (error) {
@@ -11,4 +11,4 @@ class ViewPendingAccountDetailsController {
   }
 }
 
-export default ViewPendingAccountDetailsController;
+export default GetPendingAccountDetailsController;

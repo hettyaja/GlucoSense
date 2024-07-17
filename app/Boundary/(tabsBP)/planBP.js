@@ -6,9 +6,9 @@ import Calendar from '../../Calendar';
 import moment from 'moment';
 import { Tabs, useRouter } from 'expo-router';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { collection, getDocs } from 'firebase/firestore';
-import { db, auth } from '../../../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../../../firebase';
+import ViewDietPlanController from '../../Controller/ViewDietPlanController';
 
 const planBP = () => {
   const { dietPlans, setDietPlans, removeDietPlan } = useContext(DietPlanContext);
@@ -33,13 +33,7 @@ const planBP = () => {
     if (userId) {
       const fetchData = async () => {
         try {
-          const dietPlanCollection = collection(db, `businessPartner/${userId}/dietplan`);
-          const dietPlanSnapshot = await getDocs(dietPlanCollection);
-          const dietPlansData = dietPlanSnapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data(),
-            meals: doc.data().meals || { lunch: {}, dinner: {} },
-          }));
+          const dietPlansData = await ViewDietPlanController.fetchDietPlans(userId);
           setDietPlans(dietPlansData);
         } catch (error) {
           console.error("Error fetching diet plans: ", error);
