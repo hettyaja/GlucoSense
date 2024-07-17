@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
-import ViewPendingAccountListController from '../Controller/ViewPendingAccountListController';
-
+import ViewPendingAccountDetailsController from '../../Controller/ViewPendingAccountDetailsController';
 
 const PendingAccountList = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -13,7 +12,7 @@ const PendingAccountList = () => {
   useEffect(() => {
     const fetchPendingAccounts = async () => {
       try {
-        const pendingAccountsData = await ViewPendingAccountListController.getPendingAccounts();
+        const pendingAccountsData = await ViewPendingAccountDetailsController.getPendingAccounts();
         setPendingAccounts(pendingAccountsData);
       } catch (error) {
         console.error("Error fetching pending accounts: ", error);
