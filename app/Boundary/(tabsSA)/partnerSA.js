@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import ViewBusinessPartnerController from '../../Controller/ViewBusinessPartnerController';
+import ApproveBusinessPartnerController from '../../Controller/ApproveBusinessPartnerController';
+import RejectBusinessPartnerController from '../../Controller/RejectBusinessPartnerController';
+import SuspendBusinessPartnerController from '../../Controller/SuspendBusinessPartnerController';
+import UnsuspendBusinessPartnerController from '../../Controller/UnsuspendBusinessPartnerController';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Header from '../../components/Header';
 
@@ -23,6 +27,46 @@ const PartnerSA = () => {
     fetchBusinessPartners();
   }, []);
 
+  const handleApprove = async (id) => {
+    try {
+      await ApproveBusinessPartnerController.approve(id);
+      alert('Business Partner approved successfully');
+    } catch (error) {
+      console.error("Error approving business partner: ", error);
+      alert('Failed to approve Business Partner');
+    }
+  };
+
+  const handleReject = async (id) => {
+    try {
+      await RejectBusinessPartnerController.reject(id);
+      alert('Business Partner rejected successfully');
+    } catch (error) {
+      console.error("Error rejecting business partner: ", error);
+      alert('Failed to reject Business Partner');
+    }
+  };
+
+  const handleSuspend = async (id) => {
+    try {
+      await SuspendBusinessPartnerController.suspend(id);
+      alert('Business Partner suspended successfully');
+    } catch (error) {
+      console.error("Error suspending business partner: ", error);
+      alert('Failed to suspend Business Partner');
+    }
+  };
+
+  const handleUnsuspend = async (id) => {
+    try {
+      await UnsuspendBusinessPartnerController.unsuspend(id);
+      alert('Business Partner unsuspended successfully');
+    } catch (error) {
+      console.error("Error unsuspending business partner: ", error);
+      alert('Failed to unsuspend Business Partner');
+    }
+  };
+
   const filteredBusinessPartners = businessPartner.filter(partner => {
     return searchQuery ? partner.name && partner.name.toLowerCase().includes(searchQuery.toLowerCase()) : true;
   });
@@ -33,6 +77,20 @@ const PartnerSA = () => {
       <Text style={styles.partnerCell}>{item.entityName}</Text>
       <Text style={styles.partnerCell}>{item.registerTime ? new Date(item.registerTime.seconds * 1000).toLocaleDateString() : 'N/A'}</Text>
       <Text style={[styles.partnerCell, item.status === 'Active' ? styles.activeStatus : styles.pendingStatus]}>{item.status}</Text>
+      <View style={styles.actionButtons}>
+        <TouchableOpacity onPress={() => handleApprove(item.id)}>
+          <Text style={styles.actionText}>Approve</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => handleReject(item.id)}>
+          <Text style={styles.actionText}>Reject</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => handleSuspend(item.id)}>
+          <Text style={styles.actionText}>Suspend</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => handleUnsuspend(item.id)}>
+          <Text style={styles.actionText}>Unsuspend</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 
@@ -160,6 +218,16 @@ const styles = StyleSheet.create({
   noPartnersText: {
     fontSize: 18, // Ensure fontSize is a number
     color: '#ccc',
+  },
+  actionButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  actionText: {
+    color: '#007BFF',
+    fontSize: 14,
+    fontWeight: 'bold',
+    marginHorizontal: 4,
   },
 });
 
