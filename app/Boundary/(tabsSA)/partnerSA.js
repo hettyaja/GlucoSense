@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import ViewBusinessPartnerController from '../../Controller/ViewBusinessPartnerController';
-import ApproveBusinessPartnerController from '../../Controller/ApproveBusinessPartnerController';
-import RejectBusinessPartnerController from '../../Controller/RejectBusinessPartnerController';
 import SuspendBusinessPartnerController from '../../Controller/SuspendBusinessPartnerController';
 import UnsuspendBusinessPartnerController from '../../Controller/UnsuspendBusinessPartnerController';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -26,26 +24,6 @@ const PartnerSA = () => {
 
     fetchBusinessPartners();
   }, []);
-
-  const handleApprove = async (id) => {
-    try {
-      await ApproveBusinessPartnerController.approve(id);
-      alert('Business Partner approved successfully');
-    } catch (error) {
-      console.error("Error approving business partner: ", error);
-      alert('Failed to approve Business Partner');
-    }
-  };
-
-  const handleReject = async (id) => {
-    try {
-      await RejectBusinessPartnerController.reject(id);
-      alert('Business Partner rejected successfully');
-    } catch (error) {
-      console.error("Error rejecting business partner: ", error);
-      alert('Failed to reject Business Partner');
-    }
-  };
 
   const handleSuspend = async (id) => {
     try {
@@ -78,12 +56,6 @@ const PartnerSA = () => {
       <Text style={styles.partnerCell}>{item.registerTime ? new Date(item.registerTime.seconds * 1000).toLocaleDateString() : 'N/A'}</Text>
       <Text style={[styles.partnerCell, item.status === 'Active' ? styles.activeStatus : styles.pendingStatus]}>{item.status}</Text>
       <View style={styles.actionButtons}>
-        <TouchableOpacity onPress={() => handleApprove(item.id)}>
-          <Text style={styles.actionText}>Approve</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => handleReject(item.id)}>
-          <Text style={styles.actionText}>Reject</Text>
-        </TouchableOpacity>
         <TouchableOpacity onPress={() => handleSuspend(item.id)}>
           <Text style={styles.actionText}>Suspend</Text>
         </TouchableOpacity>
@@ -160,7 +132,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 4,
-    fontSize: 16, // Ensure fontSize is a number
+    fontSize: 16,
   },
   pendingContainer: {
     flexDirection: 'row',
@@ -176,7 +148,7 @@ const styles = StyleSheet.create({
   pendingText: {
     color: '#000',
     fontWeight: 'bold',
-    fontSize: 14, // Ensure fontSize is a number
+    fontSize: 14,
   },
   tableHeader: {
     flexDirection: 'row',
@@ -187,7 +159,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontWeight: 'bold',
     textAlign: 'center',
-    fontSize: 16, // Ensure fontSize is a number
+    fontSize: 16,
   },
   partnerRow: {
     flexDirection: 'row',
@@ -198,17 +170,17 @@ const styles = StyleSheet.create({
   partnerCell: {
     flex: 1,
     textAlign: 'center',
-    fontSize: 14, // Ensure fontSize is a number
+    fontSize: 14,
   },
   activeStatus: {
     color: 'green',
     fontWeight: 'bold',
-    fontSize: 14, // Ensure fontSize is a number
+    fontSize: 14,
   },
   pendingStatus: {
     color: 'red',
     fontWeight: 'bold',
-    fontSize: 14, // Ensure fontSize is a number
+    fontSize: 14,
   },
   noPartners: {
     flex: 1,
@@ -216,7 +188,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   noPartnersText: {
-    fontSize: 18, // Ensure fontSize is a number
+    fontSize: 18,
     color: '#ccc',
   },
   actionButtons: {
