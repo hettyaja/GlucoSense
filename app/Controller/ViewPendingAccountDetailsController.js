@@ -5,8 +5,17 @@ class ViewPendingAccountDetailsController {
     try {
       return await BusinessPartner.getPendingDetails(accountId);
     } catch (error) {
-      console.error('Error fetching account details:', error);
-      throw new Error('Failed to fetch account details.');
+      console.error('Error fetching pending account details:', error);
+      throw new Error('Failed to fetch pending account details.');
+    }
+  }
+
+  static async getPendingAccounts() {
+    try {
+      return await BusinessPartner.getPendingAccounts();
+    } catch (error) {
+      console.error('Error fetching pending accounts:', error);
+      throw new Error('Failed to fetch pending accounts.');
     }
   }
 }
