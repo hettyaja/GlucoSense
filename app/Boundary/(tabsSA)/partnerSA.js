@@ -6,42 +6,59 @@ import SuspendBusinessPartnerController from '../../Controller/SuspendBusinessPa
 import UnsuspendBusinessPartnerController from '../../Controller/UnsuspendBusinessPartnerController';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Header from '../../components/Header';
+import ConfirmDialog from '../../components/ConfirmDialog';
 
 const PartnerSA = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [businessPartner, setBusinessPartner] = useState([]);
+  const [selectedPartner, setSelectedPartner] = useState(null);
+  const [confirmDialogVisible, setConfirmDialogVisible] = useState(false);
+  const [confirmMessage, setConfirmMessage] = useState('');
+  const [actionType, setActionType] = useState('');
   const router = useRouter();
 
   useEffect(() => {
-    const fetchBusinessPartners = async () => {
-      try {
-        const businessPartnerCollection = await ViewBusinessPartnerController.ViewBusinessPartner();
-        setBusinessPartner(businessPartnerCollection);
-      } catch (error) {
-        console.error("Error fetching business partners: ", error);
-      }
-    };
-
     fetchBusinessPartners();
   }, []);
 
-  const handleSuspend = async (id) => {
+  const fetchBusinessPartners = async () => {
     try {
-      await SuspendBusinessPartnerController.suspend(id);
-      alert('Business Partner suspended successfully');
+      const businessPartnerCollection = await ViewBusinessPartnerController.ViewBusinessPartner();
+      setBusinessPartner(businessPartnerCollection);
     } catch (error) {
-      console.error("Error suspending business partner: ", error);
-      alert('Failed to suspend Business Partner');
+      console.error("Error fetching business partners: ", error);
     }
   };
 
-  const handleUnsuspend = async (id) => {
-    try {
-      await UnsuspendBusinessPartnerController.unsuspend(id);
-      alert('Business Partner unsuspended successfully');
-    } catch (error) {
-      console.error("Error unsuspending business partner: ", error);
-      alert('Failed to unsuspend Business Partner');
+  const handleSuspend = async () => {
+    if (selectedPartner && selectedPartner.status !== 'suspended') {
+      try {
+        await SuspendBusinessPartnerController.suspend(selectedPartner.id);
+        fetchBusinessPartners();
+        setConfirmDialogVisible(false);
+      } catch (error) {
+        console.error("Error suspending business partner: ", error);
+      }
+    }
+  };
+
+  const handleUnsuspend = async () => {
+    if (selectedPartner && selectedPartner.status === 'suspended') {
+      try {
+        await UnsuspendBusinessPartnerController.unsuspend(selectedPartner.id);
+        fetchBusinessPartners();
+        setConfirmDialogVisible(false);
+      } catch (error) {
+        console.error("Error unsuspending business partner: ", error);
+      }
+    }
+  };
+
+  const handleConfirm = () => {
+    if (actionType === 'suspend') {
+      handleSuspend();
+    } else if (actionType === 'unsuspend') {
+      handleUnsuspend();
     }
   };
 
@@ -56,12 +73,25 @@ const PartnerSA = () => {
       <Text style={styles.partnerCell}>{item.registerTime ? new Date(item.registerTime.seconds * 1000).toLocaleDateString() : 'N/A'}</Text>
       <Text style={[styles.partnerCell, item.status === 'Active' ? styles.activeStatus : styles.pendingStatus]}>{item.status}</Text>
       <View style={styles.actionButtons}>
-        <TouchableOpacity onPress={() => handleSuspend(item.id)}>
-          <Text style={styles.actionText}>Suspend</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => handleUnsuspend(item.id)}>
-          <Text style={styles.actionText}>Unsuspend</Text>
-        </TouchableOpacity>
+        {item.status === 'Active' ? (
+          <TouchableOpacity onPress={() => {
+            setSelectedPartner(item);
+            setActionType('suspend');
+            setConfirmMessage(`Are you sure you want to suspend this account?`);
+            setConfirmDialogVisible(true);
+          }}>
+            <Text style={styles.actionText}>Suspend</Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity onPress={() => {
+            setSelectedPartner(item);
+            setActionType('unsuspend');
+            setConfirmMessage(`Are you sure you want to unsuspend this account?`);
+            setConfirmDialogVisible(true);
+          }}>
+            <Text style={styles.actionText}>Unsuspend</Text>
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );
@@ -100,6 +130,12 @@ const PartnerSA = () => {
           />
         )}
       </View>
+      <ConfirmDialog
+        visible={confirmDialogVisible}
+        onConfirm={handleConfirm}
+        onCancel={() => setConfirmDialogVisible(false)}
+        message={confirmMessage}
+      />
     </>
   );
 };
@@ -132,7 +168,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 4,
-    fontSize: 16,
+    fontSize: 16, // Ensure fontSize is a number
   },
   pendingContainer: {
     flexDirection: 'row',
@@ -148,7 +184,7 @@ const styles = StyleSheet.create({
   pendingText: {
     color: '#000',
     fontWeight: 'bold',
-    fontSize: 14,
+    fontSize: 14, // Ensure fontSize is a number
   },
   tableHeader: {
     flexDirection: 'row',
@@ -159,7 +195,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontWeight: 'bold',
     textAlign: 'center',
-    fontSize: 16,
+    fontSize: 16, // Ensure fontSize is a number
   },
   partnerRow: {
     flexDirection: 'row',
@@ -170,17 +206,17 @@ const styles = StyleSheet.create({
   partnerCell: {
     flex: 1,
     textAlign: 'center',
-    fontSize: 14,
+    fontSize: 14, // Ensure fontSize is a number
   },
   activeStatus: {
     color: 'green',
     fontWeight: 'bold',
-    fontSize: 14,
+    fontSize: 14, // Ensure fontSize is a number
   },
   pendingStatus: {
     color: 'red',
     fontWeight: 'bold',
-    fontSize: 14,
+    fontSize: 14, // Ensure fontSize is a number
   },
   noPartners: {
     flex: 1,
@@ -188,7 +224,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   noPartnersText: {
-    fontSize: 18,
+    fontSize: 18, // Ensure fontSize is a number
     color: '#ccc',
   },
   actionButtons: {
