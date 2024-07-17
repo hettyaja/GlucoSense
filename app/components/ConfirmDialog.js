@@ -8,10 +8,10 @@ const ConfirmDialog = ({ visible, message, onConfirm, onCancel }) => {
       visible={visible}
       animationType="slide"
     >
-      <View style={styles.modalBackground}>
-        <View style={styles.modalContainer}>
+      <View style={styles.container}>
+        <View style={styles.dialog}>
           <Text style={styles.message}>{message}</Text>
-          <View style={styles.buttonContainer}>
+          <View style={styles.buttons}>
             <TouchableOpacity style={styles.button} onPress={onCancel}>
               <Text style={styles.buttonText}>Cancel</Text>
             </TouchableOpacity>
@@ -26,39 +26,34 @@ const ConfirmDialog = ({ visible, message, onConfirm, onCancel }) => {
 };
 
 const styles = StyleSheet.create({
-  modalBackground: {
+  container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
-  modalContainer: {
-    width: 300,
+  dialog: {
+    width: '80%',
     padding: 20,
-    backgroundColor: 'white',
+    backgroundColor: '#fff',
     borderRadius: 10,
-    alignItems: 'center',
   },
   message: {
-    fontSize: 16,
+    fontSize: 18,
     marginBottom: 20,
     textAlign: 'center',
   },
-  buttonContainer: {
+  buttons: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
+    justifyContent: 'space-around',
   },
   button: {
-    flex: 1,
     padding: 10,
     borderRadius: 5,
-    backgroundColor: '#D9A37E',
-    alignItems: 'center',
-    marginHorizontal: 5,
+    backgroundColor: '#007BFF',
   },
   buttonText: {
-    color: 'white',
+    color: '#fff',
     fontSize: 16,
   },
 });
