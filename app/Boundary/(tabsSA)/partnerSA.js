@@ -6,7 +6,7 @@ import SuspendBusinessPartnerController from '../../Controller/SuspendBusinessPa
 import UnsuspendBusinessPartnerController from '../../Controller/UnsuspendBusinessPartnerController';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Header from '../../components/Header';
-import ConfirmDialog from '../components/ConfirmDialog'; // Import ConfirmDialog
+import ConfirmDialog from '../../components/ConfirmDialog'; // Import ConfirmDialog
 
 const PartnerSA = () => {
   const [searchQuery, setSearchQuery] = useState('');
