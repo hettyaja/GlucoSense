@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
-import ViewPendingAccountDetailsController from '../../Controller/ViewPendingAccountDetailsController';
+import ViewPendingAccountDetailsController from '../Controller/ViewPendingAccountDetailsController';
 
 const PendingAccountList = () => {
   const [searchQuery, setSearchQuery] = useState('');
