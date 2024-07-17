@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
+import ViewPendingAccountDetailsController from '../../Controller/ViewPendingAccountDetailsController';
 import ApproveBusinessPartnerController from '../../Controller/ApproveBusinessPartnerController';
 import RejectBusinessPartnerController from '../../Controller/RejectBusinessPartnerController';
 
@@ -13,7 +14,7 @@ const PendingAccountDetails = () => {
   useEffect(() => {
     const fetchAccountDetails = async () => {
       try {
-        const details = await ViewBusinessPartnerController.getDetails(accountId);
+        const details = await ViewPendingAccountDetailsController.getDetails(accountId);
         setAccountDetails(details);
       } catch (error) {
         console.error("Error fetching account details: ", error);
