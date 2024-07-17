@@ -1,4 +1,4 @@
-import { auth, db } from '../../service/firebase'; // Adjust the path according to your project structure
+import { auth, db } from '../../firebase'; // Adjust the path according to your project structure
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { doc, setDoc, deleteDoc, getDocs, Timestamp, collection, updateDoc, getDoc } from 'firebase/firestore';
 import { deleteUser as firebaseDeleteUser } from 'firebase/auth';
