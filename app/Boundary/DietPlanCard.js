@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { doc, deleteDoc } from 'firebase/firestore';
-import { db } from '../../firebase';
+import DeleteDietPlanController from '../Controller/DeleteDietPlanController';
 import { useAuth } from '../service/AuthContext';
 
 const DietPlanCard = ({ dietPlan, onEdit, onDelete }) => {
@@ -17,8 +16,7 @@ const DietPlanCard = ({ dietPlan, onEdit, onDelete }) => {
   const handleDelete = async () => {
     setModalVisible(false);
     try {
-      const dietPlanDoc = doc(db, `businessPartner/${user.uid}/dietplan`, dietPlan.id);
-      await deleteDoc(dietPlanDoc);
+      await DeleteDietPlanController.deleteDietPlan(user.uid, dietPlan.id);
       onDelete(dietPlan.id);
     } catch (error) {
       console.error("Error deleting document: ", error);
