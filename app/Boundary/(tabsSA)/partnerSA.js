@@ -60,11 +60,13 @@ const PartnerSA = () => {
   });
 
   const renderBusinessPartnerItem = ({ item }) => (
-    <TouchableOpacity style={styles.partnerRow} onPress={() => setSelectedUser(item)}>
-      <Text style={styles.partnerCell}>{item.name}</Text>
-      <Text style={styles.partnerCell}>{item.entityName}</Text>
-      <Text style={styles.partnerCell}>{item.registerTime ? new Date(item.registerTime.seconds * 1000).toLocaleDateString() : 'N/A'}</Text>
-      <Text style={[styles.partnerCell, item.status === 'active' ? styles.activeStatus : styles.pendingStatus]}>{item.status}</Text>
+    <TouchableOpacity onPress={() => setSelectedUser(item)}>
+      <View style={styles.partnerRow}>
+        <Text style={styles.partnerCell}>{item.name}</Text>
+        <Text style={styles.partnerCell}>{item.entityName}</Text>
+        <Text style={styles.partnerCell}>{item.registerTime ? new Date(item.registerTime.seconds * 1000).toLocaleDateString() : 'N/A'}</Text>
+        <Text style={[styles.partnerCell, item.status === 'active' ? styles.activeStatus : styles.pendingStatus]}>{item.status}</Text>
+      </View>
     </TouchableOpacity>
   );
 
@@ -98,39 +100,27 @@ const PartnerSA = () => {
           <FlatList
             data={filteredBusinessPartners}
             renderItem={renderBusinessPartnerItem}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => item.username}
           />
         )}
         {selectedUser && (
           <Modal
             visible={!!selectedUser}
             transparent={true}
-            animationType="fade"
+            animationType="slide"
             onRequestClose={() => setSelectedUser(null)}
           >
             <View style={styles.modalContainer}>
               <View style={styles.modalContent}>
                 <Text style={styles.detailsText}>Username: {selectedUser.name}</Text>
                 <Text style={styles.detailsText}>Stall Name: {selectedUser.entityName}</Text>
-                <Text style={styles.detailsText}>Registered: {new Date(selectedUser.registerTime.seconds * 1000).toLocaleDateString()}</Text>
+                <Text style={styles.detailsText}>Registered: {selectedUser.registerTime ? new Date(selectedUser.registerTime.seconds * 1000).toLocaleDateString() : 'N/A'}</Text>
                 <Text style={styles.detailsText}>Status: {selectedUser.status}</Text>
                 <View style={styles.actionsContainer}>
-                  <TouchableOpacity
-                    style={styles.suspendButton}
-                    onPress={() => {
-                      setConfirmAction(() => handleSuspend);
-                      setDialogVisible(true);
-                    }}
-                  >
+                  <TouchableOpacity style={styles.suspendButton} onPress={() => { setConfirmAction('suspend'); setDialogVisible(true); }}>
                     <Text style={styles.buttonText}>Suspend</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.unsuspendButton}
-                    onPress={() => {
-                      setConfirmAction(() => handleUnsuspend);
-                      setDialogVisible(true);
-                    }}
-                  >
+                  <TouchableOpacity style={styles.unsuspendButton} onPress={() => { setConfirmAction('unsuspend'); setDialogVisible(true); }}>
                     <Text style={styles.buttonText}>Unsuspend</Text>
                   </TouchableOpacity>
                 </View>
@@ -144,11 +134,14 @@ const PartnerSA = () => {
         <ConfirmDialog
           visible={isDialogVisible}
           onConfirm={() => {
-            confirmAction();
-            setDialogVisible(false);
+            if (confirmAction === 'suspend') {
+              handleSuspend();
+            } else if (confirmAction === 'unsuspend') {
+              handleUnsuspend();
+            }
           }}
           onCancel={() => setDialogVisible(false)}
-          message="Are you sure you want to perform this action?"
+          message={`Are you sure you want to ${confirmAction} this account?`}
         />
       </View>
     </>
@@ -189,6 +182,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginLeft: 16,
+  },
+  pendingSquare: {
+    width: 20,
+    height: 20,
+    backgroundColor: '#ccc',
+    marginRight: 8,
   },
   pendingText: {
     color: '#000',
