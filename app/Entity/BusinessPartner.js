@@ -76,45 +76,41 @@ class BusinessPartner {
 
   static async suspendBusinessPartner(uid) {
     try {
-      const businessPartnerDocRef = doc(db, 'businessPartner', uid);
-      await updateDoc(businessPartnerDocRef, { status: 'suspended' });
+      await updateDoc(doc(db, 'businessPartner', uid), { status: 'suspended' });
       return true;
     } catch (error) {
       console.error('Error suspending business partner:', error);
-      throw error;
+      throw new Error('Failed to suspend business partner.');
     }
   }
 
   static async unsuspendBusinessPartner(uid) {
     try {
-      const businessPartnerDocRef = doc(db, 'businessPartner', uid);
-      await updateDoc(businessPartnerDocRef, { status: 'active' });
+      await updateDoc(doc(db, 'businessPartner', uid), { status: 'active' });
       return true;
     } catch (error) {
       console.error('Error unsuspending business partner:', error);
-      throw error;
+      throw new Error('Failed to unsuspend business partner.');
     }
   }
 
   static async approveBusinessPartner(uid) {
     try {
-      const businessPartnerDocRef = doc(db, 'businessPartner', uid);
-      await updateDoc(businessPartnerDocRef, { status: 'approved' });
+      await updateDoc(doc(db, 'businessPartner', uid), { status: 'approved' });
       return true;
     } catch (error) {
       console.error('Error approving business partner:', error);
-      throw error;
+      throw new Error('Failed to approve business partner.');
     }
   }
 
   static async rejectBusinessPartner(uid) {
     try {
-      const businessPartnerDocRef = doc(db, 'businessPartner', uid);
-      await updateDoc(businessPartnerDocRef, { status: 'rejected' });
+      await updateDoc(doc(db, 'businessPartner', uid), { status: 'rejected' });
       return true;
     } catch (error) {
       console.error('Error rejecting business partner:', error);
-      throw error;
+      throw new Error('Failed to reject business partner.');
     }
   }
 
