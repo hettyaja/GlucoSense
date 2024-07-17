@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../../firebase';
+import { useRouter } from 'expo-router';
+import ViewPendingAccountListController from '../../Controller/ViewPendingAccountListController';
 
 const PendingAccountList = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -13,10 +12,7 @@ const PendingAccountList = () => {
   useEffect(() => {
     const fetchPendingAccounts = async () => {
       try {
-        const accountsCollection = await getDocs(collection(db, 'businessPartner'));
-        const pendingAccountsData = accountsCollection.docs
-          .map(doc => ({ ...doc.data(), id: doc.id }))
-          .filter(account => account.status === 'pending');
+        const pendingAccountsData = await ViewPendingAccountListController.getPendingAccounts();
         setPendingAccounts(pendingAccountsData);
       } catch (error) {
         console.error("Error fetching pending accounts: ", error);
