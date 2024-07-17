@@ -1,74 +1,88 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from 'react-native';
-import { useRouter } from 'expo-router';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useRouter, useLocalSearchParams } from 'expo-router';
+import ApproveBusinessPartnerController from '../../Controller/ApproveBusinessPartnerController';
+import RejectBusinessPartnerController from '../../Controller/RejectBusinessPartnerController';
 import ViewPendingAccountDetailsController from '../../Controller/ViewPendingAccountDetailsController';
 
-const PendingAccountList = () => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [pendingAccounts, setPendingAccounts] = useState([]);
+const PendingAccountDetails = () => {
+  const { accountId } = useLocalSearchParams();
+  const [accountDetails, setAccountDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
-    const fetchPendingAccounts = async () => {
+    const fetchAccountDetails = async () => {
       try {
-        const pendingAccountsData = await ViewPendingAccountDetailsController.getPendingAccounts();
-        setPendingAccounts(pendingAccountsData);
+        const details = await ViewPendingAccountDetailsController.getDetails(accountId);
+        setAccountDetails(details);
       } catch (error) {
-        console.error("Error fetching pending accounts: ", error);
+        console.error("Error fetching account details: ", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchPendingAccounts();
-  }, []);
+    fetchAccountDetails();
+  }, [accountId]);
 
-  const filteredPendingAccounts = pendingAccounts.filter(account => {
-    return searchQuery ? account.name && account.name.toLowerCase().includes(searchQuery.toLowerCase()) : true;
-  });
+  const handleAccept = async () => {
+    try {
+      await ApproveBusinessPartnerController.approve(accountId);
+      alert('Business Partner approved successfully');
+      router.back();
+    } catch (error) {
+      console.error("Error accepting account: ", error);
+      alert('Failed to accept Business Partner');
+    }
+  };
 
-  const renderPendingAccountItem = ({ item }) => (
-    <TouchableOpacity style={styles.accountRow} onPress={() => router.push(`/Boundary/pendingAccountDetails`, { accountId: item.id })}>
-      <Text style={styles.accountCell}>{item.name}</Text>
-      <Text style={styles.accountCell}>{new Date(item.registerTime.seconds * 1000).toLocaleDateString()}</Text>
-      <Text style={styles.accountCell}>{item.status}</Text>
-    </TouchableOpacity>
-  );
+  const handleReject = async () => {
+    try {
+      await RejectBusinessPartnerController.reject(accountId);
+      alert('Business Partner rejected successfully');
+      router.back();
+    } catch (error) {
+      console.error("Error rejecting account: ", error);
+      alert('Failed to reject Business Partner');
+    }
+  };
+
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.loadingText}>Loading...</Text>
+      </View>
+    );
+  }
+
+  if (!accountDetails) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.loadingText}>No Account Details Found</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerText}>Pending Account</Text>
       </View>
-      <View style={styles.searchBar}>
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search Account"
-          value={searchQuery}
-          onChangeText={(text) => setSearchQuery(text)}
-        />
+      <View style={styles.detailsContainer}>
+        <Text style={styles.detailsText}>Username: {accountDetails.name}</Text>
+        <Text style={styles.detailsText}>Stall Name: {accountDetails.entityName}</Text>
+        <Text style={styles.detailsText}>Registered: {new Date(accountDetails.registerTime.seconds * 1000).toLocaleDateString()}</Text>
+        <Text style={styles.detailsText}>Status: {accountDetails.status}</Text>
       </View>
-      <View style={styles.tableHeader}>
-        <Text style={styles.tableHeaderCell}>Username</Text>
-        <Text style={styles.tableHeaderCell}>Registered</Text>
-        <Text style={styles.tableHeaderCell}>Status</Text>
+      <View style={styles.actionsContainer}>
+        <TouchableOpacity style={styles.rejectButton} onPress={handleReject}>
+          <Text style={styles.buttonText}>Reject</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.acceptButton} onPress={handleAccept}>
+          <Text style={styles.buttonText}>Accept</Text>
+        </TouchableOpacity>
       </View>
-      {loading ? (
-        <View style={styles.noAccounts}>
-          <Text style={styles.noAccountsText}>Loading...</Text>
-        </View>
-      ) : filteredPendingAccounts.length === 0 ? (
-        <View style={styles.noAccounts}>
-          <Text style={styles.noAccountsText}>NO PENDING ACCOUNTS</Text>
-        </View>
-      ) : (
-        <FlatList
-          data={filteredPendingAccounts}
-          renderItem={renderPendingAccountItem}
-          keyExtractor={(item) => item.id}
-        />
-      )}
     </View>
   );
 };
@@ -88,49 +102,44 @@ const styles = StyleSheet.create({
     color: '#fff',
     textAlign: 'center',
   },
-  searchBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  detailsContainer: {
     padding: 16,
-    borderBottomWidth: 1,
-    borderColor: '#ccc',
   },
-  searchInput: {
-    flex: 1,
-    padding: 8,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 4,
+  detailsText: {
+    fontSize: 16,
+    marginBottom: 8,
   },
-  tableHeader: {
+  actionsContainer: {
     flexDirection: 'row',
-    backgroundColor: '#f2f2f2',
-    padding: 8,
+    justifyContent: 'space-between',
+    padding: 16,
   },
-  tableHeaderCell: {
-    flex: 1,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  accountRow: {
-    flexDirection: 'row',
-    padding: 8,
-    borderBottomWidth: 1,
-    borderColor: '#ccc',
-  },
-  accountCell: {
-    flex: 1,
-    textAlign: 'center',
-  },
-  noAccounts: {
-    flex: 1,
-    justifyContent: 'center',
+  rejectButton: {
+    backgroundColor: 'red',
+    padding: 16,
+    borderRadius: 8,
     alignItems: 'center',
+    flex: 1,
+    marginRight: 8,
   },
-  noAccountsText: {
+  acceptButton: {
+    backgroundColor: 'green',
+    padding: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+    flex: 1,
+    marginLeft: 8,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  loadingText: {
     fontSize: 18,
-    color: '#ccc',
+    textAlign: 'center',
+    marginTop: 20,
   },
 });
 
-export default PendingAccountList;
+export default PendingAccountDetails;
