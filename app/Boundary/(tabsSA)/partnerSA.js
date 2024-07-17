@@ -6,10 +6,14 @@ import SuspendBusinessPartnerController from '../../Controller/SuspendBusinessPa
 import UnsuspendBusinessPartnerController from '../../Controller/UnsuspendBusinessPartnerController';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Header from '../../components/Header';
+import ConfirmDialog from '../../components/ConfirmDialog';
 
 const PartnerSA = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [businessPartner, setBusinessPartner] = useState([]);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [isSuspendDialogVisible, setSuspendDialogVisible] = useState(false);
+  const [isUnsuspendDialogVisible, setUnsuspendDialogVisible] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -25,27 +29,36 @@ const PartnerSA = () => {
     fetchBusinessPartners();
   }, []);
 
-  const handleSuspend = async (id) => {
-    try {
-      await SuspendBusinessPartnerController.suspend(id);
-      alert('Business Partner suspended successfully');
-      // Refresh the list after suspension
-      fetchBusinessPartners();
-    } catch (error) {
-      console.error("Error suspending business partner: ", error);
-      alert('Failed to suspend Business Partner');
+  const handleSuspend = async () => {
+    if (selectedUser && selectedUser.status !== 'suspended') {
+      try {
+        await SuspendBusinessPartnerController.suspend(selectedUser.id);
+        fetchBusinessPartners();
+        setSuspendDialogVisible(false);
+      } catch (error) {
+        console.error("Error suspending business partner: ", error);
+      }
     }
   };
 
-  const handleUnsuspend = async (id) => {
+  const handleUnsuspend = async () => {
+    if (selectedUser && selectedUser.status === 'suspended') {
+      try {
+        await UnsuspendBusinessPartnerController.unsuspend(selectedUser.id);
+        fetchBusinessPartners();
+        setUnsuspendDialogVisible(false);
+      } catch (error) {
+        console.error("Error unsuspending business partner: ", error);
+      }
+    }
+  };
+
+  const fetchBusinessPartners = async () => {
     try {
-      await UnsuspendBusinessPartnerController.unsuspend(id);
-      alert('Business Partner unsuspended successfully');
-      // Refresh the list after unsuspension
-      fetchBusinessPartners();
+      const businessPartnerCollection = await ViewBusinessPartnerController.ViewBusinessPartner();
+      setBusinessPartner(businessPartnerCollection);
     } catch (error) {
-      console.error("Error unsuspending business partner: ", error);
-      alert('Failed to unsuspend Business Partner');
+      console.error("Error fetching business partners: ", error);
     }
   };
 
@@ -60,12 +73,16 @@ const PartnerSA = () => {
       <Text style={styles.partnerCell}>{item.registerTime ? new Date(item.registerTime.seconds * 1000).toLocaleDateString() : 'N/A'}</Text>
       <Text style={[styles.partnerCell, item.status === 'Active' ? styles.activeStatus : styles.pendingStatus]}>{item.status}</Text>
       <View style={styles.actionButtons}>
-        <TouchableOpacity onPress={() => handleSuspend(item.id)}>
-          <Text style={styles.actionText}>Suspend</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => handleUnsuspend(item.id)}>
-          <Text style={styles.actionText}>Unsuspend</Text>
-        </TouchableOpacity>
+        {item.status !== 'suspended' && (
+          <TouchableOpacity onPress={() => { setSelectedUser(item); setSuspendDialogVisible(true); }}>
+            <Text style={styles.actionText}>Suspend</Text>
+          </TouchableOpacity>
+        )}
+        {item.status === 'suspended' && (
+          <TouchableOpacity onPress={() => { setSelectedUser(item); setUnsuspendDialogVisible(true); }}>
+            <Text style={styles.actionText}>Unsuspend</Text>
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );
@@ -100,10 +117,22 @@ const PartnerSA = () => {
           <FlatList
             data={filteredBusinessPartners}
             renderItem={renderBusinessPartnerItem}
-            keyExtractor={(item) => item.username}
+            keyExtractor={(item) => item.id}
           />
         )}
       </View>
+      <ConfirmDialog
+        visible={isSuspendDialogVisible}
+        message="Are you sure you want to suspend this account?"
+        onConfirm={handleSuspend}
+        onCancel={() => setSuspendDialogVisible(false)}
+      />
+      <ConfirmDialog
+        visible={isUnsuspendDialogVisible}
+        message="Are you sure you want to unsuspend this account?"
+        onConfirm={handleUnsuspend}
+        onCancel={() => setUnsuspendDialogVisible(false)}
+      />
     </>
   );
 };
