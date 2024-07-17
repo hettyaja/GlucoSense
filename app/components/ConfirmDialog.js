@@ -1,14 +1,18 @@
 import React from 'react';
-import { Modal, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Modal, TouchableOpacity } from 'react-native';
 
-const ConfirmDialog = ({ visible, title, message, onConfirm, onCancel }) => {
+const ConfirmDialog = ({ visible, onConfirm, onCancel, message }) => {
   return (
-    <Modal visible={visible} transparent animationType="slide">
-      <View style={styles.modalContainer}>
-        <View style={styles.dialogContainer}>
-          <Text style={styles.title}>{title}</Text>
+    <Modal
+      visible={visible}
+      transparent={true}
+      animationType="fade"
+      onRequestClose={onCancel}
+    >
+      <View style={styles.overlay}>
+        <View style={styles.dialog}>
           <Text style={styles.message}>{message}</Text>
-          <View style={styles.buttonContainer}>
+          <View style={styles.actions}>
             <TouchableOpacity style={styles.cancelButton} onPress={onCancel}>
               <Text style={styles.buttonText}>Cancel</Text>
             </TouchableOpacity>
@@ -23,44 +27,47 @@ const ConfirmDialog = ({ visible, title, message, onConfirm, onCancel }) => {
 };
 
 const styles = StyleSheet.create({
-  modalContainer: {
+  overlay: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
-  dialogContainer: {
-    width: '80%',
-    padding: 16,
-    backgroundColor: 'white',
+  dialog: {
+    width: 300,
+    padding: 20,
+    backgroundColor: '#fff',
     borderRadius: 8,
-    elevation: 4,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 8,
+    alignItems: 'center',
   },
   message: {
     fontSize: 16,
-    marginBottom: 16,
+    marginBottom: 20,
+    textAlign: 'center',
   },
-  buttonContainer: {
+  actions: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    width: '100%',
   },
   cancelButton: {
-    padding: 8,
     backgroundColor: 'red',
-    borderRadius: 4,
+    padding: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+    flex: 1,
+    marginRight: 8,
   },
   confirmButton: {
-    padding: 8,
     backgroundColor: 'green',
-    borderRadius: 4,
+    padding: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+    flex: 1,
+    marginLeft: 8,
   },
   buttonText: {
-    color: 'white',
+    color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
   },
