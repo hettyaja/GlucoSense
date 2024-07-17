@@ -118,4 +118,16 @@ class BusinessPartner {
   }
 }
 
+  static async getPendingAccounts() {
+    try {
+      const accountsCollection = await getDocs(collection(db, 'businessPartner'));
+      return accountsCollection.docs
+        .map(doc => ({ ...doc.data(), id: doc.id }))
+        .filter(account => account.status === 'pending');
+    } catch (error) {
+      console.error('Error fetching pending accounts:', error);
+      throw new Error('Failed to fetch pending accounts.');
+    }
+  }
+
 export default BusinessPartner;
