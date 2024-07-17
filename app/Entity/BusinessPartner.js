@@ -1,4 +1,4 @@
-import { auth, db } from '../firebase'; // Correct the path to your firebase configuration
+import { auth, db } from '../../firebase'; // Correct the path to your firebase configuration
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { doc, setDoc, deleteDoc, getDocs, Timestamp, collection, updateDoc, getDoc, addDoc } from 'firebase/firestore';
 import { deleteUser as firebaseDeleteUser } from 'firebase/auth';
