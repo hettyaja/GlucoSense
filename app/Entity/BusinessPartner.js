@@ -1,6 +1,7 @@
 import { auth, db } from '../../service/firebase'; // Adjust the path according to your project structure
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, deleteUser as firebaseDeleteUser } from 'firebase/auth';
-import { doc, setDoc, deleteDoc, getDocs, getDoc, Timestamp, collection, updateDoc } from 'firebase/firestore';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { doc, setDoc, deleteDoc, getDocs, Timestamp, collection, updateDoc, getDoc } from 'firebase/firestore';
+import { deleteUser as firebaseDeleteUser } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 class BusinessPartner {
@@ -116,7 +117,6 @@ class BusinessPartner {
       throw error;
     }
   }
-}
 
   static async getPendingAccounts() {
     try {
@@ -129,5 +129,21 @@ class BusinessPartner {
       throw new Error('Failed to fetch pending accounts.');
     }
   }
+
+  static async getPendingDetails(uid) {
+    try {
+      const businessPartnerDocRef = doc(db, 'businessPartner', uid);
+      const docSnap = await getDoc(businessPartnerDocRef);
+      if (docSnap.exists()) {
+        return docSnap.data();
+      } else {
+        throw new Error('No such document!');
+      }
+    } catch (error) {
+      console.error('Error fetching account details:', error);
+      throw new Error('Failed to fetch account details.');
+    }
+  }
+}
 
 export default BusinessPartner;
