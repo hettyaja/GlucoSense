@@ -6,59 +6,46 @@ import SuspendBusinessPartnerController from '../../Controller/SuspendBusinessPa
 import UnsuspendBusinessPartnerController from '../../Controller/UnsuspendBusinessPartnerController';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Header from '../../components/Header';
-import ConfirmDialog from '../../components/ConfirmDialog';
 
 const PartnerSA = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [businessPartner, setBusinessPartner] = useState([]);
-  const [selectedPartner, setSelectedPartner] = useState(null);
-  const [confirmDialogVisible, setConfirmDialogVisible] = useState(false);
-  const [confirmMessage, setConfirmMessage] = useState('');
-  const [actionType, setActionType] = useState('');
   const router = useRouter();
 
   useEffect(() => {
+    const fetchBusinessPartners = async () => {
+      try {
+        const businessPartnerCollection = await ViewBusinessPartnerController.ViewBusinessPartner();
+        setBusinessPartner(businessPartnerCollection);
+      } catch (error) {
+        console.error("Error fetching business partners: ", error);
+      }
+    };
+
     fetchBusinessPartners();
   }, []);
 
-  const fetchBusinessPartners = async () => {
+  const handleSuspend = async (id) => {
     try {
-      const businessPartnerCollection = await ViewBusinessPartnerController.ViewBusinessPartner();
-      setBusinessPartner(businessPartnerCollection);
+      await SuspendBusinessPartnerController.suspend(id);
+      alert('Business Partner suspended successfully');
+      // Refresh the list after suspension
+      fetchBusinessPartners();
     } catch (error) {
-      console.error("Error fetching business partners: ", error);
+      console.error("Error suspending business partner: ", error);
+      alert('Failed to suspend Business Partner');
     }
   };
 
-  const handleSuspend = async () => {
-    if (selectedPartner && selectedPartner.status !== 'suspended') {
-      try {
-        await SuspendBusinessPartnerController.suspend(selectedPartner.id);
-        fetchBusinessPartners();
-        setConfirmDialogVisible(false);
-      } catch (error) {
-        console.error("Error suspending business partner: ", error);
-      }
-    }
-  };
-
-  const handleUnsuspend = async () => {
-    if (selectedPartner && selectedPartner.status === 'suspended') {
-      try {
-        await UnsuspendBusinessPartnerController.unsuspend(selectedPartner.id);
-        fetchBusinessPartners();
-        setConfirmDialogVisible(false);
-      } catch (error) {
-        console.error("Error unsuspending business partner: ", error);
-      }
-    }
-  };
-
-  const handleConfirm = () => {
-    if (actionType === 'suspend') {
-      handleSuspend();
-    } else if (actionType === 'unsuspend') {
-      handleUnsuspend();
+  const handleUnsuspend = async (id) => {
+    try {
+      await UnsuspendBusinessPartnerController.unsuspend(id);
+      alert('Business Partner unsuspended successfully');
+      // Refresh the list after unsuspension
+      fetchBusinessPartners();
+    } catch (error) {
+      console.error("Error unsuspending business partner: ", error);
+      alert('Failed to unsuspend Business Partner');
     }
   };
 
@@ -73,25 +60,12 @@ const PartnerSA = () => {
       <Text style={styles.partnerCell}>{item.registerTime ? new Date(item.registerTime.seconds * 1000).toLocaleDateString() : 'N/A'}</Text>
       <Text style={[styles.partnerCell, item.status === 'Active' ? styles.activeStatus : styles.pendingStatus]}>{item.status}</Text>
       <View style={styles.actionButtons}>
-        {item.status === 'Active' ? (
-          <TouchableOpacity onPress={() => {
-            setSelectedPartner(item);
-            setActionType('suspend');
-            setConfirmMessage(`Are you sure you want to suspend this account?`);
-            setConfirmDialogVisible(true);
-          }}>
-            <Text style={styles.actionText}>Suspend</Text>
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity onPress={() => {
-            setSelectedPartner(item);
-            setActionType('unsuspend');
-            setConfirmMessage(`Are you sure you want to unsuspend this account?`);
-            setConfirmDialogVisible(true);
-          }}>
-            <Text style={styles.actionText}>Unsuspend</Text>
-          </TouchableOpacity>
-        )}
+        <TouchableOpacity onPress={() => handleSuspend(item.id)}>
+          <Text style={styles.actionText}>Suspend</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => handleUnsuspend(item.id)}>
+          <Text style={styles.actionText}>Unsuspend</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -130,12 +104,6 @@ const PartnerSA = () => {
           />
         )}
       </View>
-      <ConfirmDialog
-        visible={confirmDialogVisible}
-        onConfirm={handleConfirm}
-        onCancel={() => setConfirmDialogVisible(false)}
-        message={confirmMessage}
-      />
     </>
   );
 };
