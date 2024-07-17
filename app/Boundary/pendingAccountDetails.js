@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { db } from '../../firebase';
+import { db } from '../../service/firebase';
+import ApproveBusinessPartnerController from '../../Controller/ApproveBusinessPartnerController';
+import RejectBusinessPartnerController from '../../Controller/RejectBusinessPartnerController';
 
 const PendingAccountDetails = () => {
   const { accountId } = useLocalSearchParams();
@@ -32,25 +34,23 @@ const PendingAccountDetails = () => {
 
   const handleAccept = async () => {
     try {
-      const docRef = doc(db, 'businessPartner', accountId);
-      await updateDoc(docRef, {
-        status: 'Active'
-      });
+      await ApproveBusinessPartnerController.approve(accountId);
+      alert('Business Partner approved successfully');
       router.back();
     } catch (error) {
       console.error("Error accepting account: ", error);
+      alert('Failed to accept Business Partner');
     }
   };
 
   const handleReject = async () => {
     try {
-      const docRef = doc(db, 'businessPartner', accountId);
-      await updateDoc(docRef, {
-        status: 'Rejected'
-      });
+      await RejectBusinessPartnerController.reject(accountId);
+      alert('Business Partner rejected successfully');
       router.back();
     } catch (error) {
       console.error("Error rejecting account: ", error);
+      alert('Failed to reject Business Partner');
     }
   };
 
