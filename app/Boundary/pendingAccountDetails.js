@@ -23,7 +23,11 @@ const PendingAccountDetails = () => {
       }
     };
 
-    fetchAccountDetails();
+    if (accountId) {
+      fetchAccountDetails();
+    } else {
+      setLoading(false);
+    }
   }, [accountId]);
 
   const handleAccept = async () => {
