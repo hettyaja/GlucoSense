@@ -5,7 +5,7 @@ class UnsuspendBusinessPartnerController {
     try {
       return await BusinessPartner.unsuspendBusinessPartner(uid);
     } catch (error) {
-      console.error("Error unsuspending business partner: ", error);
+      console.error('Error unsuspending business partner:', error);
       throw new Error('Failed to unsuspend business partner.');
     }
   }
