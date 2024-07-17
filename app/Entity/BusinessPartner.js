@@ -1,6 +1,6 @@
-import { auth, db } from '../../firebase'; // Correct the path to your firebase configuration
+import { auth, db } from '../../firebase'; // Adjust the path according to your project structure
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
-import { doc, setDoc, deleteDoc, getDocs, Timestamp, collection, updateDoc, getDoc, addDoc } from 'firebase/firestore';
+import { doc, setDoc, deleteDoc, getDocs, Timestamp, collection, updateDoc, getDoc, addDoc } from 'firebase/firestore'; // addDoc added here
 import { deleteUser as firebaseDeleteUser } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -22,7 +22,6 @@ class BusinessPartner {
 
   static async register(email, password, additionalData) {
     try {
-      console.log('Registering business partner with email:', email);
       const businessPartnerCredential = await createUserWithEmailAndPassword(auth, email, password);
       const businessPartner = businessPartnerCredential.user;
       const businessPartnerRef = doc(db, 'businessPartner', businessPartner.uid);
@@ -42,7 +41,6 @@ class BusinessPartner {
       });
       return new BusinessPartner(businessPartner.uid, additionalData.entityName, additionalData.UEN, additionalData.city, additionalData.address, additionalData.postal, additionalData.name, additionalData.phoneNum, email, registerTime, 'pending', 'businessPartner');
     } catch (error) {
-      console.error('Error registering business partner:', error.message); 
       throw new Error(error.message);
     }
   }
@@ -60,7 +58,6 @@ class BusinessPartner {
       }
       return true;
     } catch (error) {
-        console.error('Error deleting user profile:', error);
         throw error;
     }
   }
@@ -76,41 +73,41 @@ class BusinessPartner {
 
   static async suspendBusinessPartner(uid) {
     try {
-      await updateDoc(doc(db, 'businessPartner', uid), { status: 'suspended' });
+      const businessPartnerDocRef = doc(db, 'businessPartner', uid);
+      await updateDoc(businessPartnerDocRef, { status: 'suspended' });
       return true;
     } catch (error) {
-      console.error('Error suspending business partner:', error);
-      throw new Error('Failed to suspend business partner.');
+      throw error;
     }
   }
 
   static async unsuspendBusinessPartner(uid) {
     try {
-      await updateDoc(doc(db, 'businessPartner', uid), { status: 'active' });
+      const businessPartnerDocRef = doc(db, 'businessPartner', uid);
+      await updateDoc(businessPartnerDocRef, { status: 'active' });
       return true;
     } catch (error) {
-      console.error('Error unsuspending business partner:', error);
-      throw new Error('Failed to unsuspend business partner.');
+      throw error;
     }
   }
 
   static async approveBusinessPartner(uid) {
     try {
-      await updateDoc(doc(db, 'businessPartner', uid), { status: 'approved' });
+      const businessPartnerDocRef = doc(db, 'businessPartner', uid);
+      await updateDoc(businessPartnerDocRef, { status: 'approved' });
       return true;
     } catch (error) {
-      console.error('Error approving business partner:', error);
-      throw new Error('Failed to approve business partner.');
+      throw error;
     }
   }
 
   static async rejectBusinessPartner(uid) {
     try {
-      await updateDoc(doc(db, 'businessPartner', uid), { status: 'rejected' });
+      const businessPartnerDocRef = doc(db, 'businessPartner', uid);
+      await updateDoc(businessPartnerDocRef, { status: 'rejected' });
       return true;
     } catch (error) {
-      console.error('Error rejecting business partner:', error);
-      throw new Error('Failed to reject business partner.');
+      throw error;
     }
   }
 
@@ -121,7 +118,6 @@ class BusinessPartner {
         .map(doc => ({ ...doc.data(), id: doc.id }))
         .filter(account => account.status === 'pending');
     } catch (error) {
-      console.error('Error fetching pending accounts:', error);
       throw new Error('Failed to fetch pending accounts.');
     }
   }
@@ -136,7 +132,6 @@ class BusinessPartner {
         throw new Error('No such document!');
       }
     } catch (error) {
-      console.error('Error fetching account details:', error);
       throw new Error('Failed to fetch account details.');
     }
   }
