@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { db } from '../../service/firebase';
 import ApproveBusinessPartnerController from '../../Controller/ApproveBusinessPartnerController';
 import RejectBusinessPartnerController from '../../Controller/RejectBusinessPartnerController';
 
@@ -15,13 +13,8 @@ const PendingAccountDetails = () => {
   useEffect(() => {
     const fetchAccountDetails = async () => {
       try {
-        const docRef = doc(db, 'businessPartner', accountId);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          setAccountDetails(docSnap.data());
-        } else {
-          console.log("No such document!");
-        }
+        const details = await ViewBusinessPartnerController.getDetails(accountId);
+        setAccountDetails(details);
       } catch (error) {
         console.error("Error fetching account details: ", error);
       } finally {
