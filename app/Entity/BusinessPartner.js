@@ -1,7 +1,6 @@
 import { auth, db } from '../../firebase'; // Adjust the path according to your project structure
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
-import { doc, setDoc, deleteDoc, getDocs, Timestamp, collection, updateDoc, getDoc } from 'firebase/firestore';
-import { deleteUser as firebaseDeleteUser } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, deleteUser as firebaseDeleteUser } from 'firebase/auth';
+import { doc, setDoc, deleteDoc, getDocs, Timestamp, collection, updateDoc, getDoc, addDoc } from 'firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 class BusinessPartner {
@@ -69,7 +68,7 @@ class BusinessPartner {
     try{
       const profileRef = doc(db,'businessPartner', uid);
       await updateDoc(profileRef, profileData)
-      console.log("Profile updated sucessfully");
+      console.log("Profile updated successfully");
     }catch(error){
         console.error("Error updating profile", error);
     }
@@ -89,8 +88,7 @@ class BusinessPartner {
         console.error('Error fetching profile data:', error);
         throw error;
       }
-  };  
-  
+  }
 
   static async export() {
     try {
@@ -170,6 +168,34 @@ class BusinessPartner {
       console.error('Error fetching account details:', error);
       throw new Error('Failed to fetch account details.');
     }
+  }
+
+ 
+
+  static async createDietPlan(userId, newDietPlan) {
+    const dietPlanCollection = collection(db, `businessPartner/${userId}/dietplan`);
+    const docRef = await addDoc(dietPlanCollection, newDietPlan);
+    return docRef.id;
+  }
+
+  static async fetchDietPlans(userId) {
+    const dietPlanCollection = collection(db, `businessPartner/${userId}/dietplan`);
+    const dietPlanSnapshot = await getDocs(dietPlanCollection);
+    return dietPlanSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+      meals: doc.data().meals || { lunch: {}, dinner: {} },
+    }));
+  }
+
+  static async updateDietPlan(userId, dietPlanId, updatedDietPlan) {
+    const dietPlanDoc = doc(db, `businessPartner/${userId}/dietplan`, dietPlanId);
+    await updateDoc(dietPlanDoc, updatedDietPlan);
+  }
+
+  static async deleteDietPlan(userId, dietPlanId) {
+    const dietPlanDoc = doc(db, `businessPartner/${userId}/dietplan`, dietPlanId);
+    await deleteDoc(dietPlanDoc);
   }
 }
 
