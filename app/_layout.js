@@ -57,7 +57,7 @@ const RootLayout = () => {
         headerTitleAlign: 'center',
       }} />
       {/* <Stack.Screen name="Subscribe" options={{ headerShown: false }} /> */}
-      <Stack.Screen name="profileBP" />
+      <Stack.Screen name="Boundary/ProfileBpPage" />
       <Stack.Screen name="addMeals" />
       <Stack.Screen name="selectMedicine" />
       <Stack.Screen name='ReportProblem' options={{
