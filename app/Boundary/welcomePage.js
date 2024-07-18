@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Black",
     fontSize: 36,
     color: "#E58B68",
-    paddingTop: 250,
+    paddingTop: 200,
   },
   subTitleText: {
     fontFamily: "Poppins-Medium",

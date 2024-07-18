@@ -30,10 +30,10 @@ const _layout = () => {
         <Tabs.Screen name='home' options={{
             title:'Home',
             tabBarIcon: () => (
-                <Octicons name='home' size={24} color='#E58B68'/>
+                <Octicons name='home' size={20} color='#E58B68'/>
             ),
             tabBarLabel: ({ focused }) => (
-              <Text style={{ fontFamily: focused ? 'Poppins-SemiBold' : 'Poppins-Regular', color: '#E58B68' }}>
+              <Text style={{ fontFamily: focused ? 'Poppins-SemiBold' : 'Poppins-Regular', fontSize:10, color: '#E58B68' }}>
                   Home
               </Text>
           ),
@@ -41,10 +41,10 @@ const _layout = () => {
         <Tabs.Screen name='insight' options={{
             title:'Insight',
             tabBarIcon: () => (
-                <SimpleLineIcons name='graph' size={24} color='#E58B68'/>
+                <SimpleLineIcons name='graph' size={20} color='#E58B68'/>
             ),
             tabBarLabel: ({ focused }) => (
-              <Text style={{ fontFamily: focused ? 'Poppins-SemiBold' : 'Poppins-Regular', color: '#E58B68' }}>
+              <Text style={{ fontFamily: focused ? 'Poppins-SemiBold' : 'Poppins-Regular', fontSize:10, color: '#E58B68' }}>
                   Insight
               </Text>
           ),
@@ -67,10 +67,10 @@ const _layout = () => {
         <Tabs.Screen name='food' options={{
             title:'Food',
             tabBarIcon: () => (
-                <FontAwesome name='cutlery' size={24} color='#E58B68'/>
+                <FontAwesome name='cutlery' size={20} color='#E58B68'/>
             ),
             tabBarLabel: ({ focused }) => (
-              <Text style={{ fontFamily: focused ? 'Poppins-SemiBold' : 'Poppins-Regular', color: '#E58B68' }}>
+              <Text style={{ fontFamily: focused ? 'Poppins-SemiBold' : 'Poppins-Regular', fontSize:10, color: '#E58B68' }}>
                   Food
               </Text>
           ),
@@ -78,10 +78,10 @@ const _layout = () => {
         <Tabs.Screen name='setting' options={{
             title:'Setting',
             tabBarIcon: () => (
-                <AntDesign name='setting' size={24} color='#E58B68'/>
+                <AntDesign name='setting' size={20} color='#E58B68'/>
             ),
             tabBarLabel: ({ focused }) => (
-              <Text style={{ fontFamily: focused ? 'Poppins-SemiBold' : 'Poppins-Regular', color: '#E58B68' }}>
+              <Text style={{ fontFamily: focused ? 'Poppins-SemiBold' : 'Poppins-Regular', fontSize:10, color: '#E58B68' }}>
                   Setting
               </Text>
           ),
