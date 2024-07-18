@@ -1,5 +1,5 @@
-import { View, Text, StyleSheet, Dimensions, ScrollView, TouchableOpacity } from 'react-native';
 import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, Dimensions, ScrollView, TouchableOpacity } from 'react-native';
 import { Tabs } from 'expo-router';
 import { LineChart } from 'react-native-chart-kit';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -9,10 +9,8 @@ import RetrieveGlucoseLogsController from '../../Controller/RetrieveGlucoseLogsC
 const Insight = () => {
   const screenWidth = Dimensions.get("window").width;
   const { user } = useAuth();
-  const [graphData, setGraphData] = useState({
-    labels: [],
-    datasets: [{ data: [] }]
-  });
+  const [graphData, setGraphData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const prepareDataForGraph = async () => {
@@ -22,6 +20,8 @@ const Insight = () => {
         setGraphData(data);
       } catch (error) {
         console.error('Error preparing data for graph:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -30,7 +30,7 @@ const Insight = () => {
     }
   }, [user.uid]);
 
-  if (!graphData) {
+  if (loading) {
     return <Text>Loading...</Text>;
   }
 
@@ -97,10 +97,15 @@ const Insight = () => {
         headerTitleAlign: 'center',
       }} />
       <ScrollView style={styles.container}>
-      <TouchableOpacity>
+      <TouchableOpacity style={styles.centeredChart}>
+          <View style = {styles.chartContainer}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 15, marginTop: 15}}>
+              <Text style={styles.chartTitle}>Blood Glucose</Text>
+              <Entypo name="resize-full-screen" size={16} />
+            </View>
           <LineChart
             data={graphData}
-            width={Dimensions.get('window').width - 16}
+            width={Dimensions.get('window').width}
             height={220}
             yAxisLabel=""
             yAxisSuffix=""
@@ -117,16 +122,16 @@ const Insight = () => {
               },
               propsForDots: {
                 r: "6",
-                strokeWidth: "2",
-                stroke: "#ffa726"
+                strokeWidth: "1",
               }
             }}
-            bezier
+            
             style={{
               marginVertical: 8,
-              borderRadius: 16
+
             }}
           />
+        </View>
         </TouchableOpacity>
         <TouchableOpacity style={styles.centeredChart}>
           <View style = {styles.chartContainer}>

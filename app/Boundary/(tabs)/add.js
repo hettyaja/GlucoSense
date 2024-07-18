@@ -24,7 +24,7 @@ const BottomSheetModal = ({ isVisible, onClose }) => {
 
         <View style={styles.content}>
               <View style={styles.contentContainer}>
-                <TouchableOpacity style={styles.button} onPress={() => router.push({pathname: '/addGlucose', query: onClose()})}>
+                <TouchableOpacity style={styles.button} onPress={() => router.push({pathname: '/Boundary/addGlucose', query: onClose()})}>
                   <FontAwesome name="tint" size={24} color="#000" />
                   <Text style={styles.buttonText}>Glucose</Text>
                 </TouchableOpacity>

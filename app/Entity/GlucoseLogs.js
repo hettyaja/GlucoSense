@@ -60,9 +60,29 @@ class GlucoseLogs {
       static async fetchGlucoseLogsForGraph(uid) {
         try {
             const logsRef = collection(db, 'users', uid, 'glucoseLogs');
-            const logsQuery = query(logsRef, orderBy('time', 'desc'), limit(10));
+    
+            // Get the timestamp for 7 days ago
+            const now = new Date();
+            const sevenDaysAgo = new Date();
+            sevenDaysAgo.setDate(now.getDate() - 7);
+    
+            // Convert the date to a Firestore timestamp
+            const timestamp = Timestamp.fromDate(sevenDaysAgo);
+    
+            // Adjust the query to fetch logs from the last 7 days
+            const logsQuery = query(
+                logsRef,
+                where('time', '>=', timestamp),
+                orderBy('time', 'desc')
+            );
+    
             const querySnapshot = await getDocs(logsQuery);
             const logs = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    
+            // Debugging: Print fetched logs
+            logs.forEach(log => {
+                console.log('Fetched log time:', log.time.toDate().toISOString());
+            });
     
             logs.sort((a, b) => a.time.seconds - b.time.seconds); // Sort data by time in ascending order
     
@@ -75,7 +95,7 @@ class GlucoseLogs {
     
             const data = logs.map(item => parseFloat(item.glucose));
     
-            console.log('Processed graph data:', { labels, datasets: [{ data }] }); // Add this line for debugging
+            console.log('Processed graph data:', { labels, datasets: [{ data }] });
     
             return { labels, datasets: [{ data }] };
         } catch (error) {
