@@ -1,22 +1,25 @@
+// components/ConfirmDialog.js
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
+import { View, Text, Modal, StyleSheet, TouchableOpacity } from 'react-native';
 
-const ConfirmDialog = ({ visible, message, onCancel, onConfirm }) => {
+const ConfirmDialog = ({ visible, onCancel, onConfirm, action }) => {
   return (
     <Modal
       transparent={true}
-      visible={visible}
       animationType="slide"
+      visible={visible}
+      onRequestClose={onCancel}
     >
-      <View style={styles.modalOverlay}>
-        <View style={styles.modalContainer}>
-          <Text style={styles.modalText}>{message}</Text>
+      <View style={styles.modalContainer}>
+        <View style={styles.dialogContainer}>
+          <Text style={styles.title}>Confirmation</Text>
+          <Text style={styles.message}>Are you sure you want to {action} this account?</Text>
           <View style={styles.buttonContainer}>
-            <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={onCancel}>
-              <Text style={styles.buttonText}>Cancel</Text>
+            <TouchableOpacity style={styles.cancelButton} onPress={onCancel}>
+              <Text style={styles.cancelButtonText}>Cancel</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.button, styles.confirmButton]} onPress={onConfirm}>
-              <Text style={styles.buttonText}>Confirm</Text>
+            <TouchableOpacity style={styles.confirmButton} onPress={onConfirm}>
+              <Text style={styles.confirmButtonText}>Confirm</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -26,42 +29,57 @@ const ConfirmDialog = ({ visible, message, onCancel, onConfirm }) => {
 };
 
 const styles = StyleSheet.create({
-  modalOverlay: {
+  modalContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
-  modalContainer: {
+  dialogContainer: {
     width: 300,
+    backgroundColor: '#fff',
     padding: 20,
-    backgroundColor: 'white',
     borderRadius: 10,
+    alignItems: 'center',
   },
-  modalText: {
-    fontSize: 18,
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  message: {
+    fontSize: 16,
     marginBottom: 20,
     textAlign: 'center',
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-  },
-  button: {
-    flex: 1,
-    padding: 10,
-    alignItems: 'center',
-    borderRadius: 5,
-    marginHorizontal: 5,
+    width: '100%',
   },
   cancelButton: {
     backgroundColor: 'red',
+    padding: 10,
+    borderRadius: 5,
+    flex: 1,
+    alignItems: 'center',
+    marginRight: 5,
   },
   confirmButton: {
     backgroundColor: 'green',
+    padding: 10,
+    borderRadius: 5,
+    flex: 1,
+    alignItems: 'center',
+    marginLeft: 5,
   },
-  buttonText: {
-    color: 'white',
+  cancelButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  confirmButtonText: {
+    color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
   },
