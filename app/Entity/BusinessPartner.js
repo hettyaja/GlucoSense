@@ -135,7 +135,7 @@ class BusinessPartner {
       const businessPartnerDocRef = doc(db, 'businessPartner', uid);
       const docSnap = await getDoc(businessPartnerDocRef);
       if (docSnap.exists()) {
-        return docSnap.data();
+        return { id: docSnap.id, ...docSnap.data() };
       } else {
         throw new Error('No such document!');
       }
