@@ -1,8 +1,9 @@
 // components/ConfirmDialog.js
-import React from 'react';
-import { View, Text, Modal, StyleSheet, TouchableOpacity } from 'react-native';
 
-const ConfirmDialog = ({ visible, onCancel, onConfirm, action }) => {
+import React from 'react';
+import { Modal, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+
+const ConfirmDialog = ({ visible, action, onConfirm, onCancel }) => {
   return (
     <Modal
       transparent={true}
@@ -15,11 +16,11 @@ const ConfirmDialog = ({ visible, onCancel, onConfirm, action }) => {
           <Text style={styles.title}>Confirmation</Text>
           <Text style={styles.message}>Are you sure you want to {action} this account?</Text>
           <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.cancelButton} onPress={onCancel}>
-              <Text style={styles.cancelButtonText}>Cancel</Text>
+            <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={onCancel}>
+              <Text style={styles.buttonText}>Cancel</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.confirmButton} onPress={onConfirm}>
-              <Text style={styles.confirmButtonText}>Confirm</Text>
+            <TouchableOpacity style={[styles.button, styles.confirmButton]} onPress={onConfirm}>
+              <Text style={styles.buttonText}>Confirm</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -36,10 +37,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   dialogContainer: {
-    width: 300,
-    backgroundColor: '#fff',
-    padding: 20,
+    width: '80%',
+    backgroundColor: 'white',
     borderRadius: 10,
+    padding: 20,
     alignItems: 'center',
   },
   title: {
@@ -49,37 +50,29 @@ const styles = StyleSheet.create({
   },
   message: {
     fontSize: 16,
-    marginBottom: 20,
     textAlign: 'center',
+    marginBottom: 20,
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
   },
-  cancelButton: {
-    backgroundColor: 'red',
+  button: {
     padding: 10,
     borderRadius: 5,
     flex: 1,
     alignItems: 'center',
-    marginRight: 5,
+    margin: 5,
+  },
+  cancelButton: {
+    backgroundColor: 'red',
   },
   confirmButton: {
     backgroundColor: 'green',
-    padding: 10,
-    borderRadius: 5,
-    flex: 1,
-    alignItems: 'center',
-    marginLeft: 5,
   },
-  cancelButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  confirmButtonText: {
-    color: '#fff',
+  buttonText: {
+    color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
   },
