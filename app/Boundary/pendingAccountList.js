@@ -29,17 +29,20 @@ const PendingAccountList = () => {
     return searchQuery ? account.name && account.name.toLowerCase().includes(searchQuery.toLowerCase()) : true;
   });
 
- const renderPendingAccountItem = ({ item }) => (
-  <TouchableOpacity 
-    style={styles.accountRow} 
-    onPress={() => router.push(`/Boundary/pendingAccountDetails`, { accountId: item.id })}
-    key={item.id} // Add key prop here
-  >
-    <Text style={styles.accountCell}>{item.name}</Text>
-    <Text style={styles.accountCell}>{new Date(item.registerTime.seconds * 1000).toLocaleDateString()}</Text>
-    <Text style={styles.accountCell}>{item.status}</Text>
-  </TouchableOpacity>
-);
+  const renderPendingAccountItem = ({ item }) => (
+    <TouchableOpacity 
+      style={styles.accountRow} 
+      onPress={() => router.push({
+        pathname: `/Boundary/pendingAccountDetails`,
+        params: { accountId: item.id }
+      })}
+      key={item.id}
+    >
+      <Text style={styles.accountCell}>{item.name}</Text>
+      <Text style={styles.accountCell}>{new Date(item.registerTime.seconds * 1000).toLocaleDateString()}</Text>
+      <Text style={styles.accountCell}>{item.status}</Text>
+    </TouchableOpacity>
+  );
 
   return (
     <View style={styles.container}>
