@@ -119,7 +119,7 @@ const PartnerSA = () => {
         )}
         {selectedUser && (
           <View style={styles.detailsContainer}>
-            <Text style={styles.detailsText}>Account Details</Text>
+            <Text style={styles.detailsTitle}>Account Details</Text>
             <Text style={styles.detailsText}>Username: {selectedUser.name}</Text>
             <Text style={styles.detailsText}>Stall Name: {selectedUser.entityName}</Text>
             <Text style={styles.detailsText}>Registered: {selectedUser.registerTime ? new Date(selectedUser.registerTime.seconds * 1000).toLocaleDateString() : 'N/A'}</Text>
@@ -132,6 +132,9 @@ const PartnerSA = () => {
                 <Text style={styles.buttonText}>Unsuspend</Text>
               </TouchableOpacity>
             </View>
+            <TouchableOpacity style={styles.cancelButton} onPress={() => setSelectedUser(null)}>
+              <Text style={styles.buttonText}>Cancel</Text>
+            </TouchableOpacity>
           </View>
         )}
       </View>
@@ -224,6 +227,12 @@ const styles = StyleSheet.create({
     right: '10%',
     zIndex: 10,
   },
+  detailsTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
   detailsText: {
     fontSize: 16,
     marginBottom: 8,
@@ -248,6 +257,13 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     marginLeft: 5,
+  },
+  cancelButton: {
+    backgroundColor: 'gray',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginTop: 16,
   },
   buttonText: {
     color: '#fff',
