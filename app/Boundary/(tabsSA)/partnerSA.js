@@ -1,177 +1,266 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Modal } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../../firebase';
-import ConfirmDialog from '../../components/ConfirmDialog';
+import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, Modal, Alert } from 'react-native';
+import { useRouter } from 'expo-router';
+import ViewBusinessPartnerController from '../../Controller/ViewBusinessPartnerController';
+import SuspendBusinessPartnerController from '../../Controller/SuspendBusinessPartnerController';
+import UnsuspendBusinessPartnerController from '../../Controller/UnsuspendBusinessPartnerController';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import Header from '../../components/Header';
 
 const PartnerSA = () => {
-  const [businessPartners, setBusinessPartners] = useState([]);
-  const [selectedPartner, setSelectedPartner] = useState(null);
-  const [isSuspendDialogVisible, setSuspendDialogVisible] = useState(false);
-  const [isUnsuspendDialogVisible, setUnsuspendDialogVisible] = useState(false);
-  const [isDetailDialogVisible, setDetailDialogVisible] = useState(false);
-  const navigation = useNavigation();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [businessPartner, setBusinessPartner] = useState([]);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [confirmModalVisible, setConfirmModalVisible] = useState(false);
+  const [confirmAction, setConfirmAction] = useState(null);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchBusinessPartners = async () => {
-      const partnersCollection = await getDocs(collection(db, 'businessPartner'));
-      const partnersData = partnersCollection.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setBusinessPartners(partnersData);
+      try {
+        const businessPartnerCollection = await ViewBusinessPartnerController.ViewBusinessPartner();
+        setBusinessPartner(businessPartnerCollection);
+      } catch (error) {
+        console.error("Error fetching business partners: ", error);
+      }
     };
+
     fetchBusinessPartners();
   }, []);
 
-  const handleSuspend = () => {
-    setSuspendDialogVisible(true);
-  };
-
-  const handleUnsuspend = () => {
-    setUnsuspendDialogVisible(true);
-  };
-
-  const confirmSuspend = async () => {
-    try {
-      // Call your suspend function here
-      setSuspendDialogVisible(false);
-      setDetailDialogVisible(false);
-    } catch (error) {
-      console.error('Error suspending business partner:', error);
+  const handleSuspend = async () => {
+    if (selectedUser && selectedUser.status !== 'suspended') {
+      try {
+        await SuspendBusinessPartnerController.suspendBusinessPartner(selectedUser.id);
+        fetchBusinessPartners();
+        setModalVisible(false);
+        setConfirmModalVisible(false);
+      } catch (error) {
+        console.error("Error suspending business partner: ", error);
+        Alert.alert('Failed to suspend Business Partner');
+      }
     }
   };
 
-  const confirmUnsuspend = async () => {
-    try {
-      // Call your unsuspend function here
-      setUnsuspendDialogVisible(false);
-      setDetailDialogVisible(false);
-    } catch (error) {
-      console.error('Error unsuspending business partner:', error);
+  const handleUnsuspend = async () => {
+    if (selectedUser && selectedUser.status === 'suspended') {
+      try {
+        await UnsuspendBusinessPartnerController.unsuspendBusinessPartner(selectedUser.id);
+        fetchBusinessPartners();
+        setModalVisible(false);
+        setConfirmModalVisible(false);
+      } catch (error) {
+        console.error("Error unsuspending business partner: ", error);
+        Alert.alert('Failed to unsuspend Business Partner');
+      }
     }
   };
 
-  const renderItem = ({ item }) => (
-    <TouchableOpacity
-      style={styles.row}
-      onPress={() => {
-        setSelectedPartner(item);
-        setDetailDialogVisible(true);
-      }}
-    >
-      <Text style={styles.cell}>{item.name}</Text>
-      <Text style={styles.cell}>{item.entityName}</Text>
-      <Text style={styles.cell}>{item.registerTime ? new Date(item.registerTime.seconds * 1000).toLocaleDateString() : 'N/A'}</Text>
-      <Text style={item.status === 'pending' ? styles.pendingCell : styles.cell}>{item.status}</Text>
+  const fetchBusinessPartners = async () => {
+    try {
+      const businessPartnerCollection = await ViewBusinessPartnerController.ViewBusinessPartner();
+      setBusinessPartner(businessPartnerCollection);
+    } catch (error) {
+      console.error("Error fetching business partners: ", error);
+    }
+  };
+
+  const openConfirmModal = (action) => {
+    setConfirmAction(action);
+    setConfirmModalVisible(true);
+  };
+
+  const renderBusinessPartnerItem = ({ item }) => (
+    <TouchableOpacity style={styles.partnerRow} onPress={() => {
+      setSelectedUser(item);
+      setModalVisible(true);
+    }}>
+      <Text style={styles.partnerCell}>{item.name}</Text>
+      <Text style={styles.partnerCell}>{item.entityName}</Text>
+      <Text style={styles.partnerCell}>{item.registerTime ? new Date(item.registerTime.seconds * 1000).toLocaleDateString() : 'N/A'}</Text>
+      <Text style={[styles.partnerCell, item.status === 'Active' ? styles.activeStatus : styles.pendingStatus]}>{item.status}</Text>
     </TouchableOpacity>
   );
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Business Partner</Text>
+    <>
+      <Header title="Business Partner" />
+      <View style={styles.container}>
+        <View style={styles.searchBar}>
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search Account"
+            value={searchQuery}
+            onChangeText={(text) => setSearchQuery(text)}
+          />
+          <TouchableOpacity style={styles.pendingContainer} onPress={() => router.push('/Boundary/pendingAccountList')}>
+            <AntDesign name="form" size={24} />
+            <Text style={styles.pendingText}>Pending</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.tableHeader}>
+          <Text style={styles.tableHeaderCell}>Username</Text>
+          <Text style={styles.tableHeaderCell}>Stall Name</Text>
+          <Text style={styles.tableHeaderCell}>Registered</Text>
+          <Text style={styles.tableHeaderCell}>Status</Text>
+        </View>
+        {businessPartner.length === 0 ? (
+          <View style={styles.noPartners}>
+            <Text style={styles.noPartnersText}>NO PARTNER REGISTERED</Text>
+          </View>
+        ) : (
+          <FlatList
+            data={businessPartner}
+            renderItem={renderBusinessPartnerItem}
+            keyExtractor={(item) => item.id}
+          />
+        )}
       </View>
-      <View style={styles.searchContainer}>
-        <Text style={styles.searchLabel}>Search Account</Text>
-        <Text style={styles.pendingLabel}>Pending</Text>
-      </View>
-      <FlatList
-        data={businessPartners}
-        renderItem={renderItem}
-        keyExtractor={item => item.id}
-      />
       <Modal
-        visible={isDetailDialogVisible}
-        animationType="slide"
+        visible={modalVisible}
         transparent={true}
-        onRequestClose={() => setDetailDialogVisible(false)}
+        animationType="slide"
+        onRequestClose={() => setModalVisible(false)}
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
-            {selectedPartner && (
-              <>
-                <View style={styles.detailsContainer}>
-                  <Text style={styles.detailsText}>Username: {selectedPartner.name}</Text>
-                  <Text style={styles.detailsText}>Stall Name: {selectedPartner.entityName}</Text>
-                  <Text style={styles.detailsText}>Registered: {selectedPartner.registerTime ? new Date(selectedPartner.registerTime.seconds * 1000).toLocaleDateString() : 'N/A'}</Text>
-                  <Text style={styles.detailsText}>Status: {selectedPartner.status}</Text>
-                </View>
-                <View style={styles.actionsContainer}>
-                  <TouchableOpacity style={styles.suspendButton} onPress={handleSuspend}>
-                    <Text style={styles.buttonText}>Suspend</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.unsuspendButton} onPress={handleUnsuspend}>
-                    <Text style={styles.buttonText}>Unsuspend</Text>
-                  </TouchableOpacity>
-                </View>
-                <TouchableOpacity style={styles.cancelButton} onPress={() => setDetailDialogVisible(false)}>
-                  <Text style={styles.buttonText}>Cancel</Text>
-                </TouchableOpacity>
-              </>
-            )}
+            <View style={styles.detailsContainer}>
+              <Text style={styles.detailsText}>Username: {selectedUser?.name}</Text>
+              <Text style={styles.detailsText}>Stall Name: {selectedUser?.entityName}</Text>
+              <Text style={styles.detailsText}>Registered: {selectedUser?.registerTime ? new Date(selectedUser.registerTime.seconds * 1000).toLocaleDateString() : 'N/A'}</Text>
+              <Text style={styles.detailsText}>Status: {selectedUser?.status}</Text>
+            </View>
+            <View style={styles.actionsContainer}>
+              <TouchableOpacity style={styles.suspendButton} onPress={() => openConfirmModal('suspend')}>
+                <Text style={styles.buttonText}>Suspend</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.unsuspendButton} onPress={() => openConfirmModal('unsuspend')}>
+                <Text style={styles.buttonText}>Unsuspend</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.cancelButton} onPress={() => setModalVisible(false)}>
+                <Text style={styles.buttonText}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </Modal>
-      <ConfirmDialog
-        visible={isSuspendDialogVisible}
-        onCancel={() => setSuspendDialogVisible(false)}
-        onConfirm={confirmSuspend}
-        message="Are you sure you want to suspend this account?"
-      />
-      <ConfirmDialog
-        visible={isUnsuspendDialogVisible}
-        onCancel={() => setUnsuspendDialogVisible(false)}
-        onConfirm={confirmUnsuspend}
-        message="Are you sure you want to unsuspend this account?"
-      />
-    </View>
+      <Modal
+        visible={confirmModalVisible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setConfirmModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.confirmModalContainer}>
+            <Text style={styles.detailsText}>Are you sure you want to {confirmAction} this account?</Text>
+            <View style={styles.actionsContainer}>
+              <TouchableOpacity style={styles.cancelButton} onPress={() => setConfirmModalVisible(false)}>
+                <Text style={styles.buttonText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.confirmButton} onPress={() => {
+                if (confirmAction === 'suspend') {
+                  handleSuspend();
+                } else {
+                  handleUnsuspend();
+                }
+              }}>
+                <Text style={styles.buttonText}>Confirm</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+    </>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#fff',
   },
   header: {
     backgroundColor: '#D9A37E',
     padding: 16,
-    alignItems: 'center',
   },
   headerText: {
-    fontSize: 20,
+    fontSize: 18,
+    fontWeight: 'bold',
     color: '#fff',
+    textAlign: 'center',
   },
-  searchContainer: {
+  searchBar: {
     flexDirection: 'row',
-    padding: 16,
     alignItems: 'center',
-  },
-  searchLabel: {
-    flex: 1,
-  },
-  pendingLabel: {
-    color: 'red',
-  },
-  row: {
-    flexDirection: 'row',
     padding: 16,
     borderBottomWidth: 1,
     borderColor: '#ccc',
   },
-  cell: {
+  searchInput: {
     flex: 1,
+    padding: 8,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 4,
+    fontSize: 16,
   },
-  pendingCell: {
+  pendingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 16,
+  },
+  pendingText: {
+    color: '#000',
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
+  tableHeader: {
+    flexDirection: 'row',
+    backgroundColor: '#f2f2f2',
+    padding: 8,
+  },
+  tableHeaderCell: {
     flex: 1,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    fontSize: 16,
+  },
+  partnerRow: {
+    flexDirection: 'row',
+    padding: 8,
+    borderBottomWidth: 1,
+    borderColor: '#ccc',
+  },
+  partnerCell: {
+    flex: 1,
+    textAlign: 'center',
+    fontSize: 14,
+  },
+  activeStatus: {
+    color: 'green',
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
+  pendingStatus: {
     color: 'red',
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
+  noPartners: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  noPartnersText: {
+    fontSize: 18,
+    color: '#ccc',
   },
   modalOverlay: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContainer: {
     backgroundColor: '#fff',
@@ -214,13 +303,28 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 8,
     alignItems: 'center',
-    width: '100%',
+    flex: 1,
+    marginTop: 8,
+  },
+  confirmButton: {
+    backgroundColor: 'green',
+    padding: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+    flex: 1,
     marginTop: 8,
   },
   buttonText: {
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  confirmModalContainer: {
+    backgroundColor: '#fff',
+    padding: 16,
+    borderRadius: 8,
+    width: '80%',
+    alignItems: 'center',
   },
 });
 
