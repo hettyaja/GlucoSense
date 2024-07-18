@@ -1,6 +1,7 @@
-import { auth, db } from '../../firebase';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, deleteUser as firebaseDeleteUser } from 'firebase/auth';
+import { auth, db } from '../../firebase'; // Adjust the path according to your project structure
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { doc, setDoc, deleteDoc, getDocs, Timestamp, collection, updateDoc, getDoc, addDoc } from 'firebase/firestore';
+import { deleteUser as firebaseDeleteUser } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 class BusinessPartner {
@@ -21,6 +22,7 @@ class BusinessPartner {
 
   static async register(email, password, additionalData) {
     try {
+      console.log('Registering business partner with email:', email);
       const businessPartnerCredential = await createUserWithEmailAndPassword(auth, email, password);
       const businessPartner = businessPartnerCredential.user;
       const businessPartnerRef = doc(db, 'businessPartner', businessPartner.uid);
@@ -52,14 +54,14 @@ class BusinessPartner {
       await AsyncStorage.clear();
       const currentUser = auth.currentUser;
       if (currentUser) {
-        await firebaseDeleteUser(currentUser);
+          await firebaseDeleteUser(currentUser);
       } else {
-        throw new Error('No user is currently signed in');
+          throw new Error('No user is currently signed in');
       }
       return true;
     } catch (error) {
-      console.error('Error deleting user profile:', error);
-      throw error;
+        console.error('Error deleting user profile:', error);
+        throw error;
     }
   }
 
@@ -119,11 +121,9 @@ class BusinessPartner {
   static async getPendingAccounts() {
     try {
       const accountsCollection = await getDocs(collection(db, 'businessPartner'));
-      const pendingAccounts = accountsCollection.docs
+      return accountsCollection.docs
         .map(doc => ({ ...doc.data(), id: doc.id }))
         .filter(account => account.status === 'pending');
-      console.log('Fetched pending accounts:', pendingAccounts); // Debugging log
-      return pendingAccounts;
     } catch (error) {
       console.error('Error fetching pending accounts:', error);
       throw new Error('Failed to fetch pending accounts.');
@@ -135,7 +135,7 @@ class BusinessPartner {
       const businessPartnerDocRef = doc(db, 'businessPartner', uid);
       const docSnap = await getDoc(businessPartnerDocRef);
       if (docSnap.exists()) {
-        return { id: docSnap.id, ...docSnap.data() };
+        return { id: docSnap.id, ...docSnap.data() }; // Ensure to include id
       } else {
         throw new Error('No such document!');
       }
@@ -143,6 +143,32 @@ class BusinessPartner {
       console.error('Error fetching account details:', error);
       throw new Error('Failed to fetch account details.');
     }
+  }
+
+  static async createDietPlan(userId, newDietPlan) {
+    const dietPlanCollection = collection(db, `businessPartner/${userId}/dietplan`);
+    const docRef = await addDoc(dietPlanCollection, newDietPlan);
+    return docRef.id;
+  }
+
+  static async fetchDietPlans(userId) {
+    const dietPlanCollection = collection(db, `businessPartner/${userId}/dietplan`);
+    const dietPlanSnapshot = await getDocs(dietPlanCollection);
+    return dietPlanSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+      meals: doc.data().meals || { lunch: {}, dinner: {} },
+    }));
+  }
+
+  static async updateDietPlan(userId, dietPlanId, updatedDietPlan) {
+    const dietPlanDoc = doc(db, `businessPartner/${userId}/dietplan`, dietPlanId);
+    await updateDoc(dietPlanDoc, updatedDietPlan);
+  }
+
+  static async deleteDietPlan(userId, dietPlanId) {
+    const dietPlanDoc = doc(db, `businessPartner/${userId}/dietplan`, dietPlanId);
+    await deleteDoc(dietPlanDoc);
   }
 }
 
