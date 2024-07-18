@@ -7,6 +7,7 @@ import ViewPendingAccountDetailsController from '../Controller/ViewPendingAccoun
 
 const PendingAccountDetails = () => {
   const { accountId } = useLocalSearchParams();
+  const [parsedAccountId, setParsedAccountId] = useState(accountId ? JSON.parse(accountId) : null)
   const [accountDetails, setAccountDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
@@ -14,6 +15,7 @@ const PendingAccountDetails = () => {
   useEffect(() => {
     const fetchAccountDetails = async () => {
       try {
+        console.log(parsedAccountId)
         const details = await ViewPendingAccountDetailsController.getDetails(accountId);
         console.log('Fetched account details:', details); // Debugging log
         setAccountDetails(details);
