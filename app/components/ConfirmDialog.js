@@ -1,23 +1,21 @@
-// components/ConfirmDialog.js
 import React from 'react';
-import { View, Text, TouchableOpacity, Modal, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 
 const ConfirmDialog = ({ visible, message, onCancel, onConfirm }) => {
   return (
     <Modal
       transparent={true}
-      animationType="slide"
       visible={visible}
-      onRequestClose={onCancel}
+      animationType="slide"
     >
-      <View style={styles.modalContainer}>
-        <View style={styles.dialogContainer}>
-          <Text style={styles.messageText}>{message}</Text>
+      <View style={styles.modalOverlay}>
+        <View style={styles.modalContainer}>
+          <Text style={styles.modalText}>{message}</Text>
           <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.cancelButton} onPress={onCancel}>
+            <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={onCancel}>
               <Text style={styles.buttonText}>Cancel</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.confirmButton} onPress={onConfirm}>
+            <TouchableOpacity style={[styles.button, styles.confirmButton]} onPress={onConfirm}>
               <Text style={styles.buttonText}>Confirm</Text>
             </TouchableOpacity>
           </View>
@@ -28,48 +26,44 @@ const ConfirmDialog = ({ visible, message, onCancel, onConfirm }) => {
 };
 
 const styles = StyleSheet.create({
-  modalContainer: {
+  modalOverlay: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
-  dialogContainer: {
+  modalContainer: {
     width: 300,
     padding: 20,
     backgroundColor: 'white',
-    borderRadius: 8,
-    alignItems: 'center',
+    borderRadius: 10,
   },
-  messageText: {
+  modalText: {
     fontSize: 18,
-    textAlign: 'center',
     marginBottom: 20,
+    textAlign: 'center',
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '100%',
+  },
+  button: {
+    flex: 1,
+    padding: 10,
+    alignItems: 'center',
+    borderRadius: 5,
+    marginHorizontal: 5,
   },
   cancelButton: {
     backgroundColor: 'red',
-    padding: 10,
-    borderRadius: 5,
-    flex: 1,
-    marginRight: 5,
-    alignItems: 'center',
   },
   confirmButton: {
     backgroundColor: 'green',
-    padding: 10,
-    borderRadius: 5,
-    flex: 1,
-    marginLeft: 5,
-    alignItems: 'center',
   },
   buttonText: {
     color: 'white',
     fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 
