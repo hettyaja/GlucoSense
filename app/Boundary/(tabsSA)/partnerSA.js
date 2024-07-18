@@ -1,20 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, Modal } from 'react-native';
 import { useRouter } from 'expo-router';
 import ViewBusinessPartnerController from '../../Controller/ViewBusinessPartnerController';
 import SuspendBusinessPartnerController from '../../Controller/SuspendBusinessPartnerController';
 import UnsuspendBusinessPartnerController from '../../Controller/UnsuspendBusinessPartnerController';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import Header from '../../components/Header';
 import ConfirmDialog from '../../components/ConfirmDialog';
+import Header from '../../components/Header';
 
 const PartnerSA = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [businessPartner, setBusinessPartner] = useState([]);
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [showDetails, setShowDetails] = useState(false);
-  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const [confirmAction, setConfirmAction] = useState(null);
+  const [selectedPartner, setSelectedPartner] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [action, setAction] = useState('');
   const router = useRouter();
 
   useEffect(() => {
@@ -30,29 +29,19 @@ const PartnerSA = () => {
     fetchBusinessPartners();
   }, []);
 
-  const handleSuspend = async () => {
-    if (selectedUser && selectedUser.status !== 'suspended') {
-      try {
-        await SuspendBusinessPartnerController.suspend(selectedUser.id);
-        fetchBusinessPartners();
-        setShowConfirmDialog(false);
-        setShowDetails(false);
-      } catch (error) {
-        console.error("Error suspending business partner: ", error);
+  const handleAction = async () => {
+    if (!selectedPartner) return;
+    try {
+      if (action === 'suspend') {
+        await SuspendBusinessPartnerController.suspend(selectedPartner.id);
+      } else if (action === 'unsuspend') {
+        await UnsuspendBusinessPartnerController.unsuspend(selectedPartner.id);
       }
-    }
-  };
-
-  const handleUnsuspend = async () => {
-    if (selectedUser && selectedUser.status === 'suspended') {
-      try {
-        await UnsuspendBusinessPartnerController.unsuspend(selectedUser.id);
-        fetchBusinessPartners();
-        setShowConfirmDialog(false);
-        setShowDetails(false);
-      } catch (error) {
-        console.error("Error unsuspending business partner: ", error);
-      }
+      fetchBusinessPartners(); // Refresh the list after action
+      setModalVisible(false);
+    } catch (error) {
+      console.error(`Error performing action ${action} on user: `, error);
+      alert(`Failed to ${action} business partner.`);
     }
   };
 
@@ -61,11 +50,11 @@ const PartnerSA = () => {
   });
 
   const renderBusinessPartnerItem = ({ item }) => (
-    <TouchableOpacity style={styles.partnerRow} onPress={() => { setSelectedUser(item); setShowDetails(true); }}>
+    <TouchableOpacity style={styles.partnerRow} onPress={() => setSelectedPartner(item)}>
       <Text style={styles.partnerCell}>{item.name}</Text>
       <Text style={styles.partnerCell}>{item.entityName}</Text>
       <Text style={styles.partnerCell}>{item.registerTime ? new Date(item.registerTime.seconds * 1000).toLocaleDateString() : 'N/A'}</Text>
-      <Text style={[styles.partnerCell, item.status === 'Active' ? styles.activeStatus : styles.pendingStatus]}>{item.status}</Text>
+      <Text style={[styles.partnerCell, item.status === 'active' ? styles.activeStatus : styles.pendingStatus]}>{item.status}</Text>
     </TouchableOpacity>
   );
 
@@ -99,47 +88,35 @@ const PartnerSA = () => {
           <FlatList
             data={filteredBusinessPartners}
             renderItem={renderBusinessPartnerItem}
-            keyExtractor={(item) => item.id} // Ensure each item has a unique key
+            keyExtractor={(item) => item.id}
           />
         )}
-      </View>
 
-      {showDetails && selectedUser && (
-        <View style={styles.detailsContainer}>
-          <Text style={styles.detailsTitle}>Account Details</Text>
-          <Text style={styles.detailsText}>Username: {selectedUser.name}</Text>
-          <Text style={styles.detailsText}>Stall Name: {selectedUser.entityName}</Text>
-          <Text style={styles.detailsText}>Registered: {selectedUser.registerTime ? new Date(selectedUser.registerTime.seconds * 1000).toLocaleDateString() : 'N/A'}</Text>
-          <Text style={styles.detailsText}>Status: {selectedUser.status}</Text>
-          <View style={styles.actionsContainer}>
-            <TouchableOpacity
-              style={styles.rejectButton}
-              onPress={() => {
-                setConfirmAction('suspend');
-                setShowConfirmDialog(true);
-              }}
-            >
-              <Text style={styles.buttonText}>Suspend</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.acceptButton}
-              onPress={() => {
-                setConfirmAction('unsuspend');
-                setShowConfirmDialog(true);
-              }}
-            >
-              <Text style={styles.buttonText}>Unsuspend</Text>
-            </TouchableOpacity>
+        {selectedPartner && (
+          <View style={styles.detailsContainer}>
+            <Text style={styles.detailsTitle}>Account Details</Text>
+            <Text style={styles.detailsText}>Username: {selectedPartner.name}</Text>
+            <Text style={styles.detailsText}>Stall Name: {selectedPartner.entityName}</Text>
+            <Text style={styles.detailsText}>Registered: {selectedPartner.registerTime ? new Date(selectedPartner.registerTime.seconds * 1000).toLocaleDateString() : 'N/A'}</Text>
+            <Text style={styles.detailsText}>Status: {selectedPartner.status}</Text>
+            <View style={styles.actionsContainer}>
+              <TouchableOpacity style={styles.rejectButton} onPress={() => { setAction('suspend'); setModalVisible(true); }}>
+                <Text style={styles.buttonText}>Suspend</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.acceptButton} onPress={() => { setAction('unsuspend'); setModalVisible(true); }}>
+                <Text style={styles.buttonText}>Unsuspend</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-      )}
+        )}
 
-      <ConfirmDialog
-        visible={showConfirmDialog}
-        message={`Are you sure you want to ${confirmAction} this account?`}
-        onCancel={() => setShowConfirmDialog(false)}
-        onConfirm={confirmAction === 'suspend' ? handleSuspend : handleUnsuspend}
-      />
+        <ConfirmDialog
+          visible={modalVisible}
+          onCancel={() => setModalVisible(false)}
+          onConfirm={handleAction}
+          action={action}
+        />
+      </View>
     </>
   );
 };
@@ -238,6 +215,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 10,
     margin: 16,
+    alignItems: 'center', // Center the details
   },
   detailsTitle: {
     fontSize: 18,
