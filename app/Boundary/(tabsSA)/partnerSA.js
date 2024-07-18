@@ -72,13 +72,18 @@ const PartnerSA = () => {
   });
 
   const renderBusinessPartnerItem = ({ item }) => (
-    <TouchableOpacity style={styles.partnerRow} onPress={() => setSelectedUser(item)}>
-      <Text style={styles.partnerCell}>{item.name}</Text>
-      <Text style={styles.partnerCell}>{item.entityName}</Text>
-      <Text style={styles.partnerCell}>{item.registerTime ? new Date(item.registerTime.seconds * 1000).toLocaleDateString() : 'N/A'}</Text>
-      <Text style={[styles.partnerCell, item.status === 'active' ? styles.activeStatus : styles.pendingStatus]}>{item.status}</Text>
-    </TouchableOpacity>
-  );
+  <TouchableOpacity
+    key={item.id}
+    style={styles.partnerRow}
+    onPress={() => handleShowDetails(item)}
+  >
+    <Text style={styles.partnerCell}>{item.name}</Text>
+    <Text style={styles.partnerCell}>{item.entityName}</Text>
+    <Text style={styles.partnerCell}>{item.registerTime ? new Date(item.registerTime.seconds * 1000).toLocaleDateString() : 'N/A'}</Text>
+    <Text style={[styles.partnerCell, item.status === 'Active' ? styles.activeStatus : styles.pendingStatus]}>{item.status}</Text>
+  </TouchableOpacity>
+);
+
 
   return (
     <>
