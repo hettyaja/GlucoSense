@@ -4,15 +4,16 @@ import { useRouter } from 'expo-router';
 import ViewBusinessPartnerController from '../../Controller/ViewBusinessPartnerController';
 import SuspendBusinessPartnerController from '../../Controller/SuspendBusinessPartnerController';
 import UnsuspendBusinessPartnerController from '../../Controller/UnsuspendBusinessPartnerController';
-import ConfirmDialog from '../../components/ConfirmDialog';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Header from '../../components/Header';
+import ConfirmDialog from '../../components/ConfirmDialog';
 
 const PartnerSA = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [businessPartner, setBusinessPartner] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [confirmVisible, setConfirmVisible] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [confirmAction, setConfirmAction] = useState(null);
   const router = useRouter();
 
@@ -34,7 +35,8 @@ const PartnerSA = () => {
       try {
         await SuspendBusinessPartnerController.suspend(selectedUser.id);
         fetchBusinessPartners();
-        setConfirmVisible(false);
+        setShowConfirmDialog(false);
+        setShowDetails(false);
       } catch (error) {
         console.error("Error suspending business partner: ", error);
       }
@@ -46,19 +48,11 @@ const PartnerSA = () => {
       try {
         await UnsuspendBusinessPartnerController.unsuspend(selectedUser.id);
         fetchBusinessPartners();
-        setConfirmVisible(false);
+        setShowConfirmDialog(false);
+        setShowDetails(false);
       } catch (error) {
         console.error("Error unsuspending business partner: ", error);
       }
-    }
-  };
-
-  const fetchBusinessPartners = async () => {
-    try {
-      const businessPartnerCollection = await ViewBusinessPartnerController.ViewBusinessPartner();
-      setBusinessPartner(businessPartnerCollection);
-    } catch (error) {
-      console.error("Error fetching business partners: ", error);
     }
   };
 
@@ -67,19 +61,11 @@ const PartnerSA = () => {
   });
 
   const renderBusinessPartnerItem = ({ item }) => (
-    <TouchableOpacity style={styles.partnerRow} onPress={() => setSelectedUser(item)}>
+    <TouchableOpacity style={styles.partnerRow} onPress={() => { setSelectedUser(item); setShowDetails(true); }}>
       <Text style={styles.partnerCell}>{item.name}</Text>
       <Text style={styles.partnerCell}>{item.entityName}</Text>
       <Text style={styles.partnerCell}>{item.registerTime ? new Date(item.registerTime.seconds * 1000).toLocaleDateString() : 'N/A'}</Text>
-      <Text style={[styles.partnerCell, item.status === 'active' ? styles.activeStatus : styles.pendingStatus]}>{item.status}</Text>
-      <View style={styles.actionButtons}>
-        <TouchableOpacity onPress={() => { setSelectedUser(item); setConfirmAction('suspend'); setConfirmVisible(true); }}>
-          <Text style={styles.actionText}>Suspend</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => { setSelectedUser(item); setConfirmAction('unsuspend'); setConfirmVisible(true); }}>
-          <Text style={styles.actionText}>Unsuspend</Text>
-        </TouchableOpacity>
-      </View>
+      <Text style={[styles.partnerCell, item.status === 'Active' ? styles.activeStatus : styles.pendingStatus]}>{item.status}</Text>
     </TouchableOpacity>
   );
 
@@ -113,18 +99,47 @@ const PartnerSA = () => {
           <FlatList
             data={filteredBusinessPartners}
             renderItem={renderBusinessPartnerItem}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => item.id} // Ensure each item has a unique key
           />
         )}
       </View>
-      {confirmVisible && (
-        <ConfirmDialog
-          visible={confirmVisible}
-          message={`Are you sure you want to ${confirmAction} this account?`}
-          onCancel={() => setConfirmVisible(false)}
-          onConfirm={confirmAction === 'suspend' ? handleSuspend : handleUnsuspend}
-        />
+
+      {showDetails && selectedUser && (
+        <View style={styles.detailsContainer}>
+          <Text style={styles.detailsTitle}>Account Details</Text>
+          <Text style={styles.detailsText}>Username: {selectedUser.name}</Text>
+          <Text style={styles.detailsText}>Stall Name: {selectedUser.entityName}</Text>
+          <Text style={styles.detailsText}>Registered: {selectedUser.registerTime ? new Date(selectedUser.registerTime.seconds * 1000).toLocaleDateString() : 'N/A'}</Text>
+          <Text style={styles.detailsText}>Status: {selectedUser.status}</Text>
+          <View style={styles.actionsContainer}>
+            <TouchableOpacity
+              style={styles.rejectButton}
+              onPress={() => {
+                setConfirmAction('suspend');
+                setShowConfirmDialog(true);
+              }}
+            >
+              <Text style={styles.buttonText}>Suspend</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.acceptButton}
+              onPress={() => {
+                setConfirmAction('unsuspend');
+                setShowConfirmDialog(true);
+              }}
+            >
+              <Text style={styles.buttonText}>Unsuspend</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
       )}
+
+      <ConfirmDialog
+        visible={showConfirmDialog}
+        message={`Are you sure you want to ${confirmAction} this account?`}
+        onCancel={() => setShowConfirmDialog(false)}
+        onConfirm={confirmAction === 'suspend' ? handleSuspend : handleUnsuspend}
+      />
     </>
   );
 };
@@ -216,15 +231,48 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#ccc',
   },
-  actionButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+  detailsContainer: {
+    padding: 16,
+    backgroundColor: '#fff',
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 10,
+    margin: 16,
   },
-  actionText: {
-    color: '#007BFF',
-    fontSize: 14,
+  detailsTitle: {
+    fontSize: 18,
     fontWeight: 'bold',
-    marginHorizontal: 4,
+    marginBottom: 10,
+  },
+  detailsText: {
+    fontSize: 16,
+    marginBottom: 8,
+  },
+  actionsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingTop: 16,
+  },
+  rejectButton: {
+    backgroundColor: 'red',
+    padding: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+    flex: 1,
+    marginRight: 8,
+  },
+  acceptButton: {
+    backgroundColor: 'green',
+    padding: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+    flex: 1,
+    marginLeft: 8,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 
