@@ -57,29 +57,33 @@ class GlucoseLogs {
         }
       }
     
-    static async fetchGlucoseLogsForGraph(uid) {
+      static async fetchGlucoseLogsForGraph(uid) {
         try {
             const logsRef = collection(db, 'users', uid, 'glucoseLogs');
             const logsQuery = query(logsRef, orderBy('time', 'desc'), limit(10));
             const querySnapshot = await getDocs(logsQuery);
             const logs = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    
             logs.sort((a, b) => a.time.seconds - b.time.seconds); // Sort data by time in ascending order
-
+    
             const labels = logs.map(item => {
                 const time = new Date(item.time.seconds * 1000);
                 const hours = time.getHours().toString().padStart(2, '0');
                 const minutes = time.getMinutes().toString().padStart(2, '0');
                 return `${hours}:${minutes}`;
             });
-
+    
             const data = logs.map(item => parseFloat(item.glucose));
-
+    
+            console.log('Processed graph data:', { labels, datasets: [{ data }] }); // Add this line for debugging
+    
             return { labels, datasets: [{ data }] };
         } catch (error) {
             console.error(`Error fetching glucose logs for graph:`, error);
             throw error;
         }
     }
+    
 
 }
 

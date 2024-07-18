@@ -1,30 +1,40 @@
 import { View, Text, StyleSheet, Dimensions, ScrollView, TouchableOpacity } from 'react-native';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Tabs } from 'expo-router';
 import { LineChart } from 'react-native-chart-kit';
 import Entypo from 'react-native-vector-icons/Entypo';
-import { retrieveGlucoseLogs } from '../../Controller/RetrieveGlucoseLogsController';
+import { useAuth } from '../../service/AuthContext';
+import RetrieveGlucoseLogsController from '../../Controller/RetrieveGlucoseLogsController';
 
-const insight = () => {
+const Insight = () => {
   const screenWidth = Dimensions.get("window").width;
+  const { user } = useAuth();
+  const [graphData, setGraphData] = useState({
+    labels: [],
+    datasets: [{ data: [] }]
+  });
 
-  const prepareDataForGraph = async (userId) => {
-    const glucoseData = await retrieveGlucoseLogs(userId);
-    glucoseData.sort((a, b) => a.time - b.time); // Sort data by time
-  
-    const labels = glucoseData.map(item => {
-      const hours = item.time.getHours().toString().padStart(2, '0');
-      const minutes = item.time.getMinutes().toString().padStart(2, '0');
-      return `${hours}:${minutes}`;
-    });
-  
-    const data = glucoseData.map(item => item.glucoseValue);
-  
-    return { labels, datasets: [{ data }] };
-  };
-  
-  const userId = "kGS6OVl4XKT2fBZS4Cs3PMOjuO22";
-  const graphData = prepareDataForGraph(userId);
+  useEffect(() => {
+    const prepareDataForGraph = async () => {
+      try {
+        const data = await RetrieveGlucoseLogsController.retriveGlucoseLogs(user.uid);
+        console.log('Graph data to be set:', data);
+        setGraphData(data);
+      } catch (error) {
+        console.error('Error preparing data for graph:', error);
+      }
+    };
+
+    if (user.uid) {
+      prepareDataForGraph();
+    }
+  }, [user.uid]);
+
+  if (!graphData) {
+    return <Text>Loading...</Text>;
+  }
+
+  console.log('Graph data in component:', graphData);
 
   const chartConfig = {
     backgroundGradientFrom: "#f5f5f5",
@@ -87,6 +97,37 @@ const insight = () => {
         headerTitleAlign: 'center',
       }} />
       <ScrollView style={styles.container}>
+      <TouchableOpacity>
+          <LineChart
+            data={graphData}
+            width={Dimensions.get('window').width - 16}
+            height={220}
+            yAxisLabel=""
+            yAxisSuffix=""
+            yAxisInterval={1}
+            chartConfig={{
+              backgroundColor: "#ffffff",
+              backgroundGradientFrom: "#ffffff",
+              backgroundGradientTo: "#ffffff",
+              decimalPlaces: 2,
+              color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+              labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+              style: {
+                borderRadius: 16
+              },
+              propsForDots: {
+                r: "6",
+                strokeWidth: "2",
+                stroke: "#ffa726"
+              }
+            }}
+            bezier
+            style={{
+              marginVertical: 8,
+              borderRadius: 16
+            }}
+          />
+        </TouchableOpacity>
         <TouchableOpacity style={styles.centeredChart}>
           <View style = {styles.chartContainer}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 15, marginTop: 15}}>
@@ -111,8 +152,6 @@ const insight = () => {
                 }}
                 width={Dimensions.get('window').width}
                 height={220}
-                //yAxisLabel="$"
-                //yAxisSuffix=""
                 yAxisInterval={1}
                 chartConfig={{
                   backgroundColor: "#ffffff",
@@ -133,37 +172,8 @@ const insight = () => {
             />
           </View>
         </TouchableOpacity>
-        <TouchableOpacity>
-        <LineChart
-          data={graphData}
-          width={Dimensions.get('window').width - 16}
-          height={220}
-          yAxisLabel=""
-          yAxisSuffix=""
-          yAxisInterval={1}
-          chartConfig={{
-            backgroundColor: "#ffffff",
-            backgroundGradientFrom: "#ffffff",
-            backgroundGradientTo: "#ffffff",
-            decimalPlaces: 2,
-            color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-            labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-            style: {
-              borderRadius: 16
-            },
-            propsForDots: {
-              r: "6",
-              strokeWidth: "2",
-              stroke: "#ffa726"
-            }
-          }}
-          bezier
-          style={{
-            marginVertical: 8,
-            borderRadius: 16
-          }}
-        />
-        </TouchableOpacity>
+        
+        
         <TouchableOpacity style={styles.centeredChart}>
           <View style = {styles.chartContainer}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 15, marginTop: 15}}>
@@ -188,8 +198,6 @@ const insight = () => {
                 }}
                 width={Dimensions.get('window').width}
                 height={220}
-                //yAxisLabel="$"
-                //yAxisSuffix=""
                 yAxisInterval={1}
                 chartConfig={{
                   backgroundColor: "#ffffff",
@@ -234,8 +242,6 @@ const insight = () => {
                 }}
                 width={Dimensions.get('window').width}
                 height={220}
-                //yAxisLabel="$"
-                //yAxisSuffix=""
                 yAxisInterval={1}
                 chartConfig={{
                   backgroundColor: "#ffffff",
@@ -339,7 +345,7 @@ const insight = () => {
   );
 }
 
-export default insight;
+export default Insight;
 
 const styles = StyleSheet.create({
   container: {
