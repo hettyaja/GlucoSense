@@ -15,6 +15,7 @@ const PendingAccountDetails = () => {
     const fetchAccountDetails = async () => {
       try {
         const details = await ViewPendingAccountDetailsController.getDetails(accountId);
+        console.log('Fetched account details:', details); // Debugging log
         setAccountDetails(details);
       } catch (error) {
         console.error("Error fetching account details: ", error);
