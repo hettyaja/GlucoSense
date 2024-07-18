@@ -20,7 +20,6 @@ const PartnerSA = () => {
     const fetchBusinessPartners = async () => {
       try {
         const businessPartnerCollection = await ViewBusinessPartnerController.ViewBusinessPartner();
-        console.log('Accounts fetched:', businessPartnerCollection); // Debugging log
         setBusinessPartner(businessPartnerCollection);
       } catch (error) {
         console.error("Error fetching business partners: ", error);
@@ -51,6 +50,15 @@ const PartnerSA = () => {
       } catch (error) {
         console.error("Error unsuspending business partner: ", error);
       }
+    }
+  };
+
+  const fetchBusinessPartners = async () => {
+    try {
+      const businessPartnerCollection = await ViewBusinessPartnerController.ViewBusinessPartner();
+      setBusinessPartner(businessPartnerCollection);
+    } catch (error) {
+      console.error("Error fetching business partners: ", error);
     }
   };
 
@@ -105,7 +113,7 @@ const PartnerSA = () => {
           <FlatList
             data={filteredBusinessPartners}
             renderItem={renderBusinessPartnerItem}
-            keyExtractor={(item) => item.id} // Add keyExtractor
+            keyExtractor={(item) => item.id}
           />
         )}
       </View>
