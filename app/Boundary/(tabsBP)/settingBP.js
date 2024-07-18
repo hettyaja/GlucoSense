@@ -8,9 +8,9 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { fetchBPProfile } from '../../service/profileBPService';
 import { useFocusEffect } from '@react-navigation/native';
-import LogoutController from '../../Controller/LogoutController';
 import { useAuth } from '../../service/AuthContext';
 import DeleteBPController from '../../Controller/DeleteBPController';
+import LogoutController from '../../Controller/LogoutController';
 
 const settingBP = () => {
   const { user } = useAuth();
@@ -73,7 +73,7 @@ const settingBP = () => {
     <>
       <View style={styles.container}>
         {/* Profile Card Section */}
-        <TouchableOpacity onPress={() => router.push('/profileBP')}>
+        <TouchableOpacity onPress={() => router.push('Boundary/ProfileBpPage')}>
           <View style={styles.profileCard}>
             <Image
               source={{ uri: photoUri }} // Use actual photo URI

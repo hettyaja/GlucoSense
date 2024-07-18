@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
-import ViewPendingAccountDetailsController from '../Controller/ViewPendingAccountDetailsController';
+import ViewPendingAccountListController from '../Controller/ViewPendingAccountListController';
 
 const PendingAccountList = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -12,8 +12,9 @@ const PendingAccountList = () => {
   useEffect(() => {
     const fetchPendingAccounts = async () => {
       try {
-        const pendingAccountsData = await ViewPendingAccountDetailsController.getPendingAccounts();
-        setPendingAccounts(pendingAccountsData);
+        const accounts = await ViewPendingAccountListController.getPendingAccounts();
+        console.log('Accounts fetched:', accounts); // Debugging log
+        setPendingAccounts(accounts);
       } catch (error) {
         console.error("Error fetching pending accounts: ", error);
       } finally {
@@ -29,7 +30,14 @@ const PendingAccountList = () => {
   });
 
   const renderPendingAccountItem = ({ item }) => (
-    <TouchableOpacity style={styles.accountRow} onPress={() => router.push(`/Boundary/pendingAccountDetails`, { accountId: item.id })}>
+    <TouchableOpacity 
+      style={styles.accountRow} 
+      onPress={() => router.push({
+        pathname: `/Boundary/pendingAccountDetails`,
+        params: { accountId: item.id }
+      })}
+      key={item.id}
+    >
       <Text style={styles.accountCell}>{item.name}</Text>
       <Text style={styles.accountCell}>{new Date(item.registerTime.seconds * 1000).toLocaleDateString()}</Text>
       <Text style={styles.accountCell}>{item.status}</Text>

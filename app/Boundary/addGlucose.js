@@ -2,14 +2,14 @@ import { View, Text, StyleSheet, Image, Button, TouchableOpacity, Alert, TextInp
 import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack, router} from 'expo-router'
-import { images } from './constants/images';
+import { images } from '../constants/images';
 import { Picker } from '@react-native-picker/picker';
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import Feather from 'react-native-vector-icons/Feather'
-import { useAuth } from './service/AuthContext';
-import { addGlucoseLog } from './service/diaryService';
-import CreateGlucoseLogsController from './Controller/CreateGlucoseLogsController';
+import { useAuth } from '../service/AuthContext';
+import { addGlucoseLog } from '../service/diaryService';
+import CreateGlucoseLogsController from '../Controller/CreateGlucoseLogsController';
 
 
 const preReg = () => {

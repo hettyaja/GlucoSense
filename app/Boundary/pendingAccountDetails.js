@@ -14,7 +14,9 @@ const PendingAccountDetails = () => {
   useEffect(() => {
     const fetchAccountDetails = async () => {
       try {
+        console.log(accountId)
         const details = await ViewPendingAccountDetailsController.getDetails(accountId);
+        console.log('Fetched account details:', details); // Debugging log
         setAccountDetails(details);
       } catch (error) {
         console.error("Error fetching account details: ", error);

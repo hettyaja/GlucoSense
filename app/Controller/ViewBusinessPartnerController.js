@@ -9,5 +9,4 @@ class ViewBusinessPartnerController {
         }
     }
 }
-
 export default ViewBusinessPartnerController

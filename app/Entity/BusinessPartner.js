@@ -1,7 +1,6 @@
 import { auth, db } from '../../firebase'; // Adjust the path according to your project structure
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
-import { doc, setDoc, deleteDoc, getDocs, Timestamp, collection, updateDoc, getDoc, addDoc } from 'firebase/firestore'; // addDoc added here
-import { deleteUser as firebaseDeleteUser } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, deleteUser as firebaseDeleteUser } from 'firebase/auth';
+import { doc, setDoc, deleteDoc, getDocs, Timestamp, collection, updateDoc, getDoc, addDoc } from 'firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 class BusinessPartner {
@@ -63,6 +62,32 @@ class BusinessPartner {
         console.error('Error deleting user profile:', error);
         throw error;
     }
+  }
+
+  static async updateProfileBp(uid, profileData){
+    try{
+      const profileRef = doc(db,'businessPartner', uid);
+      await updateDoc(profileRef, profileData)
+      console.log("Profile updated successfully");
+    }catch(error){
+        console.error("Error updating profile", error);
+    }
+  }
+
+  static async fetchBPProfile(uid){
+       try{
+          const docRef = doc(db, 'businessPartner', uid);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            return docSnap.data();
+          } else {
+            console.log('No such document!');
+            return null;
+          }
+      } catch (error) {
+        console.error('Error fetching profile data:', error);
+        throw error;
+      }
   }
 
   static async export() {
@@ -135,7 +160,7 @@ class BusinessPartner {
       const businessPartnerDocRef = doc(db, 'businessPartner', uid);
       const docSnap = await getDoc(businessPartnerDocRef);
       if (docSnap.exists()) {
-        return docSnap.data();
+        return { id: docSnap.id, ...docSnap.data() }; // Ensure to include id
       } else {
         throw new Error('No such document!');
       }
@@ -144,6 +169,8 @@ class BusinessPartner {
       throw new Error('Failed to fetch account details.');
     }
   }
+
+ 
 
   static async createDietPlan(userId, newDietPlan) {
     const dietPlanCollection = collection(db, `businessPartner/${userId}/dietplan`);
