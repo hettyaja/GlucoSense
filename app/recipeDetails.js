@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
-import { router } from 'expo-router';
+import { router, Stack } from 'expo-router';
 import { fetchRecipeDetails } from './service/spoonacularAPI';
 import Header from './components/Header';
 

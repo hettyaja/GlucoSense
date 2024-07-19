@@ -1,5 +1,5 @@
 import { auth, db } from '../../firebase';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail } from 'firebase/auth';
 import { doc, setDoc, deleteDoc, getDocs, updateDoc, Timestamp, collection } from 'firebase/firestore';
 import { deleteUser as firebaseDeleteUser } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -118,6 +118,14 @@ class User {
       return usersCollection.docs.map(doc => doc.data());
     } catch (error) {
       throw new Error('Failed to fetch users.');
+    }
+  }
+  
+  static async resetPassword(email) {
+    try {
+      await sendPasswordResetEmail(auth, email)
+    } catch(error) {
+      throw new Error('Failed to reset password')
     }
   }
 }
