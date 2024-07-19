@@ -1,9 +1,9 @@
 import GlucoseLogs from "../Entity/GlucoseLogs";
 
 class RetrieveGlucoseLogsController {
-    static async retriveGlucoseLogs(uid) {
+    static async retrieveGlucoseLogs(uid) {
         try {
-            return await GlucoseLogs.fetchGlucoseLogsForGraph(uid)
+            return await GlucoseLogs.fetchGlucoseLogsForInsight(uid)
         } catch(error) {
             throw new Error(error.message);
         }

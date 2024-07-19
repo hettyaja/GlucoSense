@@ -1,5 +1,5 @@
 import { db } from '../../firebase';
-import { collection, doc, addDoc, getDocs, query, where, orderBy, limit, deleteDoc, updateDoc} from 'firebase/firestore';
+import { collection, doc, addDoc, getDocs, query, where, orderBy, limit, deleteDoc, updateDoc, Timestamp} from 'firebase/firestore';
 
 
 class GlucoseLogs {
@@ -57,14 +57,13 @@ class GlucoseLogs {
         }
       }
     
-      static async fetchGlucoseLogsForGraph(uid) {
+      static async fetchGlucoseLogsForInsight(uid) {
         try {
             const logsRef = collection(db, 'users', uid, 'glucoseLogs');
     
             // Get the timestamp for 7 days ago
             const now = new Date();
-            const sevenDaysAgo = new Date();
-            sevenDaysAgo.setDate(now.getDate() - 7);
+            const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000); // 7 days ago
     
             // Convert the date to a Firestore timestamp
             const timestamp = Timestamp.fromDate(sevenDaysAgo);
@@ -84,16 +83,37 @@ class GlucoseLogs {
                 console.log('Fetched log time:', log.time.toDate().toISOString());
             });
     
-            logs.sort((a, b) => a.time.seconds - b.time.seconds); // Sort data by time in ascending order
+            // Initialize labels and data for the last 7 days
+            const labels = [];
+            const data = [];
+            const dayData = {};
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
+                const day = date.toLocaleDateString('en-US', { weekday: 'short' });
+                const key = date.toDateString();
+                labels.push(day);
+                dayData[key] = { total: 0, count: 0, day };
+            }
     
-            const labels = logs.map(item => {
-                const time = new Date(item.time.seconds * 1000);
-                const hours = time.getHours().toString().padStart(2, '0');
-                const minutes = time.getMinutes().toString().padStart(2, '0');
-                return `${hours}:${minutes}`;
+            // Populate dayData with logs
+            logs.forEach(log => {
+                const logDate = log.time.toDate();
+                const key = logDate.toDateString();
+                if (dayData[key]) {
+                    dayData[key].total += parseFloat(log.glucose);
+                    dayData[key].count += 1;
+                }
             });
     
-            const data = logs.map(item => parseFloat(item.glucose));
+            // Fill the data array with average glucose values
+            labels.forEach(label => {
+                const day = Object.values(dayData).find(d => d.day === label);
+                if (day.count > 0) {
+                    data.push(day.total / day.count);
+                } else {
+                    data.push(0); // Or use 0 or another value to represent no data
+                }
+            });
     
             console.log('Processed graph data:', { labels, datasets: [{ data }] });
     
@@ -103,6 +123,9 @@ class GlucoseLogs {
             throw error;
         }
     }
+    
+    
+    
     
 
 }

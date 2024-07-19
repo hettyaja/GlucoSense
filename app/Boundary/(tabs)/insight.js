@@ -5,28 +5,35 @@ import { LineChart } from 'react-native-chart-kit';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { useAuth } from '../../service/AuthContext';
 import RetrieveGlucoseLogsController from '../../Controller/RetrieveGlucoseLogsController';
+import RetrieveMealLogsController from '../../Controller/RetrieveMealLogsController';
 
 const Insight = () => {
   const screenWidth = Dimensions.get("window").width;
   const { user } = useAuth();
-  const [graphData, setGraphData] = useState(null);
+  const [glucoseGraphData, setGlucoseGraphData] = useState(null);
+  const [mealGraphData, setMealGraphData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const prepareDataForGraph = async () => {
+    const prepareDataForGraphs = async () => {
       try {
-        const data = await RetrieveGlucoseLogsController.retriveGlucoseLogs(user.uid);
-        console.log('Graph data to be set:', data);
-        setGraphData(data);
+        const glucoseData = await RetrieveGlucoseLogsController.retrieveGlucoseLogs(user.uid);
+        console.log('Graph data to be set:', glucoseData);
+        setGlucoseGraphData(glucoseData);
+
+        const mealData = await RetrieveMealLogsController.retrieveMealLogs(user.uid);
+        console.log('Graph data to be set:', mealData);
+        setMealGraphData(mealData);
+
       } catch (error) {
-        console.error('Error preparing data for graph:', error);
+        console.error('Error preparing data for graphs:', error);
       } finally {
         setLoading(false);
       }
     };
 
     if (user.uid) {
-      prepareDataForGraph();
+      prepareDataForGraphs();
     }
   }, [user.uid]);
 
@@ -34,7 +41,8 @@ const Insight = () => {
     return <Text>Loading...</Text>;
   }
 
-  console.log('Graph data in component:', graphData);
+  console.log('Graph data in component:', glucoseGraphData);
+  console.log('Graph data in component:', mealGraphData);
 
   const chartConfig = {
     backgroundGradientFrom: "#f5f5f5",
@@ -104,7 +112,7 @@ const Insight = () => {
               <Entypo name="resize-full-screen" size={16} />
             </View>
           <LineChart
-            data={graphData}
+            data={glucoseGraphData}
             width={Dimensions.get('window').width}
             height={220}
             yAxisLabel=""
@@ -136,136 +144,38 @@ const Insight = () => {
         <TouchableOpacity style={styles.centeredChart}>
           <View style = {styles.chartContainer}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 15, marginTop: 15}}>
-              <Text style={styles.chartTitle}>Blood Glucose</Text>
-              <Entypo name="resize-full-screen" size={16} />
-            </View>
-              <LineChart
-                data={{
-                  labels: generateHourlyLabels1(),
-                  datasets: [
-                    {
-                      data: [
-                        Math.random() * 100,
-                        Math.random() * 100,
-                        Math.random() * 100,
-                        Math.random() * 100,
-                        Math.random() * 100,
-                        Math.random() * 100
-                      ]
-                    }
-                  ]
-                }}
-                width={Dimensions.get('window').width}
-                height={220}
-                yAxisInterval={1}
-                chartConfig={{
-                  backgroundColor: "#ffffff",
-                  backgroundGradientFrom: "#ffffff",
-                  backgroundGradientTo: "#ffffff",
-                  decimalPlaces: 2,
-                  color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-                  labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-                  propsForDots: {
-                    r: "6",
-                    strokeWidth: "1",
-                    
-                  }
-                }}
-                style={{
-                  marginVertical: 8,
-                }}
-            />
-          </View>
-        </TouchableOpacity>
-        
-        
-        <TouchableOpacity style={styles.centeredChart}>
-          <View style = {styles.chartContainer}>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 15, marginTop: 15}}>
               <Text style={styles.chartTitle}>Calorie Consumption</Text>
               <Entypo name="resize-full-screen" size={16} />
             </View>
-              <LineChart
-                data={{
-                  labels: generateHourlyLabels1(),
-                  datasets: [
-                    {
-                      data: [
-                        Math.random() * 100,
-                        Math.random() * 100,
-                        Math.random() * 100,
-                        Math.random() * 100,
-                        Math.random() * 100,
-                        Math.random() * 100
-                      ]
-                    }
-                  ]
-                }}
-                width={Dimensions.get('window').width}
-                height={220}
-                yAxisInterval={1}
-                chartConfig={{
-                  backgroundColor: "#ffffff",
-                  backgroundGradientFrom: "#ffffff",
-                  backgroundGradientTo: "#ffffff",
-                  decimalPlaces: 2,
-                  color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-                  labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-                  propsForDots: {
-                    r: "6",
-                    strokeWidth: "1",
-                    
-                  }
-                }}
-                style={{
-                  marginVertical: 8,
-                }}
-            />
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.centeredChart}>
-          <View style = {styles.chartContainer}>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 15, marginTop: 15}}>
-              <Text style={styles.chartTitle}>Calorie Consumption & Blood Glucose</Text>
-              <Entypo name="resize-full-screen" size={16} />
-            </View>
-              <LineChart
-                data={{
-                  labels: generateHourlyLabels1(),
-                  datasets: [
-                    {
-                      data: [
-                        Math.random() * 100,
-                        Math.random() * 100,
-                        Math.random() * 100,
-                        Math.random() * 100,
-                        Math.random() * 100,
-                        Math.random() * 100
-                      ]
-                    }
-                  ]
-                }}
-                width={Dimensions.get('window').width}
-                height={220}
-                yAxisInterval={1}
-                chartConfig={{
-                  backgroundColor: "#ffffff",
-                  backgroundGradientFrom: "#ffffff",
-                  backgroundGradientTo: "#ffffff",
-                  decimalPlaces: 2,
-                  color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-                  labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-                  propsForDots: {
-                    r: "6",
-                    strokeWidth: "1",
-                    
-                  }
-                }}
-                style={{
-                  marginVertical: 8,
-                }}
-            />
-          </View>
+          <LineChart
+            data={mealGraphData}
+            width={Dimensions.get('window').width}
+            height={220}
+            yAxisLabel=""
+            yAxisSuffix=""
+            yAxisInterval={1}
+            chartConfig={{
+              backgroundColor: "#ffffff",
+              backgroundGradientFrom: "#ffffff",
+              backgroundGradientTo: "#ffffff",
+              decimalPlaces: 2,
+              color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+              labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+              style: {
+                borderRadius: 16
+              },
+              propsForDots: {
+                r: "6",
+                strokeWidth: "1",
+              }
+            }}
+            
+            style={{
+              marginVertical: 8,
+
+            }}
+          />
+        </View>
         </TouchableOpacity>
         <View>
           <ScrollView horizontal contentContainerStyle={{ flexGrow: 1 }}>
@@ -303,34 +213,6 @@ const Insight = () => {
             />
           </ScrollView>
         </View>
-        <TouchableOpacity>
-          <View style={styles.section}>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-              <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 16 }}>Calorie Consumption</Text>
-              <Entypo name="resize-full-screen" size={16} />
-            </View>
-            <LineChart
-              data={data}
-              width={screenWidth - 32}
-              height={220}
-              chartConfig={chartConfig}
-            />
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <View style={styles.section}>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-              <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 16 }}>Blood Glucose</Text>
-              <Entypo name="resize-full-screen" size={16} />
-            </View>
-            <LineChart
-              data={data}
-              width={screenWidth - 32}
-              height={220}
-              chartConfig={chartConfig}
-            />
-          </View>
-        </TouchableOpacity>
         <TouchableOpacity>
           <View style={styles.section}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
