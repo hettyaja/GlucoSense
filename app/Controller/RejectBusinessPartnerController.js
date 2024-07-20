@@ -1,7 +1,7 @@
 import BusinessPartner from '../Entity/BusinessPartner';
 
 class RejectBusinessPartnerController {
-  static async reject(accountId) {
+  static async rejectBusinessPartner(accountId) {
     try {
       return await BusinessPartner.rejectBusinessPartner(accountId);
     } catch (error) {

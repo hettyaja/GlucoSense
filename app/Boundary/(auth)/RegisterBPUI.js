@@ -161,7 +161,7 @@ const RegisetrBPUI= () => {
                 <TextInput
                     style={styles.input}
                     value={password}
-                    secureTextEntry = 'true'
+                    secureTextEntry = {true}
                     onChangeText={Text => setPassword(Text)}
                 />
             </View>

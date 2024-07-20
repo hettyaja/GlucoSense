@@ -93,7 +93,7 @@ class BusinessPartner {
   static async export() {
     try {
       const partnersCollection = await getDocs(collection(db, 'businessPartner'));
-      return partnersCollection.docs.map(doc => doc.data());
+      return partnersCollection.docs.map(doc => ({ ...doc.data(), id: doc.id }));
     } catch (error) {
       throw new Error('Failed to fetch business partners.');
     }
@@ -135,7 +135,7 @@ class BusinessPartner {
   static async rejectBusinessPartner(uid) {
     try {
       const businessPartnerDocRef = doc(db, 'businessPartner', uid);
-      await updateDoc(businessPartnerDocRef, { status: 'rejected' });
+      await deleteDoc(businessPartnerDocRef);
       return true;
     } catch (error) {
       console.error('Error rejecting business partner:', error);

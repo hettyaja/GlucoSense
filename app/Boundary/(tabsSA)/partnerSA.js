@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, Modal, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import ViewBusinessPartnerController from '../../Controller/ViewBusinessPartnerController';
-import SuspendBusinessPartnerController from '../../Controller/SuspendBusinessPartnerController';
 import UnsuspendBusinessPartnerController from '../../Controller/UnsuspendBusinessPartnerController';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Header from '../../components/Header';
+import SuspendBusinessPartnerController from '../../Controller/SuspendBusinessPartnerController';
 
 const PartnerSA = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -29,10 +29,11 @@ const PartnerSA = () => {
     }
   };
 
-  const handleSuspend = async () => {
+  const handleSuspend = async (uid) => {
     if (selectedUser && selectedUser.status !== 'suspended') {
       try {
-        await SuspendBusinessPartnerController.suspendBusinessPartner(selectedUser.id);
+        console.log(uid)
+        await SuspendBusinessPartnerController.suspendBusinessPartner(uid);
         fetchBusinessPartners();
         setModalVisible(false);
         setConfirmModalVisible(false);
@@ -43,10 +44,10 @@ const PartnerSA = () => {
     }
   };
 
-  const handleUnsuspend = async () => {
+  const handleUnsuspend = async (uid) => {
     if (selectedUser && selectedUser.status === 'suspended') {
       try {
-        await UnsuspendBusinessPartnerController.unsuspendBusinessPartner(selectedUser.id);
+        await UnsuspendBusinessPartnerController.unsuspendBusinessPartner(uid);
         fetchBusinessPartners();
         setModalVisible(false);
         setConfirmModalVisible(false);
@@ -63,10 +64,14 @@ const PartnerSA = () => {
   };
 
   const renderBusinessPartnerItem = ({ item }) => (
-    <TouchableOpacity style={styles.partnerRow} onPress={() => {
-      setSelectedUser(item);
-      setModalVisible(true);
-    }}>
+    <TouchableOpacity
+      style={styles.partnerRow}
+      onPress={() => {
+        console.log("Selected user:", item);
+        setSelectedUser(item);
+        setModalVisible(true);
+      }}
+    >
       <Text style={styles.partnerCell}>{item.name}</Text>
       <Text style={styles.partnerCell}>{item.entityName}</Text>
       <Text style={styles.partnerCell}>{item.registerTime ? new Date(item.registerTime.seconds * 1000).toLocaleDateString() : 'N/A'}</Text>
@@ -144,16 +149,16 @@ const PartnerSA = () => {
       >
         <View style={styles.modalOverlay}>
           <View style={styles.confirmModalContainer}>
-            <Text style={styles.detailsText}>Are you sure you want to {confirmAction} this account?</Text>
+            <Text style={styles.detailsText}>Are you sure youwant to {confirmAction} this account?</Text>
             <View style={styles.actionsContainer}>
               <TouchableOpacity style={styles.cancelButton} onPress={() => setConfirmModalVisible(false)}>
                 <Text style={styles.buttonText}>Cancel</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.confirmButton} onPress={() => {
                 if (confirmAction === 'suspend') {
-                  handleSuspend();
+                  handleSuspend(selectedUser.id);
                 } else {
-                  handleUnsuspend();
+                  handleUnsuspend(selectedUser.id);
                 }
               }}>
                 <Text style={styles.buttonText}>Confirm</Text>

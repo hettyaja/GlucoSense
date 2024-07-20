@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import ViewPendingAccountListController from '../Controller/ViewPendingAccountListController';
+import Header from '../components/Header';
 
 const PendingAccountList = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -44,10 +45,13 @@ const PendingAccountList = () => {
   );
 
   return (
+    <>
+    <Header
+      title='Pending Account'
+      leftButton='Back'
+      onLeftButtonPress={() => router.back()}
+    />
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Pending Account</Text>
-      </View>
       <View style={styles.searchBar}>
         <TextInput
           style={styles.searchInput}
@@ -77,6 +81,7 @@ const PendingAccountList = () => {
         />
       )}
     </View>
+    </>
   );
 };
 

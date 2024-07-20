@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Button, Alert } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import UpdateAccountStatusController from '../Controller/UpdateAccountStatusController';
 import ViewPendingAccountListController from '../Controller/ViewPendingAccountListController';
+import Header from '../components/Header';
+import ApproveBusinessPartnerController from '../Controller/ApproveBusinessPartnerController';
+import RejectBusinessPartnerController from '../Controller/RejectBusinessPartnerController';
 
 const PendingAccountDetails = () => {
   const [accountDetails, setAccountDetails] = useState(null);
@@ -25,9 +27,9 @@ const PendingAccountDetails = () => {
 
   const handleAccept = async () => {
     try {
-      await UpdateAccountStatusController.updateAccountStatus(accountId, 'active');
+      await ApproveBusinessPartnerController.approveBusinessPartner(accountId);
       Alert.alert('Success', 'Account has been accepted and is now active.');
-      router.push('/Boundary/PartnerSA');
+      router.back()
     } catch (error) {
       console.error("Error accepting account: ", error);
       Alert.alert('Error', 'Failed to accept the account.');
@@ -36,9 +38,9 @@ const PendingAccountDetails = () => {
 
   const handleReject = async () => {
     try {
-      await UpdateAccountStatusController.updateAccountStatus(accountId, 'rejected');
+      await RejectBusinessPartnerController.rejectBusinessPartner(accountId);
       Alert.alert('Success', 'Account has been rejected.');
-      router.push('/Boundary/PendingAccountList');
+      router.back()
     } catch (error) {
       console.error("Error rejecting account: ", error);
       Alert.alert('Error', 'Failed to reject the account.');
@@ -54,6 +56,12 @@ const PendingAccountDetails = () => {
   }
 
   return (
+    <>
+    <Header
+      title='Details'
+      leftButton='Back'
+      onLeftButtonPress={() => router.back()}
+    />
     <View style={styles.container}>
       <Text style={styles.detailText}>Username: {accountDetails.name}</Text>
       <Text style={styles.detailText}>Registered: {new Date(accountDetails.registerTime.seconds * 1000).toLocaleDateString()}</Text>
@@ -63,6 +71,7 @@ const PendingAccountDetails = () => {
         <Button title="Accept" onPress={handleAccept} color="green" />
       </View>
     </View>
+    </>
   );
 };
 
