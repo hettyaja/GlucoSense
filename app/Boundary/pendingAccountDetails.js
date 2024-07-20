@@ -1,27 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Button, Alert } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import ApproveBusinessPartnerController from '../Controller/ApproveBusinessPartnerController';
-import RejectBusinessPartnerController from '../Controller/RejectBusinessPartnerController';
-import ViewPendingAccountDetailsController from '../Controller/ViewPendingAccountDetailsController';
+import UpdateAccountStatusController from '../Controller/UpdateAccountStatusController';
+import ViewPendingAccountListController from '../Controller/ViewPendingAccountListController';
 
 const PendingAccountDetails = () => {
-  const { accountId } = useLocalSearchParams();
   const [accountDetails, setAccountDetails] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { accountId } = useLocalSearchParams();
   const router = useRouter();
 
   useEffect(() => {
     const fetchAccountDetails = async () => {
       try {
-        console.log(accountId)
-        const details = await ViewPendingAccountDetailsController.getDetails(accountId);
-        console.log('Fetched account details:', details); // Debugging log
-        setAccountDetails(details);
+        const account = await ViewPendingAccountListController.getPendingAccounts();
+        const selectedAccount = account.find(acc => acc.id === accountId);
+        setAccountDetails(selectedAccount);
       } catch (error) {
         console.error("Error fetching account details: ", error);
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -30,60 +25,42 @@ const PendingAccountDetails = () => {
 
   const handleAccept = async () => {
     try {
-      await ApproveBusinessPartnerController.approve(accountId);
-      alert('Business Partner approved successfully');
-      router.back();
+      await UpdateAccountStatusController.updateAccountStatus(accountId, 'active');
+      Alert.alert('Success', 'Account has been accepted and is now active.');
+      router.push('/Boundary/PartnerSA');
     } catch (error) {
       console.error("Error accepting account: ", error);
-      alert('Failed to accept Business Partner');
+      Alert.alert('Error', 'Failed to accept the account.');
     }
   };
 
   const handleReject = async () => {
     try {
-      await RejectBusinessPartnerController.reject(accountId);
-      alert('Business Partner rejected successfully');
-      router.back();
+      await UpdateAccountStatusController.updateAccountStatus(accountId, 'rejected');
+      Alert.alert('Success', 'Account has been rejected.');
+      router.push('/Boundary/PendingAccountList');
     } catch (error) {
       console.error("Error rejecting account: ", error);
-      alert('Failed to reject Business Partner');
+      Alert.alert('Error', 'Failed to reject the account.');
     }
   };
-
-  if (loading) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.loadingText}>Loading...</Text>
-      </View>
-    );
-  }
 
   if (!accountDetails) {
     return (
       <View style={styles.container}>
-        <Text style={styles.loadingText}>No Account Details Found</Text>
+        <Text>Loading...</Text>
       </View>
     );
   }
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Pending Account</Text>
-      </View>
-      <View style={styles.detailsContainer}>
-        <Text style={styles.detailsText}>Username: {accountDetails.name}</Text>
-        <Text style={styles.detailsText}>Stall Name: {accountDetails.entityName}</Text>
-        <Text style={styles.detailsText}>Registered: {new Date(accountDetails.registerTime.seconds * 1000).toLocaleDateString()}</Text>
-        <Text style={styles.detailsText}>Status: {accountDetails.status}</Text>
-      </View>
-      <View style={styles.actionsContainer}>
-        <TouchableOpacity style={styles.rejectButton} onPress={handleReject}>
-          <Text style={styles.buttonText}>Reject</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.acceptButton} onPress={handleAccept}>
-          <Text style={styles.buttonText}>Accept</Text>
-        </TouchableOpacity>
+      <Text style={styles.detailText}>Username: {accountDetails.name}</Text>
+      <Text style={styles.detailText}>Registered: {new Date(accountDetails.registerTime.seconds * 1000).toLocaleDateString()}</Text>
+      <Text style={styles.detailText}>Status: {accountDetails.status}</Text>
+      <View style={styles.buttonContainer}>
+        <Button title="Reject" onPress={handleReject} color="red" />
+        <Button title="Accept" onPress={handleAccept} color="green" />
       </View>
     </View>
   );
@@ -92,55 +69,17 @@ const PendingAccountDetails = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: 16,
     backgroundColor: '#fff',
   },
-  header: {
-    backgroundColor: '#D9A37E',
-    padding: 16,
-  },
-  headerText: {
+  detailText: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#fff',
-    textAlign: 'center',
-  },
-  detailsContainer: {
-    padding: 16,
-  },
-  detailsText: {
-    fontSize: 16,
     marginBottom: 8,
   },
-  actionsContainer: {
+  buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: 16,
-  },
-  rejectButton: {
-    backgroundColor: 'red',
-    padding: 16,
-    borderRadius: 8,
-    alignItems: 'center',
-    flex: 1,
-    marginRight: 8,
-  },
-  acceptButton: {
-    backgroundColor: 'green',
-    padding: 16,
-    borderRadius: 8,
-    alignItems: 'center',
-    flex: 1,
-    marginLeft: 8,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  loadingText: {
-    fontSize: 18,
-    textAlign: 'center',
-    marginTop: 20,
+    marginTop: 16,
   },
 });
 
