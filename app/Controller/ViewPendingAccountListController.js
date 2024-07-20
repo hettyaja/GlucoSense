@@ -5,7 +5,8 @@ class ViewPendingAccountListController {
     try {
       return await BusinessPartner.getPendingAccounts();
     } catch (error) {
-      throw new Error('Failed to fetch pending accounts.');
+      console.error('Error in controller while fetching pending accounts:', error);
+      throw error;
     }
   }
 }
