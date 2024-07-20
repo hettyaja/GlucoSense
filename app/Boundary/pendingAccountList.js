@@ -13,7 +13,6 @@ const PendingAccountList = () => {
     const fetchPendingAccounts = async () => {
       try {
         const accounts = await ViewPendingAccountListController.getPendingAccounts();
-        console.log('Accounts fetched:', accounts); // Debugging log
         setPendingAccounts(accounts);
       } catch (error) {
         console.error("Error fetching pending accounts: ", error);
