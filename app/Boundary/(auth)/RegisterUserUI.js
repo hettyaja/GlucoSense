@@ -173,6 +173,7 @@ const RegisterUserUI= () => {
             flex: 1,
             justifyContent: 'center',
             alignItems: 'center',
+            // marginTop :70,
         },
         input: {
             fontFamily: 'Poppins-Medium',

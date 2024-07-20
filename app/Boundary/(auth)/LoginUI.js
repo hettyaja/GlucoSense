@@ -23,17 +23,17 @@ const Login = () => {
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
-      <SafeAreaView style={{ flex: 1, backgroundColor: 'white', alignItems: 'center', paddingHorizontal:16 }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: 'white', alignItems: 'center', paddingHorizontal:16}}>
         <View style={{alignItems: 'flex-start', width: '100%'}}>
           <TouchableOpacity onPress={() => router.back()}>
             <Ionicons name='chevron-back' size={32} color='black' />
           </TouchableOpacity>
         </View>
 
-        <Image source={images.logo} style={{width:200, height:200, marginTop:16}}/>
+        <Image source={images.logo} style={{width:200, height:200, marginTop: 70}}/>
         <Text style={styles.titleText}>GlucoSense</Text>
 
-        <View style={{ backgroundColor: 'white', alignItems: 'flex-start', width: '80%'}}>
+        <View style={{ backgroundColor: 'white', alignItems: 'flex-start', width: '80%',marginTop: 10}}>
           <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 14 }}>Email</Text>
         </View>
 
@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Black",
     fontSize: 48,
     color: "#E58B68",
-    paddingBottom:60
+    // paddingBottom:60
   },
   input: {
     height: 40,
