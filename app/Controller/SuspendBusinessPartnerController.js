@@ -1,9 +1,9 @@
 import BusinessPartner from "../Entity/BusinessPartner";
 
 class SuspendBusinessPartnerController {
-  static async suspend(id) {
+  static async suspendBusinessPartner(id) {
     try {
-      return await BusinessPartner.suspendBusinessPartner(id);
+      return await BusinessPartner.suspend(id);
     } catch (error) {
       console.error("Error suspending business partner: ", error);
       throw new Error('Failed to suspend business partner.');

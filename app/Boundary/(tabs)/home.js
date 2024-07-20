@@ -230,7 +230,7 @@ const home = () => {
             ) : (
               <Text style={styles.buttonText}>
                 {item.type === 'glucose' && `${item.glucose} mmol/L`}
-                {item.type === 'meal' && `${item.carbs} Carbs`}
+                {item.type === 'meal' && `${item.calories} kcal`}
               </Text>
             )}
             <Text style={styles.buttonText2}>{new Date(item.time.seconds * 1000).toLocaleTimeString()}</Text>

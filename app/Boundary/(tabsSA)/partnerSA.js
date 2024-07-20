@@ -17,17 +17,17 @@ const PartnerSA = () => {
   const router = useRouter();
 
   useEffect(() => {
-    const fetchBusinessPartners = async () => {
-      try {
-        const businessPartnerCollection = await ViewBusinessPartnerController.ViewBusinessPartner();
-        setBusinessPartner(businessPartnerCollection);
-      } catch (error) {
-        console.error("Error fetching business partners: ", error);
-      }
-    };
-
     fetchBusinessPartners();
   }, []);
+
+  const fetchBusinessPartners = async () => {
+    try {
+      const businessPartnerCollection = await ViewBusinessPartnerController.ViewBusinessPartner();
+      setBusinessPartner(businessPartnerCollection);
+    } catch (error) {
+      console.error("Error fetching business partners: ", error);
+    }
+  };
 
   const handleSuspend = async () => {
     if (selectedUser && selectedUser.status !== 'suspended') {
@@ -54,15 +54,6 @@ const PartnerSA = () => {
         console.error("Error unsuspending business partner: ", error);
         Alert.alert('Failed to unsuspend Business Partner');
       }
-    }
-  };
-
-  const fetchBusinessPartners = async () => {
-    try {
-      const businessPartnerCollection = await ViewBusinessPartnerController.ViewBusinessPartner();
-      setBusinessPartner(businessPartnerCollection);
-    } catch (error) {
-      console.error("Error fetching business partners: ", error);
     }
   };
 

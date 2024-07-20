@@ -8,14 +8,14 @@ import { router } from 'expo-router'
 const welcomePage = () => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white", alignItems:'center' }}>
-        <Image source={images.logo} style={{width:200, height:200, marginTop:40}}/>
+        <Image source={images.logo} style={{width:200, height:200, marginTop:70}}/>
         <Text style={styles.titleText}>GlucoSense</Text>
         <Text style={styles.welcomeText}>
           Welcome!
         </Text>
         
         <Text style={styles.subTitleText}>
-          Join with Us & Enjoy Healthy Life!
+          Join Us & Enjoy Healthy Life!
         </Text>
 
         <TouchableOpacity
@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Black",
     fontSize: 36,
     color: "#E58B68",
-    paddingTop: 200,
+    paddingTop: 150,
   },
   subTitleText: {
     fontFamily: "Poppins-Medium",

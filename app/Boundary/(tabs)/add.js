@@ -24,15 +24,15 @@ const BottomSheetModal = ({ isVisible, onClose }) => {
 
         <View style={styles.content}>
               <View style={styles.contentContainer}>
-                <TouchableOpacity style={styles.button} onPress={() => router.push({pathname: '/Boundary/addGlucose', query: onClose()})}>
+                <TouchableOpacity style={styles.button} onPress={() => router.push({pathname: 'Boundary/addGlucose', query: onClose()})}>
                   <FontAwesome name="tint" size={24} color="#000" />
                   <Text style={styles.buttonText}>Glucose</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.button} onPress={() => router.push({pathname: '/addMeals', query: onClose()})}>
+                <TouchableOpacity style={styles.button} onPress={() => router.push({pathname: 'Boundary/addMeals', query: onClose()})}>
                   <FontAwesome name="cutlery" size={24} color="#000" />
                   <Text style={styles.buttonText}>Meals</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.button} onPress={() => router.push({pathname: '/addMeds', query: onClose()})}>
+                <TouchableOpacity style={styles.button} onPress={() => router.push({pathname: 'Boundary/addMeds', query: onClose()})}>
                   <FontAwesome5 name="pills" size={24} color="#000" />
                   <Text style={styles.buttonText}>Meds</Text>
                 </TouchableOpacity>
