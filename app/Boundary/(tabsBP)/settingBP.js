@@ -17,8 +17,8 @@ const settingBP = () => {
 
   const router = useRouter();
 
-  const [photoUri, setPhotoUri] = useState('');
-  const [shopName, setShopName] = useState('');
+  const [photoUri, setPhotoUri] = useState();
+  const [entityName, setentityName] = useState('');
   const [location, setLocation] = useState('');
   const [description, setDescription] = useState('');
 
@@ -28,7 +28,7 @@ const settingBP = () => {
         const data = await fetchBPProfile(user.uid);
         if (data) {
           setPhotoUri(data.photoUri || '');
-          setShopName(data.shopName || '');
+          setentityName(data.entityName || '');
           setLocation(data.address || '');
           setDescription(data.description || '');
         }
@@ -80,7 +80,7 @@ const settingBP = () => {
               style={styles.profilePhoto}
             />
             <View style={styles.profileInfo}>
-              <Text style={styles.profileName}>{shopName || 'Shop Name'}</Text>
+              <Text style={styles.profileName}>{entityName || 'Shop Name'}</Text>
               <Text style={styles.profileLocation}>{location || 'Location'}</Text>
               <Text style={styles.profileDescription}>{description || 'Description'}</Text>
             </View>

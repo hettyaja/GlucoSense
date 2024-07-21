@@ -72,7 +72,7 @@ const Header = ({ title, leftButton, onLeftButtonPress, rightButton, onRightButt
         title: title,
         headerShown: headerShown,
         headerStyle: { backgroundColor: '#E58B68' },
-        headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold' },
+        headerTitleStyle: { color: 'white', fontFamily: 'Poppins-SemiBold', fontSize:18 },
         headerLeft: renderLeftButton,
         headerRight: renderRightButton,
         headerTitleAlign: 'center',

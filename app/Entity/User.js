@@ -26,7 +26,7 @@ class User {
         email,
         username: additionalData.username,
         name: additionalData.name,
-        userType: 'free',
+        subscriptionType: 'free',
         registerTime: registerTime,
         status: 'active',
         bodyProfileComplete: false

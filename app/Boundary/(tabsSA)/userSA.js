@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, Modal, Button } from 'react-native';
+import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import FetchUsersController from '../../Controller/FetchUsersController';
 import SuspendUserController from '../../Controller/SuspendUserController';
 import UnsuspendUserController from '../../Controller/UnsuspendUserController';
 import Header from '../../components/Header';
+import Fontisto from 'react-native-vector-icons/Fontisto';
+import Modal from 'react-native-modal';
 
 const UserSA = () => {
   const [filter, setFilter] = useState('');
@@ -31,7 +33,7 @@ const UserSA = () => {
 
   const filteredUsers = users.filter(user => {
     return (
-      (filter ? user.subscriptionType === filter : true) &&
+      (filter === 'all users' || !filter || user.subscriptionType === filter) &&
       (searchQuery ? user.username?.toLowerCase().includes(searchQuery.toLowerCase()) : true)
     );
   });
@@ -79,80 +81,95 @@ const UserSA = () => {
 
   return (
     <>
-    <Header
-      title="User Account"
-    />
-    <View style={styles.container}>
-      <View style={styles.searchBar}>
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search Account"
-          value={searchQuery}
-          onChangeText={(text) => setSearchQuery(text)}
-        />
-        <Picker
-          selectedValue={filter}
-          style={styles.dropdown}
-          onValueChange={(itemValue) => setFilter(itemValue)}
-        >
-          <Picker.Item label="All users" value="" />
-          <Picker.Item label="Free user" value="free" />
-          <Picker.Item label="Premium user" value="premium" />
-        </Picker>
-      </View>
-      <View style={styles.tableHeader}>
-        <Text style={styles.tableHeaderCell}>Username</Text>
-        <Text style={styles.tableHeaderCell}>Type</Text>
-        <Text style={styles.tableHeaderCell}>Registered</Text>
-        <Text style={styles.tableHeaderCell}>Status</Text>
-      </View>
-      {loading ? (
-        <View style={styles.noUsers}>
-          <Text style={styles.noUsersText}>Loading...</Text>
-        </View>
-      ) : filteredUsers.length === 0 ? (
-        <View style={styles.noUsers}>
-          <Text style={styles.noUsersText}>NO USER REGISTERED</Text>
-        </View>
-      ) : (
-        <FlatList
-          data={filteredUsers}
-          renderItem={renderUserItem}
-          keyExtractor={(item) => item.id}
-        />
-      )}
-
-      {selectedUser && (
-        <Modal
-          visible={modalVisible}
-          animationType="slide"
-          transparent={true}
-          onRequestClose={() => setModalVisible(false)}
-        >
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>Account Details</Text>
-              <Text>Username: {selectedUser.username}</Text>
-              <Text>Type: {selectedUser.subscriptionType}</Text>
-              <Text>Registered: {formatDate(selectedUser.registerTime)}</Text>
-              <View style={styles.modalButtons}>
-                <Button
-                  title="Suspend"
-                  onPress={handleSuspend}
-                  disabled={selectedUser.status === 'suspended'}
-                />
-                <Button
-                  title="Unsuspend"
-                  onPress={handleUnsuspend}
-                  disabled={selectedUser.status !== 'suspended'}
-                />
-              </View>
-              <Button title="Close" onPress={() => setModalVisible(false)} />
+      <Header title="User Account" />
+      <View style={styles.container}>
+        <View style={styles.searchBar}>
+          <View style={styles.searchContainer}>
+            <View style={styles.pickerWrapper}>
+              <Picker
+                selectedValue={filter}
+                style={styles.dropdown}
+                onValueChange={(itemValue) => setFilter(itemValue)}
+              >
+                <Picker.Item label="All" value="all users" style={styles.pickerItem} />
+                <Picker.Item label="Free" value="free" style={styles.pickerItem} />
+                <Picker.Item label="Premium" value="premium" style={styles.pickerItem} />
+              </Picker>
+            </View>
+            <View style={styles.icons}>
+              <Fontisto name='search' size={16} color='gray' />
+              <TextInput
+                style={styles.searchInput}
+                placeholder="Search Account"
+                value={searchQuery}
+                onChangeText={(text) => setSearchQuery(text)}
+              />
             </View>
           </View>
-        </Modal>
-      )}
-    </View>
+        </View>
+
+        <View style={styles.tableHeader}>
+          <Text style={styles.tableHeaderCell}>Username</Text>
+          <Text style={styles.tableHeaderCell}>Type</Text>
+          <Text style={styles.tableHeaderCell}>Registered</Text>
+          <Text style={styles.tableHeaderCell}>Status</Text>
+        </View>
+        {loading ? (
+          <View style={styles.noUsers}>
+            <Text style={styles.noUsersText}>Loading...</Text>
+          </View>
+        ) : filteredUsers.length === 0 ? (
+          <View style={styles.noUsers}>
+            <Text style={styles.noUsersText}>NO USER REGISTERED</Text>
+          </View>
+        ) : (
+          <FlatList
+            data={filteredUsers}
+            renderItem={renderUserItem}
+            keyExtractor={(item) => item.id}
+          />
+        )}
+
+        {selectedUser && (
+          <Modal
+            isVisible={modalVisible}
+            animationType="slide"
+            backdropOpacity={0.5}
+            onBackdropPress={() => setModalVisible(false)}
+            onRequestClose={() => setModalVisible(false)}
+          >
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <Text style={styles.modalTitle}>Account Details</Text>
+                <View>
+                <Text>Username: {selectedUser.username}</Text>
+                <Text>Type: {selectedUser.subscriptionType}</Text>
+                <Text>Registered: {formatDate(selectedUser.registerTime)}</Text>
+                </View>
+                <View style={styles.modalButtons}>
+                  <TouchableOpacity
+                    style={styles.cancelButton}
+                    onPress={() => setModalVisible(false)}
+                  >
+                    <Text style={styles.buttonText}>Cancel</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[
+                      styles.actionButton,
+                      { backgroundColor: selectedUser.status === 'suspended' ? '#4CAF50' : '#ff4d4d' }
+                    ]}
+                    onPress={selectedUser.status === 'suspended' ? handleUnsuspend : handleSuspend}
+                  >
+                    <Text style={styles.buttonText}>
+                      {selectedUser.status === 'suspended' ? 'Unsuspend' : 'Suspend'}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </Modal>
+        )}
+      </View>
     </>
   );
 };
@@ -162,16 +179,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
-  header: {
-    backgroundColor: '#D9A37E',
-    padding: 16,
-  },
-  headerText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#fff',
-    textAlign: 'center',
-  },
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -180,15 +187,28 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
   },
   searchInput: {
-    flex: 1,
-    padding: 8,
-    borderWidth: 1,
+    flex: 8,
+    marginLeft: 16,
     borderColor: '#ccc',
     borderRadius: 4,
   },
-  dropdown: {
-    marginLeft: 8,
+  pickerWrapper: {
+    flex: 4.9,
+    borderColor: '#ccc',
+    borderRightWidth: 1,
+  },
+  searchContainer: {
     flex: 1,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 8,
+    flexDirection: 'row',
+  },
+  dropdown: {
+    fontSize: 10,
+  },
+  pickerItem: {
+    fontSize: 14, // Customize font size here
   },
   tableHeader: {
     flexDirection: 'row',
@@ -223,7 +243,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',
   },
   modalContent: {
     width: '80%',
@@ -241,6 +260,32 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: 10,
+    width: '100%',
+  },
+  icons: {
+    flexDirection: 'row',
+    flex: 8,
+    alignItems: 'center',
+    marginLeft: 16,
+  },
+  cancelButton: {
+    flex: 1,
+    backgroundColor: '#ccc',
+    padding: 10,
+    margin: 8,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  actionButton: {
+    flex: 1,
+    padding: 10,
+    margin: 8,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#fff',
+    fontWeight: 'bold',
   },
 });
 

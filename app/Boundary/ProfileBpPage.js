@@ -13,7 +13,7 @@ const profileBP = () => {
   const { user } = useAuth()
   const uid = user.uid;
   const [photoUri, setPhotoUri] = useState('');
-  const [shopName, setShopName] = useState('');
+  const [entityName, setEntityName] = useState('');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phoneNum, setPhoneNum] = useState('');
@@ -34,7 +34,7 @@ const profileBP = () => {
             setName(data.name || '');
             setPhoneNum(data.phoneNum || '');
             setEmail(data.email || '');
-            setShopName(data.entityName || '');
+            setEntityName(data.entityName || '');
             setUEN(data.UEN || '');
             setAddress(data.address || '');
             setDescription(data.description || '');
@@ -79,7 +79,7 @@ const profileBP = () => {
         phoneNum,
         address,
         description,
-        shopName,
+        entityName,
         UEN,
         postal,
         city,
@@ -190,8 +190,8 @@ const profileBP = () => {
             <TextInput
               style={styles.input}
               placeholder="Add shop name"
-              value={shopName}
-              onChangeText={setShopName}
+              value={entityName}
+              onChangeText={setEntityName}
               editable={isEditable}
             />
           </View>
