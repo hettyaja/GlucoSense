@@ -38,7 +38,7 @@ const profileBP = () => {
             setUEN(data.UEN || '');
             setAddress(data.address || '');
             setDescription(data.description || '');
-            setCity(data.City || '');
+            setCity(data.city || '');
             setPostal(data.postal || '');
           }
         } catch (error) {
@@ -217,7 +217,9 @@ const profileBP = () => {
         <View style={styles.section}>
           <View style={styles.item}>
             <Text style={styles.text}>City/Town</Text>
-            <TextInput style={styles.input} value={city} editable={false} />
+            <TextInput style={styles.input} 
+              value={city} 
+              editable={false} />
           </View>
 
           <View style={styles.item}>

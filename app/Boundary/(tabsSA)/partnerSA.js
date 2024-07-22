@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, Modal, Alert } from 'react-native';
+import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import ViewBusinessPartnerController from '../../Controller/ViewBusinessPartnerController';
 import UnsuspendBusinessPartnerController from '../../Controller/UnsuspendBusinessPartnerController';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Header from '../../components/Header';
 import SuspendBusinessPartnerController from '../../Controller/SuspendBusinessPartnerController';
+import Modal from 'react-native-modal';
 
 const PartnerSA = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -29,11 +30,11 @@ const PartnerSA = () => {
     }
   };
 
-  const handleSuspend = async (uid) => {
+  const handleSuspend = async () => {
     if (selectedUser && selectedUser.status !== 'suspended') {
       try {
-        console.log(uid)
-        await SuspendBusinessPartnerController.suspendBusinessPartner(uid);
+
+        await SuspendBusinessPartnerController.suspendBusinessPartner(selectedUser.id);
         fetchBusinessPartners();
         setModalVisible(false);
         setConfirmModalVisible(false);
@@ -44,10 +45,10 @@ const PartnerSA = () => {
     }
   };
 
-  const handleUnsuspend = async (uid) => {
+  const handleUnsuspend = async () => {
     if (selectedUser && selectedUser.status === 'suspended') {
       try {
-        await UnsuspendBusinessPartnerController.unsuspendBusinessPartner(uid);
+        await UnsuspendBusinessPartnerController.unsuspendBusinessPartner(selectedUser.id);
         fetchBusinessPartners();
         setModalVisible(false);
         setConfirmModalVisible(false);
@@ -67,7 +68,6 @@ const PartnerSA = () => {
     <TouchableOpacity
       style={styles.partnerRow}
       onPress={() => {
-        console.log("Selected user:", item);
         setSelectedUser(item);
         setModalVisible(true);
       }}
@@ -112,55 +112,77 @@ const PartnerSA = () => {
             keyExtractor={(item) => item.id}
           />
         )}
+
+        {selectedUser && (
+          <Modal
+            isVisible={modalVisible}
+            animationType="slide"
+            backdropOpacity={0.5}
+            onBackdropPress={() => setModalVisible(false)}
+            onRequestClose={() => setModalVisible(false)}
+          >
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <Text style={styles.modalTitle}>Account Details</Text>
+                <View>
+                  <Text>Username: {selectedUser.name}</Text>
+                  <Text>Stall Name: {selectedUser.entityName}</Text>
+                  <Text>Registered: {selectedUser.registerTime ? new Date(selectedUser.registerTime.seconds * 1000).toLocaleDateString() : 'N/A'}</Text>
+                  <Text>Status: {selectedUser.status}</Text>
+                </View>
+                <View style={styles.modalButtons}>
+                  <TouchableOpacity
+                    style={styles.cancelButton}
+                    onPress={() => setModalVisible(false)}
+                  >
+                    <Text style={styles.buttonText}>Cancel</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[
+                      styles.actionButton,
+                      { backgroundColor: selectedUser.status === 'suspended' ? '#4CAF50' : '#ff4d4d' }
+                    ]}
+                    onPress={selectedUser.status === 'suspended' ? handleUnsuspend : handleSuspend}
+                  >
+                    <Text style={styles.buttonText}>
+                      {selectedUser.status === 'suspended' ? 'Unsuspend' : 'Suspend'}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </Modal>
+        )}
       </View>
+
       <Modal
-        visible={modalVisible}
-        transparent={true}
+        isVisible={confirmModalVisible}
         animationType="slide"
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContainer}>
-            <View style={styles.detailsContainer}>
-              <Text style={styles.detailsText}>Username: {selectedUser?.name}</Text>
-              <Text style={styles.detailsText}>Stall Name: {selectedUser?.entityName}</Text>
-              <Text style={styles.detailsText}>Registered: {selectedUser?.registerTime ? new Date(selectedUser.registerTime.seconds * 1000).toLocaleDateString() : 'N/A'}</Text>
-              <Text style={styles.detailsText}>Status: {selectedUser?.status}</Text>
-            </View>
-            <View style={styles.actionsContainer}>
-              <TouchableOpacity style={styles.suspendButton} onPress={() => openConfirmModal('suspend')}>
-                <Text style={styles.buttonText}>Suspend</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.unsuspendButton} onPress={() => openConfirmModal('unsuspend')}>
-                <Text style={styles.buttonText}>Unsuspend</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.cancelButton} onPress={() => setModalVisible(false)}>
-                <Text style={styles.buttonText}>Cancel</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
-      <Modal
-        visible={confirmModalVisible}
-        transparent={true}
-        animationType="slide"
+        backdropOpacity={0.5}
+        onBackdropPress={() => setConfirmModalVisible(false)}
         onRequestClose={() => setConfirmModalVisible(false)}
       >
-        <View style={styles.modalOverlay}>
-          <View style={styles.confirmModalContainer}>
-            <Text style={styles.detailsText}>Are you sure youwant to {confirmAction} this account?</Text>
-            <View style={styles.actionsContainer}>
-              <TouchableOpacity style={styles.cancelButton} onPress={() => setConfirmModalVisible(false)}>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Confirmation</Text>
+            <Text style={styles.detailsText}>Are you sure you want to {confirmAction} this account?</Text>
+            <View style={styles.modalButtons}>
+              <TouchableOpacity
+                style={styles.cancelButton}
+                onPress={() => setConfirmModalVisible(false)}
+              >
                 <Text style={styles.buttonText}>Cancel</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.confirmButton} onPress={() => {
-                if (confirmAction === 'suspend') {
-                  handleSuspend(selectedUser.id);
-                } else {
-                  handleUnsuspend(selectedUser.id);
-                }
-              }}>
+              <TouchableOpacity
+                style={styles.actionButton}
+                onPress={() => {
+                  if (confirmAction === 'suspend') {
+                    handleSuspend(selectedUser.id);
+                  } else {
+                    handleUnsuspend(selectedUser.id);
+                  }
+                }}
+              >
                 <Text style={styles.buttonText}>Confirm</Text>
               </TouchableOpacity>
             </View>
@@ -175,16 +197,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-  },
-  header: {
-    backgroundColor: '#D9A37E',
-    padding: 16,
-  },
-  headerText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#fff',
-    textAlign: 'center',
   },
   searchBar: {
     flexDirection: 'row',
@@ -252,75 +264,53 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#ccc',
   },
-  modalOverlay: {
+  modalContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
-  modalContainer: {
-    backgroundColor: '#fff',
-    padding: 16,
-    borderRadius: 8,
+  modalContent: {
     width: '80%',
+    padding: 20,
+    backgroundColor: 'white',
+    borderRadius: 10,
     alignItems: 'center',
   },
-  detailsContainer: {
-    marginBottom: 16,
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
   },
-  detailsText: {
-    fontSize: 16,
-    marginBottom: 8,
-    textAlign: 'center',
-  },
-  actionsContainer: {
+  modalButtons: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginTop: 10,
     width: '100%',
   },
-  suspendButton: {
-    backgroundColor: 'red',
-    padding: 16,
-    borderRadius: 8,
-    alignItems: 'center',
-    flex: 1,
-    marginRight: 8,
-  },
-  unsuspendButton: {
-    backgroundColor: 'green',
-    padding: 16,
-    borderRadius: 8,
-    alignItems: 'center',
-    flex: 1,
-    marginLeft: 8,
-  },
   cancelButton: {
-    backgroundColor: 'grey',
-    padding: 16,
+    flex: 1,
+    backgroundColor: '#ccc',
+    padding: 10,
+    margin: 8,
     borderRadius: 8,
     alignItems: 'center',
-    flex: 1,
-    marginTop: 8,
   },
-  confirmButton: {
-    backgroundColor: 'green',
-    padding: 16,
+  actionButton: {
+    flex: 1,
+    padding: 10,
+    margin: 8,
     borderRadius: 8,
     alignItems: 'center',
-    flex: 1,
-    marginTop: 8,
   },
   buttonText: {
     color: '#fff',
-    fontSize: 16,
     fontWeight: 'bold',
   },
-  confirmModalContainer: {
-    backgroundColor: '#fff',
-    padding: 16,
-    borderRadius: 8,
-    width: '80%',
+  icons: {
+    flexDirection: 'row',
+    flex: 8,
     alignItems: 'center',
+    marginLeft: 16,
   },
 });
 
