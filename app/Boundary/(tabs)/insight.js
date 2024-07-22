@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Dimensions, ScrollView, TouchableOpacity } from 'react-native';
-import { Tabs } from 'expo-router';
+import { Tabs, router} from 'expo-router';
 import { LineChart } from 'react-native-chart-kit';
-import Entypo from 'react-native-vector-icons/Entypo';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useAuth } from '../../service/AuthContext';
 import RetrieveGlucoseLogsController from '../../Controller/RetrieveGlucoseLogsController';
 import RetrieveMealLogsController from '../../Controller/RetrieveMealLogsController';
@@ -81,20 +81,6 @@ const Insight = () => {
     return labels;
   };
 
-  const generateHourlyLabels1 = () => {
-    const labels = [];
-    const now = new Date();
-    const options = { timeZone: 'Asia/Singapore', hour: '2-digit', hour12: false };
-    const formatter = new Intl.DateTimeFormat('en-US', options);
-  
-    for (let i = 5; i >= 0; i--) {
-      const date = new Date(now.getTime() - i * 60 * 60 * 1000);
-      const hours = formatter.format(date);
-      labels.push(`${hours}:00`);
-    }
-    return labels;
-  };
-
   return (
     <>
       <Tabs.Screen options={{
@@ -105,11 +91,11 @@ const Insight = () => {
         headerTitleAlign: 'center',
       }} />
       <ScrollView style={styles.container}>
-      <TouchableOpacity style={styles.centeredChart}>
+      <TouchableOpacity style={styles.centeredChart} onPress={() => router.push('/glucoseInsight')}>
           <View style = {styles.chartContainer}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 15, marginTop: 15}}>
               <Text style={styles.chartTitle}>Blood Glucose</Text>
-              <Entypo name="resize-full-screen" size={16} />
+              <AntDesign name="right" size={16} />
             </View>
           <LineChart
             data={glucoseGraphData}
@@ -141,11 +127,11 @@ const Insight = () => {
           />
         </View>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.centeredChart}>
+        <TouchableOpacity style={styles.centeredChart} onPress={() => router.push('/caloriesInsight')}>
           <View style = {styles.chartContainer}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 15, marginTop: 15}}>
               <Text style={styles.chartTitle}>Calorie Consumption</Text>
-              <Entypo name="resize-full-screen" size={16} />
+              <AntDesign name="right" size={16} />
             </View>
           <LineChart
             data={mealGraphData}
@@ -217,7 +203,7 @@ const Insight = () => {
           <View style={styles.section}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
               <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 16 }}>Calorie Consumption & Blood Glucose</Text>
-              <Entypo name="resize-full-screen" size={16} />
+              <AntDesign name="right" size={16} />
             </View>
             <LineChart
               data={data}

@@ -135,6 +135,40 @@ class MealLogs {
           throw error;
       }
   }
+
+  static async fetchMealLogsForDataInsight(uid, period) {
+    try {
+      const logsRef = collection(db, 'users', uid, 'mealLogs');
+      const now = new Date();
+      let timePeriod;
+  
+      if (period === 'daily') {
+        timePeriod = new Date(now.getTime() - 1 * 24 * 60 * 60 * 1000); // 1 day ago
+      } else if (period === 'weekly') {
+        timePeriod = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000); // 7 days ago
+      } else if (period === 'monthly') {
+        timePeriod = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000); // 30 days ago
+      } else {
+        throw new Error('Invalid period specified');
+      }
+  
+      const timestamp = Timestamp.fromDate(timePeriod);
+  
+      const logsQuery = query(
+        logsRef,
+        where('time', '>=', timestamp),
+        orderBy('time', 'desc')
+      );
+  
+      const querySnapshot = await getDocs(logsQuery);
+      const logs = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  
+      return logs;
+    } catch (error) {
+      console.error(`Error fetching meal logs for ${period}:`, error);
+      throw error;
+    }
+  }
 }
 
 export default MealLogs
