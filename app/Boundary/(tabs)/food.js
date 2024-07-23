@@ -1,11 +1,26 @@
+// app/Boundary/tabsBP/food.js
 import { useRouter } from 'expo-router';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Header from '../../components/Header';
+import { countFoodOrders } from '../../service/foodordermenuService'; // Import the countFoodOrders function
 
-const food = () => {
+const Food = () => {
   const router = useRouter();
+  const [totalOrders, setTotalOrders] = useState(0);
+
+  useEffect(() => {
+    const fetchTotalOrders = async () => {
+      try {
+        const totalOrdersCount = await countFoodOrders();
+        setTotalOrders(totalOrdersCount);
+      } catch (error) {
+        console.error('Error counting food orders:', error);
+      }
+    };
+    fetchTotalOrders();
+  }, []);
 
   return (
     <>
@@ -15,7 +30,7 @@ const food = () => {
           <View style={styles.statusHeader}>
             <Text style={styles.statusHeaderText}>My Food</Text>
             <TouchableOpacity style={styles.statusBox} onPress={() => router.push('foodOrder')}>
-              <Text>3 Orders</Text>
+              <Text>{totalOrders} Orders</Text>
             </TouchableOpacity>
           </View>
 
@@ -72,4 +87,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default food;
+export default Food;
