@@ -115,6 +115,7 @@ const preReg = () => {
         ),
         headerTitle: 'Add meds',
         headerTitleAlign: 'center',
+        
       }} />
 
       <ScrollView style={{ flex: 1, backgroundColor: '#f5f5f5' }}>

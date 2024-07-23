@@ -103,7 +103,7 @@ const setting = () => {
           <Text style={styles.buttonText}>Connect glucose meter</Text>
         </TouchableOpacity>
         <View style={{borderBottomColor:'#d9d9d9', borderBottomWidth:1}}/>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={() => router.push('Boundary/ExportReportUserUI')}>
           <MaterialIcons name="bar-chart" size={24}/>
           <Text style={styles.buttonText}>Report</Text>
         </TouchableOpacity>
