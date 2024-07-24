@@ -75,7 +75,7 @@ const Header = ({ title, leftButton, onLeftButtonPress, rightButton, onRightButt
         title: title,
         headerShown: headerShown,
         headerStyle: transparent ? {} : { backgroundColor: '#E58B68' },
-        headerTitleStyle: transparent ? {} : { color: 'white', fontFamily: 'Poppins-SemiBold', fontSize: 18 },
+        headerTitleStyle: transparent ? {} : { color: 'white', fontFamily: 'Poppins-Medium', fontSize: 16 },
         headerLeft: renderLeftButton,
         headerRight: renderRightButton,
         headerTitleAlign: 'center',

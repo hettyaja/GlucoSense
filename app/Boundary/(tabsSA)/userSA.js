@@ -41,7 +41,7 @@ const UserSA = () => {
   const formatDate = (timestamp) => {
     if (!timestamp || !timestamp.seconds) return "";
     const date = new Date(timestamp.seconds * 1000);
-    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+    return date.toLocaleDateString() ;
   };
 
   const handleSuspend = async () => {

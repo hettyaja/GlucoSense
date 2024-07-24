@@ -134,8 +134,9 @@ const styles = StyleSheet.create({
   accountCell: {
     flex: 2,
     textAlign: 'left',
-    fontFamily: 'Poppins-Medium',
-    paddingLeft:8
+    fontFamily: 'Poppins-Regular',
+    paddingLeft:8,
+    fontSize: 14,
   },
   noAccounts: {
     flex: 1,
