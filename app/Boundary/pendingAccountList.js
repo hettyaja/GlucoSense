@@ -38,9 +38,9 @@ const PendingAccountList = () => {
       })}
       key={item.id}
     >
-      <Text style={styles.accountCell}>{item.name}</Text>
-      <Text style={styles.accountCell}>{new Date(item.registerTime.seconds * 1000).toLocaleDateString()}</Text>
-      <Text style={styles.accountCell}>{item.status}</Text>
+      <Text style={[styles.accountCell, {flex:1.5}]}>{item.name}</Text>
+      <Text style={styles.accountCell}>{new Date(item.registerTime.seconds * 1000).toLocaleString() }</Text>
+      <Text style={[styles.accountCell, {flex:1}, {color: 'red'}]}>{item.status}</Text>
     </TouchableOpacity>
   );
 
@@ -61,9 +61,9 @@ const PendingAccountList = () => {
         />
       </View>
       <View style={styles.tableHeader}>
-        <Text style={styles.tableHeaderCell}>Username</Text>
+        <Text style={[styles.tableHeaderCell, {flex:1.5}]}>Username</Text>
         <Text style={styles.tableHeaderCell}>Registered</Text>
-        <Text style={styles.tableHeaderCell}>Status</Text>
+        <Text style={[styles.tableHeaderCell, {flex:1}]}>Status</Text>
       </View>
       {loading ? (
         <View style={styles.noAccounts}>
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
     padding: 8,
     borderWidth: 1,
     borderColor: '#ccc',
-    borderRadius: 4,
+    borderRadius: 8,
   },
   tableHeader: {
     flexDirection: 'row',
@@ -120,9 +120,10 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   tableHeaderCell: {
-    flex: 1,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    flex: 2,
+    fontFamily: 'Poppins-SemiBold',
+    textAlign: 'left',
+    paddingLeft:8
   },
   accountRow: {
     flexDirection: 'row',
@@ -131,8 +132,10 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
   },
   accountCell: {
-    flex: 1,
-    textAlign: 'center',
+    flex: 2,
+    textAlign: 'left',
+    fontFamily: 'Poppins-Medium',
+    paddingLeft:8
   },
   noAccounts: {
     flex: 1,

@@ -59,6 +59,7 @@
     "react-native-elements": "^3.4.3",
     "react-native-fs": "^2.20.0",
     "react-native-gesture-handler": "~2.16.1",
+    "react-native-highlighter": "^1.0.7",
     "react-native-modal": "^13.0.1",
     "react-native-modal-datetime-picker": "^17.1.0",
     "react-native-picker-select": "^3.1.1",
