@@ -16,16 +16,11 @@ import DeleteUserController from '../../Controller/DeleteUserController'
 
 const setting = () => {
   const { user } = useAuth()
-  const [isModalVisible, setModalVisible] = useState(false)
-  const [glucoseUnit, setGlucoseUnit] = useState('mmoL/L')
-  const [weightUnit, setWeightUnit] = useState('kgs')
-  const [modalType, setModalType] = useState('')
   const [photoUri, setPhotoUri] = useState('https://reactnative.dev/img/tiny_logo.png')
   
   const handleSignOut = async () => {
     await LogoutController.logout()
   }
-
 
   const createTwoButtonAlert = () =>
     Alert.alert('Delete account', 'Are you sure you want to delete?', [
@@ -47,26 +42,6 @@ const setting = () => {
       },
     ]);
 
-  
-
-  const handleGlucoseUnit = (glucoseSelection) => {
-    setGlucoseUnit(glucoseSelection)
-    toggleModal()
-  }
-
-  const handleWeightUnit = (weightSelection) => {
-    setWeightUnit(weightSelection)
-    toggleModal()
-  }
-
-  const toggleModal = () => {
-    setModalVisible(false)
-  }
-
-  const openModal = (type) => {
-    setModalType(type)
-    setModalVisible(true)
-  }
 
   return (
     <>
@@ -108,26 +83,9 @@ const setting = () => {
           <Text style={styles.buttonText}>Report</Text>
         </TouchableOpacity>
         <View style={{borderBottomColor:'#d9d9d9', borderBottomWidth:1}}/>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={() => router.push('reminder')}>
           <MaterialCommunityIcons name='bell-outline' size={24}/>
           <Text style={styles.buttonText}>Reminder</Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.section}>
-        <TouchableOpacity style={styles.button} onPress={() => openModal('glucoseUnit')}>
-          <FontAwesome name="sliders" size={24}/>
-          <View style={{flexDirection:'row', flex:1, justifyContent:'space-between'}}>
-          <Text style={styles.buttonText}>Change glucose unit</Text>
-          <Text style={{color:'#808080', fontFamily:'Poppins-Medium', fontSize:16}}>{glucoseUnit}</Text>
-          </View>
-        </TouchableOpacity>
-        <View style={{borderBottomColor:'#d9d9d9', borderBottomWidth:1}}/>
-        <TouchableOpacity style={styles.button} onPress={() => openModal('weightUnit')}>
-          <FontAwesome name="sliders" size={24}/>
-          <View style={{flexDirection:'row', flex:1, justifyContent:'space-between'}}>
-          <Text style={styles.buttonText}>Change weight unit</Text>
-          <Text style={{color:'#808080', fontFamily:'Poppins-Medium', fontSize:16}}>{weightUnit}</Text>
-          </View>
         </TouchableOpacity>
       </View>
 
@@ -149,40 +107,6 @@ const setting = () => {
         </TouchableOpacity>
       </View>
     </ScrollView>
-    <Modal
-      isVisible={isModalVisible}
-      swipeDirection={'down'}
-      onBackdropPress={toggleModal}
-      style={styles.modal}
-    >
-      <View style={styles.modalContent}>
-        {modalType === 'glucoseUnit' ? (
-          <>
-            <TouchableOpacity style={[styles.selectButton, {borderTopLeftRadius:16, borderTopRightRadius:16, borderBottomWidth:0.5, borderBottomColor:'#808080'}]} onPress={() => handleGlucoseUnit('mmoL/L')}>
-              <Text style={{fontFamily:'Poppins-Regular', fontSize:16}}>mmol/L</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.selectButton, {borderBottomLeftRadius:16, borderBottomRightRadius:16}]} onPress={() => handleGlucoseUnit('mg/dL')}>
-              <Text style={{fontFamily:'Poppins-Regular', fontSize:16}}>mg/dL</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.cancelButton} onPress={() => toggleModal()}>
-              <Text style={{fontFamily:'Poppins-SemiBold', fontSize:16}}>Cancel</Text>
-            </TouchableOpacity>
-          </>
-          ) : ( 
-          <>
-            <TouchableOpacity style={[styles.selectButton, {borderTopLeftRadius:16, borderTopRightRadius:16, borderBottomWidth:0.5, borderBottomColor:'#808080'}]} onPress={() => handleWeightUnit('kgs')}>
-              <Text style={{fontFamily:'Poppins-Regular', fontSize:16}}>kgs</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.selectButton, {borderBottomLeftRadius:16, borderBottomRightRadius:16}]} onPress={() => handleWeightUnit('lbs')}>
-              <Text style={{fontFamily:'Poppins-Regular', fontSize:16}}>lbs</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.cancelButton} onPress={() => toggleModal()}>
-              <Text style={{fontFamily:'Poppins-SemiBold', fontSize:16}}>Cancel</Text>
-            </TouchableOpacity>
-          </>
-        )}
-      </View>
-    </Modal>
     </>
   )
 }
