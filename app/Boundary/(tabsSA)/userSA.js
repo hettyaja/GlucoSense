@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
     flex: 2,
     textAlign: 'left',
     paddingLeft:16,
-    fontFamily: 'Poppins-Medium',
+    fontFamily: 'Poppins-Reguler',
     
   },
   noUsers: {
