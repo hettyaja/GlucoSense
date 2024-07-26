@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Dimensions, ScrollView, TouchableOpacity } from 'react-native';
-import { Tabs, router} from 'expo-router';
+import { Tabs, router } from 'expo-router';
 import { LineChart } from 'react-native-chart-kit';
+import { ScatterChart, YAxis, XAxis, Grid } from 'react-native-svg-charts';
+import { Circle, G } from 'react-native-svg';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useAuth } from '../../service/AuthContext';
 import RetrieveGlucoseLogsController from '../../Controller/RetrieveGlucoseLogsController';
@@ -12,18 +14,24 @@ const Insight = () => {
   const { user } = useAuth();
   const [glucoseGraphData, setGlucoseGraphData] = useState(null);
   const [mealGraphData, setMealGraphData] = useState(null);
+  const [scatterGraphData, setScatterGraphData] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const prepareDataForGraphs = async () => {
       try {
         const glucoseData = await RetrieveGlucoseLogsController.retrieveGlucoseLogs(user.uid);
-        console.log('Graph data to be set:', glucoseData);
+        console.log('Blood Glucose data:', glucoseData);
         setGlucoseGraphData(glucoseData);
 
         const mealData = await RetrieveMealLogsController.retrieveMealLogs(user.uid);
-        console.log('Graph data to be set:', mealData);
+        console.log('Calorie Consumption data:', mealData);
         setMealGraphData(mealData);
+
+        // Combine data for scatter plot
+        const combinedData = combineGlucoseAndMealData(glucoseData, mealData);
+        console.log('Combined Scatter Data:', combinedData);  // Log combined data
+        setScatterGraphData(combinedData);
 
       } catch (error) {
         console.error('Error preparing data for graphs:', error);
@@ -37,49 +45,28 @@ const Insight = () => {
     }
   }, [user.uid]);
 
+  const combineGlucoseAndMealData = (glucoseData, mealData) => {
+    const combinedData = [];
+    const glucoseEntries = glucoseData.datasets[0].data;
+    const mealEntries = mealData.datasets[0].data;
+
+    for (let i = 0; i < glucoseEntries.length; i++) {
+      combinedData.push({
+        x: mealEntries[i],
+        y: glucoseEntries[i]
+      });
+    }
+
+    return combinedData;
+  };
+
   if (loading) {
     return <Text>Loading...</Text>;
   }
 
-  console.log('Graph data in component:', glucoseGraphData);
-  console.log('Graph data in component:', mealGraphData);
-
-  const chartConfig = {
-    backgroundGradientFrom: "#f5f5f5",
-    backgroundGradientFromOpacity: 1,
-    backgroundGradientTo: "#f5f5f5",
-    backgroundGradientToOpacity: 1,
-    color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-    strokeWidth: 2, // optional, default 3
-    barPercentage: 0.5,
-    useShadowColorFromDataset: false // optional
-  };
-
-  const data = {
-    labels: ["January", "February", "March", "April", "May", "June"],
-    datasets: [
-      {
-        data: [77, 95, 91, 80, 101, 85],
-        color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`, // optional
-        strokeWidth: 2 // optional
-      }
-    ],
-  };
-
-  const generateHourlyLabels = () => {
-    const labels = [];
-    const now = new Date();
-    const options = { timeZone: 'Asia/Singapore', hour: '2-digit', hour12: false };
-    const formatter = new Intl.DateTimeFormat('en-US', options);
-
-    for (let i = 24; i >= 0; i--) { // Last 24 hours
-      const date = new Date(now.getTime() - i * 60 * 60 * 1000);
-      const hours = formatter.format(date);
-      labels.push(`${hours}:00`);
-    }
-
-    return labels;
-  };
+  console.log('Glucose Graph Data:', glucoseGraphData);
+  console.log('Meal Graph Data:', mealGraphData);
+  console.log('Scatter Graph Data:', scatterGraphData);
 
   return (
     <>
@@ -91,126 +78,123 @@ const Insight = () => {
         headerTitleAlign: 'center',
       }} />
       <ScrollView style={styles.container}>
-      <TouchableOpacity style={styles.centeredChart} onPress={() => router.push('/glucoseInsight')}>
-          <View style = {styles.chartContainer}>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 15, marginTop: 15}}>
+        <TouchableOpacity style={styles.centeredChart} onPress={() => router.push('/glucoseInsight')}>
+          <View style={styles.chartContainer}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 15, marginTop: 15 }}>
               <Text style={styles.chartTitle}>Blood Glucose</Text>
               <AntDesign name="right" size={16} />
             </View>
-          <LineChart
-            data={glucoseGraphData}
-            width={Dimensions.get('window').width}
-            height={220}
-            yAxisLabel=""
-            yAxisSuffix=""
-            yAxisInterval={1}
-            chartConfig={{
-              backgroundColor: "#ffffff",
-              backgroundGradientFrom: "#ffffff",
-              backgroundGradientTo: "#ffffff",
-              decimalPlaces: 2,
-              color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-              labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-              style: {
-                borderRadius: 16
-              },
-              propsForDots: {
-                r: "6",
-                strokeWidth: "1",
-              }
-            }}
-            
-            style={{
-              marginVertical: 8,
-
-            }}
-          />
-        </View>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.centeredChart} onPress={() => router.push('/caloriesInsight')}>
-          <View style = {styles.chartContainer}>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 15, marginTop: 15}}>
-              <Text style={styles.chartTitle}>Calorie Consumption</Text>
-              <AntDesign name="right" size={16} />
-            </View>
-          <LineChart
-            data={mealGraphData}
-            width={Dimensions.get('window').width}
-            height={220}
-            yAxisLabel=""
-            yAxisSuffix=""
-            yAxisInterval={1}
-            chartConfig={{
-              backgroundColor: "#ffffff",
-              backgroundGradientFrom: "#ffffff",
-              backgroundGradientTo: "#ffffff",
-              decimalPlaces: 2,
-              color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-              labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-              style: {
-                borderRadius: 16
-              },
-              propsForDots: {
-                r: "6",
-                strokeWidth: "1",
-              }
-            }}
-            
-            style={{
-              marginVertical: 8,
-
-            }}
-          />
-        </View>
-        </TouchableOpacity>
-        <View>
-          <ScrollView horizontal contentContainerStyle={{ flexGrow: 1 }}>
             <LineChart
-              data={{
-                labels: generateHourlyLabels(),
-                datasets: [
-                  {
-                    data: generateHourlyLabels().map(() => Math.random() * 100)
-                  }
-                ]
-              }}
-              width={generateHourlyLabels().length * 50} // Adjust the width based on the number of labels
+              data={glucoseGraphData}
+              width={Dimensions.get('window').width}
               height={220}
-              yAxisLabel="$"
-              yAxisSuffix="k"
+              yAxisLabel=""
+              yAxisSuffix=""
               yAxisInterval={1}
               chartConfig={{
-                backgroundColor: "#e26a00",
-                backgroundGradientFrom: "#fb8c00",
-                backgroundGradientTo: "#ffa726",
+                backgroundColor: "#ffffff",
+                backgroundGradientFrom: "#ffffff",
+                backgroundGradientTo: "#ffffff",
                 decimalPlaces: 2,
-                color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-                labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                style: {
+                  borderRadius: 16
+                },
                 propsForDots: {
                   r: "6",
-                  strokeWidth: "2",
-                  stroke: "#ffa726"
+                  strokeWidth: "1",
                 }
               }}
               style={{
                 marginVertical: 8,
-                borderRadius: 16
               }}
             />
-          </ScrollView>
-        </View>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.centeredChart} onPress={() => router.push('/caloriesInsight')}>
+          <View style={styles.chartContainer}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 15, marginTop: 15 }}>
+              <Text style={styles.chartTitle}>Calorie Consumption</Text>
+              <AntDesign name="right" size={16} />
+            </View>
+            <LineChart
+              data={mealGraphData}
+              width={Dimensions.get('window').width}
+              height={220}
+              yAxisLabel=""
+              yAxisSuffix=""
+              yAxisInterval={1}
+              chartConfig={{
+                backgroundColor: "#ffffff",
+                backgroundGradientFrom: "#ffffff",
+                backgroundGradientTo: "#ffffff",
+                decimalPlaces: 2,
+                color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                style: {
+                  borderRadius: 16
+                },
+                propsForDots: {
+                  r: "6",
+                  strokeWidth: "1",
+                }
+              }}
+              style={{
+                marginVertical: 8,
+              }}
+            />
+          </View>
+        </TouchableOpacity>
         <TouchableOpacity>
           <View style={styles.section}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
               <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 16 }}>Calorie Consumption & Blood Glucose</Text>
               <AntDesign name="right" size={16} />
             </View>
-            <LineChart
-              data={data}
-              width={screenWidth - 32}
-              height={220}
-              chartConfig={chartConfig}
-            />
+            <View style={{ flexDirection: 'row', height: 220, padding: 20 }}>
+              <YAxis
+                data={scatterGraphData.map(point => point.y)}
+                contentInset={{ top: 20, bottom: 20 }}
+                svg={{
+                  fill: 'grey',
+                  fontSize: 10,
+                }}
+                numberOfTicks={10}
+                formatLabel={value => `${value}`}
+              />
+              <View style={{ flex: 1, marginLeft: 10 }}>
+                <ScatterChart
+                  style={{ flex: 1 }}
+                  data={scatterGraphData}
+                  xAccessor={({ item }) => item.x}
+                  yAccessor={({ item }) => item.y}
+                  svg={{ stroke: 'rgb(134, 65, 244)' }}
+                  contentInset={{ top: 20, bottom: 20 }}
+                >
+                  <Grid />
+                  <G>
+                    {scatterGraphData.map((point, index) => (
+                      <Circle
+                        key={index}
+                        cx={point.x}
+                        cy={point.y}
+                        r={5}
+                        stroke={'rgb(134, 65, 244)'}
+                        fill={'rgba(134, 65, 244, 0.8)'}
+                      />
+                    ))}
+                  </G>
+                </ScatterChart>
+                <XAxis
+                  style={{ marginHorizontal: -10, height: 30 }}
+                  data={scatterGraphData.map(point => point.x)}
+                  formatLabel={(value, index) => scatterGraphData[index].x}
+                  contentInset={{ left: 10, right: 10 }}
+                  svg={{ fontSize: 10, fill: 'grey' }}
+                />
+              </View>
+            </View>
           </View>
         </TouchableOpacity>
       </ScrollView>
@@ -229,7 +213,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 20,
-    
   },
   chartTitle: {
     marginTop: 5,

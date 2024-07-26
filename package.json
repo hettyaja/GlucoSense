@@ -63,11 +63,13 @@
     "react-native-screens": "3.31.1",
     "react-native-share": "^10.2.1",
     "react-native-svg": "^15.4.0",
+    "react-native-svg-charts": "^5.4.0",
     "react-native-tab-view": "^3.5.2",
     "react-native-text-recognition": "^1.0.2",
     "react-native-vision-camera": "^4.4.1",
     "ss": "^0.0.1",
     "typescript": "~5.3.3",
+    "victory-native": "^41.0.2",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {

@@ -72,9 +72,12 @@ class MealLogs {
       try {
           const logsRef = collection(db, 'users', uid, 'mealLogs');
   
-          // Get the timestamp for 7 days ago
+          // Get the current timestamp in Singapore time
           const now = new Date();
-          const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000); // 7 days ago
+          const singaporeTime = new Date(now.getTime() + (8 * 60 * 60 * 1000)); // Adding 8 hours for SGT
+  
+          // Calculate the timestamp for 7 days ago in Singapore time
+          const sevenDaysAgo = new Date(singaporeTime.getTime() - 7 * 24 * 60 * 60 * 1000); // 7 days ago
   
           // Convert the date to a Firestore timestamp
           const timestamp = Timestamp.fromDate(sevenDaysAgo);
@@ -99,7 +102,7 @@ class MealLogs {
           const data = [];
           const dayData = {};
           for (let i = 6; i >= 0; i--) {
-              const date = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
+              const date = new Date(singaporeTime.getTime() - i * 24 * 60 * 60 * 1000);
               const day = date.toLocaleDateString('en-US', { weekday: 'short' });
               const key = date.toDateString();
               labels.push(day);
@@ -118,36 +121,37 @@ class MealLogs {
   
           // Fill the data array with total calorie values
           labels.forEach(label => {
-            const day = Object.values(dayData).find(d => d.day === label);
-            if (day.count > 0) {
-                data.push(day.total);
-            } else {
-                data.push(0); // Or use 0 or another value to represent no data
-            }
+              const day = Object.values(dayData).find(d => d.day === label);
+              if (day.count > 0) {
+                  data.push(day.total);
+              } else {
+                  data.push(0); // Or use 0 or another value to represent no data
+              }
           });
-
   
           console.log('Processed graph data:', { labels, datasets: [{ data }] });
   
           return { labels, datasets: [{ data }] };
       } catch (error) {
-          console.error(`Error fetching glucose logs for graph:`, error);
+          console.error(`Error fetching meal logs for graph:`, error);
           throw error;
       }
   }
+  
 
   static async fetchMealLogsForDataInsight(uid, period) {
     try {
       const logsRef = collection(db, 'users', uid, 'mealLogs');
       const now = new Date();
+      const singaporeTime = new Date(now.getTime() + (8 * 60 * 60 * 1000)); // Adding 8 hours for SGT
       let timePeriod;
   
       if (period === 'daily') {
-        timePeriod = new Date(now.getTime() - 1 * 24 * 60 * 60 * 1000); // 1 day ago
+        timePeriod = new Date(singaporeTime.getTime() - 1 * 24 * 60 * 60 * 1000); // 1 day ago
       } else if (period === 'weekly') {
-        timePeriod = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000); // 7 days ago
+        timePeriod = new Date(singaporeTime.getTime() - 7 * 24 * 60 * 60 * 1000); // 7 days ago
       } else if (period === 'monthly') {
-        timePeriod = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000); // 30 days ago
+        timePeriod = new Date(singaporeTime.getTime() - 30 * 24 * 60 * 60 * 1000); // 30 days ago
       } else {
         throw new Error('Invalid period specified');
       }
