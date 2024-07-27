@@ -1,216 +1,131 @@
-import React, {useState} from 'react';
-import { Image, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, Platform } from 'react-native';
-import { images } from '../../constants/images'
-import { router } from 'expo-router'
-import ImageButton from '../../components/ImageButton'
+import React, { useState } from 'react';
+import { Image, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, ScrollView } from 'react-native';
+import { router } from 'expo-router';
 import RegisterUserController from '../../Controller/RegisterUserController';
 import Header from '../../components/Header';
 
-const RegisterUserUI= () => {
-    const [username ,setUsername] = useState('')
-    const [name, setName] = useState('')
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [confirmPassword, setConfirmPassword] = useState('')
+const RegisterUserUI = () => {
+    const [username, setUsername] = useState('');
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
 
     const handleSignUp = async () => {
         try {
-            const additionalData = {username, name};
+            const additionalData = { username, name };
             await RegisterUserController.register(email, password, confirmPassword, additionalData);
         } catch (error) {
             alert(error.message);
         }
     };
 
+    const renderInputField = (label, value, onChangeText, secureTextEntry = false) => (
+        <>
+            <Text style={styles.label}>{label}</Text>
+            <View style={styles.inputContainer}>
+                <TextInput
+                    style={styles.input}
+                    secureTextEntry={secureTextEntry}
+                    value={value}
+                    onChangeText={onChangeText}
+                />
+            </View>
+        </>
+    );
+
     return (
-    <>
-    <Header headerShown={false}/>
-    <SafeAreaView style={styles.safeArea}>
-        <Image source={images.header} style={{position:"absolute", width:430, height:275}}/>
-        <View style={{alignItems:'flex-start', width:"100%", paddingHorizontal:20, paddingTop: Platform.OS === 'ios' ? 0 : 50}}>
-        <ImageButton
-            source={require("../../assets/back.png")}
-            imageSize={{width:24, height:24}}
-            onPress={() => router.back('/welcomePage')}
-        />
-        </View>
-        <Text style={{fontFamily:"Poppins-Bold", fontSize: 24, paddingLeft: 25, paddingTop: 100, color: '#FAF5E1'}}>Sign up</Text>
-
-        <View style={{marginTop:80}}>
-        <Text style={{
-            fontFamily: 'Poppins-Medium',
-            fontSize: 14,
-            fontWeight: '500',
-            color: '#333',
-            paddingLeft: 12,
-            fontWeight: "bold"
-            }}>
-            Username
-        </Text>
-        <View style={{ paddingLeft: 10, paddingRight: 10, flexDirection:'row', paddingBottom:2, marginBottom:10}}>
-            <TextInput
-                style={styles.input}
-                keyboardType="default"
-                value={username}
-                onChangeText={text => setUsername(text)}
+        <>
+            <Header
+                title='Register'
+                leftButton='Back'
+                onLeftButtonPress={() => router.back()}
             />
-        </View>
-
-        <Text style={{
-            fontFamily: 'Poppins-Medium',
-            fontSize: 14,
-            fontWeight: '500',
-            color: '#333',
-            paddingLeft: 12,
-            fontWeight: "bold",
-            }}>
-            Name
-        </Text>
-        <View style={{ paddingLeft: 10, paddingRight: 10, flexDirection:'row', paddingBottom:2, marginBottom:15}}>
-            <TextInput
-                style={styles.input}
-                keyboardType="default"
-                value={name}
-                onChangeText={text => setName(text)}
-            />
-        </View>
-
-        <Text style={{
-            fontFamily: 'Poppins-Medium',
-            fontSize: 14,
-            fontWeight: '500',
-            color: '#333',
-            paddingLeft: 12,
-            fontWeight: "bold"
-            }}>
-            Email
-        </Text>
-        <View style={{ paddingLeft: 10, paddingRight: 10, flexDirection:'row', paddingBottom:2, marginBottom:15}}>
-            <TextInput
-                style={styles.input}
-                keyboardType="email-address"
-                value={email}
-                onChangeText={text => setEmail(text)}
-            />
-        </View>
-
-        <Text style={{
-            fontFamily: 'Poppins-Medium',
-            fontSize: 14,
-            fontWeight: '500',
-            color: '#333',
-            paddingLeft: 12,
-            fontWeight: "bold"
-            }}>
-            Password
-        </Text>
-        <View style={{ paddingLeft: 10, paddingRight: 10, flexDirection:'row', paddingBottom:2, marginBottom:15}}>
-            <TextInput
-                style={styles.input}
-                secureTextEntry={true}
-                value={password}
-                onChangeText={text => setPassword(text)}/>
-        </View>
-
-        <Text style={{
-            fontFamily: 'Poppins-Medium',
-            fontSize: 14,
-            fontWeight: '500',
-            color: '#333',
-            paddingLeft: 12,
-            fontWeight: "bold"
-            }}>
-            Confirm Password
-        </Text>
-        </View>
-        <View style={{ paddingLeft: 10, paddingRight: 10, flexDirection:'row',paddingBottom:2, marginBottom: 15}}>
-            <TextInput
-                style={styles.input}
-                secureTextEntry={true}
-                value={confirmPassword}
-                onChangeText={text => setConfirmPassword(text)}
-            />
-        </View>
-        
-        <View style={{alignItems:'center', paddingTop:50}}>
-        <TouchableOpacity onPress={() => handleSignUp()} style={styles.registerButtonContainer}>
-            <Text style={styles.registerButtonText}> Register </Text>
-        </TouchableOpacity>
-        </View>
-        
-        <View style={{ alignItems:'center',flexDirection:'row', marginBottom: 5, justifyContent: 'center'}}>
-        
-        <Text style={{fontSize: 14, alignItems:'center', textAlign: 'center', marginTop: 20, fontFamily: 'Poppins-Medium'}}> Already have an account? 
-        </Text>
-        </View>
-        
-        <View style={{ alignItems:'center'}}>
-        <TouchableOpacity onPress={() => {}}>
-            <Text style={{ alignItems:'center', fontFamily: 'Poppins-Medium', fontSize: 14, paddingBottom: 35, color: '#0044CC', justifyContent: 'center', textAlign: 'center', fontFamily:'Poppins-Medium'}}> Log In </Text>
-        </TouchableOpacity> 
-        </View>
-    </SafeAreaView>
-    </>
+            <ScrollView style={styles.safeArea}>
+                <View style={styles.formContainer}>
+                    {renderInputField('Username', username, setUsername)}
+                    {renderInputField('Name', name, setName)}
+                    {renderInputField('Email', email, setEmail)}
+                    {renderInputField('Password', password, setPassword, true)}
+                    {renderInputField('Confirm Password', confirmPassword, setConfirmPassword, true)}
+                </View>
+                <TouchableOpacity onPress={handleSignUp} style={styles.registerButtonContainer}>
+                    <Text style={styles.registerButtonText}>Register</Text>
+                </TouchableOpacity>
+                <View style={styles.loginPrompt}>
+                    <Text style={styles.loginText}>Already have an account?</Text>
+                    <TouchableOpacity onPress={() => {}}>
+                        <Text style={styles.loginLink}>Log In</Text>
+                    </TouchableOpacity>
+                </View>
+            </ScrollView>
+        </>
     );
 };
 
-    const styles = StyleSheet.create({
-        container: {flex: 1, alignItems: 'center'},
-        safeArea: {flex: 1, backgroundColor: 'white'},
-        registerButtonContainer: {
-            elevation: 5,
-            backgroundColor: "#E58B68",
-            borderRadius: 8,
-            borderColor: "#000000",
-            resizeBorder: 10,
-            borderWidth: 0,
-            paddingVertical: 8,
-            paddingHorizontal: 65
-        },
-        image: {
-            width: 50,
-            height: 200,
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-            // marginTop :70,
-        },
-        input: {
-            fontFamily: 'Poppins-Medium',
-            flex:1,
-            width: 300,
-            height: 40,
-            backgroundColor: '#fff',
-            paddingVertical: 3,
-            paddingLeft: 5,
-            borderColor: '#ccc',
-            borderWidth: 1,
-            borderRadius: 8,
-            fontSize: 14
-        },
-        registerButtonText: {
-            fontFamily: 'Poppins-Medium',
-            fontSize: 18,
-            color: "#FAF5E1",
-            fontWeight: "bold",
-            alignSelf: 'center',
-            alignItems:'center'
-        },
-        touchablePreviousArrow: {
-            flex: 1,
-            paddingLeft: 30,
-            justifyContent: 'left',
-            alignItems: 'left',
-        },
-        previousArrowIcon: {
-            width: 50,
-            height: 100,
-            size: 30,
-            color: '#FAF5E1',
-            paddingLeft: 30,
-            justifyContent: 'left',
-            alignItems: 'left',
-        }
+const styles = StyleSheet.create({
+    safeArea: {
+        flex: 1,
+        backgroundColor: 'white',
+    },
+    formContainer: {
+        paddingHorizontal: 16,
+        paddingTop: 16,
+        flex: 1,
+    },
+    label: {
+        fontFamily: 'Poppins-SemiBold',
+        fontSize: 14,
+        paddingLeft: 4,
+        paddingBottom: 4,
+    },
+    inputContainer: {
+        paddingBottom: 16,
+    },
+    input: {
+        fontFamily: 'Poppins-Regular',
+        width: '100%',
+        height: 40,
+        backgroundColor: '#fff',
+        paddingVertical: 4,
+        paddingLeft: 8,
+        borderColor: '#ccc',
+        borderWidth: 1,
+        borderRadius: 8,
+        fontSize: 12,
+    },
+    registerButtonContainer: {
+        backgroundColor: "#E58B68",
+        width: '50%',
+        borderRadius: 8,
+        padding: 8,
+        marginVertical: 24,
+        alignSelf: 'center',
+    },
+    registerButtonText: {
+        fontFamily: 'Poppins-Regular',
+        fontSize: 16,
+        color: "white",
+        alignSelf: 'center',
+        
+    },
+    loginPrompt: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        marginBottom:40
+    },
+    loginText: {
+        fontSize: 14,
+        fontFamily: 'Poppins-Medium',
+        textAlign: 'center',
+    },
+    loginLink: {
+        fontSize: 14,
+        fontFamily: 'Poppins-Medium',
+        color: '#0044CC',
+        paddingLeft: 4,
+        textAlign: 'center',
+    }
 });
 
 export default RegisterUserUI;

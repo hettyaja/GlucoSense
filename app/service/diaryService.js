@@ -232,7 +232,6 @@ export const calculateA1C = async (userId) => {
     const a1c = (averageBloodGlucoseMgDl + 46.7) / 28.7;
     return a1c.toFixed(2);
   } catch (error) {
-    console.error('Error fetching documents: ', error);
     return 0; // Return 0 in case of error
   }
 };

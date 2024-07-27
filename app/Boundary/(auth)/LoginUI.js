@@ -17,9 +17,10 @@ const Login = () => {
     try {
       await LoginController.login(email, password);
     } catch (error) {
-      Alert.alert('Login Failed', error.message);
+      Alert.alert('Login Error', error.message);
     }
   };
+
 
   return (
     <>
@@ -32,11 +33,6 @@ const Login = () => {
       />
       <ScrollView style={styles.safeArea}>
           <View style={styles.container}>
-            {/* <View style={styles.backButtonContainer}>
-              <TouchableOpacity onPress={() => router.back()}>
-                <Ionicons name='chevron-back' size={32} color='black' />
-              </TouchableOpacity>
-            </View> */}
 
             <Image source={images.logo} style={styles.logo} />
             <Text style={styles.titleText}>GlucoSense</Text>
@@ -70,7 +66,7 @@ const Login = () => {
             />
 
             <View style={styles.forgotPasswordContainer}>
-              <TouchableOpacity onPress={() => router.push('Boundary/resetPwd1')}>
+              <TouchableOpacity onPress={() => router.push('Boundary/ResetPasswordUI')}>
                 <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
               </TouchableOpacity>
             </View>

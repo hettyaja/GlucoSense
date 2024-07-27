@@ -1,12 +1,12 @@
 import React, {useState} from 'react';
-import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View, ScrollView } from 'react-native';
+import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, Stack } from 'expo-router';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import Header from '../../components/Header';
 import RegisterBPController from '../../Controller/RegisterBPController';
 
-const RegisetrBPUI= () => {
+const RegisterBPUI= () => {
     const [entityName, setEntityName] = useState('')
     const [UEN, setUEN] = useState('')
     const [city, setCity] = useState('')
@@ -31,14 +31,14 @@ const RegisetrBPUI= () => {
             }
             await RegisterBPController.register(email, password, confirmPassword, additionalData)
         } catch (error) {
-            alert(error.message)
+            Alert.alert('Register Error', error.message)
         }
     }
 
     return (
         <>
           <Header
-            title="Registration"
+            title="Register"
             leftButton='Back'
             onLeftButtonPress={() => router.back('/welcomePage')}
           />
@@ -205,7 +205,6 @@ const RegisetrBPUI= () => {
         // container: {flex: 1, alignItems: 'center'},
         safeArea: {flex: 1, backgroundColor:'#F5F5F5'},
         registerButtonContainer: {
-            elevation: 5,
             backgroundColor: "#E58B68",
             borderRadius: 8,
             borderColor: "#000000",
@@ -237,7 +236,7 @@ const RegisetrBPUI= () => {
         registerButtonText: {
             fontFamily: 'Poppins-Bold',
             fontSize: 16,
-            color: "#FAF5E1",
+            color: "white",
             fontWeight: "bold",
             alignSelf: 'center',
             alignItems:'center'
@@ -268,4 +267,4 @@ const RegisetrBPUI= () => {
     
     });
 
-export default RegisetrBPUI;
+export default RegisterBPUI;

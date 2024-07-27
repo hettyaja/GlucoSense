@@ -2,7 +2,6 @@ import { StyleSheet, Text, TouchableOpacity, View, Alert, Platform } from 'react
 import React, { useEffect, useState } from 'react';
 import { printToFileAsync } from 'expo-print';
 import * as FileSystem from 'expo-file-system';
-import * as MediaLibrary from 'expo-media-library';
 import { StorageAccessFramework } from 'expo-file-system';
 import Header from '../components/Header';
 import { router } from 'expo-router';
