@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Platform, Alert } from 'react-native';
 import Header from './components/Header';
 import { router } from 'expo-router';
-import RNNPickerSelect from 'react-native-picker-select';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import * as Notifications from 'expo-notifications';
 import { useAuth } from './service/AuthContext';
@@ -28,8 +27,8 @@ Notifications.setNotificationHandler({
 
 const createReminder = () => {
   const { user } = useAuth();
-  const [selectedType, setSelectedType] = useState(null);
-  const [selectedDay, setSelectedDay] = useState(null);
+  const [selectedType, setSelectedType] = useState('Glucose');
+  const [selectedDay, setSelectedDay] = useState('Everyday');
   const [selectedTime, setSelectedTime] = useState(new Date());
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
@@ -124,17 +123,6 @@ const createReminder = () => {
         <View style={styles.section}>
           <View style={styles.item}>
             <Text>Type</Text>
-            {Platform.OS === 'ios' ? (
-              <RNNPickerSelect
-                onValueChange={(itemValue) => setSelectedType(itemValue)}
-                placeholder={{ label: 'Select type', value: null, fontFamily: 'Poppins-Regular', fontSize: 14 }}
-                items={[
-                  { label: 'Glucose', value: 'Glucose' },
-                  { label: 'Meal', value: 'Meal' },
-                  { label: 'Medicine', value: 'Medicine' }
-                ]}
-              />
-            ) : (
               <Picker
                 selectedValue={selectedType}
                 onValueChange={(itemValue) => setSelectedType(itemValue)}
@@ -145,26 +133,9 @@ const createReminder = () => {
                 <Picker.Item label="Meal" value="Meal" />
                 <Picker.Item label="Medicine" value="Medicine" />
               </Picker>
-            )}
           </View>
           <View style={styles.item}>
             <Text>Day</Text>
-            {Platform.OS === 'ios' ? (
-              <RNNPickerSelect
-                onValueChange={(itemValue) => setSelectedDay(itemValue)}
-                placeholder={{ label: 'Select day', value: null, fontFamily: 'Poppins-Regular', fontSize: 14 }}
-                items={[
-                  { label: 'Everyday', value: 'Everyday' },
-                  { label: 'Monday', value: 'Monday' },
-                  { label: 'Tuesday', value: 'Tuesday' },
-                  { label: 'Wednesday', value: 'Wednesday' },
-                  { label: 'Thursday', value: 'Thursday' },
-                  { label: 'Friday', value: 'Friday' },
-                  { label: 'Saturday', value: 'Saturday' },
-                  { label: 'Sunday', value: 'Sunday' }
-                ]}
-              />
-            ) : (
               <Picker
                 selectedValue={selectedDay}
                 onValueChange={(itemValue) => setSelectedDay(itemValue)}
@@ -180,7 +151,6 @@ const createReminder = () => {
                 <Picker.Item label="Saturday" value="Saturday" />
                 <Picker.Item label="Sunday" value="Sunday" />
               </Picker>
-            )}
           </View>
           <View style={styles.item}>
             <Text>Time</Text>

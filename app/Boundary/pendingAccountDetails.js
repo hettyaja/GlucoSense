@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Button, Alert } from 'react-native';
+import { View, Text, StyleSheet, Button, Alert, ScrollView, TouchableOpacity } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import ViewPendingAccountListController from '../Controller/ViewPendingAccountListController';
 import Header from '../components/Header';
 import ApproveBusinessPartnerController from '../Controller/ApproveBusinessPartnerController';
 import RejectBusinessPartnerController from '../Controller/RejectBusinessPartnerController';
+
 
 const PendingAccountDetails = () => {
   const [accountDetails, setAccountDetails] = useState(null);
@@ -29,7 +30,7 @@ const PendingAccountDetails = () => {
     try {
       await ApproveBusinessPartnerController.approveBusinessPartner(accountId);
       Alert.alert('Success', 'Account has been accepted and is now active.');
-      router.back()
+      router.back();
     } catch (error) {
       console.error("Error accepting account: ", error);
       Alert.alert('Error', 'Failed to accept the account.');
@@ -40,7 +41,7 @@ const PendingAccountDetails = () => {
     try {
       await RejectBusinessPartnerController.rejectBusinessPartner(accountId);
       Alert.alert('Success', 'Account has been rejected.');
-      router.back()
+      router.back();
     } catch (error) {
       console.error("Error rejecting account: ", error);
       Alert.alert('Error', 'Failed to reject the account.');
@@ -49,7 +50,7 @@ const PendingAccountDetails = () => {
 
   if (!accountDetails) {
     return (
-      <View style={styles.container}>
+      <View style={styles.loadingContainer}>
         <Text>Loading...</Text>
       </View>
     );
@@ -57,38 +58,90 @@ const PendingAccountDetails = () => {
 
   return (
     <>
-    <Header
-      title='Details'
-      leftButton='Back'
-      onLeftButtonPress={() => router.back()}
-    />
-    <View style={styles.container}>
-      <Text style={styles.detailText}>Username: {accountDetails.name}</Text>
-      <Text style={styles.detailText}>Registered: {new Date(accountDetails.registerTime.seconds * 1000).toLocaleDateString()}</Text>
-      <Text style={styles.detailText}>Status: {accountDetails.status}</Text>
-      <View style={styles.buttonContainer}>
-        <Button title="Reject" onPress={handleReject} color="red" />
-        <Button title="Accept" onPress={handleAccept} color="green" />
-      </View>
-    </View>
+      <Header
+        title="Details"
+        leftButton="Back"
+        onLeftButtonPress={() => router.back()}
+      />
+      <ScrollView contentContainerStyle={styles.scrollView}>
+        <View style={styles.container}>
+          <Text style={styles.detailText}><Text style={styles.headerText}>Username:</Text> {accountDetails.name}</Text>
+          <Text style={styles.detailText}><Text style={styles.headerText}>Registered:</Text> {new Date(accountDetails.registerTime.seconds * 1000).toLocaleDateString()}</Text>
+          <Text style={styles.detailText}><Text style={styles.headerText}>Status:</Text> {accountDetails.status}</Text>
+          <Text style={styles.detailText}><Text style={styles.headerText}>UEN:</Text> {accountDetails.UEN}</Text>
+          <Text style={styles.detailText}><Text style={styles.headerText}>Entity Name:</Text> {accountDetails.entityName}</Text>
+          <Text style={styles.detailText}><Text style={styles.headerText}>City:</Text> {accountDetails.city}</Text>
+          <Text style={styles.detailText}><Text style={styles.headerText}>Address:</Text> {accountDetails.address}</Text>
+          <Text style={styles.detailText}><Text style={styles.headerText}>Postal code:</Text> {accountDetails.postal}</Text>
+          <Text style={styles.detailText}><Text style={styles.headerText}>Full Name:</Text> {accountDetails.name}</Text>
+          <Text style={styles.detailText}><Text style={styles.headerText}>Phone Number:</Text> {accountDetails.phoneNum}</Text>
+          <View style={styles.buttonContainer}>
+          <TouchableOpacity style={[styles.button, styles.rejectButton]} onPress={handleReject}>
+              <Text style={styles.buttonText}>Reject</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.button, styles.acceptButton]} onPress={handleAccept}>
+              <Text style={styles.buttonText}>Accept</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </ScrollView>
     </>
   );
 };
 
 const styles = StyleSheet.create({
+  scrollView: {
+    flexGrow: 1,
+    justifyContent: 'center',
+  },
   container: {
     flex: 1,
-    padding: 16,
-    backgroundColor: '#fff',
+    paddingHorizontal: 16, // Padding only on left and right
+    paddingVertical: 20, // Padding on top and bottom
+    backgroundColor: '#ededed',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#ededed',
   },
   detailText: {
-    fontSize: 18,
-    marginBottom: 8,
+    fontSize: 12,
+    marginBottom: 12, // Increased margin between lines
+    paddingHorizontal: 10, // Added padding around the text
+    backgroundColor: '#f9f9f9',
+    borderRadius: 5,
+    paddingVertical: 6, // Padding for vertical spacing
+  },
+  headerText: {
+    fontFamily: 'Poppins-SemiBold',
+  },
+  
+  background: {
+    flex: 1,
+    backgroundColor: 'white',
   },
   buttonContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 16,
+    justifyContent: 'space-evenly', // Even spacing between buttons
+    marginTop: 20,
+  },
+  button: {
+    paddingHorizontal: 40,
+    paddingVertical: 10,
+    borderRadius: 8,
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  rejectButton: {
+    backgroundColor: 'red',
+  },
+  acceptButton: {
+    backgroundColor: 'green',
   },
 });
 

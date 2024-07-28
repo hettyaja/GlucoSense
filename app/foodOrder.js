@@ -1,41 +1,80 @@
-import { View, Text, StyleSheet, Image, Button, TouchableOpacity, Touchable, TextInput} from 'react-native'
-import React, { useState } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { Stack, Tabs, router} from 'expo-router'
-import { images } from './constants/images';
-import { Picker } from '@react-native-picker/picker';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Tabs, router } from 'expo-router';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { fetchMenuData } from './service/foodordermenuService'; // Updated import
+import { useAuth } from './service/AuthContext'; // Import your auth context
 
-const food = () => {
-  const handleButtonPress = (buttonIndex) => {
-    setSelectedButton(buttonIndex === selectedButton ? null : buttonIndex);
-  }
+const FoodOrder = () => {
+  const { user } = useAuth(); // Get the current user
+  const [searchQuery, setSearchQuery] = useState('');
+  const [menuData, setMenuData] = useState([]);
+
+  useEffect(() => {
+    const fetchMenuItems = async () => {
+      try {
+        const menuCollection = await fetchMenuData(); // Fetch menu data for all business partners
+        console.log('Fetched menu data:', menuCollection); // Log menu data for debugging
+        setMenuData(menuCollection);
+      } catch (error) {
+        console.error('Error fetching menu data:', error);
+      }
+    };
+    fetchMenuItems();
+  }, []);
+
+  const filteredMenu = menuData.filter(menu => {
+    if (!menu.title) {
+      console.warn('Menu item with undefined title:', menu);
+      return false;
+    }
+    return menu.title.toLowerCase().includes(searchQuery.toLowerCase());
+  });
+
   return (
     <>
-        <Tabs.Screen options={{
+      <Tabs.Screen options={{
         title: 'Food Order',
         headerStyle: { backgroundColor: '#E58B68' },
-        headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold'},
+        headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold' },
         headerTitle: 'Food Order',
         headerTitleAlign: 'center',
-      }}/>
+      }} />
 
-    <View style={{flex:1, backgroundColor:'#f5f5f5'}}>
-          <TouchableOpacity style={styles.container1} onPress = {() => router.push('details')}>
-            <View style={styles.container2}>
-            </View>
-            <View style={{marginLeft: 20}}>
-                <Text style={{fontFamily: 'Poppins-SemiBold', fontSize: 16, marginTop: 22}}>Chicken Rice</Text>
-                <Text style={{fontFamily: 'Poppins-Regular', fontSize: 16}}>$4.50</Text>
-            </View>
-          </TouchableOpacity>
-    </View>
-    
+      <View style={{ flex: 1, backgroundColor: '#f5f5f5' }}>
+        <View style={styles.searchContainer}>
+          <View style={styles.searchBar}>
+            <FontAwesome name="search" size={20} color="#666" style={styles.icon} />
+            <TextInput
+              style={styles.input}
+              placeholder="Search menu"
+              placeholderTextColor="#999"
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+            />
+          </View>
+        </View>
+
+        <ScrollView contentContainerStyle={{ padding: 20 }}>
+          {filteredMenu.map((menu) => (
+            <TouchableOpacity key={menu.id} style={styles.container1} onPress={() => router.push('details')}>
+              <View style={styles.container2}>
+                {/* Image component can be added here if image URL is available in menu data */}
+              </View>
+              <View style={{ marginLeft: 20 }}>
+                <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 16, marginTop: 22 }}>{menu.title}</Text>
+                <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 16 }}>${menu.price}</Text>
+              </View>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
     </>
-  )
-}
+  );
+};
 
-
-export default food
+export default FoodOrder;
 
 const styles = StyleSheet.create({
   container: {
@@ -43,11 +82,11 @@ const styles = StyleSheet.create({
   },
   selectedButton: {
     backgroundColor: '#FAF5E1',
-    borderColor: '#E58B68', 
+    borderColor: '#E58B68',
   },
   buttonText: {
-    fontSize:12,
-    fontFamily:"Poppins-Regular",
+    fontSize: 12,
+    fontFamily: "Poppins-Regular",
     textAlign: 'center',
     color: 'black',
   },
@@ -55,7 +94,7 @@ const styles = StyleSheet.create({
     borderColor: 'white',
     borderWidth: 1,
     borderRadius: 8,
-    paddingHorizontal: 3, // Adjust the padding to increase the width
+    paddingHorizontal: 3,
     paddingLeft: 10,
     marginRight: 10,
     alignItems: 'center',
@@ -86,9 +125,30 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Regular',
   },
   text: {
-    fontSize: 16, 
-    fontFamily: 'Poppins-Medium', 
-    marginLeft: 20, 
+    fontSize: 16,
+    fontFamily: 'Poppins-Medium',
+    marginLeft: 20,
     marginVertical: 10,
+  },
+  searchBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f1f1f1',
+    borderRadius: 10,
+    paddingHorizontal: 16,
+    height: 40,
+    marginVertical: 10,
+    marginHorizontal: 11,
+  },
+  searchContainer: {
+    backgroundColor: 'white',
+  },
+  icon: {
+    marginRight: 10,
+  },
+  input: {
+    flex: 1,
+    fontSize: 16,
+    color: '#333',
   },
 });

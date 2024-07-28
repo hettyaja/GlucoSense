@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Platform, Picker } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import Header from './components/Header';
 import { router, useLocalSearchParams } from 'expo-router';
 import RNNPickerSelect from 'react-native-picker-select';
@@ -9,6 +9,7 @@ import { updateReminder, deleteReminder } from './service/reminderService';
 import { useAuth } from './service/AuthContext';
 import UpdateReminderController from './Controller/UpdateReminderController';
 import DeleteReminderController from './Controller/DeleteReminderController';
+import { Picker } from '@react-native-picker/picker';
 
 const editReminder = () => {
   const { user } = useAuth();

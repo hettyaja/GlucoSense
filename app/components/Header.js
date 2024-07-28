@@ -7,27 +7,30 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { Stack } from 'expo-router';
 import { useAuth } from '../service/AuthContext';
 
-const Header = ({ title, leftButton, onLeftButtonPress, rightButton, onRightButtonPress, headerShown}) => {
-  const { user } = useAuth()
+const Header = ({ title, leftButton, onLeftButtonPress, rightButton, onRightButtonPress, headerShown, transparent, leftButtonColor }) => {
+  const { user } = useAuth();
+
   const renderLeftButton = () => {
+    const color = leftButtonColor || 'white';
+
     switch (leftButton) {
       case 'Back':
         return (
           <TouchableOpacity onPress={onLeftButtonPress}>
-            <Ionicons name='chevron-back' size={24} color='white' />
+            <Ionicons name='chevron-back' size={24} color={color} />
           </TouchableOpacity>
         );
       case 'Close':
         return (
           <TouchableOpacity onPress={onLeftButtonPress}>
-            <AntDesign name='close' size={24} color='white' />
+            <AntDesign name='close' size={24} color={color} />
           </TouchableOpacity>
         );
       case 'Home':
         return (
           <View style={{ flexDirection: 'row', marginLeft: 16 }}>
-            <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 16, color: 'white' }}>Welcome, </Text>
-            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 16, color: 'white' }}>{user.username}</Text>
+            <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 16, color }}>Welcome, </Text>
+            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 16, color }}>{user.username}</Text>
           </View>
         );
       default:
@@ -39,15 +42,15 @@ const Header = ({ title, leftButton, onLeftButtonPress, rightButton, onRightButt
     switch (rightButton) {
       case 'Save':
         return (
-            <TouchableOpacity onPress={onRightButtonPress}>
-                <Text style={styles.rightButton}>{rightButton}</Text>
-            </TouchableOpacity>
+          <TouchableOpacity onPress={onRightButtonPress}>
+            <Text style={styles.rightButton}>{rightButton}</Text>
+          </TouchableOpacity>
         );
       case 'Edit':
         return (
-            <TouchableOpacity onPress={onRightButtonPress}>
-                <Text style={styles.rightButton}>{rightButton}</Text>
-            </TouchableOpacity>
+          <TouchableOpacity onPress={onRightButtonPress}>
+            <Text style={styles.rightButton}>{rightButton}</Text>
+          </TouchableOpacity>
         );
       case 'Add':
         return (
@@ -57,10 +60,10 @@ const Header = ({ title, leftButton, onLeftButtonPress, rightButton, onRightButt
         );
       case 'Notification':
         return (
-        <TouchableOpacity style={{marginRight:16}} onPress={onRightButtonPress}>
-            <MaterialCommunityIcons name='bell-outline' size={24} color='white'/>
+          <TouchableOpacity style={{ marginRight: 16 }} onPress={onRightButtonPress}>
+            <MaterialCommunityIcons name='bell-outline' size={24} color='white' />
           </TouchableOpacity>
-        )
+        );
       default:
         return null;
     }
@@ -71,11 +74,12 @@ const Header = ({ title, leftButton, onLeftButtonPress, rightButton, onRightButt
       options={{
         title: title,
         headerShown: headerShown,
-        headerStyle: { backgroundColor: '#E58B68' },
-        headerTitleStyle: { color: 'white', fontFamily: 'Poppins-SemiBold', fontSize:18 },
+        headerStyle: transparent ? {} : { backgroundColor: '#E58B68' },
+        headerTitleStyle: transparent ? {} : { color: 'white', fontFamily: 'Poppins-Medium', fontSize: 16 },
         headerLeft: renderLeftButton,
         headerRight: renderRightButton,
         headerTitleAlign: 'center',
+        headerTransparent: transparent,
       }}
     />
   );

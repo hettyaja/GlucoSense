@@ -6,6 +6,8 @@ import { images } from '../../constants/images';
 import ImageButton from '../../components/ImageButton';
 import LoginController from '../../Controller/LoginController';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { ScrollView } from 'react-native';
+import Header from '../../components/Header';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -21,19 +23,20 @@ const Login = () => {
 
   return (
     <>
-      <Stack.Screen options={{ headerShown: false }} />
-      <SafeAreaView style={styles.safeArea}>
-        <KeyboardAvoidingView
-          style={styles.keyboardAvoidingView}
-          behavior="padding"
-          keyboardVerticalOffset={20}
-        >
+      <Header
+        leftButton='Back'
+        onLeftButtonPress={() => router.back()}
+        transparent={true}
+        title=''
+        leftButtonColor='black'
+      />
+      <ScrollView style={styles.safeArea}>
           <View style={styles.container}>
-            <View style={styles.backButtonContainer}>
+            {/* <View style={styles.backButtonContainer}>
               <TouchableOpacity onPress={() => router.back()}>
                 <Ionicons name='chevron-back' size={32} color='black' />
               </TouchableOpacity>
-            </View>
+            </View> */}
 
             <Image source={images.logo} style={styles.logo} />
             <Text style={styles.titleText}>GlucoSense</Text>
@@ -49,6 +52,7 @@ const Login = () => {
               value={email}
               onChangeText={setEmail}
               autoCapitalize="none"
+              keyboardType='email'
             />
 
             <View style={styles.inputLabelContainer}>
@@ -80,8 +84,7 @@ const Login = () => {
               <Text style={styles.signUpText}>Sign Up</Text>
             </TouchableOpacity>
           </View>
-        </KeyboardAvoidingView>
-      </SafeAreaView>
+      </ScrollView>
     </>
   );
 };
@@ -99,6 +102,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 16,
+    paddingTop:100
   },
   backButtonContainer: {
     position: 'absolute',
