@@ -132,6 +132,15 @@ class User {
     }
   }
 
+  static async grantPremium(userId) {
+    try {
+      await updateDoc(doc(db, 'users', userId), { subscriptionType: "premium" });
+    } catch (error) {
+      throw new Error('Failed to give premium to user.');
+    }
+  }
+
+  
   static async export() {
     try {
       const usersCollection = await getDocs(collection(db, 'users'));

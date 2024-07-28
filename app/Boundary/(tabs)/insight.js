@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Dimensions, ScrollView, TouchableOpacity } from 'react-native';
 import { Tabs, router } from 'expo-router';
 import { LineChart } from 'react-native-chart-kit';
-import { ScatterChart, YAxis, XAxis, Grid } from 'react-native-svg-charts';
+//import { ScatterChart, YAxis, XAxis, Grid } from 'react-native-svg-charts';
 import { Circle, G } from 'react-native-svg';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useAuth } from '../../service/AuthContext';
@@ -146,57 +146,7 @@ const Insight = () => {
             />
           </View>
         </TouchableOpacity>
-        <TouchableOpacity>
-          <View style={styles.section}>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-              <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 16 }}>Calorie Consumption & Blood Glucose</Text>
-              <AntDesign name="right" size={16} />
-            </View>
-            <View style={{ flexDirection: 'row', height: 220, padding: 20 }}>
-              <YAxis
-                data={scatterGraphData.map(point => point.y)}
-                contentInset={{ top: 20, bottom: 20 }}
-                svg={{
-                  fill: 'grey',
-                  fontSize: 10,
-                }}
-                numberOfTicks={10}
-                formatLabel={value => `${value}`}
-              />
-              <View style={{ flex: 1, marginLeft: 10 }}>
-                <ScatterChart
-                  style={{ flex: 1 }}
-                  data={scatterGraphData}
-                  xAccessor={({ item }) => item.x}
-                  yAccessor={({ item }) => item.y}
-                  svg={{ stroke: 'rgb(134, 65, 244)' }}
-                  contentInset={{ top: 20, bottom: 20 }}
-                >
-                  <Grid />
-                  <G>
-                    {scatterGraphData.map((point, index) => (
-                      <Circle
-                        key={index}
-                        cx={point.x}
-                        cy={point.y}
-                        r={5}
-                        stroke={'rgb(134, 65, 244)'}
-                        fill={'rgba(134, 65, 244, 0.8)'}
-                      />
-                    ))}
-                  </G>
-                </ScatterChart>
-                <XAxis
-                  style={{ marginHorizontal: -10, height: 30 }}
-                  data={scatterGraphData.map(point => point.x)}
-                  formatLabel={(value, index) => scatterGraphData[index].x}
-                  contentInset={{ left: 10, right: 10 }}
-                  svg={{ fontSize: 10, fill: 'grey' }}
-                />
-              </View>
-            </View>
-          </View>
-        </TouchableOpacity>
+        
       </ScrollView>
     </>
   );

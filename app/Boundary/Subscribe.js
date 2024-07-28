@@ -1,6 +1,6 @@
 import React from "react";
 import ImageButton from '../components/ImageButton';
-import { View, Text, StyleSheet, TouchableOpacity, Alert} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import { router } from "expo-router";
@@ -13,7 +13,7 @@ const Subscribe = () =>
     {
     const navigation = useNavigation();
     return (
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
             <View style={styles.header}>
                 <ImageButton
                     source={require("./../assets/back.png")}
@@ -56,12 +56,12 @@ const Subscribe = () =>
                 <Text style={styles.tag}>Only $4.00 per month</Text>
                 <TouchableOpacity
                     style={styles.button}
-                    onPress={() => Alert.alert('Button pressed')}
+                    onPress={() => router.push('./Subscription')}
                 >
                     <Text style={styles.buttonText}>Get Started</Text>
                 </TouchableOpacity>
             </View>
-        </View>
+        </ScrollView>
     );
 };
 
@@ -73,13 +73,13 @@ const styles = StyleSheet.create({
     header:{
         backgroundColor: '#E58B68',
         paddingBottom:30, 
-        padding: 24 ,  
-        paddingTop: 70,   
+        padding: 20 ,  
+        paddingTop: 30,   
     },
 
     title:{
         fontSize:30,
-        paddingTop:50,
+        paddingTop:30,
         textAlign: 'center',
         fontWeight: 'bold',
         color: 'white',
@@ -116,8 +116,7 @@ const styles = StyleSheet.create({
     }, 
     price:{
         backgroundColor:'#ffff',
-        marginTop:100,
-        paddingBottom:100,
+        paddingBottom:20,
         borderRadius:20,
         alignItems:'center',
         justifyContent:'center',

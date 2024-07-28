@@ -50,7 +50,7 @@ const setting = () => {
         headerStyle: { backgroundColor: '#E58B68' },
         headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold'},
         headerRight: () => (
-          <TouchableOpacity onPress={() => router.push('Subscribe')}>
+          <TouchableOpacity onPress={() => router.push('Boundary/Subscribe')}>
             <Text style={{paddingHorizontal:16, fontFamily: 'Poppins-SemiBold', fontSize:14, color:'white'}}>Upgrade</Text>
           </TouchableOpacity>
         ),

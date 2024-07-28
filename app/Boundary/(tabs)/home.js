@@ -285,7 +285,7 @@ const home = () => {
           <View style={{ flexDirection: 'row-reverse' }}>
             <TouchableOpacity
               style={{ borderColor: 'white', borderWidth: 1, borderRadius: 8, width: '32%', padding: 8, alignItems:'center' }} 
-              onPress={() => router.push('Subscribe')}
+              onPress={() => router.push('Boundary/Subscribe')}
             >
               <A1CComponent key={refreshA1C} user={user} />
             </TouchableOpacity>
