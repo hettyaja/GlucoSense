@@ -33,7 +33,17 @@ class User {
       });
       return new User(user.uid, additionalData.username, additionalData.name, email, 'free', registerTime, 'active', false);
     } catch (error) {
-      throw new Error(error.message);
+      if (error.code === 'auth/email-already-in-use') {
+        throw new Error('This email is already in use. Please use a different email.');
+      } else if (error.code === 'auth/weak-password') {
+          throw new Error('Password should be at least 6 characters.');
+      } else if (error.code === 'auth/missing-password') {
+          throw new Error('The password field cannot be empty.');2
+      } else if (error.code === 'auth/invalid-email') {
+          throw new Error('Please input valid email.');
+      } else {
+          throw new Error(error.message);
+      }
     }
   }
 
@@ -41,7 +51,17 @@ class User {
     try {
       await signInWithEmailAndPassword(auth, email, password);
     } catch (error) {
-      throw new Error(error.message);
+      if (error.code === 'auth/wrong-password') {
+        throw new Error('The password is incorrect. Please try again.');
+      } else if (error.code === 'auth/invalid-email') {
+        throw new Error('Please enter a valid email address.');
+      } else if (error.code === 'auth/user-not-found') {
+        throw new Error('No user found with this email address.');
+      } else if (error.code === 'auth/invalid-credential') {
+        throw new Error('Please enter valid credentials')
+      } else {
+        throw new Error(error.message);
+      }
     }
   }
 

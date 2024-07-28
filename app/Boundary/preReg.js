@@ -1,10 +1,8 @@
-import { View, Text, StyleSheet, Image, Button, TouchableOpacity} from 'react-native'
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import React, { useState } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { router, Stack } from 'expo-router'
-import { images } from '../constants/images';
-import ImageButton from '../components/ImageButton'
-import Ionicons from 'react-native-vector-icons/Ionicons'
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { router, Stack } from 'expo-router';
+import Header from '../components/Header';
 
 const preReg = () => {
   const [selectedButton, setSelectedButton] = useState(null);
@@ -23,92 +21,107 @@ const preReg = () => {
 
   return (
     <>
-     <Stack.Screen
-          options={{
-            headerShown:false
-          }}
+      <Stack.Screen
+        options={{
+          headerShown: false
+        }}
+      />
+      <View style={styles.container}>
+        <Header
+          title='Choose Your Profile'
+          leftButton='Back'
+          onLeftButtonPress={() => router.back()}
         />
-    
-    <SafeAreaView style={{flex:1, backgroundColor:"white"}}>
-      <Image source={images.header} style={{position:"absolute", width:430, height:275}}/>
-      <View style={{alignItems:'flex-start', width:"100%", paddingHorizontal:16}}>
-      <TouchableOpacity onPress={() => router.back('welcomePage')}>
-      <Ionicons name='chevron-back' size={32} color='white'/>
-      </TouchableOpacity>
-      </View>
-      <Text style={{fontFamily:"Poppins-Bold", fontSize: 24, paddingLeft: 25, paddingTop: 100, color: '#FAF5E1'}}>Which one are you?</Text>
-      <View style={{flexDirection: 'row', justifyContent: 'space-around', paddingTop: 50 }}>
-        <View style={styles.container}>
+        <View style={styles.buttonContainer}>
           <TouchableOpacity
             style={[
               styles.button,
               selectedButton === 1 ? styles.selectedButton : null,
-              { marginRight: 20, alignItems:'center', justifyContent:'space-evenly'}, // Added margin to create space between buttons
+              { alignItems: 'center', justifyContent: 'space-evenly' },
             ]}
             onPress={() => handleButtonPress(1)}
           >
             <Image
-            source={require('../assets/userIcon.png')}
-            style={styles.image}
+              source={require('../assets/userIcon.png')}
+              style={styles.image}
             />
-            <Text style={[styles.buttonText, {}]}>User</Text>
+            <Text style={styles.buttonText}>User</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[
               styles.button,
               selectedButton === 2 ? styles.selectedButton : null,
-              {alignItems:'center', justifyContent:'space-evenly'}
+              { alignItems: 'center', justifyContent: 'space-evenly' }
             ]}
             onPress={() => handleButtonPress(2)}
           >
             <Image
-            source={require('../assets/businessIcon.png')}
-            style={styles.image}
+              source={require('../assets/businessIcon.png')}
+              style={styles.image}
             />
-            <Text style={[styles.buttonText]}>Business Partner</Text>
+            <Text style={styles.buttonText}>Business Partner</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.footer}>
+          <TouchableOpacity style={styles.nextButtonContainer} onPress={handleNextPress}>
+            <Text style={styles.nextButtonText}>Next</Text>
           </TouchableOpacity>
         </View>
       </View>
-      <TouchableOpacity style={{ alignItems: 'center', marginTop: 100 }}
-        onPress={handleNextPress}>
-        <View style={{ backgroundColor: "#D96B41", width: 164, height: 42, borderRadius: 8, justifyContent: 'center' }}>
-          <Text style={{ fontSize: 16, fontFamily: "Poppins-Regular", textAlign: 'center', color: '#FAF5E1' }}>Next</Text>
-      </View>
-      </TouchableOpacity>
-    </SafeAreaView>
     </>
   )
 }
+
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    backgroundColor: 'white',
+  },
+  buttonContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 50,
+    justifyContent: 'space-evenly',
+    paddingTop: 120,
+    flex: 1,
   },
   button: {
     backgroundColor: '#f5f5f5',
-    width: 146,
-    height: 217,
+    width: '40%',
+    height: '50%',
     paddingVertical: 20,
     paddingHorizontal: 20,
-    borderRadius: 17,
-    borderWidth: 1, 
+    borderRadius: 16,
+    borderWidth: 1,
     borderColor: 'transparent',
   },
   selectedButton: {
     backgroundColor: '#FAF5E1',
-    borderColor: '#E58B68', 
+    borderColor: '#E58B68',
   },
   buttonText: {
-    fontSize:16,
-    fontFamily:"Poppins-Bold",
+    fontSize: 16,
+    fontFamily: "Poppins-Bold",
     textAlign: 'center',
     color: 'black',
     fontWeight: 'bold',
   },
-  testButton: {
-    backgroundColor: '#000000',
-    borderColor: '#E58B68', 
+  footer: {
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    paddingBottom: 120,
+  },
+  nextButtonContainer: {
+    backgroundColor: "#E58B68",
+    width: '50%',
+    borderRadius: 8,
+    height: 40,
+    justifyContent: 'center'
+  },
+  nextButtonText: {
+    fontSize: 16,
+    fontFamily: "Poppins-Regular",
+    textAlign: 'center',
+    color: 'white',
   },
 });
-export default preReg
+
+export default preReg;

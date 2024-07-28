@@ -7,6 +7,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import Header from '../../components/Header';
 import SuspendBusinessPartnerController from '../../Controller/SuspendBusinessPartnerController';
 import Modal from 'react-native-modal';
+import Fontisto from 'react-native-vector-icons/Fontisto';
 
 const PartnerSA = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -74,8 +75,8 @@ const PartnerSA = () => {
     >
       <Text style={styles.partnerCell}>{item.name}</Text>
       <Text style={styles.partnerCell}>{item.entityName}</Text>
-      <Text style={styles.partnerCell}>{item.registerTime ? new Date(item.registerTime.seconds * 1000).toLocaleDateString() : 'N/A'}</Text>
-      <Text style={[styles.partnerCell, item.status === 'Active' ? styles.activeStatus : styles.pendingStatus]}>{item.status}</Text>
+      <Text style={[styles.partnerCell, {color:'grey'}]}>{item.registerTime ? new Date(item.registerTime.seconds * 1000).toLocaleDateString() : 'N/A'}</Text>
+      <Text style={[styles.partnerCell, styles.activeStatus ]}>{item.status}</Text>
     </TouchableOpacity>
   );
 
@@ -84,12 +85,15 @@ const PartnerSA = () => {
       <Header title="Business Partner" />
       <View style={styles.container}>
         <View style={styles.searchBar}>
+        <View style={styles.searchIcon}>
+        <Fontisto name='search' size={16} color='gray' />
           <TextInput
             style={styles.searchInput}
             placeholder="Search Account"
             value={searchQuery}
             onChangeText={(text) => setSearchQuery(text)}
           />
+          </View>
           <TouchableOpacity style={styles.pendingContainer} onPress={() => router.push('/Boundary/pendingAccountList')}>
             <AntDesign name="form" size={24} />
             <Text style={styles.pendingText}>Pending</Text>
@@ -207,10 +211,8 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    padding: 8,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 4,
+    padding: 12,
+    
     fontSize: 16,
   },
   pendingContainer: {
@@ -230,9 +232,9 @@ const styles = StyleSheet.create({
   },
   tableHeaderCell: {
     flex: 1,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    fontSize: 16,
+    textAlign: 'left',
+    fontFamily: 'Poppins-SemiBold',
+    paddingLeft: 16
   },
   partnerRow: {
     flexDirection: 'row',
@@ -242,19 +244,16 @@ const styles = StyleSheet.create({
   },
   partnerCell: {
     flex: 1,
-    textAlign: 'center',
+    textAlign: 'left',
     fontSize: 14,
+    paddingLeft: 16
   },
   activeStatus: {
     color: 'green',
     fontWeight: 'bold',
     fontSize: 14,
   },
-  pendingStatus: {
-    color: 'red',
-    fontWeight: 'bold',
-    fontSize: 14,
-  },
+ 
   noPartners: {
     flex: 1,
     justifyContent: 'center',
@@ -311,6 +310,16 @@ const styles = StyleSheet.create({
     flex: 8,
     alignItems: 'center',
     marginLeft: 16,
+  },
+  searchIcon: {
+    flexDirection: 'row',
+    flex: 8,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    paddingLeft: 8,
+   
   },
 });
 

@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from 'r
 import { useRouter } from 'expo-router';
 import ViewPendingAccountListController from '../Controller/ViewPendingAccountListController';
 import Header from '../components/Header';
+import Fontisto from 'react-native-vector-icons/Fontisto';
 
 const PendingAccountList = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -53,12 +54,15 @@ const PendingAccountList = () => {
     />
     <View style={styles.container}>
       <View style={styles.searchBar}>
+      <View style={styles.searchIcon}>
+      <Fontisto name='search' size={16} color='gray' />
         <TextInput
           style={styles.searchInput}
           placeholder="Search Account"
           value={searchQuery}
           onChangeText={(text) => setSearchQuery(text)}
         />
+      </View>
       </View>
       <View style={styles.tableHeader}>
         <Text style={[styles.tableHeaderCell, {flex:1.5}]}>Username</Text>
@@ -109,10 +113,8 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    padding: 8,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
+    padding: 10,
+   
   },
   tableHeader: {
     flexDirection: 'row',
@@ -146,6 +148,15 @@ const styles = StyleSheet.create({
   noAccountsText: {
     fontSize: 18,
     color: '#ccc',
+  },
+  searchIcon: {
+    flexDirection: 'row',
+    flex: 8,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    paddingLeft: 8,
   },
 });
 

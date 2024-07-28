@@ -1,7 +1,6 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView } from 'react-native'
+import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import React from 'react'
-
 import { images } from '../constants/images'
 import { router } from 'expo-router'
 
@@ -45,7 +44,7 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Black",
     fontSize: 36,
     color: "#E58B68",
-    paddingTop: 150,
+    paddingTop: 100,
   },
   subTitleText: {
     fontFamily: "Poppins-Medium",

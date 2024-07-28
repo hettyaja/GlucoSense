@@ -1,107 +1,294 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Platform, Alert } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, Alert, Platform } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { printToFileAsync } from 'expo-print';
+import * as FileSystem from 'expo-file-system';
+import { StorageAccessFramework } from 'expo-file-system';
+import { router } from 'expo-router';
 import { Picker } from '@react-native-picker/picker';
-import { useRouter } from 'expo-router';
+import XLSX from 'xlsx';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import ExportReportController from './Controller/ExportReportController';
+import Header from './components/Header';
+import FetchUsersController from './Controller/FetchUsersController';
+import ViewBusinessPartnerController from './Controller/ViewBusinessPartnerController';
+import { useAuth } from './service/AuthContext';
 
-const ExportReportSA = () => {
-  const router = useRouter();
-  const [data, setData] = useState('Users');
-  const [format, setFormat] = useState('Microsoft Excel');
+const exportReportSA = () => {
+  const { user } = useAuth();
+  const [userList, setUserList] = useState([]);
+  const [businessPartnerList, setBusinessPartnerList] = useState([]);
+  const [selectedData, setSelectedData] = useState('User');
+  const [selectedFormat, setSelectedFormat] = useState('pdf');
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
   const [showStartDatePicker, setShowStartDatePicker] = useState(false);
   const [showEndDatePicker, setShowEndDatePicker] = useState(false);
-  const [hasPermission, setHasPermission] = useState(false);
 
   useEffect(() => {
-    ExportReportController.getPermissions(setHasPermission, Alert);
-  }, []);
+    const fetchData = async () => {
+      if (user) {
+        try {
+          const userList = await FetchUsersController.fetchUsers();
+          const businessPartnerList = await ViewBusinessPartnerController.ViewBusinessPartner();
+          setUserList(userList);
+          setBusinessPartnerList(businessPartnerList);
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        }
+      }
+    };
+
+    fetchData();
+  }, [user]);
+
+  const filterDataByDateRange = (data) => {
+    const start = new Date(startDate).setHours(0, 0, 0, 0);
+    const end = new Date(endDate).setHours(23, 59, 59, 999);
+
+    return data.filter(item => {
+      const itemDate = new Date(item.registerTime.seconds * 1000).setHours(0, 0, 0, 0);
+      return itemDate >= start && itemDate <= end;
+    });
+  };
+
+  const convertTimestamp = (timestamp) => {
+    const date = new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000);
+    const dateString = date.toLocaleDateString();
+    const timeString = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return { dateString, timeString };
+  };
+
+  const generateTableHeaders = (type) => {
+    if (type === 'User') {
+      return `
+        <tr>
+          <th>Email</th>
+          <th>Name</th>
+          <th>Username</th>
+          <th>Register Time</th>
+          <th>Status</th>
+          <th>Subscription Type</th>
+          <th>Height</th>
+          <th>Weight</th>
+          <th>Gender</th>
+        </tr>
+      `;
+    } else if (type === 'Business Partner') {
+      return `
+        <tr>
+          <th>Email</th>
+          <th>Entity Name</th>
+          <th>Name</th>
+          <th>Phone Number</th>
+          <th>Register Time</th>
+          <th>Address</th>
+          <th>UEN</th>
+          <th>City</th>
+          <th>Status</th>
+          <th>Postal</th>
+        </tr>
+      `;
+    }
+  };
+
+  const generateTableRows = (data, type) => {
+    return data.map(item => {
+      const { dateString, timeString } = convertTimestamp(item.registerTime);
+      if (type === 'User') {
+        return `
+          <tr>
+            <td>${item.email}</td>
+            <td>${item.name}</td>
+            <td>${item.username}</td>
+            <td>${dateString} ${timeString}</td>
+            <td>${item.status}</td>
+            <td>${item.subscriptionType}</td>
+            <td>${item.height}</td>
+            <td>${item.weight}</td>
+            <td>${item.gender}</td>
+          </tr>
+        `;
+      } else if (type === 'Business Partner') {
+        return `
+          <tr>
+            <td>${item.email}</td>
+            <td>${item.entityName}</td>
+            <td>${item.name}</td>
+            <td>${item.phoneNum}</td>
+            <td>${dateString} ${timeString}</td>
+            <td>${item.address}</td>
+            <td>${item.UEN}</td>
+            <td>${item.city}</td>
+            <td>${item.status}</td>
+            <td>${item.postal}</td>
+          </tr>
+        `;
+      }
+    }).join('');
+  };
+
+  const generateHtml = (type, data) => {
+    const tableHeaders = generateTableHeaders(type);
+    const tableRows = generateTableRows(data, type);
+
+    return `
+      <html>
+      <head>
+          <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+          <style>
+              body {
+                  font-family: Arial, sans-serif;
+                  text-align: center;
+              }
+              table {
+                  width: 100%;
+                  border-collapse: collapse;
+              }
+              th, td {
+                  border: 1px solid black;
+                  padding: 8px;
+                  text-align: left;
+              }
+              th {
+                  background-color: #f2f2f2;
+              }
+              h1 {
+                  font-size: 24px;
+              }
+              .footer {
+                  margin-top: 20px;
+                  font-size: 12px;
+                  color: grey;
+              }
+          </style>
+      </head>
+      <body>
+          <h1>${type.toUpperCase()} DATA</h1>
+          <table>
+              ${tableHeaders}
+              ${tableRows}
+          </table>
+          <div class="footer">
+              For more printable ${type.toLowerCase()} data sheets, please visit https://inkpx.com
+          </div>
+      </body>
+      </html>
+    `;
+  };
+
+  const pickDirectoryAndSaveFile = async (fileName, fileData, mimeType) => {
+    try {
+      const permissions = await StorageAccessFramework.requestDirectoryPermissionsAsync();
+      if (!permissions.granted) {
+        Alert.alert('Error', 'Directory permission not granted');
+        return;
+      }
+
+      const uri = await StorageAccessFramework.createFileAsync(permissions.directoryUri, fileName, mimeType);
+      await FileSystem.writeAsStringAsync(uri, fileData, { encoding: FileSystem.EncodingType.Base64 });
+      Alert.alert('Success', `File saved to ${uri}`);
+    } catch (e) {
+      console.error('Error saving file:', e);
+      Alert.alert('Error', 'An error occurred while saving the file.');
+    }
+  };
+
+  const exportAsPdf = async () => {
+    try {
+      let data;
+      if (selectedData === 'User') data = filterDataByDateRange(userList);
+      else if (selectedData === 'Business Partner') data = filterDataByDateRange(businessPartnerList);
+
+      const html = generateHtml(selectedData, data);
+      const { uri } = await printToFileAsync({ html });
+      const base64Data = await FileSystem.readAsStringAsync(uri, { encoding: FileSystem.EncodingType.Base64 });
+      await pickDirectoryAndSaveFile(`${selectedData}_Data.pdf`, base64Data, 'application/pdf');
+    } catch (error) {
+      console.error('Error generating or saving PDF:', error);
+      Alert.alert('Error', 'An error occurred while generating or saving the PDF file.');
+    }
+  };
+
+  const exportAsExcel = async () => {
+    try {
+      let data;
+      if (selectedData === 'User') data = filterDataByDateRange(userList);
+      else if (selectedData === 'Business Partner') data = filterDataByDateRange(businessPartnerList);
+
+      const tableRows = generateTableRows(data, selectedData);
+      const ws = XLSX.utils.json_to_sheet(tableRows.map(row => JSON.parse(row.match(/{.*?}/)[0])));
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Data');
+
+      const wbout = XLSX.write(wb, { type: 'base64', bookType: 'xlsx' });
+      await pickDirectoryAndSaveFile(`${selectedData}_Data.xlsx`, wbout, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    } catch (error) {
+      console.error('Error exporting to Excel:', error);
+      Alert.alert('Error', 'An error occurred while exporting the Excel file.');
+    }
+  };
 
   const handleExport = async () => {
-    if (!hasPermission) {
-      Alert.alert('Permission Denied', 'Permission to access storage was denied.');
-      return;
-    }
-    
-    try {
-      await ExportReportController.handleExport({
-        format,
-        data,
-        startDate,
-        endDate,
-        hasPermission,
-      });
-    } catch (error) {
-      Alert.alert('Export Failed', error.message);
+    if (selectedFormat === 'pdf') {
+      await exportAsPdf();
+    } else if (selectedFormat === 'xlsx') {
+      await exportAsExcel();
     }
   };
 
   const onStartDateChange = (event, selectedDate) => {
-    const currentDate = selectedDate || startDate;
     setShowStartDatePicker(false);
-    setStartDate(currentDate);
+    if (selectedDate !== undefined) {
+      setStartDate(selectedDate);
+    }
   };
 
   const onEndDateChange = (event, selectedDate) => {
-    const currentDate = selectedDate || endDate;
     setShowEndDatePicker(false);
-    setEndDate(currentDate);
-  };
-
-  const showStartPicker = () => {
-    setShowStartDatePicker(true);
-  };
-
-  const showEndPicker = () => {
-    setShowEndDatePicker(true);
-  };
-
-  const formatDate = (date) => {
-    return new Intl.DateTimeFormat('en-GB').format(date);
+    if (selectedDate !== undefined) {
+      setEndDate(selectedDate);
+    }
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButtonContainer}>
-          <Text style={styles.backButton}>{"<"}</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerText}>Export Report</Text>
-      </View>
-      <View style={styles.content}>
+    <>
+      <Header
+        title='Export'
+        leftButton='Back'
+        onLeftButtonPress={() => router.back()}
+      />
+      <View style={styles.container}>
+        <Text style={styles.sectionText}>Report</Text>
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Report</Text>
-          <View style={styles.row}>
-            <Text style={styles.label}>Data</Text>
+          <View style={styles.item}>
+            <Text style={styles.itemText}>Data</Text>
             <Picker
-              selectedValue={data}
+              selectedValue={selectedData}
               style={styles.picker}
-              onValueChange={(itemValue) => setData(itemValue)}
+              onValueChange={(itemValue) => setSelectedData(itemValue)}
             >
-              <Picker.Item label="Users" value="Users" />
+              <Picker.Item label="User" value="User" />
               <Picker.Item label="Business Partner" value="Business Partner" />
             </Picker>
           </View>
-          <View style={styles.row}>
-            <Text style={styles.label}>Format</Text>
+          <View style={styles.divider} />
+          <View style={styles.item}>
+            <Text style={styles.itemText}>Format</Text>
             <Picker
-              selectedValue={format}
+              selectedValue={selectedFormat}
               style={styles.picker}
-              onValueChange={(itemValue) => setFormat(itemValue)}
+              onValueChange={(itemValue) => setSelectedFormat(itemValue)}
             >
-              <Picker.Item label="PDF Report" value="PDF Report" />
-              <Picker.Item label="Microsoft Excel" value="Microsoft Excel" />
+              <Picker.Item label="PDF" value="pdf"/>
+              <Picker.Item label="Excel" value="xlsx"/>
             </Picker>
           </View>
         </View>
+        <Text style={styles.sectionText}>Period</Text>
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Period</Text>
-          <View style={styles.row}>
-            <Text style={styles.label}>Start Date</Text>
-            <TouchableOpacity onPress={showStartPicker} style={styles.datePicker}>
-              <Text>{formatDate(startDate)}</Text>
+          <View style={styles.item}>
+            <Text style={styles.itemText}>Start Date</Text>
+            <TouchableOpacity onPress={() => setShowStartDatePicker(true)}>
+              <Text style={styles.itemText}>{startDate.toLocaleDateString()}</Text>
             </TouchableOpacity>
             {showStartDatePicker && (
               <DateTimePicker
@@ -112,10 +299,11 @@ const ExportReportSA = () => {
               />
             )}
           </View>
-          <View style={styles.row}>
-            <Text style={styles.label}>End Date</Text>
-            <TouchableOpacity onPress={showEndPicker} style={styles.datePicker}>
-              <Text>{formatDate(endDate)}</Text>
+          <View style={styles.divider} />
+          <View style={styles.item}>
+            <Text style={styles.itemText}>End Date</Text>
+            <TouchableOpacity onPress={() => setShowEndDatePicker(true)}>
+              <Text style={styles.itemText}>{endDate.toLocaleDateString()}</Text>
             </TouchableOpacity>
             {showEndDatePicker && (
               <DateTimePicker
@@ -127,87 +315,67 @@ const ExportReportSA = () => {
             )}
           </View>
         </View>
-        <TouchableOpacity style={styles.exportButton} onPress={handleExport}>
-          <Text style={styles.exportButtonText}>Export</Text>
+        <TouchableOpacity onPress={handleExport} style={styles.button}>
+          <Text style={styles.buttonText}>Export</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </>
   );
-};
+}
+
+export default exportReportSA;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#D9A37E',
-    padding: 16,
-  },
-  backButtonContainer: {
-    paddingRight: 16,
-  },
-  backButton: {
-    fontSize: 18,
-    color: '#fff',
-  },
-  headerText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#fff',
-    textAlign: 'center',
-    flex: 1,
-  },
-  content: {
-    padding: 16,
+    backgroundColor: '#f5f5f5',
+    paddingTop: 16,
   },
   section: {
-    marginBottom: 16,
-    backgroundColor: '#f8f8f8',
-    borderRadius: 8,
-    padding: 16,
+    backgroundColor: 'white',
+    borderTopWidth: 0.5,
+    borderBottomWidth: 0.5,
   },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 8,
-    color: '#666',
+  sectionText: {
+    fontFamily: 'Poppins-Regular',
+    fontSize: 12,
+    color: '#808080',
+    paddingHorizontal: 16,
+    paddingTop: 16,
   },
-  row: {
+  item: {
     flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e8e8e8',
   },
-  label: {
-    fontSize: 16,
-    color: '#666',
+  itemText: {
+    fontFamily: 'Poppins-Regular',
+    fontSize: 12,
+    color: 'black',
+    paddingHorizontal: 16,
+    paddingVertical: 16,
   },
   picker: {
-    width: '50%',
+    height: 40,
+    width: 150,
   },
-  datePicker: {
-    width: '48%',
-    padding: 8,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
+  button: {
+    backgroundColor: 'white',
+    marginVertical: 16,
+    justifyContent: 'center',
     alignItems: 'center',
+    borderTopWidth: 0.5,
+    borderBottomWidth: 0.5,
   },
-  exportButton: {
-    backgroundColor: '#D96B41',
+  buttonText: {
+    fontFamily: 'Poppins-SemiBold',
+    fontSize: 12,
+    color: '#E58B68',
     padding: 16,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 32,
   },
-  exportButtonText: {
-    color: '#fff',
-    fontSize: 16,
+  divider: {
+    height: 1,
+    backgroundColor: '#ccc',
+    marginHorizontal: 16,
   },
 });
-
-export default ExportReportSA;

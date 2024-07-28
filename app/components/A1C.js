@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { calculateA1C } from '../service/diaryService'; // Adjust the import path
+
 const A1CComponent = ({ user }) => {
     const [a1c, setA1C] = useState(null);
   

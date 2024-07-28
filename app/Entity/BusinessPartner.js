@@ -93,7 +93,7 @@ class BusinessPartner {
   static async export() {
     try {
       const partnersCollection = await getDocs(collection(db, 'businessPartner'));
-      return partnersCollection.docs.map(doc => ({ ...doc.data(), id: doc.id })).filter(account => account.status !== 'pend\ing')
+      return partnersCollection.docs.map(doc => ({ ...doc.data(), id: doc.id })).filter(account => account.status !== 'pending')
     } catch (error) {
       throw new Error('Failed to fetch business partners.');
     }
