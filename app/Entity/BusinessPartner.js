@@ -2,6 +2,9 @@ import { auth, db } from '../../firebase'; // Adjust the path according to your 
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, deleteUser as firebaseDeleteUser } from 'firebase/auth';
 import { doc, setDoc, deleteDoc, getDocs, Timestamp, collection, updateDoc, getDoc, addDoc } from 'firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+// import admin from '../../firebaseAdmin'; // Import Firebase Admin SDK instance
+
+
 
 class BusinessPartner {
   constructor(id, entityName, UEN, city, address, postal, name, phoneNum, email, registerTime, status, userType) {
@@ -136,6 +139,7 @@ class BusinessPartner {
     try {
       const businessPartnerDocRef = doc(db, 'businessPartner', uid);
       await deleteDoc(businessPartnerDocRef);
+      // await admin.auth().deleteUser(uid);
       return true;
     } catch (error) {
       console.error('Error rejecting business partner:', error);

@@ -19,7 +19,15 @@ export const AuthProvider = ({ children }) => {
                     const adminDoc = await getDoc(doc(db, 'systemAdmin', user.uid));
     
                     if (userDoc.exists() && userDoc.data().status === 'suspended') {
-                        alert("Your account is suspended.");
+                        alert("Your user account is suspended.");
+                        await auth.signOut();
+                        setUser(false);
+                    } else if (businessDoc.exists() && businessDoc.data().status === 'suspended') {
+                        alert("Your business account is suspended.");
+                        await auth.signOut();
+                        setUser(false);
+                    } else if (businessDoc.exists() && businessDoc.data().status === 'pending') {
+                        alert("Your business account is pending approval.");
                         await auth.signOut();
                         setUser(false);
                     } else {
@@ -49,7 +57,7 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     return (
-        <AuthContext.Provider value={{ user, userType}}>
+        <AuthContext.Provider value={{ user, userType }}>
             {children}
         </AuthContext.Provider>
     );

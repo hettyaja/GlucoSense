@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, Alert } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import FetchUsersController from '../../Controller/FetchUsersController';
 import SuspendUserController from '../../Controller/SuspendUserController';
@@ -31,6 +31,24 @@ const UserSA = () => {
     }
   };
 
+  const confirmAction = (action) => {
+    Alert.alert(
+      "Confirm Action",
+      `Are you sure you want to ${selectedUser.status === 'suspended' ? 'unsuspend' : 'suspend'} this user?`,
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+        {
+          text: "OK",
+          onPress: action
+        }
+      ],
+      { cancelable: false }
+    );
+  };
+
   const filteredUsers = users.filter(user => {
     return (
       (filter === 'all users' || !filter || user.subscriptionType === filter) &&
@@ -41,7 +59,7 @@ const UserSA = () => {
   const formatDate = (timestamp) => {
     if (!timestamp || !timestamp.seconds) return "";
     const date = new Date(timestamp.seconds * 1000);
-    return date.toLocaleDateString() ;
+    return date.toLocaleDateString();
   };
 
   const handleSuspend = async () => {
@@ -72,9 +90,9 @@ const UserSA = () => {
     <TouchableOpacity onPress={() => { setSelectedUser(item); setModalVisible(true); }}>
       <View style={styles.userRow}>
         <Text style={styles.userCell}>{item.username}</Text>
-        <Text style={[styles.userCell, {flex:1.5}]}>{item.subscriptionType}</Text>
-        <Text style={[styles.userCell, {color:'grey'}]}>{formatDate(item.registerTime)}</Text>
-        <Text style={[styles.userCell, {flex:1.5}]}>{item.status}</Text>
+        <Text style={[styles.userCell, { flex: 1.5 }]}>{item.subscriptionType}</Text>
+        <Text style={[styles.userCell, { color: 'grey' }]}>{formatDate(item.registerTime)}</Text>
+        <Text style={[styles.userCell, { flex: 1.5 }, item.status === 'suspended' ? styles.suspendedStatus : styles.activeStatus]}>{item.status}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -110,9 +128,9 @@ const UserSA = () => {
 
         <View style={styles.tableHeader}>
           <Text style={styles.tableHeaderCell}>Username</Text>
-          <Text style={[styles.tableHeaderCell, {flex:1.5}]}>Type</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 1.5 }]}>Type</Text>
           <Text style={styles.tableHeaderCell}>Registered</Text>
-          <Text style={[styles.tableHeaderCell, {flex:1.5}]}>Status</Text>
+          <Text style={[styles.tableHeaderCell, { flex: 1.5 }]}>Status</Text>
         </View>
         {loading ? (
           <View style={styles.noUsers}>
@@ -142,9 +160,9 @@ const UserSA = () => {
               <View style={styles.modalContent}>
                 <Text style={styles.modalTitle}>Account Details</Text>
                 <View>
-                <Text>Username: {selectedUser.username}</Text>
-                <Text >Type: {selectedUser.subscriptionType}</Text>
-                <Text>Registered: {formatDate(selectedUser.registerTime)}</Text>
+                  <Text>Username: {selectedUser.username}</Text>
+                  <Text>Type: {selectedUser.subscriptionType}</Text>
+                  <Text>Registered: {formatDate(selectedUser.registerTime)}</Text>
                 </View>
                 <View style={styles.modalButtons}>
                   <TouchableOpacity
@@ -158,7 +176,7 @@ const UserSA = () => {
                       styles.actionButton,
                       { backgroundColor: selectedUser.status === 'suspended' ? '#4CAF50' : '#ff4d4d' }
                     ]}
-                    onPress={selectedUser.status === 'suspended' ? handleUnsuspend : handleSuspend}
+                    onPress={() => confirmAction(selectedUser.status === 'suspended' ? handleUnsuspend : handleSuspend)}
                   >
                     <Text style={styles.buttonText}>
                       {selectedUser.status === 'suspended' ? 'Unsuspend' : 'Suspend'}
@@ -214,14 +232,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: '#f2f2f2',
     padding: 8,
-    alignItems:'center'
+    alignItems: 'center'
   },
   tableHeaderCell: {
     flex: 2,
     fontFamily: 'Poppins-SemiBold',
     textAlign: 'left',
-    paddingLeft:16
-    
+    paddingLeft: 8
   },
   userRow: {
     flexDirection: 'row',
@@ -232,8 +249,8 @@ const styles = StyleSheet.create({
   userCell: {
     flex: 2,
     textAlign: 'left',
-    paddingLeft:16,
-    fontFamily: 'Poppins-Reguler'
+    paddingLeft: 8,
+    fontFamily: 'Poppins-Regular'
   },
   noUsers: {
     flex: 1,
@@ -293,14 +310,16 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold',
   },
-  h2:{
-    flex: 1,
-    textAlign: 'center',
-    color: 'gray',
-    fontFamily: 'Poppins-Medium',
-    fontSize: 12,
-  }
-  
+  activeStatus: {
+    color: 'green',
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
+  suspendedStatus: {
+    color: 'red',
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
 });
 
 export default UserSA;

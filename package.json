@@ -43,6 +43,7 @@
     "expo-status-bar": "~1.12.1",
     "express": "^4.19.2",
     "firebase": "^10.12.2",
+    "firebase-admin": "^12.3.0",
     "json5": "^2.2.3",
     "metro-config": "^0.80.9",
     "moment": "^2.30.1",
