@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, Alert } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import ViewBusinessPartnerController from '../../Controller/ViewBusinessPartnerController';
 import UnsuspendBusinessPartnerController from '../../Controller/UnsuspendBusinessPartnerController';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -12,15 +12,10 @@ import Fontisto from 'react-native-vector-icons/Fontisto';
 const PartnerSA = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [businessPartner, setBusinessPartner] = useState([]);
+  const [filteredBusinessPartners, setFilteredBusinessPartners] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
-  const [confirmModalVisible, setConfirmModalVisible] = useState(false);
-  const [confirmAction, setConfirmAction] = useState(null);
   const router = useRouter();
-
-  useEffect(() => {
-    fetchBusinessPartners();
-  }, []);
 
   const fetchBusinessPartners = async () => {
     try {
@@ -31,14 +26,30 @@ const PartnerSA = () => {
     }
   };
 
+  useFocusEffect(
+    useCallback(() => {
+      fetchBusinessPartners();
+    }, [])
+  );
+
+  useEffect(() => {
+    filterBusinessPartners();
+  }, [searchQuery, businessPartner]);
+
+  const filterBusinessPartners = () => {
+    const filtered = businessPartner.filter(partner => 
+      partner.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      partner.entityName.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setFilteredBusinessPartners(filtered);
+  };
+
   const handleSuspend = async () => {
     if (selectedUser && selectedUser.status !== 'suspended') {
       try {
-
         await SuspendBusinessPartnerController.suspendBusinessPartner(selectedUser.id);
         fetchBusinessPartners();
         setModalVisible(false);
-        setConfirmModalVisible(false);
       } catch (error) {
         console.error("Error suspending business partner: ", error);
         Alert.alert('Failed to suspend Business Partner');
@@ -52,7 +63,6 @@ const PartnerSA = () => {
         await UnsuspendBusinessPartnerController.unsuspendBusinessPartner(selectedUser.id);
         fetchBusinessPartners();
         setModalVisible(false);
-        setConfirmModalVisible(false);
       } catch (error) {
         console.error("Error unsuspending business partner: ", error);
         Alert.alert('Failed to unsuspend Business Partner');
@@ -60,9 +70,22 @@ const PartnerSA = () => {
     }
   };
 
-  const openConfirmModal = (action) => {
-    setConfirmAction(action);
-    setConfirmModalVisible(true);
+  const confirmAction = (action) => {
+    Alert.alert(
+      "Confirm Action",
+      `Are you sure you want to ${action} this business partner?`,
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+        {
+          text: "OK",
+          onPress: action === 'suspend' ? handleSuspend : handleUnsuspend
+        }
+      ],
+      { cancelable: false }
+    );
   };
 
   const renderBusinessPartnerItem = ({ item }) => (
@@ -75,8 +98,8 @@ const PartnerSA = () => {
     >
       <Text style={styles.partnerCell}>{item.name}</Text>
       <Text style={styles.partnerCell}>{item.entityName}</Text>
-      <Text style={[styles.partnerCell, {color:'grey'}]}>{item.registerTime ? new Date(item.registerTime.seconds * 1000).toLocaleDateString() : 'N/A'}</Text>
-      <Text style={[styles.partnerCell, styles.activeStatus ]}>{item.status}</Text>
+      <Text style={[styles.partnerCell, { color: 'grey' }]}>{item.registerTime ? new Date(item.registerTime.seconds * 1000).toLocaleDateString() : 'N/A'}</Text>
+      <Text style={[styles.partnerCell, item.status === 'suspended' ? styles.suspendedStatus : styles.activeStatus]}>{item.status}</Text>
     </TouchableOpacity>
   );
 
@@ -85,14 +108,14 @@ const PartnerSA = () => {
       <Header title="Business Partner" />
       <View style={styles.container}>
         <View style={styles.searchBar}>
-        <View style={styles.searchIcon}>
-        <Fontisto name='search' size={16} color='gray' />
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Search Account"
-            value={searchQuery}
-            onChangeText={(text) => setSearchQuery(text)}
-          />
+          <View style={styles.searchIcon}>
+            <Fontisto name='search' size={16} color='gray' />
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Search Account"
+              value={searchQuery}
+              onChangeText={(text) => setSearchQuery(text)}
+            />
           </View>
           <TouchableOpacity style={styles.pendingContainer} onPress={() => router.push('/Boundary/pendingAccountList')}>
             <AntDesign name="form" size={24} />
@@ -105,13 +128,13 @@ const PartnerSA = () => {
           <Text style={styles.tableHeaderCell}>Registered</Text>
           <Text style={styles.tableHeaderCell}>Status</Text>
         </View>
-        {businessPartner.length === 0 ? (
+        {filteredBusinessPartners.length === 0 ? (
           <View style={styles.noPartners}>
             <Text style={styles.noPartnersText}>NO PARTNER REGISTERED</Text>
           </View>
         ) : (
           <FlatList
-            data={businessPartner}
+            data={filteredBusinessPartners}
             renderItem={renderBusinessPartnerItem}
             keyExtractor={(item) => item.id}
           />
@@ -146,7 +169,7 @@ const PartnerSA = () => {
                       styles.actionButton,
                       { backgroundColor: selectedUser.status === 'suspended' ? '#4CAF50' : '#ff4d4d' }
                     ]}
-                    onPress={selectedUser.status === 'suspended' ? handleUnsuspend : handleSuspend}
+                    onPress={() => confirmAction(selectedUser.status === 'suspended' ? 'unsuspend' : 'suspend')}
                   >
                     <Text style={styles.buttonText}>
                       {selectedUser.status === 'suspended' ? 'Unsuspend' : 'Suspend'}
@@ -158,41 +181,6 @@ const PartnerSA = () => {
           </Modal>
         )}
       </View>
-
-      <Modal
-        isVisible={confirmModalVisible}
-        animationType="slide"
-        backdropOpacity={0.5}
-        onBackdropPress={() => setConfirmModalVisible(false)}
-        onRequestClose={() => setConfirmModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Confirmation</Text>
-            <Text style={styles.detailsText}>Are you sure you want to {confirmAction} this account?</Text>
-            <View style={styles.modalButtons}>
-              <TouchableOpacity
-                style={styles.cancelButton}
-                onPress={() => setConfirmModalVisible(false)}
-              >
-                <Text style={styles.buttonText}>Cancel</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.actionButton}
-                onPress={() => {
-                  if (confirmAction === 'suspend') {
-                    handleSuspend(selectedUser.id);
-                  } else {
-                    handleUnsuspend(selectedUser.id);
-                  }
-                }}
-              >
-                <Text style={styles.buttonText}>Confirm</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
     </>
   );
 };
@@ -212,7 +200,6 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     padding: 12,
-    
     fontSize: 16,
   },
   pendingContainer: {
@@ -234,7 +221,7 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: 'left',
     fontFamily: 'Poppins-SemiBold',
-    paddingLeft: 16
+    paddingLeft: 8
   },
   partnerRow: {
     flexDirection: 'row',
@@ -246,14 +233,18 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: 'left',
     fontSize: 14,
-    paddingLeft: 16
+    paddingLeft: 8
   },
   activeStatus: {
     color: 'green',
     fontWeight: 'bold',
     fontSize: 14,
   },
- 
+  suspendedStatus: {
+    color: 'red',
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
   noPartners: {
     flex: 1,
     justifyContent: 'center',
@@ -319,8 +310,12 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     borderRadius: 8,
     paddingLeft: 8,
-   
   },
+  detailsText: {
+    fontSize: 16,
+    marginBottom: 20,
+    textAlign: 'center',
+  }
 });
 
 export default PartnerSA;

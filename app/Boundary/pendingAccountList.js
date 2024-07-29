@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import ViewPendingAccountListController from '../Controller/ViewPendingAccountListController';
 import Header from '../components/Header';
 import Fontisto from 'react-native-vector-icons/Fontisto';
@@ -11,20 +11,22 @@ const PendingAccountList = () => {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  useEffect(() => {
-    const fetchPendingAccounts = async () => {
-      try {
-        const accounts = await ViewPendingAccountListController.getPendingAccounts();
-        setPendingAccounts(accounts);
-      } catch (error) {
-        console.error("Error fetching pending accounts: ", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchPendingAccounts = async () => {
+    try {
+      const accounts = await ViewPendingAccountListController.getPendingAccounts();
+      setPendingAccounts(accounts);
+    } catch (error) {
+      console.error("Error fetching pending accounts: ", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchPendingAccounts();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchPendingAccounts();
+    }, [])
+  );
 
   const filteredPendingAccounts = pendingAccounts.filter(account => {
     return searchQuery ? account.name && account.name.toLowerCase().includes(searchQuery.toLowerCase()) : true;
@@ -47,44 +49,44 @@ const PendingAccountList = () => {
 
   return (
     <>
-    <Header
-      title='Pending Account'
-      leftButton='Back'
-      onLeftButtonPress={() => router.back()}
-    />
-    <View style={styles.container}>
-      <View style={styles.searchBar}>
-      <View style={styles.searchIcon}>
-      <Fontisto name='search' size={16} color='gray' />
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search Account"
-          value={searchQuery}
-          onChangeText={(text) => setSearchQuery(text)}
-        />
-      </View>
-      </View>
-      <View style={styles.tableHeader}>
-        <Text style={[styles.tableHeaderCell, {flex:1.5}]}>Username</Text>
-        <Text style={styles.tableHeaderCell}>Registered</Text>
-        <Text style={[styles.tableHeaderCell, {flex:1}]}>Status</Text>
-      </View>
-      {loading ? (
-        <View style={styles.noAccounts}>
-          <Text style={styles.noAccountsText}>Loading...</Text>
+      <Header
+        title='Pending Account'
+        leftButton='Back'
+        onLeftButtonPress={() => router.back()}
+      />
+      <View style={styles.container}>
+        <View style={styles.searchBar}>
+          <View style={styles.searchIcon}>
+            <Fontisto name='search' size={16} color='gray' />
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Search Account"
+              value={searchQuery}
+              onChangeText={(text) => setSearchQuery(text)}
+            />
+          </View>
         </View>
-      ) : filteredPendingAccounts.length === 0 ? (
-        <View style={styles.noAccounts}>
-          <Text style={styles.noAccountsText}>NO PENDING ACCOUNTS</Text>
+        <View style={styles.tableHeader}>
+          <Text style={[styles.tableHeaderCell, {flex:1.5}]}>Username</Text>
+          <Text style={styles.tableHeaderCell}>Registered</Text>
+          <Text style={[styles.tableHeaderCell, {flex:1}]}>Status</Text>
         </View>
-      ) : (
-        <FlatList
-          data={filteredPendingAccounts}
-          renderItem={renderPendingAccountItem}
-          keyExtractor={(item) => item.id}
-        />
-      )}
-    </View>
+        {loading ? (
+          <View style={styles.noAccounts}>
+            <Text style={styles.noAccountsText}>Loading...</Text>
+          </View>
+        ) : filteredPendingAccounts.length === 0 ? (
+          <View style={styles.noAccounts}>
+            <Text style={styles.noAccountsText}>NO PENDING ACCOUNTS</Text>
+          </View>
+        ) : (
+          <FlatList
+            data={filteredPendingAccounts}
+            renderItem={renderPendingAccountItem}
+            keyExtractor={(item) => item.id}
+          />
+        )}
+      </View>
     </>
   );
 };
@@ -114,7 +116,6 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     padding: 10,
-   
   },
   tableHeader: {
     flexDirection: 'row',

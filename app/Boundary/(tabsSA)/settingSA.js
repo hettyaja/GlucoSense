@@ -37,6 +37,8 @@ const SettingSA = () => {
       <TouchableOpacity style={styles.optionContainer} onPress={handleSignOut}>
         <Text style={styles.optionText}>Log out</Text>
       </TouchableOpacity>
+
+      
     </View>
     </>
   );

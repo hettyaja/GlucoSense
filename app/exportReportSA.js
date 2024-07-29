@@ -192,6 +192,38 @@ const exportReportSA = () => {
     }
   };
 
+  const generateExcelData = (data, type) => {
+    return data.map(item => {
+      const { dateString, timeString } = convertTimestamp(item.registerTime);
+      if (type === 'User') {
+        return {
+          Email: item.email,
+          Name: item.name,
+          Username: item.username,
+          'Register Time': `${dateString} ${timeString}`,
+          Status: item.status,
+          'Subscription Type': item.subscriptionType,
+          Height: item.height,
+          Weight: item.weight,
+          Gender: item.gender
+        };
+      } else if (type === 'Business Partner') {
+        return {
+          Email: item.email,
+          'Entity Name': item.entityName,
+          Name: item.name,
+          'Phone Number': item.phoneNum,
+          'Register Time': `${dateString} ${timeString}`,
+          Address: item.address,
+          UEN: item.UEN,
+          City: item.city,
+          Status: item.status,
+          Postal: item.postal
+        };
+      }
+    });
+  };
+
   const exportAsPdf = async () => {
     try {
       let data;
@@ -214,8 +246,8 @@ const exportReportSA = () => {
       if (selectedData === 'User') data = filterDataByDateRange(userList);
       else if (selectedData === 'Business Partner') data = filterDataByDateRange(businessPartnerList);
 
-      const tableRows = generateTableRows(data, selectedData);
-      const ws = XLSX.utils.json_to_sheet(tableRows.map(row => JSON.parse(row.match(/{.*?}/)[0])));
+      const excelData = generateExcelData(data, selectedData);
+      const ws = XLSX.utils.json_to_sheet(excelData);
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, 'Data');
 
