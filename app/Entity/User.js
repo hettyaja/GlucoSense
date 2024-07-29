@@ -1,11 +1,11 @@
 import { auth, db } from '../../firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail } from 'firebase/auth';
-import { doc, setDoc, deleteDoc, getDocs, updateDoc, Timestamp, collection } from 'firebase/firestore';
+import { doc, setDoc, deleteDoc, getDocs, updateDoc, Timestamp, collection, getDoc } from 'firebase/firestore';
 import { deleteUser as firebaseDeleteUser } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 class User {
-  constructor(id, username, name, email, userType, registerTime, status, bodyProfileComplete) {
+  constructor(id, username, name, email, userType, registerTime, status, weight, gender, height, birthdate, bodyProfileComplete) {
     this.id = id;
     this.username = username;
     this.name = name;
@@ -13,7 +13,24 @@ class User {
     this.userType = userType;
     this.registerTime = registerTime;
     this.status = status;
+    this.weight = weight;
+    this.gender = gender;
+    this.height = height;
+    this.birthdate = birthdate;
     this.bodyProfileComplete = bodyProfileComplete;
+  }
+
+  static async fetchProfile(uid) { 
+    try { 
+      const userDoc = await getDoc(doc(db, 'users', uid)); 
+      if (userDoc.exists()) {
+        return { ...userDoc.data(), id: userDoc.id };
+      } else {
+        throw new Error('No such document!');
+      }
+    } catch (error) { 
+      throw new Error('Failed to fetch user profile: ' + error.message); 
+    } 
   }
 
   static async register(email, password, additionalData) {
@@ -157,6 +174,43 @@ class User {
       throw new Error('Failed to reset password')
     }
   }
+
+  static async setBodyProfile(uid, gender, birthdate, weight, height){  
+    try {
+        const userDocRef = doc(db, 'users', uid);
+        await setDoc(userDocRef, {
+            gender,
+            birthdate,
+            weight,
+            height
+        }, { merge: true });
+        setGender(gender);
+        setBirthdate(birthdate);
+        setWeight(weight);
+        setHeight(height);
+        return { uid, gender, birthdate, weight, height };
+    } catch (error) {
+        throw error;
+    }
+  };
+
+static async setAccountProfile(uid, name, email, username){
+    try {
+        const userDocRef = doc(db, 'users', uid);
+        await setDoc(userDocRef, {
+            name,
+            email,
+            username
+        }, { merge: true });
+        setName(name);
+        setEmail(email);
+        setUsername(username);
+        return { uid, name, email, username };
+    } catch (error) {
+        throw error;
+    }
+  };
 }
 
 export default User;
+

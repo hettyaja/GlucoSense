@@ -7,16 +7,18 @@ import * as ImagePicker from 'expo-image-picker';
 import { useProfile } from './context/ProfileContext';
 import ImageButton from './components/ImageButton';
 import { useAuth } from './service/AuthContext';
+import { User } from './Entity/User';
+import getProfileController from './Controller/getProfileController'
 
 const Profile = () => {
     const { setAccountProfile, setBodyProfile, name, email, username, weight, gender, birthdate, height } = useAuth();
     const { profileData, setProfileData } = useProfile();
     const { user } = useAuth()
-    const uid = user.uid
+    //const uid = user.uid
     const [localName, setName] = useState('name');
     const [photoUri, setPhotoUri] = useState(profileData?.photoUri || '');
     const [localUsername, setUsername] = useState(username);
-    const [localEmail] = useState(email);
+    const [localEmail,setEmail] = useState(email);
     const [localBirthdate, setBirthdate] = useState(birthdate ? new Date(birthdate) : new Date());
     const [localWeight, setWeight] = useState(weight);
     const [localHeight, setHeight] = useState(height);
@@ -27,7 +29,29 @@ const Profile = () => {
     const [localGenderVisible, setLocalGenderVisible] = useState(true);
 
     useEffect(() => {
-    }, []);
+        const getProfile = async () => {
+            try {
+              const profileData = await getProfileController.getProfile(user.uid)
+              console.log(profileData)
+              setUsername(profileData.username)
+              setName(profileData.name)
+              setEmail(profileData.email)  
+              setBirthdate(profileData.birthdate ? new Date(profileData.birthdate) : new Date())    
+              setWeight(profileData.weight)
+              setHeight(profileData.height)
+              setGender(profileData.gender)
+
+                
+                     
+            } catch (error) {
+              console.error(error);
+            } 
+          };
+
+        if (user.uid) {
+            getProfile();
+          }
+    }, [user.uid]);
 
     const toggleEdit = async () => {
         
