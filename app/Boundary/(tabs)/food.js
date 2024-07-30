@@ -28,7 +28,7 @@ const Food = () => {
         <View style={styles.statusContainer}>
           <View style={styles.statusHeader}>
             <Text style={styles.statusHeaderText}>My Food</Text>
-            <TouchableOpacity style={styles.statusBox} onPress={() => router.push('test/foodOrder')}>
+            <TouchableOpacity style={styles.statusBox} onPress={() => router.push('Boundary/OrderHistory')}>
               <Text>3 Orders</Text>
             </TouchableOpacity>
           </View>
