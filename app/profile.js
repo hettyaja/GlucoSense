@@ -31,26 +31,41 @@ const Profile = () => {
     useEffect(() => {
         const getProfile = async () => {
             try {
-              const profileData = await getProfileController.getProfile(user.uid)
-              console.log(profileData)
-              setUsername(profileData.username)
-              setName(profileData.name)
-              setEmail(profileData.email)  
-              setBirthdate(profileData.birthdate ? new Date(profileData.birthdate) : new Date())    
-              setWeight(profileData.weight)
-              setHeight(profileData.height)
-              setGender(profileData.gender)
-
-                
-                     
+                const profileData = await getProfileController.getProfile(user.uid);
+                console.log('Profile Data:', profileData);
+    
+                const birthdateTimestamp = profileData.birthdate;
+                console.log('Raw Birthdate Timestamp:', birthdateTimestamp);
+    
+                // Convert Firebase timestamp to JavaScript Date
+                const birthdate = birthdateTimestamp 
+                    ? new Date(birthdateTimestamp.seconds * 1000) 
+                    : new Date();
+                console.log('Converted Birthdate:', birthdate);
+    
+                // Check if the converted date is valid
+                const isValidDate = !isNaN(birthdate.getTime());
+                console.log('Is Valid Date:', isValidDate);
+    
+                // Set the state with a valid date
+                setBirthdate(isValidDate ? birthdate : new Date());
+    
+                // Set other profile data
+                setUsername(profileData.username);
+                setName(profileData.name);
+                setEmail(profileData.email);
+                setWeight(profileData.weight);
+                setHeight(profileData.height);
+                setGender(profileData.gender);
+    
             } catch (error) {
-              console.error(error);
-            } 
-          };
-
+                console.error(error);
+            }
+        };
+    
         if (user.uid) {
             getProfile();
-          }
+        }
     }, [user.uid]);
 
     const toggleEdit = async () => {
