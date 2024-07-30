@@ -184,10 +184,6 @@ class User {
             weight,
             height
         }, { merge: true });
-        setGender(gender);
-        setBirthdate(birthdate);
-        setWeight(weight);
-        setHeight(height);
         return { uid, gender, birthdate, weight, height };
     } catch (error) {
         throw error;
@@ -202,10 +198,19 @@ static async setAccountProfile(uid, name, email, username){
             email,
             username
         }, { merge: true });
-        setName(name);
-        setEmail(email);
-        setUsername(username);
         return { uid, name, email, username };
+    } catch (error) {
+        throw error;
+    }
+  };
+
+  static async setSubscribed(uid, subscriptionType){
+    try {
+        const userDocRef = doc(db, 'users', uid);
+        await setDoc(userDocRef, {
+            subscriptionType
+        }, { merge: true });
+        return { subscriptionType };
     } catch (error) {
         throw error;
     }

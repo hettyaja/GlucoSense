@@ -1,30 +1,42 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Stack } from 'expo-router';
-import ImageButton from '../components/ImageButton';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { Stack, router } from 'expo-router';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { router } from 'expo-router';
 
 const Success = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const navigation = useNavigation();
   const route = useRoute();
   const { referenceNumber, date, time, paymentMethod, amount } = route.params;
 
+  useEffect(() => {
+    // Simulate a loading delay
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 3000); // 3 seconds
+
+    // Clean up the timer if the component unmounts
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#E58B68" />
+        <Text style={styles.loadingText}>Loading...</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <Stack.Screen options={{
-        title: 'Payment Successful',
-        headerStyle: { backgroundColor: '#E58B68' },
-        headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold' },
-        headerLeft: () => (
-          <ImageButton
-            source={require("../assets/back.png")}
-            imageSize={{ width: 24, height: 24 }}
-            onPress={() => navigation.navigate('Subscription')}
-          />
-        ),
-        headerTitleAlign: 'center',
-      }} />
+                title: 'c',
+                headerStyle: { backgroundColor: '#E58B68' },
+                headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold' },
+                headerTitle: 'Payment Successful',
+                headerTitleAlign: 'center',
+            }} />
       <View style={styles.successMessageContainer}>
         <Text style={styles.successMessage}>Thank you for your payment!</Text>
         <Text style={styles.successMessage}>Your subscription has been activated.</Text>
@@ -66,6 +78,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 20,
     backgroundColor: '#f5f5f5',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f5f5f5',
+  },
+  loadingText: {
+    fontFamily: 'Poppins-Regular',
+    fontSize: 16,
+    color: '#808080',
+    marginTop: 10,
   },
   successMessageContainer: {
     marginBottom: 20,

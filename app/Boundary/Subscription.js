@@ -2,9 +2,12 @@ import { ScrollView, StyleSheet, Text, TouchableOpacity, View, TextInput, Alert 
 import React, { useState } from 'react';
 import { Picker } from '@react-native-picker/picker';
 import ImageButton from '../components/ImageButton';
-import { router } from 'expo-router';
+import { router, Stack } from 'expo-router';
+import { useAuth } from '../service/AuthContext';
+import setSubscribedController from '../Controller/setSubscibedController';
 
 const Subscription = () => {
+  const { user } = useAuth()
   const [selectedPlan, setSelectedPlan] = useState('1');
   const [price, setPrice] = useState('4.90');
   const [cardholderName, setCardholderName] = useState('');
@@ -38,8 +41,13 @@ const Subscription = () => {
     return Object.keys(errors).length === 0;
   };
 
-  const handlePayment = () => {
+  const handlePayment = async () => {
     if (validate()) {
+      try {
+        await setSubscribedController.setSubbed(user.uid, 'premium');
+    } catch (error) {
+        alert(error.message);
+    }
       const currentDate = new Date();
       const date = currentDate.toLocaleDateString();
       const time = currentDate.toLocaleTimeString();
@@ -60,6 +68,20 @@ const Subscription = () => {
   return (
     <>
       <ScrollView style={styles.safeArea}>
+      <Stack.Screen options={{
+                title: 'Card Details',
+                headerStyle: { backgroundColor: '#E58B68' },
+                headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold' },
+                headerLeft: () => (
+                    <ImageButton
+                        source={require("../assets/back.png")}
+                        imageSize={{ width: 24, height: 24 }}
+                        onPress={() => router.back('/setting')}
+                    />
+                ),
+                headerTitle: 'Card Details',
+                headerTitleAlign: 'center',
+            }} />
         <View style={styles.container}>
           <Text style={styles.orderDetails}>Order Details</Text>
           <Picker

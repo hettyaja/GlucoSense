@@ -7,22 +7,22 @@ import * as ImagePicker from 'expo-image-picker';
 import { useProfile } from './context/ProfileContext';
 import ImageButton from './components/ImageButton';
 import { useAuth } from './service/AuthContext';
-import { User } from './Entity/User';
 import getProfileController from './Controller/getProfileController'
+import setBodyProfileController  from './Controller/SetBodyProfileController';
+import setAccountProfileController from './Controller/SetAccountProfileController';
 
 const Profile = () => {
-    const { setAccountProfile, setBodyProfile, name, email, username, weight, gender, birthdate, height } = useAuth();
-    const { profileData, setProfileData } = useProfile();
+    const {profileData} = useProfile();
     const { user } = useAuth()
     //const uid = user.uid
-    const [localName, setName] = useState('name');
     const [photoUri, setPhotoUri] = useState(profileData?.photoUri || '');
-    const [localUsername, setUsername] = useState(username);
-    const [localEmail,setEmail] = useState(email);
-    const [localBirthdate, setBirthdate] = useState(birthdate ? new Date(birthdate) : new Date());
-    const [localWeight, setWeight] = useState(weight);
-    const [localHeight, setHeight] = useState(height);
-    const [localGender, setGender] = useState(gender);
+    const [localUsername, setUsername] = useState('');
+    const [localName, setName] = useState('');
+    const [localEmail,setEmail] = useState('');
+    const [localBirthdate, setBirthdate] = useState(profileData.birthdate ? new Date(profileData.birthdate) : null);
+    const [localWeight, setWeight] = useState('');
+    const [localHeight, setHeight] = useState('');
+    const [localGender, setGender] = useState('');
     const [isEditable, setIsEditable] = useState(false);
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [showGenderPicker, setShowGenderPicker] = useState(false);
@@ -64,8 +64,8 @@ const Profile = () => {
                 return;
             }
             try {
-                await setAccountProfile(uid, localName, localEmail, localUsername);
-                await setBodyProfile(uid, localGender, localBirthdate, localWeight, localHeight);
+                await setAccountProfileController.setAccProfile(user.uid, localName, localEmail, localUsername);
+                await setBodyProfileController.setBodProfile(user.uid, localGender, localBirthdate, localWeight, localHeight);
             } catch (error) {
                 alert(error.message);
             }
@@ -152,16 +152,12 @@ const Profile = () => {
 
                     <View style={styles.item}>
                         <Text>Name</Text>
-                        {isEditable ? (
-                            <TextInput
-                                style={styles.input}
-                                value={localName}
-                                onChangeText={setName}
-                                editable={isEditable}
-                            />
-                        ) : (
-                            <Text style={styles.input}>{name}</Text>
-                        )}
+                        <TextInput
+                            style={styles.input}
+                            value={localName}
+                            onChangeText={setName}
+                            editable={isEditable}
+                        />
                     </View>
 
                     <View style={styles.item}>
@@ -230,7 +226,7 @@ const Profile = () => {
                             <>
                                 <TouchableOpacity onPress={() => {
                                     setShowGenderPicker(true);
-                                    setLocalGenderVisible(false);
+                                    setLocalGenderVisible(true);
                                 }}>
                                     {localGenderVisible && <Text style={styles.input}>{localGender}</Text>}
                                 </TouchableOpacity>
@@ -251,7 +247,7 @@ const Profile = () => {
                                 )}
                             </>
                         ) : (
-                            <Text style={styles.input}>{gender}</Text>
+                            <Text style={styles.input}>{localGender}</Text>
                         )}
                     </View>
                 </View>
