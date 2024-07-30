@@ -175,6 +175,39 @@ class User {
     }
   }
 
+  static async fetchTotalLogsCount() {
+    try {
+      const usersCollection = await getDocs(collection(db, 'users'));
+      let totalGlucoseLogsCount = 0;
+      let totalMedicineLogsCount = 0;
+      let totalMealLogsCount = 0;
+
+      await Promise.all(usersCollection.docs.map(async (userDoc) => {
+        const userId = userDoc.id;
+        
+        // Count documents in glucoseLogs subcollection
+        const glucoseLogsCollection = await getDocs(collection(db, 'users', userId, 'glucoseLogs'));
+        totalGlucoseLogsCount += glucoseLogsCollection.size;
+
+        // Count documents in medicineLogs subcollection
+        const medicineLogsCollection = await getDocs(collection(db, 'users', userId, 'medicineLogs'));
+        totalMedicineLogsCount += medicineLogsCollection.size;
+
+        // Count documents in mealLogs subcollection
+        const mealLogsCollection = await getDocs(collection(db, 'users', userId, 'mealLogs'));
+        totalMealLogsCount += mealLogsCollection.size;
+      }));
+
+      return {
+        totalGlucoseLogsCount,
+        totalMedicineLogsCount,
+        totalMealLogsCount,
+      };
+    } catch (error) {
+      throw new Error('Failed to fetch logs.');
+    }
+  }
+
   static async setBodyProfile(uid, gender, birthdate, weight, height){  
     try {
         const userDocRef = doc(db, 'users', uid);

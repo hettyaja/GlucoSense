@@ -13,10 +13,10 @@ const _layout = () => {
         headerShown: false,
         title: 'Insight',
         tabBarIcon: () => (
-          <SimpleLineIcons name="graph" size={24} color="#E58B68" />
+          <SimpleLineIcons name="graph" size={20} color="#E58B68" />
         ),
         tabBarLabel: ({ focused }) => (
-          <Text style={{ fontFamily: focused ? 'Poppins-SemiBold' : 'Poppins-Regular', color: '#E58B68' }}>
+          <Text style={{ fontFamily: focused ? 'Poppins-SemiBold' : 'Poppins-Regular', fontSize: 10, color: '#E58B68' }}>
             Insight
           </Text>
         ),
@@ -25,10 +25,10 @@ const _layout = () => {
         headerShown: false,
         title: 'Users',
         tabBarIcon: () => (
-          <Feather name="user" size={24} color="#E58B68" />
+          <Feather name="user" size={20} color="#E58B68" />
         ),
         tabBarLabel: ({ focused }) => (
-          <Text style={{ fontFamily: focused ? 'Poppins-SemiBold' : 'Poppins-Regular', color: '#E58B68' }}>
+          <Text style={{ fontFamily: focused ? 'Poppins-SemiBold' : 'Poppins-Regular', fontSize: 10, color: '#E58B68' }}>
             Users
           </Text>
         ),
@@ -37,10 +37,10 @@ const _layout = () => {
         headerShown: false,
         title: 'Partners',
         tabBarIcon: () => (
-          <Ionicons name="storefront-outline" size={24} color="#E58B68" />
+          <Ionicons name="storefront-outline" size={20} color="#E58B68" />
         ),
         tabBarLabel: ({ focused }) => (
-          <Text style={{ fontFamily: focused ? 'Poppins-SemiBold' : 'Poppins-Regular', color: '#E58B68' }}>
+          <Text style={{ fontFamily: focused ? 'Poppins-SemiBold' : 'Poppins-Regular', fontSize: 10, color: '#E58B68' }}>
             Partners
           </Text>
         ),
@@ -49,10 +49,10 @@ const _layout = () => {
         headerShown: false,
         title: 'Setting',
         tabBarIcon: () => (
-          <AntDesign name="setting" size={24} color="#E58B68" />
+          <AntDesign name="setting" size={20} color="#E58B68" />
         ),
         tabBarLabel: ({ focused }) => (
-          <Text style={{ fontFamily: focused ? 'Poppins-SemiBold' : 'Poppins-Regular', color: '#E58B68' }}>
+          <Text style={{ fontFamily: focused ? 'Poppins-SemiBold' : 'Poppins-Regular', fontSize: 10, color: '#E58B68' }}>
             Setting
           </Text>
         ),

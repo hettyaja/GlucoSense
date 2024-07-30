@@ -1,137 +1,173 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Button, FlatList, PermissionsAndroid, Platform, Alert } from 'react-native';
+import React, { useCallback, useMemo, useState } from 'react';
+import { View, Text, Button, FlatList, TouchableOpacity, ActivityIndicator, Alert, StyleSheet, PermissionsAndroid, Platform } from 'react-native';
 import { BleManager } from 'react-native-ble-plx';
-import base64 from 'react-native-base64';
 
-const bleManager = new BleManager();
-
-const BluetoothComponent = () => {
-  const [devices, setDevices] = useState([]);
+const SmartWearablePage = ({ route, navigation }) => {
+  const manager = useMemo(() => new BleManager(), []);
+  const [scannedDevices, setScannedDevices] = useState([]);
+  const [isScanning, setIsScanning] = useState(false);
   const [connectedDevice, setConnectedDevice] = useState(null);
   const [glucoseData, setGlucoseData] = useState(null);
 
-  useEffect(() => {
-    const requestPermissions = async () => {
-      if (Platform.OS === 'android' && Platform.Version >= 23) {
+  const requestPermissions = async () => {
+    if (Platform.OS === 'android') {
+      try {
         const granted = await PermissionsAndroid.requestMultiple([
           PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
           PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
           PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
         ]);
 
-        if (
-          granted['android.permission.ACCESS_FINE_LOCATION'] !== PermissionsAndroid.RESULTS.GRANTED ||
-          granted['android.permission.BLUETOOTH_SCAN'] !== PermissionsAndroid.RESULTS.GRANTED ||
-          granted['android.permission.BLUETOOTH_CONNECT'] !== PermissionsAndroid.RESULTS.GRANTED
-        ) {
-          console.log('Some permissions are not granted');
-        }
+        const allGranted = Object.values(granted).every((result) => result === PermissionsAndroid.RESULTS.GRANTED);
+        return allGranted;
+      } catch (err) {
+        console.warn(err);
+        return false;
       }
-    };
+    } else {
+      return true;
+    }
+  };
 
-    requestPermissions();
-
-    const subscription = bleManager.onStateChange((state) => {
-      if (state === 'PoweredOn') {
-        console.log('Bluetooth is on');
+  const checkBluetooth = useCallback(async () => {
+    try {
+      const isEnabled = await manager.state();
+      if (isEnabled !== 'PoweredOn') {
+        Alert.alert('Bluetooth is not enabled');
+        return false;
       }
-    }, true);
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  }, [manager]);
 
-    return () => {
-      subscription.remove();
-      bleManager.destroy();
-    };
-  }, []);
-
-  const startScan = () => {
-    setDevices([]);
-    bleManager.startDeviceScan(null, null, (error, device) => {
-      if (error) {
-        console.error(error);
+  const startDeviceScanning = useCallback(async () => {
+    try {
+      const isEnabled = await checkBluetooth();
+      if (!isEnabled) {
         return;
       }
 
-      if (device && device.name) {
-        setDevices((prevDevices) => {
-          if (!prevDevices.find((d) => d.id === device.id)) {
-            return [...prevDevices, device];
+      const permission = await requestPermissions();
+      if (!permission) {
+        return;
+      }
+
+      setIsScanning(true);
+      setScannedDevices([]);
+
+      manager.startDeviceScan(null, null, (error, scannedDevice) => {
+        if (error) {
+          console.error(error);
+          return;
+        }
+
+        if (!scannedDevice.name) {
+          return;
+        }
+
+        setScannedDevices((prevDevices) => {
+          if (!prevDevices.find((device) => device.id === scannedDevice.id)) {
+            return [...prevDevices, scannedDevice];
           }
           return prevDevices;
         });
-      }
-    });
+      });
 
-    setTimeout(() => {
-      bleManager.stopDeviceScan();
-      console.log('Scanning stopped');
-    }, 5000);
-  };
+      setTimeout(() => {
+        manager.stopDeviceScan();
+        setIsScanning(false);
+      }, 20000);
+    } catch (error) {
+      console.log(error);
+    }
+  }, [checkBluetooth, manager]);
 
-  const connectToDevice = async (device) => {
+  const actionOnTap = async (item) => {
+    console.log('Connecting to device: ' + item.name);
+    let device;
     try {
-      console.log(`Attempting to connect to device: ${device.name} (${device.id})`);
-      await bleManager.stopDeviceScan();
+      device = await manager.connectToDevice(item.id);
+      console.log('Connected to device: ' + item.id);
+      console.log('Status connected: ' + device.isConnected());
 
-      const connectedDevice = await bleManager.connectToDevice(device.id, { autoConnect: true });
-      setConnectedDevice(connectedDevice);
-      console.log(`Connected to device: ${connectedDevice.name} (${connectedDevice.id})`);
+      await device.discoverAllServicesAndCharacteristics();
+      const services = await device.services();
 
-      await connectedDevice.discoverAllServicesAndCharacteristics();
-      console.log('Services and characteristics discovered');
+      console.log(services);
 
-      const services = await connectedDevice.services();
-      for (const service of services) {
-        const characteristics = await service.characteristics();
-        for (const characteristic of characteristics) {
-          if (characteristic.isReadable) {
-            const characteristicData = await characteristic.read();
-            const decodedData = base64.decode(characteristicData.value);
-            console.log(`Characteristic ${characteristic.uuid}:`, decodedData);
+      services.forEach((service) => {
+        console.log('Service UUID:', service.uuid);
+      });
+
+      // Save connected device to state
+      setConnectedDevice(device);
+
+      // Find the glucose service
+      const glucoseService = services.find(service => service.uuid === '00001808-0000-1000-8000-00805f9b34fb');
+      if (glucoseService) {
+        console.log('Glucose service found');
+        const characteristics = await glucoseService.characteristics();
+
+        characteristics.forEach(async (characteristic) => {
+          console.log('Characteristic UUID:', characteristic.uuid);
+          if (characteristic.uuid === '00002a18-0000-1000-8000-00805f9b34fb') {
+            console.log('Glucose measurement characteristic found');
+
+            // Send connection signal
+            const connectionSignal = Buffer.from([0x01]); // Example signal, adjust as needed
+            await characteristic.writeWithResponse(connectionSignal.toString('base64'));
+            console.log('Connection signal sent');
+
+            const glucoseMeasurement = await characteristic.read();
+            const glucoseValue = decodeGlucoseMeasurement(glucoseMeasurement.value);
+            console.log('Glucose measurement data:', glucoseValue);
+            setGlucoseData(glucoseValue);
           }
-        }
+        });
       }
     } catch (error) {
-      console.error('Connection or data reading error:', error);
-      Alert.alert('Connection or data reading error', error.message);
+      console.log(error);
     }
   };
 
-  const disconnectFromDevice = async () => {
-    if (connectedDevice) {
-      try {
-        await bleManager.cancelDeviceConnection(connectedDevice.id);
-        console.log('Disconnected from ' + connectedDevice.id);
-        setConnectedDevice(null);
-        setGlucoseData(null);
-      } catch (error) {
-        console.error('Disconnection error:', error);
-        Alert.alert('Disconnection error', error.message);
-      }
+  const decodeGlucoseMeasurement = (value) => {
+    const buffer = Buffer.from(value, 'base64');
+    const flags = buffer.readUInt8(0);
+    let offset = 1;
+    const glucoseConcentration = buffer.readUInt16LE(offset) / 100.0;
+    offset += 2;
+
+    let unit = 'kg/L';
+    if (flags & 0x01) {
+      unit = 'mol/L';
     }
+
+    return `${glucoseConcentration} ${unit}`;
   };
 
   return (
     <View style={styles.container}>
-      <Button title="Start Scan" onPress={startScan} />
+      <View style={styles.scannedDataView}>
+        <Text>Scanned Devices</Text>
+      </View>
+      <Button title="Scan for Devices" onPress={startDeviceScanning} />
+      {isScanning && <ActivityIndicator size="large" color="#0000ff" />}
       <FlatList
-        data={devices}
+        data={scannedDevices}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View style={styles.deviceContainer}>
+          <TouchableOpacity style={styles.device} onPress={() => actionOnTap(item)}>
             <Text>{item.name}</Text>
-            <Button title="Connect" onPress={() => connectToDevice(item)} />
-          </View>
+            <Text>{item.id}</Text>
+          </TouchableOpacity>
         )}
       />
-      {connectedDevice && (
-        <View style={styles.connectedContainer}>
-          <Text>Connected to: {connectedDevice.name}</Text>
-          <Button title="Disconnect" onPress={disconnectFromDevice} />
-          {glucoseData && (
-            <View style={styles.dataContainer}>
-              <Text>Glucose Level: {glucoseData}</Text>
-            </View>
-          )}
+      {glucoseData && (
+        <View style={styles.glucoseDataView}>
+          <Text>Glucose Data: {glucoseData}</Text>
         </View>
       )}
     </View>
@@ -141,170 +177,25 @@ const BluetoothComponent = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    padding: 20,
   },
-  deviceContainer: {
-    margin: 10,
+  device: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
+  scannedDataView: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+  },
+  glucoseDataView: {
+    marginTop: 20,
     padding: 10,
     borderWidth: 1,
     borderColor: '#ccc',
-  },
-  connectedContainer: {
-    marginTop: 20,
-    padding: 10,
-    borderWidth: 1,
-    borderColor: 'green',
-  },
-  dataContainer: {
-    marginTop: 20,
-    padding: 10,
-    borderWidth: 1,
-    borderColor: 'blue',
+    alignItems: 'center',
   },
 });
 
-export default BluetoothComponent;
-
-
-
-// import React, { useEffect, useState } from 'react';
-// import { StyleSheet, Text, View, Button, FlatList, PermissionsAndroid, Platform, Alert } from 'react-native';
-// import BleManager from 'react-native-ble-manager';
-// import { NativeEventEmitter, NativeModules } from 'react-native';
-
-// const BleManagerModule = NativeModules.BleManager;
-// const bleManagerEmitter = new NativeEventEmitter(BleManagerModule);
-
-// const ConnectBluetooth = () => {
-//   const [devices, setDevices] = useState([]);
-//   const [connectedDevice, setConnectedDevice] = useState(null);
-
-//   useEffect(() => {
-//     BleManager.start({ showAlert: false });
-
-//     const requestPermissions = async () => {
-//       if (Platform.OS === 'android' && Platform.Version >= 23) {
-//         try {
-//           const granted = await PermissionsAndroid.requestMultiple([
-//             PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-//             PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
-//             PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
-//           ]);
-
-//           if (
-//             granted['android.permission.ACCESS_FINE_LOCATION'] === PermissionsAndroid.RESULTS.GRANTED &&
-//             granted['android.permission.BLUETOOTH_SCAN'] === PermissionsAndroid.RESULTS.GRANTED &&
-//             granted['android.permission.BLUETOOTH_CONNECT'] === PermissionsAndroid.RESULTS.GRANTED
-//           ) {
-//             console.log('All required permissions granted');
-//           } else {
-//             console.log('Some permissions are not granted');
-//           }
-//         } catch (err) {
-//           console.warn(err);
-//         }
-//       }
-//     };
-
-//     requestPermissions();
-
-//     const handleDiscoverPeripheral = (peripheral) => {
-//       if (peripheral.name) {
-//         setDevices((prevDevices) => {
-//           const deviceExists = prevDevices.some((device) => device.id === peripheral.id);
-//           if (!deviceExists) {
-//             return [...prevDevices, peripheral];
-//           } else {
-//             return prevDevices;
-//           }
-//         });
-//       }
-//     };
-
-//     bleManagerEmitter.addListener('BleManagerDiscoverPeripheral', handleDiscoverPeripheral);
-
-//     return () => {
-//       bleManagerEmitter.removeListener('BleManagerDiscoverPeripheral', handleDiscoverPeripheral);
-//     };
-//   }, []);
-
-//   const startScan = () => {
-//     setDevices([]);
-//     BleManager.scan([], 5, true).then((results) => {
-//       console.log('Scanning...');
-//     }).catch((err) => {
-//       console.log('Scan error:', err);
-//     });
-//   };
-
-//   const connectToDevice = (device) => {
-//     BleManager.connect(device.id)
-//       .then(() => {
-//         setConnectedDevice(device);
-//         console.log('Connected to ' + device.id);
-//       })
-//       .catch((error) => {
-//         console.log('Connection error:', error);
-//         Alert.alert('Connection error', error.message);
-//       });
-//   };
-
-//   const disconnectFromDevice = () => {
-//     if (connectedDevice) {
-//       BleManager.disconnect(connectedDevice.id)
-//         .then(() => {
-//           console.log('Disconnected from ' + connectedDevice.id);
-//           setConnectedDevice(null);
-//         })
-//         .catch((error) => {
-//           console.log('Disconnection error:', error);
-//           Alert.alert('Disconnection error', error.message);
-//         });
-//     }
-//   };
-
-//   return (
-//     <View style={styles.container}>
-//       <Button title="Start Scan" onPress={startScan} />
-//       <FlatList
-//         data={devices}
-//         keyExtractor={(item) => item.id}
-//         renderItem={({ item }) => (
-//           <View style={styles.deviceContainer}>
-//             <Text>{item.name}</Text>
-//             <Button title="Connect" onPress={() => connectToDevice(item)} />
-//           </View>
-//         )}
-//       />
-//       {connectedDevice && (
-//         <View style={styles.connectedContainer}>
-//           <Text>Connected to: {connectedDevice.name}</Text>
-//           <Button title="Disconnect" onPress={disconnectFromDevice} />
-//         </View>
-//       )}
-//     </View>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//   },
-//   deviceContainer: {
-//     margin: 10,
-//     padding: 10,
-//     borderWidth: 1,
-//     borderColor: '#ccc',
-//   },
-//   connectedContainer: {
-//     marginTop: 20,
-//     padding: 10,
-//     borderWidth: 1,
-//     borderColor: 'green',
-//   },
-// });
-
-// export default ConnectBluetooth;
+export default SmartWearablePage;

@@ -1,11 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import LogoutController from '../../Controller/LogoutController';
 import Header from '../../components/Header';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
+import { useAuth } from '../../service/AuthContext';
 
 const SettingSA = () => {
   const router = useRouter();
+  const { user } = useAuth();
+  const [photoUri, setPhotoUri] = useState('https://reactnative.dev/img/tiny_logo.png')
   
   const handleSignOut = async () => {
     await LogoutController.logout();
@@ -21,22 +25,31 @@ const SettingSA = () => {
       title="Setting"
     />
     <View style={styles.container}>
-      <View style={styles.profileContainer}>
-        <Image
-          source={{ uri: 'https://via.placeholder.com/150' }} // Replace with actual profile image URL
-          style={styles.profileImage}
-        />
-        <View style={styles.profileTextContainer}>
-          <Text style={styles.profileName}>Agustianto Jusuf Kalla</Text>
-          <Text style={styles.profileRole}>System Admin</Text>
+    <TouchableOpacity style={styles.profileCard} onPress={() => router.push('Boundary/SystemAdminProfileUI')}>
+        <View style={{flexDirection:'row',alignItems:'center', padding:24}}>
+         <Image style={styles.profileImage} source={{uri: photoUri}}/>
+          <View>
+            <Text style={{fontFamily:'Poppins-Bold', fontSize:16}}>
+              {user.username}
+            </Text>
+            <Text style={{fontFamily:'Poppins-Regular', fontSize:14}}>
+              System Admin
+            </Text>
+          </View>
         </View>
+      </TouchableOpacity>
+      <View style={styles.section}>
+        <TouchableOpacity style={styles.button} onPress={handleExportReport}>
+          <MaterialIcons name="bar-chart" size={24}/>
+          <Text style={styles.buttonText}>Export Report</Text>
+        </TouchableOpacity>
+        <View style={{borderBottomColor:'#d9d9d9', borderBottomWidth:1}}/>
+        <TouchableOpacity style={styles.button} onPress={handleSignOut}>
+          <MaterialIcons name='logout' size={24} style={styles.icon}/>
+          <Text style={styles.buttonText}>Log out</Text>
+        </TouchableOpacity>
       </View>
-      <TouchableOpacity style={styles.optionContainer} onPress={handleExportReport}>
-        <Text style={styles.optionText}>Export Report</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.optionContainer} onPress={handleSignOut}>
-        <Text style={styles.optionText}>Log out</Text>
-      </TouchableOpacity>
+
 
       
     </View>
@@ -47,53 +60,37 @@ const SettingSA = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#f5f5f5',
   },
-  header: {
-    backgroundColor: '#D9A37E',
-    padding: 16,
-  },
-  headerText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#fff',
-    textAlign: 'center',
-  },
-  profileContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#f2f2f2',
-    padding: 16,
-    margin: 16,
-    borderRadius: 8,
+  profileCard: {
+    backgroundColor:'white',
+    flexDirection:'row',
+    margin:16,
+    marginVertical:24,
+    borderRadius:8,
+    elevation:4
   },
   profileImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 16,
+    borderRadius:100,
+    borderColor:'black',
+    width:64,
+    height:64,
+    marginRight:16
   },
-  profileTextContainer: {
-    flex: 1,
+  section: {
+    backgroundColor:'white',
+    marginBottom:24,
+    paddingHorizontal:16
   },
-  profileName: {
-    fontSize: 16,
-    fontWeight: 'bold',
+  button: {
+    padding:8,
+    flexDirection:'row',
+    alignItems:'center'
   },
-  profileRole: {
-    fontSize: 14,
-    color: '#666',
-  },
-  optionContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderColor: '#ccc',
-  },
-  optionText: {
-    fontSize: 16,
-    marginLeft: 16,
+  buttonText: {
+    fontFamily: 'Poppins-Medium',
+    fontSize:16,
+    marginLeft:16
   },
 });
 
