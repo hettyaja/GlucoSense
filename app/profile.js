@@ -8,17 +8,16 @@ import { useProfile } from './context/ProfileContext';
 import ImageButton from './components/ImageButton';
 import { useAuth } from './service/AuthContext';
 import getProfileController from './Controller/getProfileController'
-import setBodyProfileController  from './Controller/SetBodyProfileController';
+import setBodyProfileController from './Controller/SetBodyProfileController';
 import setAccountProfileController from './Controller/SetAccountProfileController';
 
 const Profile = () => {
-    const {profileData} = useProfile();
-    const { user } = useAuth()
-    //const uid = user.uid
+    const { profileData } = useProfile();
+    const { user } = useAuth();
     const [photoUri, setPhotoUri] = useState(profileData?.photoUri || '');
     const [localUsername, setUsername] = useState('');
     const [localName, setName] = useState('');
-    const [localEmail,setEmail] = useState('');
+    const [localEmail, setEmail] = useState('');
     const [localBirthdate, setBirthdate] = useState(profileData.birthdate ? new Date(profileData.birthdate) : null);
     const [localWeight, setWeight] = useState('');
     const [localHeight, setHeight] = useState('');
@@ -28,28 +27,31 @@ const Profile = () => {
     const [showGenderPicker, setShowGenderPicker] = useState(false);
     const [localGenderVisible, setLocalGenderVisible] = useState(true);
 
+    const maxBirthdate = new Date();
+    maxBirthdate.setFullYear(maxBirthdate.getFullYear() - 10);
+
     useEffect(() => {
         const getProfile = async () => {
             try {
                 const profileData = await getProfileController.getProfile(user.uid);
                 console.log('Profile Data:', profileData);
-    
+
                 const birthdateTimestamp = profileData.birthdate;
                 console.log('Raw Birthdate Timestamp:', birthdateTimestamp);
-    
+
                 // Convert Firebase timestamp to JavaScript Date
-                const birthdate = birthdateTimestamp 
-                    ? new Date(birthdateTimestamp.seconds * 1000) 
+                const birthdate = birthdateTimestamp
+                    ? new Date(birthdateTimestamp.seconds * 1000)
                     : new Date();
                 console.log('Converted Birthdate:', birthdate);
-    
+
                 // Check if the converted date is valid
                 const isValidDate = !isNaN(birthdate.getTime());
                 console.log('Is Valid Date:', isValidDate);
-    
+
                 // Set the state with a valid date
                 setBirthdate(isValidDate ? birthdate : new Date());
-    
+
                 // Set other profile data
                 setUsername(profileData.username);
                 setName(profileData.name);
@@ -57,19 +59,18 @@ const Profile = () => {
                 setWeight(profileData.weight);
                 setHeight(profileData.height);
                 setGender(profileData.gender);
-    
+
             } catch (error) {
                 console.error(error);
             }
         };
-    
+
         if (user.uid) {
             getProfile();
         }
     }, [user.uid]);
 
     const toggleEdit = async () => {
-        
         if (isEditable) {
             if (!localName) {
                 Alert.alert("Empty Field", "Name cannot be empty.");
@@ -199,6 +200,7 @@ const Profile = () => {
                                         mode="date"
                                         display="default"
                                         onChange={onDateChange}
+                                        maximumDate={maxBirthdate}
                                     />
                                 )}
                             </>
@@ -220,7 +222,7 @@ const Profile = () => {
                             <Text style={styles.input}>{localWeight}</Text>
                         )}
                     </View>
-                    
+
                     <View style={styles.item}>
                         <Text>Height</Text>
                         {isEditable ? (

@@ -1,12 +1,9 @@
 import { StyleSheet, Text, View, SafeAreaView, Platform, TouchableOpacity, ScrollView, Image, Alert } from 'react-native';
-import React, { useState, useEffect } from 'react';
-import { router, Tabs } from 'expo-router';
+import React, { useState, useEffect, useCallback } from 'react';
+import { router, Tabs, useFocusEffect } from 'expo-router';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import Fontisto from 'react-native-vector-icons/Fontisto';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import { images } from '../../constants/images';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import LogoutController from '../../Controller/LogoutController';
 import { useAuth } from '../../service/AuthContext';
@@ -18,21 +15,31 @@ const Setting = () => {
   const { user } = useAuth();
   const [photoUri, setPhotoUri] = useState('https://reactnative.dev/img/tiny_logo.png');
   const [subscriptionType, setSubscriptionType] = useState('');
+  const [name, setName] = useState('');
+
+  const fetchProfileData = async () => {
+    try {
+      const profileData = await getProfileController.getProfile(user.uid);
+      setSubscriptionType(profileData.subscriptionType);
+      setName(profileData.name); // Assuming the profile data contains a name field
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
-    const getSubscriptionType = async () => {
-      try {
-        const profileData = await getProfileController.getProfile(user.uid);
-        setSubscriptionType(profileData.subscriptionType);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
     if (user.uid) {
-      getSubscriptionType();
+      fetchProfileData();
     }
   }, [user.uid]);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (user.uid) {
+        fetchProfileData();
+      }
+    }, [user.uid])
+  );
 
   const handleSignOut = async () => {
     await LogoutController.logout();
@@ -58,25 +65,25 @@ const Setting = () => {
       },
     ]);
 
-    const createSubTwoButtonAlert = () =>
-      Alert.alert('Cancel Subscription', 'Are you sure you want to cancel your subscription?', [
-        {
-          text: 'No',
-          onPress: () => console.log('No Pressed'),
-          
+  const createSubTwoButtonAlert = () =>
+    Alert.alert('Cancel Subscription', 'Are you sure you want to cancel your subscription?', [
+      {
+        text: 'No',
+        onPress: () => console.log('No Pressed'),
+      },
+      {
+        text: 'Yes',
+        onPress: async () => {
+          try {
+            await setSubscribedController.setSubbed(user.uid, 'free');
+            setSubscriptionType('free');
+          } catch (error) {
+            console.error('Error cancelling subscription:', error);
+          }
         },
-        {
-          text: 'Yes',
-          onPress: async () => {
-            try {
-              await setSubscribedController.setSubbed(user.uid, 'free');
-              setSubscriptionType('free');
-            } catch (error) {
-              console.error('Error deleting user profile:', error);
-            }
-          },
-        },
-      ]);
+      },
+    ]);
+
   return (
     <>
       <Tabs.Screen
@@ -105,7 +112,7 @@ const Setting = () => {
           <View style={{ flexDirection: 'row', alignItems: 'center', padding: 24 }}>
             <Image style={styles.profileImage} source={{ uri: photoUri }} />
             <View>
-              <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 16 }}>{user.name}</Text>
+              <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 16 }}>{name}</Text>
               <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 14 }}>
                 {subscriptionType === 'premium' ? 'Premium User' : 'Free User'}
               </Text>
@@ -150,7 +157,7 @@ const Setting = () => {
             <Text style={styles.buttonText}>Delete account</Text>
           </TouchableOpacity>
           <View style={{ borderBottomColor: '#d9d9d9', borderBottomWidth: 1 }} />
-          <TouchableOpacity style={styles.button} onPress={() => handleSignOut()}>
+          <TouchableOpacity style={styles.button} onPress={handleSignOut}>
             <MaterialIcons name="logout" size={24} style={styles.icon} />
             <Text style={styles.buttonText}>Log out</Text>
           </TouchableOpacity>

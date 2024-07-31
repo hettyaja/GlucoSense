@@ -54,7 +54,7 @@ const Header = ({ title, leftButton, onLeftButtonPress, rightButton, onRightButt
         );
       case 'Add':
         return (
-          <TouchableOpacity onPress={onRightButtonPress}>
+          <TouchableOpacity onPress={onRightButtonPress} style={{marginRight:16}}>
             <Feather name='plus' size={24} color='white' />
           </TouchableOpacity>
         );

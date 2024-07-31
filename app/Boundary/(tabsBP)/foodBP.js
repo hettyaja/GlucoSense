@@ -9,6 +9,7 @@ import {fetchMenuData} from '../../service/menuService';
 import DeleteMenuController from '../../Controller/DeleteMenuController';
 import { useAuth } from '../../service/AuthContext';
 import UpdateMenuController from '../../Controller/UpdateMenuController';
+import Header from '../../components/Header';
 
 const foodBP = () => {
   const {user} = useAuth()
@@ -62,19 +63,11 @@ const foodBP = () => {
 
   return (
     <>
-      <Tabs.Screen options={{
-        title: 'Menu Management',
-        headerStyle: { backgroundColor: '#E58B68' },
-        headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold' },
-        headerTitle: 'Menu Management',
-        headerTitleAlign: 'center',
-        headerRight: () => (
-          <TouchableOpacity onPress={() => router.push('Boundary/CreateMenuPage')} style={{ marginRight: 16 }}>
-            <MaterialIcons name='add' size={32} color='white' />
-          </TouchableOpacity>
-        )
-      }} />
-
+      <Header
+        title='Menu Management'
+        rightButton='Add'
+        onRightButtonPress={() => router.push('Boundary/CreateMenuPage')}
+      />
       <View style={{ flex: 1 }}>
         
         <View style={styles.searchContainer}>
