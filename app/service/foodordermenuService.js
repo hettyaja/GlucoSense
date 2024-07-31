@@ -29,12 +29,27 @@ export const fetchMenuData = async () => {
   }
 };
 
-export const countFoodOrders = async () => {
+export const fetchDietPlans = async () => {
   try {
-    const menuCollection = await fetchMenuData();
-    return menuCollection.length;
+    const dietPlanCollection = [];
+    const businessPartnersSnapshot = await getDocs(collection(db, 'businessPartner'));
+
+    for (const businessPartnerDoc of businessPartnersSnapshot.docs) {
+      const dietPlanRef = collection(db, 'businessPartner', businessPartnerDoc.id, 'dietplan');
+      const dietPlanSnapshot = await getDocs(dietPlanRef);
+
+      dietPlanSnapshot.forEach((dietPlanDoc) => {
+        const dietPlanData = dietPlanDoc.data();
+        dietPlanCollection.push({
+          id: dietPlanDoc.id,
+          ...dietPlanData
+        });
+      });
+    }
+
+    return dietPlanCollection;
   } catch (error) {
-    console.error('Error counting food orders:', error);
+    console.error('Error fetching diet plan data:', error);
     throw error;
   }
 };
