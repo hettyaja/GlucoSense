@@ -6,11 +6,11 @@ import Header from '../../components/Header';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import { useAuth } from '../../service/AuthContext';
 
+
 const SettingSA = () => {
   const router = useRouter();
   const { user } = useAuth();
-  const [photoUri, setPhotoUri] = useState('https://reactnative.dev/img/tiny_logo.png')
-  
+
   const handleSignOut = async () => {
     await LogoutController.logout();
   };
@@ -19,39 +19,34 @@ const SettingSA = () => {
     router.push('/exportReportSA');
   };
 
+  const handleProfile = () => {
+    router.push('Boundary/SystemAdminProfileUI')
+  };
+
   return (
     <>
     <Header
       title="Setting"
     />
     <View style={styles.container}>
-    <TouchableOpacity style={styles.profileCard} onPress={() => router.push('Boundary/SystemAdminProfileUI')}>
-        <View style={{flexDirection:'row',alignItems:'center', padding:24}}>
-         <Image style={styles.profileImage} source={{uri: photoUri}}/>
-          <View>
-            <Text style={{fontFamily:'Poppins-Bold', fontSize:16}}>
-              {user.username}
-            </Text>
-            <Text style={{fontFamily:'Poppins-Regular', fontSize:14}}>
-              System Admin
-            </Text>
-          </View>
-        </View>
-      </TouchableOpacity>
       <View style={styles.section}>
+        <TouchableOpacity style={styles.button} onPress={handleProfile}>
+          <MaterialIcons name="account-circle" size={24}/>
+          <Text style={styles.buttonText}>Profile</Text>
+        </TouchableOpacity>
+
+        <View style={{borderBottomColor:'#d9d9d9', borderBottomWidth:1}}/>
         <TouchableOpacity style={styles.button} onPress={handleExportReport}>
           <MaterialIcons name="bar-chart" size={24}/>
           <Text style={styles.buttonText}>Export Report</Text>
         </TouchableOpacity>
+
         <View style={{borderBottomColor:'#d9d9d9', borderBottomWidth:1}}/>
         <TouchableOpacity style={styles.button} onPress={handleSignOut}>
           <MaterialIcons name='logout' size={24} style={styles.icon}/>
           <Text style={styles.buttonText}>Log out</Text>
         </TouchableOpacity>
       </View>
-
-
-      
     </View>
     </>
   );

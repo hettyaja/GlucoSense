@@ -20,7 +20,7 @@ const Subscribe = () =>
         <Header
             title=''
             leftButton='Back'
-            onLeftButtonPress={() => router.push(handleBackButton)}
+            onLeftButtonPress={() => handleBackButton()}
         />
         <View style={styles.container}>
             <View style={styles.subtitle}>
