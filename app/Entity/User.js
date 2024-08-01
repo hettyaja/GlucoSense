@@ -271,6 +271,19 @@ static async setAccountProfile(uid, name, email, username){
     }
   }
   
+
+
+  static async setDiabetesType(uid, diabetesType){
+    try{
+      const userDocRef = doc(db, 'users', uid);
+      await setDoc(userDocRef, {
+        diabetesType
+      },{merge: true});
+      return {diabetesType};
+    }catch(error){
+      throw error;
+    }
+  };
 }
 
 export default User;

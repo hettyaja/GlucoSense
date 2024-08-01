@@ -43,9 +43,9 @@ const FoodDetails = () => {
     <>
       <Stack.Screen
         options={{
-          title: 'Add meal',
+          title: 'Meal',
           headerStyle: { backgroundColor: '#E58B68' },
-          headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold' },
+          headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Medium', fontSize: 16 },
           headerLeft: () => (
             <TouchableOpacity onPress={() => router.back()}>
               <Ionicons name='chevron-back' size={24} color='white' />
@@ -85,7 +85,7 @@ const FoodDetails = () => {
                 <Text style={styles.sectionText}>{(nutrients.ENERC_KCAL * servings).toFixed(2)} kcal</Text>
 
                 </View>
-                <View style={{borderBottomWidth:1, marginHorizontal:16}}/>
+                <View style={{borderBottomWidth:0.5, marginHorizontal:16}}/>
                 
               </>
 
@@ -96,7 +96,7 @@ const FoodDetails = () => {
               <Text style={styles.sectionText}>Fat</Text>
               <Text style={styles.sectionText}>{(nutrients.FAT * servings).toFixed(2)} g</Text>
               </View>
-              <View style={{borderBottomWidth:1, marginHorizontal:16}}/>
+              <View style={{borderBottomWidth:0.5, marginHorizontal:16}}/>
               </>
             )}
             {nutrients.PROCNT !== undefined && (
@@ -106,7 +106,7 @@ const FoodDetails = () => {
               <Text style={styles.sectionText}>{(nutrients.PROCNT * servings).toFixed(2)} g</Text>
               
               </View>
-              <View style={{borderBottomWidth:1, marginHorizontal:16}}/>
+              <View style={{borderBottomWidth:0.5, marginHorizontal:16}}/>
               </>
             )}
             {nutrients.CHOCDF !== undefined && (

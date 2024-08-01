@@ -4,19 +4,37 @@ import { router, Stack } from 'expo-router';
 import ImageButton from '../../components/ImageButton';
 import { images } from '../../constants/images'
 import Ionicons from 'react-native-vector-icons/Ionicons'
+import setDiabetesTypeController from '../../Controller/setDiabetesTypeController';
+import { useAuth } from '../../service/AuthContext';
+
+
 
 const preReg = () => {
   const [selectedButton, setSelectedButton] = useState(null);
+  const [diabetesType, setDiabetesType] = useState('');
+  const {user} = useAuth(); 
 
-  const handleButtonPress = (buttonIndex) => {
+  const handleButtonPress = (buttonIndex, type) => {
     setSelectedButton(buttonIndex === selectedButton ? null : buttonIndex);
+    setDiabetesType(buttonIndex === selectedButton ? '' : type);
   }
 
   const handleContinuePress = () => {
     if (selectedButton !== null) {
+      handleDiabetesType()
       router.push('Boundary/question3');
     }
   };
+
+  const handleDiabetesType = async () => {
+    try{
+      await setDiabetesTypeController.setDiabetesType(user.uid,diabetesType);
+    }catch (error){
+      console.log(error.message);
+    }
+  }
+
+
 
   return (
     <>
@@ -45,7 +63,7 @@ const preReg = () => {
               styles.button,
               selectedButton === 1 ? styles.selectedButton : null,
             ]}
-            onPress={() => handleButtonPress(1)}
+            onPress={() => handleButtonPress(1, 'Type 1')}
           >
             <Text style={styles.buttonText}>Type 1</Text>
           </TouchableOpacity>
@@ -54,7 +72,7 @@ const preReg = () => {
               styles.button,
               selectedButton === 2 ? styles.selectedButton : null,
             ]}
-            onPress={() => handleButtonPress(2)}
+            onPress={() => handleButtonPress(2, 'Type 2')}
           >
             <Text style={styles.buttonText}>Type 2</Text>
           </TouchableOpacity>
@@ -63,7 +81,7 @@ const preReg = () => {
               styles.button,
               selectedButton === 3 ? styles.selectedButton : null,
             ]}
-            onPress={() => handleButtonPress(3)}
+            onPress={() => handleButtonPress(3, 'Gestational')}
           >
             <Text style={styles.buttonText}>Gestational</Text>
           </TouchableOpacity>
@@ -72,7 +90,7 @@ const preReg = () => {
               styles.button,
               selectedButton === 4 ? styles.selectedButton : null,
             ]}
-            onPress={() => handleButtonPress(4)}
+            onPress={() => handleButtonPress(4, 'Pre-diabetes' )}
           >
             <Text style={styles.buttonText}>Pre-diabetes</Text>
           </TouchableOpacity>
@@ -81,7 +99,7 @@ const preReg = () => {
               styles.button,
               selectedButton === 5 ? styles.selectedButton : null,
             ]}
-            onPress={() => handleButtonPress(5)}
+            onPress={() => handleButtonPress(5, 'Not sure')}
           >
             <Text style={styles.buttonText}>Not sure</Text>
           </TouchableOpacity>

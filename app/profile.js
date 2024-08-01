@@ -10,6 +10,7 @@ import { useAuth } from './service/AuthContext';
 import getProfileController from './Controller/getProfileController';
 import setBodyProfileController from './Controller/SetBodyProfileController';
 import setAccountProfileController from './Controller/SetAccountProfileController';
+import setDiabetesTypeController from './Controller/setDiabetesTypeController';
 
 const Profile = () => {
     const { profileData } = useProfile();
@@ -25,8 +26,6 @@ const Profile = () => {
     const [localDiabetesType, setDiabetesType] = useState('');
     const [isEditable, setIsEditable] = useState(false);
     const [showDatePicker, setShowDatePicker] = useState(false);
-    const [showGenderPicker, setShowGenderPicker] = useState(false);
-    const [showDiabetesPicker, setShowDiabetesPicker] = useState(false);
 
     const maxBirthdate = new Date();
     maxBirthdate.setFullYear(maxBirthdate.getFullYear() - 10);
@@ -103,16 +102,6 @@ const Profile = () => {
         }
     };
 
-    const handleGenderChange = (selectedGender) => {
-        setGender(selectedGender);
-        setShowGenderPicker(false);
-    };
-
-    const handleDiabetesTypeChange = (selectedType) => {
-        setDiabetesType(selectedType);
-        setShowDiabetesPicker(false);
-    };
-
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -164,10 +153,8 @@ const Profile = () => {
                     {isEditable && <Text style={styles.changePhotoText}>Change Photo</Text>}
                 </TouchableOpacity>
 
-                {/* Section for account details */}
                 <Text style={styles.sectionText}>ACCOUNT DETAILS</Text>
                 <View style={styles.section}>
-                    {/* Username field */}
                     <View style={styles.item}>
                         <Text>Username</Text>
                         <TextInput
@@ -194,11 +181,8 @@ const Profile = () => {
                     </View>
                 </View>
 
-                {/* Section for user information */}
                 <Text style={styles.sectionText}>USER INFORMATION</Text>
                 <View style={styles.section}>
-
-                   
                     <View style={styles.item}>
                         <Text>Birthdate</Text>
                         {isEditable ? (
@@ -235,6 +219,7 @@ const Profile = () => {
                         )}
                     </View>
 
+
                     <View style={styles.item}>
                         <Text>Height</Text>
                         {isEditable ? (
@@ -252,22 +237,14 @@ const Profile = () => {
                     <View style={styles.item}>
                         <Text>Gender</Text>
                         {isEditable ? (
-                            <>
-                                <TouchableOpacity onPress={() => setShowGenderPicker(true)}>
-                                    <Text style={styles.input}>{localGender}</Text>
-                                </TouchableOpacity>
-                                {showGenderPicker && (
-                                    <Picker
-                                        selectedValue={localGender}
-                                        onValueChange={handleGenderChange}
-                                        style={styles.picker}
-                                        itemStyle={styles.pickerItem}
-                                    >
-                                        <Picker.Item label="Male" value="Male" />
-                                        <Picker.Item label="Female" value="Female" />
-                                    </Picker>
-                                )}
-                            </>
+                            <Picker
+                                selectedValue={localGender}
+                                onValueChange={setGender}
+                                style={styles.picker}
+                            >
+                                <Picker.Item label="Male" value="Male" />
+                                <Picker.Item label="Female" value="Female" />
+                            </Picker>
                         ) : (
                             <Text style={styles.input}>{localGender}</Text>
                         )}
@@ -276,25 +253,17 @@ const Profile = () => {
                     <View style={styles.item}>
                         <Text>Diabetes Type</Text>
                         {isEditable ? (
-                            <>
-                                <TouchableOpacity onPress={() => setShowDiabetesPicker(true)}>
-                                    <Text style={styles.input}>{localDiabetesType}</Text>
-                                </TouchableOpacity>
-                                {showDiabetesPicker && (
-                                    <Picker
-                                        selectedValue={localDiabetesType}
-                                        onValueChange={handleDiabetesTypeChange}
-                                        style={styles.picker}
-                                        itemStyle={styles.pickerItem}
-                                    >
-                                        <Picker.Item label="Type 1" value="Type1" />
-                                        <Picker.Item label="Type 2" value="Type2" />
-                                        <Picker.Item label="Gestational" value="Gestational" />
-                                        <Picker.Item label="Pre Diabetes" value="PreDiabetes" />
-                                        <Picker.Item label="Not Sure" value="NotSure" />
-                                    </Picker>
-                                )}
-                            </>
+                            <Picker
+                                selectedValue={localDiabetesType}
+                                onValueChange={setDiabetesType}
+                                style={styles.picker}
+                            >
+                                <Picker.Item label="Type 1" value="Type1" />
+                                <Picker.Item label="Type 2" value="Type2" />
+                                <Picker.Item label="Gestational" value="Gestational" />
+                                <Picker.Item label="Pre Diabetes" value="PreDiabetes" />
+                                <Picker.Item label="Not Sure" value="NotSure" />
+                            </Picker>
                         ) : (
                             <Text style={styles.input}>{localDiabetesType}</Text>
                         )}
@@ -348,10 +317,7 @@ const styles = StyleSheet.create({
         color: '#808080',
     },
     picker: {
-        width: '40%',
-    },
-    pickerItem: {
-        height: 40,
-        borderRadius: 16,
+        width: '50%',
+
     },
 });
