@@ -12,7 +12,16 @@ const searchFoodPage = () => {
   const handleSearch = async () => {
     try {
       const data = await searchFood(query);
-      setResults(data.hints);
+      // Filter out duplicates
+      const uniqueResults = [];
+      const names = new Set();
+      data.hints.forEach(item => {
+        if (!names.has(item.food.label)) {
+          uniqueResults.push(item);
+          names.add(item.food.label);
+        }
+      });
+      setResults(uniqueResults);
     } catch (error) {
       console.error('Error fetching food data:', error);
     }
@@ -24,6 +33,10 @@ const searchFoodPage = () => {
       pathname: 'foodDetails', // Ensure this matches the name of your detail page route
       params: { item: JSON.stringify(item) },
     });
+  };
+
+  const formatNumber = (number) => {
+    return number.toFixed(2);
   };
 
   return (
@@ -53,7 +66,7 @@ const searchFoodPage = () => {
         <Button title="Search" onPress={handleSearch} />
         <FlatList
           data={results}
-          keyExtractor={(item) => item.food.foodId}
+          keyExtractor={(item, index) => item.food.foodId + index.toString()}
           renderItem={({ item }) => (
             <TouchableOpacity style={styles.item} onPress={() => handleItemPress(item)}>
               <Text style={styles.foodName}>{item.food.label}</Text>
@@ -61,16 +74,16 @@ const searchFoodPage = () => {
               {item.food.nutrients && (
                 <View>
                   {item.food.nutrients.ENERC_KCAL !== undefined && (
-                    <Text style={styles.foodNutrient}>Calories: {item.food.nutrients.ENERC_KCAL} kcal</Text>
+                    <Text style={styles.foodNutrient}>Calories: {formatNumber(item.food.nutrients.ENERC_KCAL)} kcal</Text>
                   )}
                   {item.food.nutrients.FAT !== undefined && (
-                    <Text style={styles.foodNutrient}>Fat: {item.food.nutrients.FAT} g</Text>
+                    <Text style={styles.foodNutrient}>Fat: {formatNumber(item.food.nutrients.FAT)} g</Text>
                   )}
                   {item.food.nutrients.PROCNT !== undefined && (
-                    <Text style={styles.foodNutrient}>Protein: {item.food.nutrients.PROCNT} g</Text>
+                    <Text style={styles.foodNutrient}>Protein: {formatNumber(item.food.nutrients.PROCNT)} g</Text>
                   )}
                   {item.food.nutrients.CHOCDF !== undefined && (
-                    <Text style={styles.foodNutrient}>Carbohydrates: {item.food.nutrients.CHOCDF} g</Text>
+                    <Text style={styles.foodNutrient}>Carbohydrates: {formatNumber(item.food.nutrients.CHOCDF)} g</Text>
                   )}
                 </View>
               )}

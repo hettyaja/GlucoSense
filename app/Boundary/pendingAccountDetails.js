@@ -75,7 +75,8 @@ const PendingAccountDetails = () => {
           <Text style={styles.detailText}><Text style={styles.headerText}>Postal code:</Text> {accountDetails.postal}</Text>
           <Text style={styles.detailText}><Text style={styles.headerText}>Full Name:</Text> {accountDetails.name}</Text>
           <Text style={styles.detailText}><Text style={styles.headerText}>Phone Number:</Text> {accountDetails.phoneNum}</Text>
-          <View style={styles.buttonContainer}>
+        </View>
+        <View style={styles.buttonContainer}>
           <TouchableOpacity style={[styles.button, styles.rejectButton]} onPress={handleReject}>
               <Text style={styles.buttonText}>Reject</Text>
             </TouchableOpacity>
@@ -83,7 +84,6 @@ const PendingAccountDetails = () => {
               <Text style={styles.buttonText}>Accept</Text>
             </TouchableOpacity>
           </View>
-        </View>
       </ScrollView>
     </>
   );
@@ -92,26 +92,22 @@ const PendingAccountDetails = () => {
 const styles = StyleSheet.create({
   scrollView: {
     flexGrow: 1,
-    justifyContent: 'center',
   },
   container: {
-    flex: 1,
-    paddingHorizontal: 16, // Padding only on left and right
-    paddingVertical: 20, // Padding on top and bottom
-    backgroundColor: '#ededed',
+    backgroundColor: 'white',
+    margin:16,
+    borderRadius:8
+    
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#ededed',
+    backgroundColor: 'white',
   },
   detailText: {
     fontSize: 12,
-    marginBottom: 12, // Increased margin between lines
     paddingHorizontal: 10, // Added padding around the text
-    backgroundColor: '#f9f9f9',
-    borderRadius: 5,
     paddingVertical: 6, // Padding for vertical spacing
   },
   headerText: {

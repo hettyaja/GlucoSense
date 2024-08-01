@@ -32,12 +32,17 @@ const editGlucose = () => {
 
   const saveGlucose = async () => {
     if (user) {
+      if (!glucoseValue || parseFloat(glucoseValue) === 0) {
+        Alert.alert('Invalid Glucose Value', 'Please enter a valid glucose value.');
+        return;
+      }
+
       const updatedGlucoseLog = {
         id: parsedGlucoseData.id,
         time: selectedDate,
         period: selectedValue,
         glucose: glucoseValue
-      }
+      };
 
       try {
         await UpdateGlucoseLogsController.updateGlucoseLogs(user.uid, updatedGlucoseLog);
@@ -47,7 +52,7 @@ const editGlucose = () => {
         console.error('Error updating glucose log:', error);
       }
     }
-  }
+  };
 
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 

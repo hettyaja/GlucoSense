@@ -9,6 +9,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../../../firebase';
 import ViewDietPlanController from '../../Controller/ViewDietPlanController';
+import Header from '../../components/Header';
 
 const planBP = () => {
   const { dietPlans, setDietPlans, removeDietPlan } = useContext(DietPlanContext);
@@ -65,18 +66,11 @@ const planBP = () => {
 
   return (
     <>
-      <Tabs.Screen options={{
-        title: 'Diet Plan',
-        headerStyle: { backgroundColor: '#E58B68' },
-        headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold'},
-        headerTitle: 'Diet Plan',
-        headerTitleAlign: 'center',
-        headerRight: () => (
-          <TouchableOpacity onPress={() => router.push('/Boundary/CreateDietPlan')} style={{ marginRight: 16 }}>
-            <MaterialIcons name='add' size={32} color='white'/>
-          </TouchableOpacity>
-        )
-      }}/>
+      <Header
+        title="Diet Plan"
+        rightButton="Add"
+        onRightButtonPress={() => router.push('/Boundary/CreateDietPlan')}
+      />
 
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.searchContainer}>

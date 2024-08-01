@@ -4,25 +4,25 @@ import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView} from 'reac
 import { useNavigation } from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import { router } from "expo-router";
+import Header from "../components/Header";
 
 
  const handleBackButton = () => {
     router.back()
   }
+ 
 const Subscribe = () => 
     {
     const navigation = useNavigation();
+
     return (
-        <ScrollView style={styles.container}>
-            <View style={styles.header}>
-                <ImageButton
-                    source={require("./../assets/back.png")}
-                    imageSize={{ width: 24, height: 24 }}
-                    onPress={() => handleBackButton()}
-                />
-                <Text style={styles.title}> Simplify Your {"\n"} Blood Glucose Tracking </Text>
-            </View>
-          
+        <>
+        <Header
+            title=''
+            leftButton='Back'
+            onLeftButtonPress={() => handleBackButton()}
+        />
+        <View style={styles.container}>
             <View style={styles.subtitle}>
                 <Text style={styles.h3}>Unlock Exclusive Features in Our Diabetes Management App!</Text>
             </View>
@@ -61,7 +61,8 @@ const Subscribe = () =>
                     <Text style={styles.buttonText}>Get Started</Text>
                 </TouchableOpacity>
             </View>
-        </ScrollView>
+        </View>
+        </>
     );
 };
 
@@ -93,12 +94,10 @@ const styles = StyleSheet.create({
     },
 
     text:{
-        
         fontSize:16,
-        fontWeight: '600', // Changed to string
         textAlign:'left',
         paddingRight:50,
-        fontFamily: "Poppins-Light",
+        fontFamily: "Poppins-Regular",
     },
 
     icon:{
@@ -110,31 +109,29 @@ const styles = StyleSheet.create({
         backgroundColor:"white",
     },
     h3:{
-        fontSize:18,
+        fontSize:24,
         fontFamily:"Poppins-Bold",
-        paddingLeft:16
+        paddingHorizontal:16
     }, 
     price:{
         backgroundColor:'#ffff',
-        paddingBottom:20,
-        borderRadius:20,
+        marginTop:100,
+        paddingBottom:180,
+        borderRadius:24,
+        // borderWidth: 10,
+        // borderColor: 'red',
         alignItems:'center',
         justifyContent:'center',
-
-        // Adding shadow for iOS
+        elevation: 10, // Adjust the value to increase or decrease the shadow
         shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        elevation: 5, // Adding shadow for Android
+        borderWidth: 0.5,
+        borderColor: '#808080',
+        shadowOffset: { width: -50, height: -40000 }, // This creates the illusion of the shadow at the top
     },
 
     tag:{
-        fontSize:12,
-        fontFamily: "Poppins-Regular",
+        fontSize:16,
+        fontFamily: "Poppins-Medium",
         textAlign:"center",
         padding : 10,
     },

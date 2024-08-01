@@ -3,6 +3,10 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, se
 import { doc, setDoc, deleteDoc, getDocs, updateDoc, Timestamp, collection, getDoc } from 'firebase/firestore';
 import { deleteUser as firebaseDeleteUser } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+
+
+const BASE_URL = 'https://us-central1-glucosense-24-s2-07.cloudfunctions.net/api'; 
 
 class User {
   constructor(id, username, name, email, userType, registerTime, status, weight, gender, height, birthdate, bodyProfileComplete) {
@@ -175,6 +179,39 @@ class User {
     }
   }
 
+  static async fetchTotalLogsCount() {
+    try {
+      const usersCollection = await getDocs(collection(db, 'users'));
+      let totalGlucoseLogsCount = 0;
+      let totalMedicineLogsCount = 0;
+      let totalMealLogsCount = 0;
+
+      await Promise.all(usersCollection.docs.map(async (userDoc) => {
+        const userId = userDoc.id;
+        
+        // Count documents in glucoseLogs subcollection
+        const glucoseLogsCollection = await getDocs(collection(db, 'users', userId, 'glucoseLogs'));
+        totalGlucoseLogsCount += glucoseLogsCollection.size;
+
+        // Count documents in medicineLogs subcollection
+        const medicineLogsCollection = await getDocs(collection(db, 'users', userId, 'medicineLogs'));
+        totalMedicineLogsCount += medicineLogsCollection.size;
+
+        // Count documents in mealLogs subcollection
+        const mealLogsCollection = await getDocs(collection(db, 'users', userId, 'mealLogs'));
+        totalMealLogsCount += mealLogsCollection.size;
+      }));
+
+      return {
+        totalGlucoseLogsCount,
+        totalMedicineLogsCount,
+        totalMealLogsCount,
+      };
+    } catch (error) {
+      throw new Error('Failed to fetch logs.');
+    }
+  }
+
   static async setBodyProfile(uid, gender, birthdate, weight, height){  
     try {
         const userDocRef = doc(db, 'users', uid);
@@ -213,6 +250,38 @@ static async setAccountProfile(uid, name, email, username){
         return { subscriptionType };
     } catch (error) {
         throw error;
+    }
+  };
+
+  static async fetchActiveUser(user) {
+    try {
+      if (!user) {
+        throw new Error('No user is currently signed in');
+      }
+      const token = await user.getIdToken();
+      const response = await axios.get(`${BASE_URL}/active-users`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      return response.data.activeUsersCount;
+    } catch (error) {
+      console.error('Error fetching active users:', error);
+      throw new Error('Failed to fetch active users.');
+    }
+  }
+  
+
+
+  static async setDiabetesType(uid, diabetesType){
+    try{
+      const userDocRef = doc(db, 'users', uid);
+      await setDoc(userDocRef, {
+        diabetesType
+      },{merge: true});
+      return {diabetesType};
+    }catch(error){
+      throw error;
     }
   };
 }

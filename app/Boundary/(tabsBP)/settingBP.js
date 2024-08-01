@@ -11,6 +11,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useAuth } from '../../service/AuthContext';
 import DeleteBPController from '../../Controller/DeleteBPController';
 import LogoutController from '../../Controller/LogoutController';
+import Header from '../../components/Header';
 
 const settingBP = () => {
   const { user } = useAuth();
@@ -71,9 +72,29 @@ const settingBP = () => {
 
   return (
     <>
+      <Header
+        title="Setting"
+      />
       <View style={styles.container}>
         {/* Profile Card Section */}
-        <TouchableOpacity onPress={() => router.push('Boundary/ProfileBpPage')}>
+        <TouchableOpacity
+          style={styles.profileCard}
+          onPress={() => router.push('Boundary/ProfileBpPage')}
+        >
+          <View style={{ flexDirection: 'row', alignItems: 'center', padding: 24 }}>
+            <Image style={styles.profileImage} source={{ uri: photoUri }} />
+            <View>
+              <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 16 }}>{entityName}</Text>
+              <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 14 }}>
+                {location}
+              </Text>
+              <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 14 }}>
+                {description}
+              </Text>
+            </View>
+          </View>
+        </TouchableOpacity>
+        {/* <TouchableOpacity onPress={() => router.push('Boundary/ProfileBpPage')}>
           <View style={styles.profileCard}>
             <Image
               source={{ uri: photoUri }} // Use actual photo URI
@@ -87,7 +108,7 @@ const settingBP = () => {
 
             <FontAwesome name='angle-right' size={24} color="#00000" />
           </View>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         {/* Settings Options */}
         <TouchableOpacity style={styles.optionButton} onPress={() => router.push('Notification')}>
@@ -117,23 +138,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f5f5',
   },
   profileCard: {
-    backgroundColor: '#fff',
-    margin: 24,
-    padding: 20,
-    borderRadius: 10,
+    backgroundColor: 'white',
     flexDirection: 'row',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 5 },
+    margin: 16,
+    marginVertical: 24,
+    borderRadius: 8,
     elevation: 5,
   },
-  profilePhoto: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: '#ccc',
+  profileImage: {
+    borderRadius: 100,
+    borderColor: 'black',
+    width: 64,
+    height: 64,
+    marginRight: 16,
   },
   profileInfo: {
     flex: 1,

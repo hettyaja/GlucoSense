@@ -1,13 +1,15 @@
+// app/food.js
 import { useRouter } from 'expo-router';
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Header from '../../components/Header';
-import { fetchMenuData } from '../../service/foodordermenuService'; // Import the updated menu service
+import { fetchMenuData, fetchDietPlans } from '../../service/foodordermenuService'; // Import the updated menu service
 
 const Food = () => {
   const router = useRouter();
   const [featuredMenu, setFeaturedMenu] = useState([]);
+  const [dietPlans, setDietPlans] = useState([]);
 
   useEffect(() => {
     const fetchFeaturedMenu = async () => {
@@ -21,6 +23,18 @@ const Food = () => {
     fetchFeaturedMenu();
   }, []);
 
+  useEffect(() => {
+    const fetchDietPlansData = async () => {
+      try {
+        const dietPlanCollection = await fetchDietPlans(); // Fetch diet plan data
+        setDietPlans(dietPlanCollection.slice(0, 4));
+      } catch (error) {
+        console.error('Error fetching diet plan data:', error);
+      }
+    };
+    fetchDietPlansData();
+  }, []);
+
   return (
     <>
       <Header title='Food' />
@@ -28,7 +42,7 @@ const Food = () => {
         <View style={styles.statusContainer}>
           <View style={styles.statusHeader}>
             <Text style={styles.statusHeaderText}>My Food</Text>
-            <TouchableOpacity style={styles.statusBox} onPress={() => router.push('test/foodOrder')}>
+            <TouchableOpacity style={styles.statusBox} onPress={() => router.push('Boundary/OrderHistory')}>
               <Text>3 Orders</Text>
             </TouchableOpacity>
           </View>
@@ -53,6 +67,17 @@ const Food = () => {
               <Image source={{ uri: menu.image }} style={styles.menuImage} />
               <Text style={styles.menuTitle}>{menu.title}</Text>
               <Text style={styles.menuPrice}>${menu.price}</Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+
+        <Text style={styles.sectionTitle}>Diet plan choices</Text>
+        <ScrollView horizontal contentContainerStyle={styles.featuredMenuContainer}>
+          {dietPlans.map((plan) => (
+            <TouchableOpacity key={plan.id} style={styles.menuCard} onPress={() => router.push('Boundary/ViewDietPlan')}>
+              <Image source={{ uri: plan.meals.dinner.image || 'https://via.placeholder.com/150' }} style={styles.menuImage} />
+              <Text style={styles.menuTitle}>{plan.day}</Text>
+              <Text style={styles.menuPrice}>{plan.meals.dinner.title}</Text>
             </TouchableOpacity>
           ))}
         </ScrollView>

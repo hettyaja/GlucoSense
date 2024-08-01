@@ -2,10 +2,8 @@ import { View, Text, StyleSheet, TouchableOpacity, SectionList, Alert } from 're
 import React, { useEffect, useState, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { router } from 'expo-router';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import Feather from 'react-native-vector-icons/Feather';
 import { useAuth } from '../../service/AuthContext';
 import Header from '../../components/Header';
 import A1CComponent from '../../components/A1C'; // Ensure this import is correct
@@ -15,12 +13,16 @@ import Divider from '../../components/Divider';
 import ViewGlucoseLogsController from '../../Controller/ViewGlucoseLogsController';
 import ViewMedicineLogsController from '../../Controller/ViewMedicineLogsController';
 import ViewMealLogsController from '../../Controller/ViewMealLogsController';
+<<<<<<< HEAD
 import getProfileController from '../../Controller/getProfileController';
 import FetchA1cController from '../../Controller/FetchA1cController';
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu'; // Import from react-native-popup-menu
 
 
 
+=======
+import BottomSheetModal from './add';
+>>>>>>> df2bfd9a06d997bf766d416b7113efd4cce9a72a
 const formatDate = (time) => {
   const date = new Date(time.seconds * 1000);
   const today = new Date();
@@ -47,6 +49,7 @@ const groupLogsByDate = (logs) => {
   }, {});
 };
 
+
 const home = () => {
   const { user } = useAuth();
   const [dateType, setDateType] = useState('Today');
@@ -57,6 +60,7 @@ const home = () => {
   const [highestGlucose, setHighestGlucose] = useState(null);
   const [logsLoaded, setLogsLoaded] = useState(false);
   const [refreshA1C, setRefreshA1C] = useState(false);
+<<<<<<< HEAD
   const [subscriptionType, setSubscriptionType] = useState('');
   const [a1c, setA1c] = useState('');
 
@@ -76,6 +80,10 @@ const home = () => {
       getSubscriptionType();
     }
   }, [user.uid]);
+=======
+  const [isModalVisible, setModalVisible] = useState(false);
+
+>>>>>>> df2bfd9a06d997bf766d416b7113efd4cce9a72a
 
   const fetchAllLogs = async () => {
     if (user) {
@@ -337,17 +345,31 @@ const home = () => {
               onMedicine={() => handleFilterType('medicine')}
             />
           </View>
-          <SectionList
-            sections={sections}
-            keyExtractor={(item) => item.id}
-            renderItem={renderLogItem}
-            renderSectionHeader={({ section: { title } }) => (
-              <Text style={styles.sectionHeader}>{title}</Text>
-            )}
-            contentContainerStyle={styles.section}
-          />
+          {logs.length === 0 ? (
+            <View style={styles.noDataContainer}>
+              <Text style={styles.noDataText}>Input data to get started</Text>
+              <TouchableOpacity onPress={() => setModalVisible(true)}>
+                <Text style={{color: 'blue', fontFamily: 'Poppins-SemiBold', fontSize: 18}}>Create Here</Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <SectionList
+              sections={sections}
+              keyExtractor={(item) => item.id}
+              renderItem={renderLogItem}
+              renderSectionHeader={({ section: { title } }) => (
+                <Text style={styles.sectionHeader}>{title}</Text>
+              )}
+              contentContainerStyle={styles.section}
+            />
+          )}
         </View>
       </View>
+      <BottomSheetModal 
+      isVisible={isModalVisible}
+      onClose={()=> setModalVisible(false)}/>
+      
+
     </>
   );
 };
@@ -400,8 +422,10 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Regular',
     fontSize: 14,
     marginLeft: 16,
-    color: '#808080'
+    color: '#808080',
+   
   },
+<<<<<<< HEAD
   a1cMenuButton: {
     borderColor: 'white',
     borderWidth: 1,
@@ -418,5 +442,18 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Medium',
     fontSize: 16,
     padding: 8
+=======
+  noDataContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+  },
+  noDataText: {
+    fontFamily: 'Poppins-Regular',
+    fontSize: 18,
+    color: '#808080',
+    paddingHorizontal: 10
+>>>>>>> df2bfd9a06d997bf766d416b7113efd4cce9a72a
   }
 });

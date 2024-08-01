@@ -110,11 +110,12 @@ const profileBP = () => {
 
   return (
     <>
+     
       <Stack.Screen
         options={{
           title: 'Edit profile',
           headerStyle: { backgroundColor: '#E58B68' },
-          headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold' },
+          headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Medium', fontSize: 16},
           headerLeft: () => (
             <ImageButton
               source={require('../assets/back.png')}

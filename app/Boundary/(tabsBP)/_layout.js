@@ -14,66 +14,54 @@ const _layout = () => {
           title: 'Home',
           headerShown: false,
           tabBarIcon: () => (
-            <Octicons name='home' size={24} color='#E58B68' />
+            <Octicons name='home' size={20} color='#E58B68' />
           ),
           tabBarLabel: ({ focused }) => (
-            <Text style={{ fontFamily: focused ? 'Poppins-SemiBold' : 'Poppins-Regular', color: '#E58B68' }}>
+            <Text style={{ fontFamily: focused ? 'Poppins-SemiBold' : 'Poppins-Regular', fontSize:10, color: '#E58B68' }}>
               Home
             </Text>
           ),
         }} />
         <Tabs.Screen name='OrderBP' options={{
           title: 'Food Order',
-          headerTitleAlign: 'center',
-          headerStyle: { backgroundColor: '#E58B68' },
-          headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold' },
           tabBarIcon: () => (
-            <MaterialCommunityIcons name="clipboard-text-outline" size={24} color="#E58B68" />
+            <MaterialCommunityIcons name="clipboard-text-outline" size={20} color="#E58B68" />
           ),
           tabBarLabel: ({ focused }) => (
-            <Text style={{ fontFamily: focused ? 'Poppins-SemiBold' : 'Poppins-Regular', color: '#E58B68' }}>
+            <Text style={{ fontFamily: focused ? 'Poppins-SemiBold' : 'Poppins-Regular', fontSize:10, color: '#E58B68' }}>
               Order
             </Text>
           ),
         }} />
         <Tabs.Screen name='foodBP' options={{
           title: 'Food',
-          headerTitleAlign: 'center',
-          headerStyle: { backgroundColor: '#E58B68' },
-          headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold' },
           tabBarIcon: () => (
-            <FontAwesome name='cutlery' size={24} color='#E58B68' />
+            <FontAwesome name='cutlery' size={20} color='#E58B68' />
           ),
           tabBarLabel: ({ focused }) => (
-            <Text style={{ fontFamily: focused ? 'Poppins-SemiBold' : 'Poppins-Regular', color: '#E58B68' }}>
+            <Text style={{ fontFamily: focused ? 'Poppins-SemiBold' : 'Poppins-Regular', fontSize:10, color: '#E58B68' }}>
               Food
             </Text>
           ),
         }} />
         <Tabs.Screen name='planBP' options={{
           title: 'Plan',
-          headerTitleAlign: 'center',
-          headerStyle: { backgroundColor: '#E58B68' },
-          headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold' },
           tabBarIcon: () => (
-            <MaterialCommunityIcons name="clipboard-text-outline" size={24} color="#E58B68" />
+            <MaterialCommunityIcons name="clipboard-text-outline" size={20} color="#E58B68" />
           ),
           tabBarLabel: ({ focused }) => (
-            <Text style={{ fontFamily: focused ? 'Poppins-SemiBold' : 'Poppins-Regular', color: '#E58B68' }}>
+            <Text style={{ fontFamily: focused ? 'Poppins-SemiBold' : 'Poppins-Regular', fontSize:10, color: '#E58B68' }}>
               Plan
             </Text>
           ),
         }} />
         <Tabs.Screen name='settingBP' options={{
           title: 'Setting',
-          headerTitleAlign: 'center',
-          headerStyle: { backgroundColor: '#E58B68' },
-          headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold' },
           tabBarIcon: () => (
-            <AntDesign name='setting' size={24} color='#E58B68' />
+            <AntDesign name='setting' size={20} color='#E58B68' />
           ),
           tabBarLabel: ({ focused }) => (
-            <Text style={{ fontFamily: focused ? 'Poppins-SemiBold' : 'Poppins-Regular', color: '#E58B68' }}>
+            <Text style={{ fontFamily: focused ? 'Poppins-SemiBold' : 'Poppins-Regular', fontSize:10, color: '#E58B68' }}>
               Setting
             </Text>
           ),
