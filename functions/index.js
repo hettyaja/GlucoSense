@@ -2,30 +2,33 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const express = require('express');
 const cors = require('cors');
+const serviceAccount = require('./glucosense-24-s2-07-firebase-adminsdk-p9t7o-01008d24cb.json');
 
-const serviceAccount = {
-  type: functions.config().service_account.type,
-  project_id: functions.config().service_account.project_id,
-  private_key_id: functions.config().service_account.private_key_id,
-  private_key: functions.config().service_account.private_key.replace(/\\n/g, '\n'),
-  client_email: functions.config().service_account.client_email,
-  client_id: functions.config().service_account.client_id,
-  auth_uri: functions.config().service_account.auth_uri,
-  token_uri: functions.config().service_account.token_uri,
-  auth_provider_x509_cert_url: functions.config().service_account.auth_provider_x509_cert_url,
-  client_x509_cert_url: functions.config().service_account.client_x509_cert_url,
-};
+// const serviceAccount = {
+//   type: functions.config().service_account.type,
+//   project_id: functions.config().service_account.project_id,
+//   private_key_id: functions.config().service_account.private_key_id,
+//   private_key: functions.config().service_account.private_key.replace(/\\n/g, '\n'),
+//   client_email: functions.config().service_account.client_email,
+//   client_id: functions.config().service_account.client_id,
+//   auth_uri: functions.config().service_account.auth_uri,
+//   token_uri: functions.config().service_account.token_uri,
+//   auth_provider_x509_cert_url: functions.config().service_account.auth_provider_x509_cert_url,
+//   client_x509_cert_url: functions.config().service_account.client_x509_cert_url,
+// };
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
 
-const app = express();
-app.use(cors({ origin: true }));
+// const app = express();
+// app.use(cors({ origin: true }));
 
-app.get('/', (req, res) => {
-  res.send('Hello World');
-});
+exports.api = functions.https.onRequest((req, res) => {
+    cors(req, res, () => {
+      res.status(200).send("Hello from Firebase Emulator!");
+    });
+  });
 
 // app.get('/active-users', async (req, res) => {
 //   try {
@@ -62,4 +65,4 @@ app.get('/', (req, res) => {
 //   }
 // });
 
-exports.api = functions.https.onRequest(app);
+// exports.api = functions.https.onRequest(app);
