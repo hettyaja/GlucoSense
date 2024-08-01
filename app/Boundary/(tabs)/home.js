@@ -16,6 +16,7 @@ import ViewMealLogsController from '../../Controller/ViewMealLogsController';
 import getProfileController from '../../Controller/getProfileController';
 import FetchA1cController from '../../Controller/FetchA1cController';
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu'; // Import from react-native-popup-menu
+import Modal from 'react-native-modal'; // Import from react-native-modal
 
 
 import BottomSheetModal from './add';
@@ -47,6 +48,9 @@ const groupLogsByDate = (logs) => {
 
 
 const home = () => {
+  const [isA1CModalVisible, setA1CModalVisible] = useState(false); // State for A1C Modal
+  const [isA1CModalVisible1, setA1CModalVisible1] = useState(false); // State for A1C Modal
+  const [a1cMessage, setA1cMesssage] = useState('');
   const { user } = useAuth();
   const [dateType, setDateType] = useState('Today');
   const [logs, setLogs] = useState([]);
@@ -59,8 +63,9 @@ const home = () => {
   const [subscriptionType, setSubscriptionType] = useState('');
   const [a1c, setA1c] = useState('');
 
+
   useEffect(() => {
-    const getSubscriptionType = async () => {
+    const getData = async () => {
       try {
         const profileData = await getProfileController.getProfile(user.uid);
         setSubscriptionType(profileData.subscriptionType);
@@ -69,10 +74,18 @@ const home = () => {
       } catch (error) {
         console.error(error);
       }
+      if (a1c < 5.7){
+        setA1cMesssage("Your A1C level is in the normal range! Keep up the great work to maintain your health.")
+      } else if(a1c < 6.4){
+        setA1cMesssage("Your A1C level is slightly elevated. It's important to take steps to manage your glucose levels.")
+        
+      } else if( a1c >= 6.5){
+        setA1cMesssage("Your A1C level suggests diabetes. It’s crucial to consult with your healthcare provider to create a management plan.")
+      }
     };
 
     if (user.uid) {
-      getSubscriptionType();
+      getData();
     }
   }, [user.uid]);
   const [isModalVisible, setModalVisible] = useState(false);
@@ -274,9 +287,9 @@ const home = () => {
   const handleA1CPress = () => {
     if (subscriptionType === 'premium') {
       if (a1c == '0'){
-        
-      } else{
-
+        setA1CModalVisible(true); // Show A1C modal
+      } else {
+        setA1CModalVisible1(true); // Show A1C modal
       }
     } else if (subscriptionType === 'free') {
       router.push('Boundary/Subscribe');
@@ -361,7 +374,45 @@ const home = () => {
       <BottomSheetModal 
       isVisible={isModalVisible}
       onClose={()=> setModalVisible(false)}/>
-      
+      {/* A1C Modal */}
+      <Modal
+        isVisible={isA1CModalVisible}
+        onBackdropPress={() => setA1CModalVisible(false)}
+        style={styles.modal}
+      >
+        <View style={styles.modalContent}>
+          <Text style={styles.modalTitle}>Your estimated A1c</Text>
+          
+          {/* Add content for your A1C modal here */}
+          <Text style={styles.modalBoldText}>Insufficient data</Text>
+          <Text style={styles.modalText}>Currently you do not have enough glucose logs for us to provide you with an accurante estimated A1c reading. </Text>
+          <Text style={styles.modalBoldText}>How to get it</Text>
+          <Text style={styles.modalText}>Log at least 21 blood sugar values over the past 3 months in order to get your estimated A1c.</Text>
+          <TouchableOpacity onPress={() => setA1CModalVisible(false)} style={styles.closeButton}>
+            <Text style={styles.closeButtonText}>Close</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
+
+      <Modal
+        isVisible={isA1CModalVisible1}
+        onBackdropPress={() => setA1CModalVisible1(false)}
+        style={styles.modal}
+      >
+        <View style={styles.modalContent}>
+          <Text style={styles.modalTitle1}>Your estimated A1c</Text>
+          <View style = {{flexDirection: 'row'}}>
+          <Text style={styles.a1cReading}>{a1c}</Text>
+          <Text style = {{fontSize: 30, paddingTop: 20}}>%</Text>
+          </View>
+          {/* Add content for your A1C modal here */}
+          <Text style={styles.modalBoldText}>Insight</Text>
+          <Text style={styles.modalText}>{a1cMessage}</Text>
+          <TouchableOpacity onPress={() => setA1CModalVisible1(false)} style={styles.closeButton}>
+            <Text style={styles.closeButtonText}>Close</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
 
     </>
   );
@@ -446,6 +497,67 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#808080',
     paddingHorizontal: 10
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+    paddingHorizontal: 16,
+    paddingBottom: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  modalTitle: {
+    color: '#E58B68',
+    fontFamily: 'Poppins-Bold',
+    fontSize: 20,
+    marginBottom: 10,
+    marginTop: 16,
+  },
+  modalTitle1: {
+    color: '#E58B68',
+    fontFamily: 'Poppins-Bold',
+    fontSize: 20,
+    marginTop: 16,
+  },
+  modalBoldText: {
+    paddingHorizontal: 10,
+    alignSelf:'flex-start',
+    fontFamily: 'Poppins-Bold',
+    fontSize: 16,
+    marginBottom: 2,
+  },
+
+  modalText: {
+    paddingHorizontal: 10,
+    alignSelf:'flex-start',
+    fontFamily: 'Poppins-Regular',
+    fontSize: 16,
+    paddingBottom: 10,
+    
+  },
+
+  a1cReading: {
+    fontFamily: 'Poppins-SemiBold',
+    fontSize: 80,
+    marginBottom: 10,
+  },
+
+  closeButton: {
+    marginTop: 12,
+    padding: 10,
+    paddingHorizontal: 20,
+    backgroundColor: '#E58B68',
+    borderRadius: 8,
+  },
+  closeButtonText: {
+    color: 'white',
+    fontFamily: 'Poppins-SemiBold',
+    fontSize: 16,
+  },
+  modal: {
+    justifyContent: 'flex-end',
+    margin: 0
   }
 }
 );
