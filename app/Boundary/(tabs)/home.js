@@ -15,6 +15,11 @@ import Divider from '../../components/Divider';
 import ViewGlucoseLogsController from '../../Controller/ViewGlucoseLogsController';
 import ViewMedicineLogsController from '../../Controller/ViewMedicineLogsController';
 import ViewMealLogsController from '../../Controller/ViewMealLogsController';
+import getProfileController from '../../Controller/getProfileController';
+import FetchA1cController from '../../Controller/FetchA1cController';
+import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu'; // Import from react-native-popup-menu
+
+
 
 const formatDate = (time) => {
   const date = new Date(time.seconds * 1000);
@@ -30,7 +35,6 @@ const formatDate = (time) => {
     return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
   }
 };
-
 
 const groupLogsByDate = (logs) => {
   return logs.reduce((groups, log) => {
@@ -53,6 +57,25 @@ const home = () => {
   const [highestGlucose, setHighestGlucose] = useState(null);
   const [logsLoaded, setLogsLoaded] = useState(false);
   const [refreshA1C, setRefreshA1C] = useState(false);
+  const [subscriptionType, setSubscriptionType] = useState('');
+  const [a1c, setA1c] = useState('');
+
+  useEffect(() => {
+    const getSubscriptionType = async () => {
+      try {
+        const profileData = await getProfileController.getProfile(user.uid);
+        setSubscriptionType(profileData.subscriptionType);
+        const a1cData = await FetchA1cController.fetchA1C(user.uid);
+        setA1c(a1cData);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    if (user.uid) {
+      getSubscriptionType();
+    }
+  }, [user.uid]);
 
   const fetchAllLogs = async () => {
     if (user) {
@@ -247,6 +270,18 @@ const home = () => {
     </View>
   );
 
+  const handleA1CPress = () => {
+    if (subscriptionType === 'premium') {
+      if (a1c == '0'){
+        
+      } else{
+
+      }
+    } else if (subscriptionType === 'free') {
+      router.push('Boundary/Subscribe');
+    }
+  };
+
   return (
     <>
       <Header
@@ -285,13 +320,13 @@ const home = () => {
           <View style={{ flexDirection: 'row-reverse' }}>
             <TouchableOpacity
               style={{ borderColor: 'white', borderWidth: 1, borderRadius: 8, width: '32%', padding: 8, alignItems:'center' }} 
-              onPress={() => router.push('Boundary/Subscribe')}
+              onPress={handleA1CPress}
             >
               <A1CComponent key={refreshA1C} user={user} />
             </TouchableOpacity>
           </View>
         </View>
-        
+
         <View style={{ backgroundColor: '#f5f5f5', flex: 1, borderTopLeftRadius: 16, borderTopRightRadius: 16 }}>
           <View style={{ padding: 16, alignItems: 'flex-end' }}>
             <PopupMenu
@@ -367,4 +402,21 @@ const styles = StyleSheet.create({
     marginLeft: 16,
     color: '#808080'
   },
+  a1cMenuButton: {
+    borderColor: 'white',
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 8,
+    alignItems: 'center'
+  },
+  a1cButtonText: {
+    fontFamily: 'Poppins-Medium',
+    fontSize: 18,
+    color: 'white'
+  },
+  menuOptionText: {
+    fontFamily: 'Poppins-Medium',
+    fontSize: 16,
+    padding: 8
+  }
 });

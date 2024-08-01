@@ -160,11 +160,65 @@ class GlucoseLogs {
         throw error;
       }
     }
+
+    static async calculateA1C(userId)  {
+      // Set the date to three months ago
+      const threeMonthsAgo = new Date();
+      threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+    
+      try {
+        // Reference to the glucose logs collection for the user
+        const glucoseLogsRef = collection(db, 'users', userId, 'glucoseLogs');
+    
+        // Query to get glucose logs from the past three months
+        const q = query(glucoseLogsRef, where('time', '>=', threeMonthsAgo));
+        const querySnapshot = await getDocs(q);
+    
+        if (querySnapshot.empty) {
+          console.log('No matching documents.');
+          return 0; // Return 0 if there are no logs
+        }
+    
+        let totalGlucose = 0;
+        let count = 0;
+    
+        // Iterate over the query results
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          const glucoseValue = parseFloat(data.glucose);
+          if (!isNaN(glucoseValue)) {
+            totalGlucose += glucoseValue;
+            count++;
+          }
+        });
+    
+        // Check if there are less than 21 logs
+        if (count < 21) {
+          return 0; // Return 0 if there are less than 21 logs
+        }
+    
+        // Calculate the average glucose level
+        const averageGlucose = totalGlucose / count;
+    
+        // Convert average glucose level from mmol/L to mg/dL
+        const averageBloodGlucoseMgDl = averageGlucose * 18;
+    
+        // Calculate the A1C value using the formula
+        const a1c = (averageBloodGlucoseMgDl + 46.7) / 28.7;
+        return a1c.toFixed(2);
+      } catch (error) {
+        console.error('Error calculating A1C:', error);
+        return 0; // Return 0 in case of error
+      }
+    }
+    
     
     
     
     
 
 }
+
+
 
 export default GlucoseLogs
