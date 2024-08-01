@@ -105,6 +105,7 @@ const Insight = () => {
             </View>
         </View>
         <View style={styles.statsContainer}>
+        <View style = {{backgroundColor: 'white', justifyContent: 'flex-end', paddingBottom: 10}}>
           <Text style={styles.statsHeader}>Daily Stats</Text>
           <View style={styles.statsRow}>
             <View style={styles.statsBox}>
@@ -120,7 +121,8 @@ const Insight = () => {
               <Text style={styles.subTitleText}>{dailyStats.high !== null ? dailyStats.high : '---'}</Text>
             </View>
           </View>
-
+          </View>
+          <View style = {{backgroundColor: 'white', justifyContent: 'flex-end', marginTop:16, paddingBottom: 10}}>
           <Text style={styles.statsHeader}>Weekly Stats</Text>
           <View style={styles.statsRow}>
             <View style={styles.statsBox}>
@@ -136,7 +138,8 @@ const Insight = () => {
               <Text style={styles.subTitleText}>{weeklyStats.high !== null ? weeklyStats.high : '---'}</Text>
             </View>
           </View>
-
+          </View>
+          <View style = {{backgroundColor: 'white', justifyContent: 'flex-end', marginTop:16, paddingBottom: 10}}>
           <Text style={styles.statsHeader}>Monthly Stats</Text>
           <View style={styles.statsRow}>
             <View style={styles.statsBox}>
@@ -151,6 +154,7 @@ const Insight = () => {
               <Text style={styles.titleText}>High</Text>
               <Text style={styles.subTitleText}>{monthlyStats.high !== null ? monthlyStats.high : '---'}</Text>
             </View>
+          </View>
           </View>
         </View>
       </ScrollView>
@@ -179,9 +183,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   statsContainer: {
-    padding: 16,
+    paddingVertical: 16,
   },
   statsHeader: {
+    paddingLeft: 16,
     fontFamily: 'Poppins-SemiBold',
     fontSize: 18,
     color: 'black',
