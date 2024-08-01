@@ -13,16 +13,12 @@ import Divider from '../../components/Divider';
 import ViewGlucoseLogsController from '../../Controller/ViewGlucoseLogsController';
 import ViewMedicineLogsController from '../../Controller/ViewMedicineLogsController';
 import ViewMealLogsController from '../../Controller/ViewMealLogsController';
-<<<<<<< HEAD
 import getProfileController from '../../Controller/getProfileController';
 import FetchA1cController from '../../Controller/FetchA1cController';
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu'; // Import from react-native-popup-menu
 
 
-
-=======
 import BottomSheetModal from './add';
->>>>>>> df2bfd9a06d997bf766d416b7113efd4cce9a72a
 const formatDate = (time) => {
   const date = new Date(time.seconds * 1000);
   const today = new Date();
@@ -60,7 +56,6 @@ const home = () => {
   const [highestGlucose, setHighestGlucose] = useState(null);
   const [logsLoaded, setLogsLoaded] = useState(false);
   const [refreshA1C, setRefreshA1C] = useState(false);
-<<<<<<< HEAD
   const [subscriptionType, setSubscriptionType] = useState('');
   const [a1c, setA1c] = useState('');
 
@@ -80,10 +75,8 @@ const home = () => {
       getSubscriptionType();
     }
   }, [user.uid]);
-=======
   const [isModalVisible, setModalVisible] = useState(false);
 
->>>>>>> df2bfd9a06d997bf766d416b7113efd4cce9a72a
 
   const fetchAllLogs = async () => {
     if (user) {
@@ -425,7 +418,6 @@ const styles = StyleSheet.create({
     color: '#808080',
    
   },
-<<<<<<< HEAD
   a1cMenuButton: {
     borderColor: 'white',
     borderWidth: 1,
@@ -441,8 +433,8 @@ const styles = StyleSheet.create({
   menuOptionText: {
     fontFamily: 'Poppins-Medium',
     fontSize: 16,
-    padding: 8
-=======
+    padding: 8,
+  },
   noDataContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -454,6 +446,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#808080',
     paddingHorizontal: 10
->>>>>>> df2bfd9a06d997bf766d416b7113efd4cce9a72a
   }
-});
+}
+);
