@@ -71,7 +71,6 @@ const planBP = () => {
         rightButton="Add"
         onRightButtonPress={() => router.push('/Boundary/CreateDietPlan')}
       />
-
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.searchContainer}>
           <TextInput style={styles.searchInput} placeholder="Search & Filter" />

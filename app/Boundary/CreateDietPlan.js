@@ -1,69 +1,47 @@
 import React, { useState, useContext } from 'react';
-import { SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, Image, ScrollView } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
-import { DietPlanContext } from '../context/DietPlanContext';
-import { Picker } from '@react-native-picker/picker';
+import { SafeAreaView, StyleSheet, Text, ScrollView, View, TouchableOpacity, TextInput } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CreateDietPlanController from '../Controller/CreateDietPlanController';
-import { auth } from '../../firebase';
+import DietPlanEntry from './DietPlanEntry';
+import { useAuth } from '../service/AuthContext';
+
+const initialDietPlanState = {
+  Monday: { Lunch: { image: '', name: '', description: '', ingredients: '' }, Dinner: { image: '', name: '', description: '', ingredients: '' } },
+  Tuesday: { Lunch: { image: '', name: '', description: '', ingredients: '' }, Dinner: { image: '', name: '', description: '', ingredients: '' } },
+  Wednesday: { Lunch: { image: '', name: '', description: '', ingredients: '' }, Dinner: { image: '', name: '', description: '', ingredients: '' } },
+  Thursday: { Lunch: { image: '', name: '', description: '', ingredients: '' }, Dinner: { image: '', name: '', description: '', ingredients: '' } },
+  Friday: { Lunch: { image: '', name: '', description: '', ingredients: '' }, Dinner: { image: '', name: '', description: '', ingredients: '' } },
+  Saturday: { Lunch: { image: '', name: '', description: '', ingredients: '' }, Dinner: { image: '', name: '', description: '', ingredients: '' } },
+  Sunday: { Lunch: { image: '', name: '', description: '', ingredients: '' }, Dinner: { image: '', name: '', description: '', ingredients: '' } },
+};
 
 const CreateDietPlan = () => {
-  const { addDietPlan } = useContext(DietPlanContext);
-  const [day, setDay] = useState('');
-  const [lunchImage, setLunchImage] = useState(null);
-  const [dinnerImage, setDinnerImage] = useState(null);
-  const [lunchTitle, setLunchTitle] = useState('');
-  const [dinnerTitle, setDinnerTitle] = useState('');
-  const [lunchDescription, setLunchDescription] = useState('');
-  const [dinnerDescription, setDinnerDescription] = useState('');
-  const [lunchIngredients, setLunchIngredients] = useState('');
-  const [dinnerIngredients, setDinnerIngredients] = useState('');
+  const { user } = useAuth();
+  const [dietPlans, setDietPlans] = useState(initialDietPlanState);
+  const [planName, setPlanName] = useState('');
+  const [price, setPrice] = useState('');
   const router = useRouter();
 
-  const addImage = async (setImage) => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      alert('Sorry, we need camera roll permissions to make this work!');
-      return;
-    }
-
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      setImage(result.assets[0].uri);
-    }
+  const setEntry = (day, mealType, entry) => {
+    setDietPlans((prevDietPlans) => ({
+      ...prevDietPlans,
+      [day]: {
+        ...prevDietPlans[day],
+        [mealType]: entry,
+      },
+    }));
   };
 
   const handleSave = async () => {
-    const user = auth.currentUser;
-    const newDietPlan = {
-      day,
-      meals: {
-        lunch: {
-          image: lunchImage,
-          title: lunchTitle,
-          description: lunchDescription,
-          ingredients: lunchIngredients,
-        },
-        dinner: {
-          image: dinnerImage,
-          title: dinnerTitle,
-          description: dinnerDescription,
-          ingredients: dinnerIngredients,
-        },
-      },
+    const completeDietPlan = {
+      planName,
+      price,
+      ...dietPlans,
     };
+
     try {
-      const docId = await CreateDietPlanController.createDietPlan(user.uid, newDietPlan);
-      newDietPlan.id = docId; // Store the Firestore generated ID
-      newDietPlan.userId = user.uid; // Store the userId in the diet plan
-      addDietPlan(newDietPlan);
+      await CreateDietPlanController.createDietPlan(user.uid, completeDietPlan);
       router.push('/Boundary/planBP'); // Ensure this path is correct
     } catch (error) {
       console.error("Error adding document: ", error);
@@ -75,70 +53,66 @@ const CreateDietPlan = () => {
       <Stack.Screen options={{
         title: 'Create diet plan',
         headerStyle: { backgroundColor: '#E58B68' },
-        headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold'},
+        headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Medium', fontSize:16},
         headerTitle: 'Create diet plan',
         headerTitleAlign: 'center',
         headerLeft: () => (
           <TouchableOpacity onPress={() => router.back()}>
-            <Ionicons name='chevron-back' size={32} color='white'/>
+            <Ionicons name='chevron-back' size={24} color='white'/>
           </TouchableOpacity>
         ),
         headerRight: () => (
           <TouchableOpacity onPress={handleSave}>
-            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 14, color: 'white' }}>Publish</Text>
+            <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 14, color: 'white' }}>Publish</Text>
           </TouchableOpacity>
         ),
       }}/>
 
       <SafeAreaView style={styles.safeArea}>
         <ScrollView contentContainerStyle={styles.container}>
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Day</Text>
-            <Picker selectedValue={day} onValueChange={(itemValue) => setDay(itemValue)} style={styles.picker}>
-              <Picker.Item label="Select day" value="" />
-              <Picker.Item label="Monday" value="Monday" />
-              <Picker.Item label="Tuesday" value="Tuesday" />
-              <Picker.Item label="Wednesday" value="Wednesday" />
-              <Picker.Item label="Thursday" value="Thursday" />
-              <Picker.Item label="Friday" value="Friday" />
-              <Picker.Item label="Saturday" value="Saturday" />
-              <Picker.Item label="Sunday" value="Sunday" />
-            </Picker>
+          <View style={styles.section}>
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Diet Plan Name</Text>
+              <View>
+                <TextInput
+                  placeholder='Enter diet plan name'
+                  style={styles.input}
+                  value={planName}
+                  onChangeText={setPlanName}
+                />
+              </View>
+            </View>
+            <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5}} />
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Price per day</Text>
+              <View>
+                <TextInput
+                  placeholder='Enter price'
+                  style={styles.input}
+                  value={price}
+                  onChangeText={setPrice}
+                />
+              </View>
+            </View>
           </View>
 
-          <View style={styles.mealContainer}>
-            <Text style={styles.mealTitle}>Lunch</Text>
-            <TouchableOpacity onPress={() => addImage(setLunchImage)} style={styles.imageUpload}>
-              {lunchImage ? (
-                <Image source={{ uri: lunchImage }} style={styles.uploadedImage} />
-              ) : (
-                <View style={styles.uploadPlaceholder}>
-                  <Image source={require('../assets/iconCarrier.png')} style={styles.uploadIcon} />
-                  <Text>Upload recipe photo</Text>
-                </View>
-              )}
-            </TouchableOpacity>
-            <TextInput placeholder="Name" value={lunchTitle} onChangeText={setLunchTitle} style={styles.input} />
-            <TextInput placeholder="Description" value={lunchDescription} onChangeText={setLunchDescription} style={styles.input} />
-            <TextInput placeholder="Ingredients" value={lunchIngredients} onChangeText={setLunchIngredients} style={styles.input} />
-          </View>
-
-          <View style={styles.mealContainer}>
-            <Text style={styles.mealTitle}>Dinner</Text>
-            <TouchableOpacity onPress={() => addImage(setDinnerImage)} style={styles.imageUpload}>
-              {dinnerImage ? (
-                <Image source={{ uri: dinnerImage }} style={styles.uploadedImage} />
-              ) : (
-                <View style={styles.uploadPlaceholder}>
-                  <Image source={require('../assets/iconCarrier.png')} style={styles.uploadIcon} />
-                  <Text>Upload recipe photo</Text>
-                </View>
-              )}
-            </TouchableOpacity>
-            <TextInput placeholder="Name" value={dinnerTitle} onChangeText={setDinnerTitle} style={styles.input} />
-            <TextInput placeholder="Description" value={dinnerDescription} onChangeText={setDinnerDescription} style={styles.input} />
-            <TextInput placeholder="Ingredients" value={dinnerIngredients} onChangeText={setDinnerIngredients} style={styles.input} />
-          </View>
+          {Object.keys(dietPlans).map((day) => (
+            <View key={day}>
+              <Text style={styles.mealTitle}>{day}</Text>
+              <DietPlanEntry
+                day={day}
+                mealType="Lunch"
+                entry={dietPlans[day].Lunch}
+                setEntry={setEntry}
+              />
+              <DietPlanEntry
+                day={day}
+                mealType="Dinner"
+                entry={dietPlans[day].Dinner}
+                setEntry={setEntry}
+              />
+            </View>
+          ))}
         </ScrollView>
       </SafeAreaView>
     </>
@@ -146,18 +120,40 @@ const CreateDietPlan = () => {
 };
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1 },
-  container: { padding: 20 },
-  inputContainer: { marginVertical: 10 },
-  picker: { height: 50, width: '100%' },
-  mealContainer: { marginTop: 20 },
-  mealTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 10 },
-  imageUpload: { justifyContent: 'center', alignItems: 'center', borderColor: '#ccc', borderWidth: 1, borderRadius: 10, padding: 20, marginBottom: 10 },
-  uploadedImage: { width: 100, height: 100, borderRadius: 10 },
-  uploadPlaceholder: { alignItems: 'center' },
-  uploadIcon: { width: 30, height: 30, marginBottom: 10 },
-  input: { borderWidth: 1, borderColor: '#ccc', borderRadius: 10, padding: 10, marginBottom: 10 },
-  label: { fontSize: 16, marginBottom: 5 },
+  safeArea: {
+    flex: 1,
+    backgroundColor:'#f5f5f5'
+  },
+  container: {
+    paddingVertical:16
+  },
+  section: {
+    backgroundColor:'white',
+    borderTopWidth:0.5,
+    borderBottomWidth:0.5,
+    borderColor:'#808080',
+  },
+  inputContainer: {
+    flexDirection:'row',
+    justifyContent:'space-between',
+    alignItems:'center',
+    paddingVertical:8,
+  },
+  input: {
+    marginHorizontal:16,
+  },
+  label: {
+    fontFamily:'Poppins-Regular',
+    fontSize: 14,
+    marginHorizontal:16
+  },
+  mealTitle: { 
+    fontSize: 14,
+    fontFamily:'Poppins-Medium',
+    color:'#808080',
+    paddingHorizontal:16,
+    marginTop:16
+  }
 });
 
 export default CreateDietPlan;

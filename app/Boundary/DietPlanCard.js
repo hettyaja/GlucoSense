@@ -23,18 +23,6 @@ const DietPlanCard = ({ dietPlan, onEdit, onDelete }) => {
     }
   };
 
-  const renderMeal = (meal) => (
-    <View style={styles.meal}>
-      <Text style={styles.mealTitle}>{meal.title || 'No Title'}</Text>
-      {meal.image && <Image source={{ uri: meal.image }} style={styles.mealImage} />}
-      <Text style={styles.mealDetails}>{meal.description || 'No Description'}</Text>
-      <Text style={styles.mealDetails}>{meal.ingredients || 'No Ingredients'}</Text>
-    </View>
-  );
-
-  const lunch = dietPlan.meals?.lunch || {};
-  const dinner = dietPlan.meals?.dinner || {};
-
   return (
     <View style={styles.card}>
       <Text style={styles.day}>{dietPlan.day}</Text>
@@ -61,8 +49,11 @@ const DietPlanCard = ({ dietPlan, onEdit, onDelete }) => {
           </View>
         </View>
       </Modal>
-      {renderMeal(lunch)}
-      {renderMeal(dinner)}
+      <View>
+      <Text>{dietPlan.planName}</Text>
+      </View>
+      
+      <Text>{dietPlan.price}</Text>
     </View>
   );
 };
