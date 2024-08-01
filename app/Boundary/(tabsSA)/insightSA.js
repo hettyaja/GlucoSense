@@ -6,8 +6,11 @@ import Header from '../../components/Header';
 import { PieChart } from 'react-native-chart-kit';
 import { Dimensions } from 'react-native';
 import ViewValueableDataController from '../../Controller/ViewValuableDataController';
+import { useAuth } from '../../service/AuthContext';
+
 
 const InsightSA = () => {
+  const { user } = useAuth()
   const [totalUsers, setTotalUsers] = useState(0);
   const [totalActiveUsers, setTotalActiveUsers] = useState(0);
   const [totalActive, setTotalActive] = useState(0)
@@ -38,7 +41,7 @@ const InsightSA = () => {
             }
           });
         }
-        const testUser = await ViewValueableDataController.viewActiveUser()
+        const testUser = await ViewValueableDataController.viewActiveUser(user)
         setTotalActive(testUser)
         setTotalUsers(usersCount);
         setTotalActiveUsers(activeUsersCount);

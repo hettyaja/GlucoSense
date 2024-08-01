@@ -5,7 +5,8 @@ import { deleteUser as firebaseDeleteUser } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
-const BASE_URL = 'http://10.93.115.168:3000'; 
+
+const BASE_URL = 'https://us-central1-glucosense-24-s2-07.cloudfunctions.net/api'; 
 
 class User {
   constructor(id, username, name, email, userType, registerTime, status, weight, gender, height, birthdate, bodyProfileComplete) {
@@ -252,9 +253,17 @@ static async setAccountProfile(uid, name, email, username){
     }
   };
 
-  static async fetchActiveUser() {
+  static async fetchActiveUser(user) {
     try {
-      const response = await axios.get(`${BASE_URL}/active-users`);
+      if (!user) {
+        throw new Error('No user is currently signed in');
+      }
+      const token = await user.getIdToken();
+      const response = await axios.get(`${BASE_URL}/active-users`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       return response.data.activeUsersCount;
     } catch (error) {
       console.error('Error fetching active users:', error);

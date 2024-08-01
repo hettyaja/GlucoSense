@@ -9,9 +9,9 @@ class ViewValueableDataController {
         }
     }
 
-    static async viewActiveUser() {
+    static async viewActiveUser(user) {
         try {
-            return await User.fetchActiveUser()
+            return await User.fetchActiveUser(user)
         } catch (error) {
             throw new Error (error.message)
         }

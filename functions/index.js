@@ -21,45 +21,45 @@ admin.initializeApp({
 });
 
 const app = express();
+app.use(cors({ origin: true }));
 
-app.get('/active-users', async (req, res) => {
-  try {
-    const MS_PER_DAY = 24 * 60 * 60 * 1000;
-    const thirtyDaysAgo = Date.now() - (30 * MS_PER_DAY);
-
-    // Fetch all users from Firebase Authentication
-    const listAllUsers = async (nextPageToken) => {
-      // List batch of users, 1000 at a time.
-      const usersResult = await admin.auth().listUsers(1000, nextPageToken);
-      return usersResult;
-    };
-
-    let allUsers = [];
-    let nextPageToken;
-    do {
-      const result = await listAllUsers(nextPageToken);
-      allUsers = allUsers.concat(result.users);
-      nextPageToken = result.pageToken;
-    } while (nextPageToken);
-
-    // Fetch users from Firestore
-    const db = admin.firestore();
-    const usersCollection = await db.collection('users').get();
-
-    // Map Firestore users to a Set for quick lookup
-    const firestoreUsers = new Set(usersCollection.docs.map(doc => doc.id));
-
-    // Filter active users from Firebase Authentication
-    const activeUsers = allUsers.filter(user => {
-      const lastSignInTime = new Date(user.metadata.lastSignInTime).getTime();
-      return lastSignInTime >= thirtyDaysAgo && firestoreUsers.has(user.uid);
-    });
-
-    res.status(200).send({ activeUsersCount: activeUsers.length });
-  } catch (error) {
-    console.error('Error fetching users:', error);
-    res.status(500).send('Failed to fetch users.');
-  }
+app.get('/', (req, res) => {
+  res.send('Hello World');
 });
+
+// app.get('/active-users', async (req, res) => {
+//   try {
+//     console.log('Request received to fetch active users');
+//     const MS_PER_DAY = 24 * 60 * 60 * 1000;
+//     const thirtyDaysAgo = Date.now() - (30 * MS_PER_DAY);
+
+//     const listAllUsers = async (nextPageToken) => {
+//       const usersResult = await admin.auth().listUsers(50, nextPageToken);
+//       return usersResult;
+//     };
+
+//     let allUsers = [];
+//     let nextPageToken;
+//     do {
+//       const result = await listAllUsers(nextPageToken);
+//       allUsers = allUsers.concat(result.users);
+//       nextPageToken = result.pageToken;
+//     } while (nextPageToken);
+
+//     const db = admin.firestore();
+//     const usersCollection = await db.collection('users').get();
+//     const firestoreUsers = new Set(usersCollection.docs.map(doc => doc.id));
+//     const activeUsers = allUsers.filter(user => {
+//       const lastSignInTime = new Date(user.metadata.lastSignInTime).getTime();
+//       return lastSignInTime >= thirtyDaysAgo && firestoreUsers.has(user.uid);
+//     });
+
+//     console.log(`Active users count: ${activeUsers.length}`);
+//     res.status(200).send({ activeUsersCount: activeUsers.length });
+//   } catch (error) {
+//     console.error('Error fetching users:', error);
+//     res.status(500).send('Failed to fetch users.');
+//   }
+// });
 
 exports.api = functions.https.onRequest(app);
