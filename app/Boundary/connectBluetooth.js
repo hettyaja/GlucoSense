@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import { View, Text, Button, FlatList, TouchableOpacity, ActivityIndicator, Alert, StyleSheet, PermissionsAndroid, Platform } from 'react-native';
 import { BleManager } from 'react-native-ble-plx';
 
@@ -7,7 +7,22 @@ const SmartWearablePage = ({ route, navigation }) => {
   const [scannedDevices, setScannedDevices] = useState([]);
   const [isScanning, setIsScanning] = useState(false);
   const [connectedDevice, setConnectedDevice] = useState(null);
-  const [glucoseData, setGlucoseData] = useState(null);
+  const [glucoseData, setGlucoseData] = useState([]);
+
+  useEffect(() => {
+    if (connectedDevice) {
+      const subscription = manager.onDeviceDisconnected(connectedDevice.id, (error, device) => {
+        if (error) {
+          console.log('Device disconnected:', error);
+          setConnectedDevice(null);
+        }
+      });
+
+      return () => {
+        subscription.remove();
+      };
+    }
+  }, [connectedDevice, manager]);
 
   const requestPermissions = async () => {
     if (Platform.OS === 'android') {
@@ -86,50 +101,43 @@ const SmartWearablePage = ({ route, navigation }) => {
   }, [checkBluetooth, manager]);
 
   const actionOnTap = async (item) => {
-    console.log('Connecting to device: ' + item.name);
-    let device;
+    console.log('Connecting to device:', item.name);
     try {
-      device = await manager.connectToDevice(item.id);
-      console.log('Connected to device: ' + item.id);
-      console.log('Status connected: ' + device.isConnected());
+      const device = await manager.connectToDevice(item.id, { autoConnect: true });
+      console.log('Connected to device:', item.id);
+      setConnectedDevice(device);
+      await setupNotifications(device);
+    } catch (error) {
+      console.log('Connection error:', error);
+    }
+  };
 
+  const setupNotifications = async (device) => {
+    try {
       await device.discoverAllServicesAndCharacteristics();
       const services = await device.services();
 
-      console.log(services);
+      console.log('Discovered services:', services);
 
-      services.forEach((service) => {
-        console.log('Service UUID:', service.uuid);
-      });
+      const glucoseServiceUUID = '00001808-0000-1000-8000-00805f9b34fb';
+      const glucoseCharacteristicUUID = '00002a18-0000-1000-8000-00805f9b34fb';
 
-      // Save connected device to state
-      setConnectedDevice(device);
-
-      // Find the glucose service
-      const glucoseService = services.find(service => service.uuid === '00001808-0000-1000-8000-00805f9b34fb');
+      const glucoseService = services.find(service => service.uuid === glucoseServiceUUID);
       if (glucoseService) {
         console.log('Glucose service found');
-        const characteristics = await glucoseService.characteristics();
 
-        characteristics.forEach(async (characteristic) => {
-          console.log('Characteristic UUID:', characteristic.uuid);
-          if (characteristic.uuid === '00002a18-0000-1000-8000-00805f9b34fb') {
-            console.log('Glucose measurement characteristic found');
-
-            // Send connection signal
-            const connectionSignal = Buffer.from([0x01]); // Example signal, adjust as needed
-            await characteristic.writeWithResponse(connectionSignal.toString('base64'));
-            console.log('Connection signal sent');
-
-            const glucoseMeasurement = await characteristic.read();
-            const glucoseValue = decodeGlucoseMeasurement(glucoseMeasurement.value);
-            console.log('Glucose measurement data:', glucoseValue);
-            setGlucoseData(glucoseValue);
+        device.monitorCharacteristicForService(glucoseServiceUUID, glucoseCharacteristicUUID, (error, characteristic) => {
+          if (error) {
+            console.error('Characteristic monitor error:', error);
+            return;
           }
+          const glucoseValue = decodeGlucoseMeasurement(characteristic.value);
+          console.log('Glucose measurement data:', glucoseValue);
+          setGlucoseData(prevData => [...prevData, glucoseValue]);
         });
       }
     } catch (error) {
-      console.log(error);
+      console.error('Setup notifications error:', error);
     }
   };
 
@@ -146,6 +154,17 @@ const SmartWearablePage = ({ route, navigation }) => {
     }
 
     return `${glucoseConcentration} ${unit}`;
+  };
+
+  const unpairDevice = async (device) => {
+    try {
+      await manager.cancelDeviceConnection(device.id);
+      console.log('Device unpaired:', device.id);
+      Alert.alert('Device unpaired successfully');
+      setConnectedDevice(null);
+    } catch (error) {
+      console.error('Unpairing failed:', error);
+    }
   };
 
   return (
@@ -165,9 +184,17 @@ const SmartWearablePage = ({ route, navigation }) => {
           </TouchableOpacity>
         )}
       />
-      {glucoseData && (
+      {connectedDevice && (
         <View style={styles.glucoseDataView}>
-          <Text>Glucose Data: {glucoseData}</Text>
+          <Button title="Unpair Device" onPress={() => unpairDevice(connectedDevice)} />
+        </View>
+      )}
+      {glucoseData.length > 0 && (
+        <View style={styles.glucoseDataView}>
+          <Text>Glucose Data:</Text>
+          {glucoseData.map((data, index) => (
+            <Text key={index}>{data}</Text>
+          ))}
         </View>
       )}
     </View>

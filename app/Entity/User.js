@@ -3,6 +3,9 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, se
 import { doc, setDoc, deleteDoc, getDocs, updateDoc, Timestamp, collection, getDoc } from 'firebase/firestore';
 import { deleteUser as firebaseDeleteUser } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+
+const BASE_URL = 'http://10.93.115.168:3000'; 
 
 class User {
   constructor(id, username, name, email, userType, registerTime, status, weight, gender, height, birthdate, bodyProfileComplete) {
@@ -248,6 +251,17 @@ static async setAccountProfile(uid, name, email, username){
         throw error;
     }
   };
+
+  static async fetchActiveUser() {
+    try {
+      const response = await axios.get(`${BASE_URL}/active-users`);
+      return response.data.activeUsersCount;
+    } catch (error) {
+      console.error('Error fetching active users:', error);
+      throw new Error('Failed to fetch active users.');
+    }
+  }
+  
 }
 
 export default User;

@@ -10,6 +10,7 @@ import ViewValueableDataController from '../../Controller/ViewValuableDataContro
 const InsightSA = () => {
   const [totalUsers, setTotalUsers] = useState(0);
   const [totalActiveUsers, setTotalActiveUsers] = useState(0);
+  const [totalActive, setTotalActive] = useState(0)
   const [logsCount, setLogsCount] = useState({
     totalGlucoseLogsCount: 0,
     totalMedicineLogsCount: 0,
@@ -26,6 +27,8 @@ const InsightSA = () => {
         let usersCount = 0;
         let activeUsersCount = 0;
 
+
+
         for (const collectionName of collections) {
           const querySnapshot = await getDocs(collection(db, collectionName));
           querySnapshot.forEach((doc) => {
@@ -35,7 +38,8 @@ const InsightSA = () => {
             }
           });
         }
-
+        const testUser = await ViewValueableDataController.viewActiveUser()
+        setTotalActive(testUser)
         setTotalUsers(usersCount);
         setTotalActiveUsers(activeUsersCount);
       } catch (error) {
@@ -83,7 +87,7 @@ const InsightSA = () => {
           <View style={styles.divider}></View>
           <View style={styles.userSection}>
             <Text style={styles.cardTitle}>Active User</Text>
-            <Text style={styles.cardValue}>{totalActiveUsers}</Text>
+            <Text style={styles.cardValue}>{totalActive}</Text>
           </View>
           <View style={styles.divider}></View>
           <View style={styles.userSection}>
