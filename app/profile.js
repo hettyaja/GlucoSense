@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View, TextInput, Alert, Modal, Button, Image } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View, TextInput, Alert, Image } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { Stack, router } from 'expo-router';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -7,7 +7,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { useProfile } from './context/ProfileContext';
 import ImageButton from './components/ImageButton';
 import { useAuth } from './service/AuthContext';
-import getProfileController from './Controller/getProfileController'
+import getProfileController from './Controller/getProfileController';
 import setBodyProfileController from './Controller/SetBodyProfileController';
 import setAccountProfileController from './Controller/SetAccountProfileController';
 
@@ -22,10 +22,11 @@ const Profile = () => {
     const [localWeight, setWeight] = useState('');
     const [localHeight, setHeight] = useState('');
     const [localGender, setGender] = useState('');
+    const [localDiabetesType, setDiabetesType] = useState('');
     const [isEditable, setIsEditable] = useState(false);
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [showGenderPicker, setShowGenderPicker] = useState(false);
-    const [localGenderVisible, setLocalGenderVisible] = useState(true);
+    const [showDiabetesPicker, setShowDiabetesPicker] = useState(false);
 
     const maxBirthdate = new Date();
     maxBirthdate.setFullYear(maxBirthdate.getFullYear() - 10);
@@ -36,8 +37,10 @@ const Profile = () => {
                 const profileData = await getProfileController.getProfile(user.uid);
                 console.log('Profile Data:', profileData);
 
+
                 const birthdateTimestamp = profileData.birthdate;
                 console.log('Raw Birthdate Timestamp:', birthdateTimestamp);
+
 
                 // Convert Firebase timestamp to JavaScript Date
                 const birthdate = birthdateTimestamp
@@ -45,12 +48,15 @@ const Profile = () => {
                     : new Date();
                 console.log('Converted Birthdate:', birthdate);
 
+
                 // Check if the converted date is valid
                 const isValidDate = !isNaN(birthdate.getTime());
                 console.log('Is Valid Date:', isValidDate);
 
+
                 // Set the state with a valid date
                 setBirthdate(isValidDate ? birthdate : new Date());
+
 
                 // Set other profile data
                 setUsername(profileData.username);
@@ -59,11 +65,12 @@ const Profile = () => {
                 setWeight(profileData.weight);
                 setHeight(profileData.height);
                 setGender(profileData.gender);
-
+            setDiabetesType(profileData.diabetesType);
             } catch (error) {
                 console.error(error);
             }
         };
+
 
         if (user.uid) {
             getProfile();
@@ -81,7 +88,7 @@ const Profile = () => {
             }
             try {
                 await setAccountProfileController.setAccProfile(user.uid, localName, localEmail, localUsername);
-                await setBodyProfileController.setBodProfile(user.uid, localGender, localBirthdate, localWeight, localHeight);
+                await setBodyProfileController.setBodProfile(user.uid, localGender, localBirthdate, localWeight, localHeight, localDiabetesType);
             } catch (error) {
                 alert(error.message);
             }
@@ -99,6 +106,11 @@ const Profile = () => {
     const handleGenderChange = (selectedGender) => {
         setGender(selectedGender);
         setShowGenderPicker(false);
+    };
+
+    const handleDiabetesTypeChange = (selectedType) => {
+        setDiabetesType(selectedType);
+        setShowDiabetesPicker(false);
     };
 
     const pickImage = async () => {
@@ -186,7 +198,7 @@ const Profile = () => {
                 <Text style={styles.sectionText}>USER INFORMATION</Text>
                 <View style={styles.section}>
 
-                    {/* Birthdate field */}
+                   
                     <View style={styles.item}>
                         <Text>Birthdate</Text>
                         {isEditable ? (
@@ -241,20 +253,13 @@ const Profile = () => {
                         <Text>Gender</Text>
                         {isEditable ? (
                             <>
-                                <TouchableOpacity onPress={() => {
-                                    setShowGenderPicker(true);
-                                    setLocalGenderVisible(true);
-                                }}>
-                                    {localGenderVisible && <Text style={styles.input}>{localGender}</Text>}
+                                <TouchableOpacity onPress={() => setShowGenderPicker(true)}>
+                                    <Text style={styles.input}>{localGender}</Text>
                                 </TouchableOpacity>
                                 {showGenderPicker && (
                                     <Picker
                                         selectedValue={localGender}
-                                        onValueChange={(itemValue) => {
-                                            setGender(itemValue);
-                                            setShowGenderPicker(false);
-                                            setLocalGenderVisible(true);
-                                        }}
+                                        onValueChange={handleGenderChange}
                                         style={styles.picker}
                                         itemStyle={styles.pickerItem}
                                     >
@@ -265,6 +270,33 @@ const Profile = () => {
                             </>
                         ) : (
                             <Text style={styles.input}>{localGender}</Text>
+                        )}
+                    </View>
+
+                    <View style={styles.item}>
+                        <Text>Diabetes Type</Text>
+                        {isEditable ? (
+                            <>
+                                <TouchableOpacity onPress={() => setShowDiabetesPicker(true)}>
+                                    <Text style={styles.input}>{localDiabetesType}</Text>
+                                </TouchableOpacity>
+                                {showDiabetesPicker && (
+                                    <Picker
+                                        selectedValue={localDiabetesType}
+                                        onValueChange={handleDiabetesTypeChange}
+                                        style={styles.picker}
+                                        itemStyle={styles.pickerItem}
+                                    >
+                                        <Picker.Item label="Type 1" value="Type1" />
+                                        <Picker.Item label="Type 2" value="Type2" />
+                                        <Picker.Item label="Gestational" value="Gestational" />
+                                        <Picker.Item label="Pre Diabetes" value="PreDiabetes" />
+                                        <Picker.Item label="Not Sure" value="NotSure" />
+                                    </Picker>
+                                )}
+                            </>
+                        ) : (
+                            <Text style={styles.input}>{localDiabetesType}</Text>
                         )}
                     </View>
                 </View>
@@ -321,17 +353,5 @@ const styles = StyleSheet.create({
     pickerItem: {
         height: 40,
         borderRadius: 16,
-    },
-    pickerContainer: {
-        backgroundColor: 'white',
-        borderRadius: 10,
-        width: 300,
-        alignItems: 'center',
-        padding: 20,
-    },
-    pickerTitle: {
-        fontFamily: 'Poppins-Regular',
-        fontSize: 18,
-        marginBottom: 10,
     },
 });
