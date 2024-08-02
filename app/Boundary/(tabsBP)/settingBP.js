@@ -12,12 +12,11 @@ import { useAuth } from '../../service/AuthContext';
 import DeleteBPController from '../../Controller/DeleteBPController';
 import LogoutController from '../../Controller/LogoutController';
 import Header from '../../components/Header';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const settingBP = () => {
   const { user } = useAuth();
-
   const router = useRouter();
-
   const [photoUri, setPhotoUri] = useState();
   const [entityName, setentityName] = useState('');
   const [location, setLocation] = useState('');
@@ -82,10 +81,19 @@ const settingBP = () => {
           onPress={() => router.push('Boundary/ProfileBpPage')}
         >
           <View style={{ flexDirection: 'row', alignItems: 'center', padding: 24 }}>
-            <Image style={styles.profileImage} source={{ uri: photoUri }} />
+          {photoUri ? (
+          <Image
+            style={styles.profileImage}
+            source={{ uri: photoUri }} 
+          /> ) : (
+             <FontAwesome name='user-circle' size={16} style={styles.icon} />
+           )}
+
+            {/* // <Image style={styles.profileImage} source={{ uri: photoUri }} /> */}
             <View>
               <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 16 }}>{entityName}</Text>
               <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 14 }}>
+              <Ionicons name='location-outline' size={16} style={styles.icon} />
                 {location}
               </Text>
               <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 14 }}>
@@ -94,39 +102,31 @@ const settingBP = () => {
             </View>
           </View>
         </TouchableOpacity>
-        {/* <TouchableOpacity onPress={() => router.push('Boundary/ProfileBpPage')}>
-          <View style={styles.profileCard}>
-            <Image
-              source={{ uri: photoUri }} // Use actual photo URI
-              style={styles.profilePhoto}
-            />
-            <View style={styles.profileInfo}>
-              <Text style={styles.profileName}>{entityName || 'Shop Name'}</Text>
-              <Text style={styles.profileLocation}>{location || 'Location'}</Text>
-              <Text style={styles.profileDescription}>{description || 'Description'}</Text>
-            </View>
-
-            <FontAwesome name='angle-right' size={24} color="#00000" />
-          </View>
-        </TouchableOpacity> */}
-
-        {/* Settings Options */}
+        
+      <View style = {styles.section}>
         <TouchableOpacity style={styles.optionButton} onPress={() => router.push('Notification')}>
           <MaterialCommunityIcons name='bell-outline' size={24} style={styles.icon} />
           <Text style={styles.optionButtonText}>Notification</Text>
         </TouchableOpacity>
+        
+        <View style={{borderBottomColor:'#d9d9d9', borderBottomWidth:1}}/>
         <TouchableOpacity style={styles.optionButton} onPress={() => router.push('/ReportProblem')}>
           <Octicons name='report' size={24} style={styles.icon} />
           <Text style={styles.optionButtonText}>Report problem</Text>
         </TouchableOpacity>
+
+        <View style={{borderBottomColor:'#d9d9d9', borderBottomWidth:1}}/>
         <TouchableOpacity style={styles.optionButton} onPress={() => handleSignOut()}>
           <MaterialIcons name='logout' size={24} style={styles.icon} />
           <Text style={styles.optionButtonText}>Log out</Text>
         </TouchableOpacity>
+
+        <View style={{borderBottomColor:'#d9d9d9', borderBottomWidth:1}}/>
         <TouchableOpacity style={styles.optionButton} onPress={() => createTwoButtonAlert()}>
           <AntDesign name='deleteuser' size={24} style={styles.icon} />
           <Text style={styles.optionButtonText}>Delete business account</Text>
         </TouchableOpacity>
+      </View>
       </View>
     </>
   );
@@ -136,6 +136,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
+  },
+  section:{
+    backgroundColor:'white',
+    marginBottom:24,
+    paddingHorizontal:16
   },
   profileCard: {
     backgroundColor: 'white',
@@ -169,17 +174,9 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   optionButton: {
-    flexDirection: 'row',
-    backgroundColor: '#fff',
-    padding: 15,
-    marginHorizontal: 24,
-    marginBottom: 24,
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    shadowOffset: { height: 5 },
-    elevation: 5,
+    padding:8,
+    flexDirection:'row',
+    alignItems:'center'
   },
   optionButtonText: {
     fontFamily: 'Poppins-Medium',

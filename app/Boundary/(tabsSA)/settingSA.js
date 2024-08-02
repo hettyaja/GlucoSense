@@ -35,7 +35,7 @@ const SettingSA = () => {
           <Text style={styles.buttonText}>Profile</Text>
         </TouchableOpacity>
 
-        <View style={{borderBottomColor:'#d9d9d9', borderBottomWidth:1}}/>
+      <View style={{borderBottomColor:'#d9d9d9', borderBottomWidth:1}}/>
         <TouchableOpacity style={styles.button} onPress={handleExportReport}>
           <MaterialIcons name="bar-chart" size={24}/>
           <Text style={styles.buttonText}>Export Report</Text>

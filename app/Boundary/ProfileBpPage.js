@@ -143,6 +143,8 @@ const profileBP = () => {
               style={styles.profilePhoto}
               resizeMode="cover"
             />
+            {isEditable && <Text style={styles.changePhotoText}>Change Photo</Text>}
+
           </TouchableOpacity>
         </View>
 
@@ -317,6 +319,13 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontFamily: 'Poppins-Regular',
   },
+
+  changePhotoText: {
+    fontFamily: 'Poppins-Medium',
+    fontSize: 14,
+    color: 'blue',
+    marginTop: 8,
+},
 });
 
 export default profileBP;

@@ -222,7 +222,7 @@ const RegisterBPUI= () => {
         },
        
         input: {
-            fontFamily: 'Poppins-Normal',
+            fontFamily: 'Poppins-Regular',
             flex:1,
             width: 300,
             height: 40,
