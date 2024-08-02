@@ -1,16 +1,18 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { SafeAreaView, StyleSheet, Text, ScrollView, View, TouchableOpacity, TextInput } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, ScrollView, View, TouchableOpacity, TextInput, Image } from 'react-native';
 import { DietPlanContext } from '../context/DietPlanContext';
 import { Stack, useRouter, useLocalSearchParams } from 'expo-router';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import DietPlanEntry from './DietPlanEntry';
 import { useAuth } from '../service/AuthContext';
 import UpdateDietPlanController from '../Controller/UpdateDietPlanController';
-UpdateDietPlanController
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import * as ImagePicker from 'expo-image-picker';
 
 const initialDietPlanState = {
   planName: '',
   price: '',
+  planImage: '',
   Monday: { Lunch: { image: '', name: '', description: '', ingredients: '' }, Dinner: { image: '', name: '', description: '', ingredients: '' } },
   Tuesday: { Lunch: { image: '', name: '', description: '', ingredients: '' }, Dinner: { image: '', name: '', description: '', ingredients: '' } },
   Wednesday: { Lunch: { image: '', name: '', description: '', ingredients: '' }, Dinner: { image: '', name: '', description: '', ingredients: '' } },
@@ -24,13 +26,10 @@ const dayOrder = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Satur
 
 const EditDietPlan = () => {
   const { user } = useAuth();
-  const { updateDietPlan } = useContext(DietPlanContext);
   const { dietPlan: dietPlanParam } = useLocalSearchParams();
   const [dietPlan, setDietPlan] = useState(dietPlanParam ? JSON.parse(dietPlanParam) : initialDietPlanState);
   const router = useRouter();
 
-  console.log(dietPlan);
-  
   const setEntry = (day, mealType, entry) => {
     setDietPlan((prevDietPlan) => ({
       ...prevDietPlan,
@@ -43,11 +42,33 @@ const EditDietPlan = () => {
 
   const handleSave = async () => {
     try {
+      console.log(dietPlan)
       await UpdateDietPlanController.updateDietPlan(user.uid, dietPlan);
-      updateDietPlan(dietPlan.id, dietPlan);
       router.push('/Boundary/planBP'); // Ensure this path is correct
     } catch (error) {
       console.error("Error updating document: ", error);
+    }
+  };
+
+  const addImage = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      alert('Sorry, we need camera roll permissions to make this work!');
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setDietPlan((prevDietPlan) => ({
+        ...prevDietPlan,
+        planImage: result.assets[0].uri,
+      }));
     }
   };
 
@@ -97,6 +118,17 @@ const EditDietPlan = () => {
                 />
               </View>
             </View>
+            <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5}} />
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>Photo</Text>
+              <TouchableOpacity onPress={addImage} style={styles.imageUpload}>
+                {dietPlan.planImage ? (
+                  <Image source={{ uri: dietPlan.planImage }} style={styles.uploadedImage} />
+                ) : (
+                  <MaterialIcons name='add-photo-alternate' size={56} color='#E58B68'/>
+                )}
+              </TouchableOpacity>
+            </View>
           </View>
 
           {dayOrder.map((day) => (
@@ -141,11 +173,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: 8,
-    textAlign:'right'
+    textAlign: 'right'
   },
   input: {
     marginHorizontal: 16,
-    textAlign:'right'
+    textAlign: 'right'
   },
   label: {
     fontFamily: 'Poppins-Regular',
@@ -158,7 +190,18 @@ const styles = StyleSheet.create({
     color: '#808080',
     paddingHorizontal: 16,
     marginTop: 16
-  }
+  },
+  imageUpload: {
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 8,
+    width: 80,
+    height: 80,
+    marginHorizontal: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  uploadedImage: { width: 56, height: 56, borderRadius: 10 },
 });
 
 export default EditDietPlan;

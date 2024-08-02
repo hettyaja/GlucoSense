@@ -73,7 +73,7 @@ const Insight = () => {
       <Tabs.Screen options={{
         title: 'Insight',
         headerStyle: { backgroundColor: '#E58B68' },
-        headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold' },
+        headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Medium', fontSize:16 },
         headerTitle: 'Insight',
         headerTitleAlign: 'center',
       }} />

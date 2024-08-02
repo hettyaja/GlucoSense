@@ -5,17 +5,18 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
 import * as ImagePicker from 'expo-image-picker';
 import { useProfile } from './context/ProfileContext';
-import ImageButton from './components/ImageButton';
 import { useAuth } from './service/AuthContext';
 import getProfileController from './Controller/getProfileController';
 import setBodyProfileController from './Controller/SetBodyProfileController';
 import setAccountProfileController from './Controller/SetAccountProfileController';
 import setDiabetesTypeController from './Controller/setDiabetesTypeController';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { uploadImage } from './service/storageService'; // Add this import
 
 const Profile = () => {
     const { profileData } = useProfile();
     const { user } = useAuth();
-    const [photoUri, setPhotoUri] = useState(profileData?.photoUri || '');
+    const [photoUri, setPhotoUri] = useState('');
     const [localUsername, setUsername] = useState('');
     const [localName, setName] = useState('');
     const [localEmail, setEmail] = useState('');
@@ -36,40 +37,31 @@ const Profile = () => {
                 const profileData = await getProfileController.getProfile(user.uid);
                 console.log('Profile Data:', profileData);
 
-
                 const birthdateTimestamp = profileData.birthdate;
                 console.log('Raw Birthdate Timestamp:', birthdateTimestamp);
 
-
-                // Convert Firebase timestamp to JavaScript Date
                 const birthdate = birthdateTimestamp
                     ? new Date(birthdateTimestamp.seconds * 1000)
                     : new Date();
                 console.log('Converted Birthdate:', birthdate);
 
-
-                // Check if the converted date is valid
                 const isValidDate = !isNaN(birthdate.getTime());
                 console.log('Is Valid Date:', isValidDate);
 
-
-                // Set the state with a valid date
                 setBirthdate(isValidDate ? birthdate : new Date());
 
-
-                // Set other profile data
+                setPhotoUri(profileData.image);
                 setUsername(profileData.username);
                 setName(profileData.name);
                 setEmail(profileData.email);
                 setWeight(profileData.weight);
                 setHeight(profileData.height);
                 setGender(profileData.gender);
-            setDiabetesType(profileData.diabetesType);
+                setDiabetesType(profileData.diabetesType);
             } catch (error) {
                 console.error(error);
             }
         };
-
 
         if (user.uid) {
             getProfile();
@@ -86,7 +78,11 @@ const Profile = () => {
                 return;
             }
             try {
-                await setAccountProfileController.setAccProfile(user.uid, localName, localEmail, localUsername);
+                let imageUrl = photoUri;
+                if (photoUri) {
+                    imageUrl = await uploadImage(user.uid, photoUri, profileData.image);
+                }
+                await setAccountProfileController.setAccProfile(user.uid, imageUrl, localName, localEmail, localUsername);
                 await setBodyProfileController.setBodProfile(user.uid, localGender, localBirthdate, localWeight, localHeight, localDiabetesType);
             } catch (error) {
                 alert(error.message);
@@ -128,13 +124,11 @@ const Profile = () => {
             <Stack.Screen options={{
                 title: 'Profile',
                 headerStyle: { backgroundColor: '#E58B68' },
-                headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold' },
+                headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Medium', fontSize: 16 },
                 headerLeft: () => (
-                    <ImageButton
-                        source={require("./assets/back.png")}
-                        imageSize={{ width: 24, height: 24 }}
-                        onPress={() => router.back('/setting')}
-                    />
+                    <TouchableOpacity onPress={() => router.back('/setting')}>
+                        <Ionicons name='chevron-back' size={24} color='white' />
+                    </TouchableOpacity>
                 ),
                 headerRight: () => (
                     <TouchableOpacity style={styles.button} onPress={toggleEdit}>
@@ -218,7 +212,6 @@ const Profile = () => {
                             <Text style={styles.input}>{localWeight}</Text>
                         )}
                     </View>
-
 
                     <View style={styles.item}>
                         <Text>Height</Text>
@@ -318,6 +311,5 @@ const styles = StyleSheet.create({
     },
     picker: {
         width: '50%',
-
     },
 });

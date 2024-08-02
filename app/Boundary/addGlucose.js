@@ -152,7 +152,7 @@ const preReg = () => {
                 maxLength={3}
                 color="#808080"
               />
-              <Text style={styles.unit}>mmol/L</Text>
+              <Text style={styles.unit}>mg/dL</Text>
             </View>
           </View>
           <View style={styles.separator} />

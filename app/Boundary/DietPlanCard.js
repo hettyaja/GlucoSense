@@ -31,8 +31,13 @@ const DietPlanCard = ({ dietPlan, onEdit, onDelete }) => {
           onDelete={() => handleDelete()}
         />
       </View>
+      <View style={styles.bodySection}>      
+      <Image source={{ uri: dietPlan.planImage }} style={styles.uploadedImage} />
+      <View>
       <Text style={styles.label}>Price per day: {dietPlan.price}</Text>
       <Text style={styles.label}>Subscriber: </Text>
+      </View>
+      </View>
     </View>
   </>
   );
@@ -50,18 +55,27 @@ const styles = StyleSheet.create({
   titleSection: {
     flexDirection:'row',
     justifyContent:'space-between',
-    alignItems:'center'
+    alignItems:'center',
+    paddingBottom:8
   },
   title: {
     fontFamily:'Poppins-SemiBold',
     fontSize:14,
-    paddingBottom:8
+  },
+  bodySection: {
+    flexDirection:'row',
   },
   label: {
     fontFamily:'Poppins-Regular',
     fontSize:12,
     color:'#808080'
-  }
+  },
+  uploadedImage: {
+    width: 56,
+    height: 56,
+    borderRadius: 10,
+    marginRight:8
+  },
 });
 
 export default DietPlanCard;
