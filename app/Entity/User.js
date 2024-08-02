@@ -227,15 +227,16 @@ class User {
     }
   };
 
-static async setAccountProfile(uid, name, email, username){
+static async setAccountProfile(uid, image, name, email, username){
     try {
         const userDocRef = doc(db, 'users', uid);
         await setDoc(userDocRef, {
+            image,
             name,
             email,
             username
         }, { merge: true });
-        return { uid, name, email, username };
+        return { uid, image, name, email, username };
     } catch (error) {
         throw error;
     }
