@@ -24,42 +24,55 @@ const DietPlanCard = ({ dietPlan, onEdit, onDelete }) => {
   };
 
   return (
+    <>
+    
     <View style={styles.card}>
-      <Text style={styles.day}>{dietPlan.day}</Text>
+        <Text style={styles.title}>{dietPlan.planName}</Text>
       <TouchableOpacity style={styles.menuIcon} onPress={() => setModalVisible(true)}>
         <MaterialIcons name="more-vert" size={24} color="black" />
       </TouchableOpacity>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
-              <MaterialIcons name="close" size={24} color="black" />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.modalOption} onPress={handleEdit}>
-              <Text>Edit Diet Plan</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.modalOption} onPress={handleDelete}>
-              <Text>Delete This Diet Plan</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
       <View>
-      <Text>{dietPlan.planName}</Text>
-      </View>
       
+      </View>
       <Text>{dietPlan.price}</Text>
     </View>
+
+
+    <Modal
+    animationType="slide"
+    transparent={true}
+    visible={modalVisible}
+    onRequestClose={() => setModalVisible(false)}
+  >
+    <View style={styles.modalOverlay}>
+      <View style={styles.modalContent}>
+        <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
+          <MaterialIcons name="close" size={24} color="black" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.modalOption} onPress={handleEdit}>
+          <Text>Edit Diet Plan</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.modalOption} onPress={handleDelete}>
+          <Text>Delete This Diet Plan</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  </Modal>
+  </>
   );
 };
 
 const styles = StyleSheet.create({
-  card: { padding: 20, backgroundColor: '#fff', borderRadius: 10, marginVertical: 10, position: 'relative' },
+  card: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    marginVertical: 10,
+    padding:16
+  },
+  title: {
+    fontFamily:'Poppins-SemiBold',
+    fontSize:14,
+  },
   day: { fontSize: 18, fontWeight: 'bold', marginBottom: 10 },
   meal: { marginTop: 10 },
   mealTitle: { fontSize: 16, fontWeight: 'bold', marginBottom: 5 },

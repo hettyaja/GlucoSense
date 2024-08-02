@@ -1,6 +1,6 @@
 import { auth, db } from '../../firebase'; // Adjust the path according to your project structure
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, deleteUser as firebaseDeleteUser } from 'firebase/auth';
-import { doc, setDoc, deleteDoc, getDocs, Timestamp, collection, updateDoc, getDoc, addDoc } from 'firebase/firestore';
+import { doc, setDoc, deleteDoc, getDocs, Timestamp, collection, updateDoc, getDoc, addDoc, query, where } from 'firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 // import admin from '../../firebaseAdmin'; // Import Firebase Admin SDK instance
 
@@ -186,9 +186,7 @@ class BusinessPartner {
     const dietPlanCollection = collection(db, `businessPartner/${userId}/dietplan`);
     const dietPlanSnapshot = await getDocs(dietPlanCollection);
     return dietPlanSnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data(),
-      meals: doc.data().meals || { lunch: {}, dinner: {} },
+      ...doc.data(), id: doc.id,
     }));
   }
 
@@ -200,6 +198,35 @@ class BusinessPartner {
   static async deleteDietPlan(userId, dietPlanId) {
     const dietPlanDoc = doc(db, `businessPartner/${userId}/dietplan`, dietPlanId);
     await deleteDoc(dietPlanDoc);
+  }
+
+  static async fetchTotalPartnership() {
+    try {
+      const totalPartnerships = await getDocs(collection(db, 'businessPartner'))
+      return totalPartnerships.size
+    } catch (error) {
+      throw error
+    }
+  }
+
+  static async fetchActivePartnership() {
+    try {
+      const q = query(collection(db, 'businessPartner'), where('status', '==', 'active'))
+      const activePartnerships = await getDocs(q)
+      return activePartnerships.size
+    } catch (error) {
+      throw error
+    }
+  }
+
+  static async fetchPendingPartnership() {
+    try {
+      const q = query(collection(db, 'businessPartner'), where('status', '==', 'pending'))
+      const pendingPartnerships = await getDocs(q)
+      return pendingPartnerships.size
+    } catch (error) {
+      throw error
+    }
   }
 }
 

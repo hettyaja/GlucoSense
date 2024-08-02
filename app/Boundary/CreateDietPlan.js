@@ -138,9 +138,11 @@ const styles = StyleSheet.create({
     justifyContent:'space-between',
     alignItems:'center',
     paddingVertical:8,
+    textAlign:'right'
   },
   input: {
     marginHorizontal:16,
+    textAlign:'right'
   },
   label: {
     fontFamily:'Poppins-Regular',

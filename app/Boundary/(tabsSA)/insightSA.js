@@ -12,8 +12,11 @@ import { useAuth } from '../../service/AuthContext';
 const InsightSA = () => {
   const { user } = useAuth()
   const [totalUsers, setTotalUsers] = useState(0);
-  const [totalActiveUsers, setTotalActiveUsers] = useState(0);
-  const [totalActive, setTotalActive] = useState(0)
+  const [activeUsers, setActiveUsers] = useState(0);
+  const [premiumUsers, setPremiumUsers] = useState(0);
+  const [totalPartnerships, setTotalPartnerships] = useState(0);
+  const [activePartnerships, setActivePartnerships] = useState(0)
+  const [pendingPartnerships, setPendingPartnerships] = useState(0);
   const [logsCount, setLogsCount] = useState({
     totalGlucoseLogsCount: 0,
     totalMedicineLogsCount: 0,
@@ -23,28 +26,13 @@ const InsightSA = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const logsCountData = await ViewValueableDataController.viewValuableData();
-        setLogsCount(logsCountData);
-
-        const collections = ['users', 'businessPartner', 'systemAdmin'];
-        let usersCount = 0;
-        let activeUsersCount = 0;
-
-
-
-        for (const collectionName of collections) {
-          const querySnapshot = await getDocs(collection(db, collectionName));
-          querySnapshot.forEach((doc) => {
-            usersCount++;
-            if (doc.data().status === 'active') {
-              activeUsersCount++;
-            }
-          });
-        }
-        const testUser = await ViewValueableDataController.viewActiveUser(user)
-        setTotalActive(testUser)
-        setTotalUsers(usersCount);
-        setTotalActiveUsers(activeUsersCount);
+        setLogsCount(await ViewValueableDataController.viewValuableData());
+        setTotalUsers(await ViewValueableDataController.viewTotalUser())
+        setActiveUsers(await ViewValueableDataController.viewActiveUser())
+        setPremiumUsers(await ViewValueableDataController.viewPremiumUser())
+        setTotalPartnerships(await ViewValueableDataController.viewTotalPartnership())
+        setActivePartnerships(await ViewValueableDataController.viewActivePartnership())
+        setPendingPartnerships(await ViewValueableDataController.viewPendingPartnership())
       } catch (error) {
         console.error('Error fetching user data: ', error);
       }
@@ -90,24 +78,29 @@ const InsightSA = () => {
           <View style={styles.divider}></View>
           <View style={styles.userSection}>
             <Text style={styles.cardTitle}>Active User</Text>
-            <Text style={styles.cardValue}>{totalActive}</Text>
+            <Text style={styles.cardValue}>{activeUsers}</Text>
           </View>
           <View style={styles.divider}></View>
           <View style={styles.userSection}>
             <Text style={styles.cardTitle}>Premium User</Text>
-            <Text style={styles.cardValue}>{totalUsers}</Text>
+            <Text style={styles.cardValue}>{premiumUsers}</Text>
           </View>
         </View>
         <Text style={styles.title}>Partnership Statistics</Text>
         <View style={styles.userCard}>
           <View style={styles.userSection}>
             <Text style={styles.cardTitle}>Total Partnership</Text>
-            <Text style={styles.cardValue}>{totalUsers}</Text>
+            <Text style={styles.cardValue}>{totalPartnerships}</Text>
           </View>
           <View style={styles.divider}></View>
           <View style={styles.userSection}>
             <Text style={styles.cardTitle}>Active Partnership</Text>
-            <Text style={styles.cardValue}>{totalActiveUsers}</Text>
+            <Text style={styles.cardValue}>{activePartnerships}</Text>
+          </View>
+          <View style={styles.divider}></View>
+          <View style={styles.userSection}>
+            <Text style={styles.cardTitle}>Pending Partnership</Text>
+            <Text style={styles.cardValue}>{pendingPartnerships}</Text>
           </View>
         </View>
         <Text style={styles.title}>Logs Statistics</Text>

@@ -296,13 +296,21 @@ const home = () => {
     }
   };
 
+  const handleReminder = () => {
+      if (subscriptionType === 'premium') {
+        router.push('reminder')
+      } else {
+        router.push('Boundary/Subscribe')
+      }
+  }
+
   return (
     <>
       <Header
         title=''
         leftButton='Home'
         rightButton='Notification'
-        onRightButtonPress={() => router.push('reminder')}
+        onRightButtonPress={() => handleReminder()}
       />
       <View style={styles.container}>
         <View style={styles.headerArea}>

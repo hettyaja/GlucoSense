@@ -1,6 +1,6 @@
 import { auth, db } from '../../firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail } from 'firebase/auth';
-import { doc, setDoc, deleteDoc, getDocs, updateDoc, Timestamp, collection, getDoc } from 'firebase/firestore';
+import { doc, setDoc, deleteDoc, getDocs, updateDoc, Timestamp, collection, getDoc, query, where} from 'firebase/firestore';
 import { deleteUser as firebaseDeleteUser } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
@@ -253,25 +253,39 @@ static async setAccountProfile(uid, name, email, username){
     }
   };
 
-  static async fetchActiveUser(user) {
+  static async fetchTotalUsers() {
     try {
-      if (!user) {
-        throw new Error('No user is currently signed in');
-      }
-      const token = await user.getIdToken();
-      const response = await axios.get(`${BASE_URL}/active-users`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      return response.data.activeUsersCount;
+      const usersCollection = collection(db, 'users');
+      const querySnapshot = await getDocs(usersCollection);
+      const totalUsersCount = querySnapshot.size; // Get the number of documents in the snapshot
+      return totalUsersCount;
     } catch (error) {
-      console.error('Error fetching active users:', error);
-      throw new Error('Failed to fetch active users.');
+      console.error("Error fetching total users count: ", error);
+      throw error;
     }
   }
-  
 
+  static async fetchActiveUser() {
+    try {
+      const q = query(collection(db, 'users'), where('status', '==', 'active'));
+      const querySnapshot = await getDocs(q);
+      const activeUserCount = querySnapshot.size; // Get the number of documents in the snapshot
+      return activeUserCount;
+    } catch (error) {
+      throw error
+    }
+  }
+
+  static async fetchPremiumUser() {
+    try {
+      const q = query(collection(db, 'users'), where('subscriptionType', '==', 'premium'));
+      const querySnapshot = await getDocs(q);
+      const premiumUserCount = querySnapshot.size; // Get the number of documents in the snapshot
+      return premiumUserCount;
+    } catch (error) {
+      throw error
+    }
+  }
 
   static async setDiabetesType(uid, diabetesType){
     try{
