@@ -30,7 +30,8 @@ const RegisterBPUI= () => {
                 phoneNum
             }
             await RegisterBPController.register(email, password, confirmPassword, additionalData)
-            router.back()
+            alert("Your business acount is on pending approval")
+            router.dismiss(2)
         } catch (error) {
             Alert.alert('Register Error', error.message)
         }

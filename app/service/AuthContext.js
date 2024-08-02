@@ -27,7 +27,6 @@ export const AuthProvider = ({ children }) => {
                         await auth.signOut();
                         setUser(false);
                     } else if (businessDoc.exists() && businessDoc.data().status === 'pending') {
-                        alert("Your business account is pending approval.");
                         await auth.signOut();
                         setUser(false);
                     } else {

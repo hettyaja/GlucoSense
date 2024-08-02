@@ -54,7 +54,7 @@ const getStartedPage_1 = () => {
         
             <ImageButton
               source={require("../../assets/next.png")}
-              onPress={() => router.push('Boundary/RegisterBPUI')}
+              onPress={() => router.replace('Boundary/RegisterBPUI')}
             />
         </View>
     </View>
