@@ -30,6 +30,7 @@ const RegisterBPUI= () => {
                 phoneNum
             }
             await RegisterBPController.register(email, password, confirmPassword, additionalData)
+            router.back()
         } catch (error) {
             Alert.alert('Register Error', error.message)
         }

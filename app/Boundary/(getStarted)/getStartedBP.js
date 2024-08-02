@@ -2,8 +2,6 @@ import { View, Text, Image} from 'react-native'
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import {router, Stack } from 'expo-router'
-
-import { images } from '../../constants/images';
 import ImageButton from '../../components/ImageButton'
 
 const getStartedPage_1 = () => {
@@ -56,7 +54,7 @@ const getStartedPage_1 = () => {
         
             <ImageButton
               source={require("../../assets/next.png")}
-              onPress={() => router.push('Boundary/registerBP')}
+              onPress={() => router.push('Boundary/RegisterBPUI')}
             />
         </View>
     </View>
