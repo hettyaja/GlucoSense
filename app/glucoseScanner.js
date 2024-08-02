@@ -1,19 +1,27 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Camera, CameraView } from 'expo-camera';
+import {CameraView, useCameraPermissions } from 'expo-camera';
 import TextRecognition from 'react-native-text-recognition';
 
 const GlucoseScanner = () => {
-  const [hasPermission, setHasPermission] = useState(null);
+  const [permission, requestPermission] = useCameraPermissions();
   const [result, setResult] = useState('');
   const cameraRef = useRef(null);
 
-  useEffect(() => {
-    (async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync();
-      setHasPermission(status === 'granted');
-    })();
-  }, []);
+  if (!permission) {
+    // Camera permissions are still loading.
+    return <View />;
+  }
+
+  if (!permission.granted) {
+    // Camera permissions are not granted yet.
+    return (
+      <View style={styles.container}>
+        <Text style={styles.message}>We need your permission to show the camera</Text>
+        <Button onPress={requestPermission} title="grant permission" />
+      </View>
+    );
+  }
 
   const handleCapture = async () => {
     if (cameraRef.current) {
@@ -38,10 +46,10 @@ const GlucoseScanner = () => {
     }
   };
 
-  if (hasPermission === null) {
+  if (permission === null) {
     return <View />;
   }
-  if (hasPermission === false) {
+  if (permission === false) {
     return <Text>No access to camera</Text>;
   }
 

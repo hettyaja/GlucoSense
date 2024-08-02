@@ -7,7 +7,6 @@ import food from './foodOrder';
 
 export default function App() {
   const router = useRouter();
-  const [hasPermission, setHasPermission] = useState(null);
   const [permission, requestPermission] = useCameraPermissions();
   const [scanned, setScanned] = useState(false);
 
