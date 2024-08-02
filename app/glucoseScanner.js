@@ -25,8 +25,11 @@ const GlucoseScanner = () => {
 
   const extractTextFromImage = async (imageUri) => {
     try {
+      console.log('Extracting text from image:', imageUri);
       const recognizedText = await TextRecognition.recognize(imageUri);
       console.log('OCR result:', recognizedText); // Debug log
+  
+      // Process recognized text
       const numbers = recognizedText.filter(item => !isNaN(item));
       setResult(numbers.join(' '));
     } catch (err) {

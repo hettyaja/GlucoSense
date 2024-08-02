@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View, Alert } from 'react-native';
-import { BarCodeScanner } from 'expo-barcode-scanner';
+import { CameraView, useCameraPermissions} from 'expo-camera';
 import { searchFoodByBarcode } from '../server';
 import { Stack, useRouter } from 'expo-router';
 import food from './foodOrder';
@@ -8,14 +8,23 @@ import food from './foodOrder';
 export default function App() {
   const router = useRouter();
   const [hasPermission, setHasPermission] = useState(null);
+  const [permission, requestPermission] = useCameraPermissions();
   const [scanned, setScanned] = useState(false);
 
-  useEffect(() => {
-    (async () => {
-      const { status } = await BarCodeScanner.requestPermissionsAsync();
-      setHasPermission(status === 'granted');
-    })();
-  }, []);
+  if (!permission) {
+    // Camera permissions are still loading.
+    return <View />;
+  }
+
+  if (!permission.granted) {
+    // Camera permissions are not granted yet.
+    return (
+      <View style={styles.container}>
+        <Text style={styles.message}>We need your permission to show the camera</Text>
+        <Button onPress={requestPermission} title="grant permission" />
+      </View>
+    );
+  }
 
   const handleBarCodeScanned = async ({ type, data }) => {
     setScanned(true);
@@ -37,19 +46,19 @@ export default function App() {
   const renderCamera = () => {
     return (
       <View style={styles.cameraContainer}>
-        <BarCodeScanner
-          onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+        <CameraView
+        onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
           style={styles.camera}
         />
       </View>
     );
   };
 
-  if (hasPermission === null) {
+  if (permission === null) {
     return <View />;
   }
 
-  if (hasPermission === false) {
+  if (permission === false) {
     return (
       <View style={styles.container}>
         <Text style={styles.text}>Camera permission not granted</Text>
@@ -110,4 +119,3 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
-
