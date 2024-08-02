@@ -129,18 +129,19 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 16,
     height: 40,
-    marginVertical: 10,
-    marginHorizontal: 11,
+    marginVertical: 8,
+    marginHorizontal: 8,
   },
   searchContainer: {
     backgroundColor: 'white',
   },
   icon: {
-    marginRight: 10,
+    marginRight: 8,
   },
   input: {
     flex: 1,
-    fontSize: 16,
+    fontSize: 14,
+    fontFamily:'Poppins-Regular',
     color: '#333',
   },
   recipeCard: {

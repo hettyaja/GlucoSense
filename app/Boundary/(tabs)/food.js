@@ -27,7 +27,7 @@ const Food = () => {
     const fetchDietPlansData = async () => {
       try {
         const dietPlanCollection = await fetchDietPlans(); // Fetch diet plan data
-        setDietPlans(dietPlanCollection.slice(0, 4));
+        setDietPlans(dietPlanCollection);
       } catch (error) {
         console.error('Error fetching diet plan data:', error);
       }
@@ -75,9 +75,9 @@ const Food = () => {
         <ScrollView horizontal contentContainerStyle={styles.featuredMenuContainer}>
           {dietPlans.map((plan) => (
             <TouchableOpacity key={plan.id} style={styles.menuCard} onPress={() => router.push('Boundary/ViewDietPlan')}>
-              <Image source={{ uri: plan.meals.dinner.image || 'https://via.placeholder.com/150' }} style={styles.menuImage} />
-              <Text style={styles.menuTitle}>{plan.day}</Text>
-              <Text style={styles.menuPrice}>{plan.meals.dinner.title}</Text>
+              {/* <Image source={{ uri: plan.meals.dinner.image || 'https://via.placeholder.com/150' }} style={styles.menuImage} /> */}
+              <Text style={styles.menuTitle}>{plan.planName}</Text>
+              <Text style={styles.menuPrice}>{plan.price}</Text>
             </TouchableOpacity>
           ))}
         </ScrollView>

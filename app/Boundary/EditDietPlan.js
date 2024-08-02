@@ -5,7 +5,8 @@ import { Stack, useRouter, useLocalSearchParams } from 'expo-router';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import DietPlanEntry from './DietPlanEntry';
 import { useAuth } from '../service/AuthContext';
-// import EditDietPlanController from '../Controller/EditDietPlanController';
+import UpdateDietPlanController from '../Controller/UpdateDietPlanController';
+UpdateDietPlanController
 
 const initialDietPlanState = {
   planName: '',
@@ -42,7 +43,7 @@ const EditDietPlan = () => {
 
   const handleSave = async () => {
     try {
-      await EditDietPlanController.updateDietPlan(user.uid, dietPlan.id, dietPlan);
+      await UpdateDietPlanController.updateDietPlan(user.uid, dietPlan);
       updateDietPlan(dietPlan.id, dietPlan);
       router.push('/Boundary/planBP'); // Ensure this path is correct
     } catch (error) {

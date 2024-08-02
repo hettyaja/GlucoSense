@@ -13,25 +13,20 @@ import setSubscribedController from '../../Controller/setSubscibedController';
 
 const Setting = () => {
   const { user } = useAuth();
-  const [photoUri, setPhotoUri] = useState('https://reactnative.dev/img/tiny_logo.png');
+  const [photoUri, setPhotoUri] = useState('');
   const [subscriptionType, setSubscriptionType] = useState('');
   const [name, setName] = useState('');
 
   const fetchProfileData = async () => {
     try {
       const profileData = await getProfileController.getProfile(user.uid);
+      setPhotoUri(profileData.image)
       setSubscriptionType(profileData.subscriptionType);
-      setName(profileData.name); // Assuming the profile data contains a name field
+      setName(profileData.name);
     } catch (error) {
       console.error(error);
     }
   };
-
-  useEffect(() => {
-    if (user.uid) {
-      fetchProfileData();
-    }
-  }, [user.uid]);
 
   useFocusEffect(
     useCallback(() => {
@@ -110,7 +105,12 @@ const Setting = () => {
           onPress={() => router.push('profile')}
         >
           <View style={{ flexDirection: 'row', alignItems: 'center', padding: 24 }}>
-            <Image style={styles.profileImage} source={{ uri: photoUri }} />
+            {photoUri ? (
+              <Image style={styles.profileImage} source={{ uri: photoUri }} />
+            ) : (
+              <FontAwesome name='user-circle' size={64} style={styles.icon} />
+            )}
+            
             <View>
               <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 16 }}>{name}</Text>
               <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 14 }}>
@@ -213,6 +213,9 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Medium',
     fontSize: 16,
     marginLeft: 16,
+  },
+  icon: {
+    paddingRight:16
   },
   iconImage: {
     width: 32,

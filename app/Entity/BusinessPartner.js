@@ -190,9 +190,10 @@ class BusinessPartner {
     }));
   }
 
-  static async updateDietPlan(userId, dietPlanId, updatedDietPlan) {
-    const dietPlanDoc = doc(db, `businessPartner/${userId}/dietplan`, dietPlanId);
-    await updateDoc(dietPlanDoc, updatedDietPlan);
+  static async updateDietPlan(userId, updatedDietPlan) {
+    const { id, ...dietPlanWithoutId } = updatedDietPlan; // Destructure to exclude `id`
+    const dietPlanDoc = doc(db, `businessPartner/${userId}/dietplan`, id);
+    await updateDoc(dietPlanDoc, dietPlanWithoutId);
   }
 
   static async deleteDietPlan(userId, dietPlanId) {
