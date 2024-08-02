@@ -11,6 +11,7 @@ import getProfileController from './Controller/getProfileController';
 import setBodyProfileController from './Controller/SetBodyProfileController';
 import setAccountProfileController from './Controller/SetAccountProfileController';
 import setDiabetesTypeController from './Controller/setDiabetesTypeController';
+import Ionicons from 'react-native-vector-icons/Ionicons'
 
 const Profile = () => {
     const { profileData } = useProfile();
@@ -128,13 +129,11 @@ const Profile = () => {
             <Stack.Screen options={{
                 title: 'Profile',
                 headerStyle: { backgroundColor: '#E58B68' },
-                headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold' },
+                headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Medium', fontSize:16 },
                 headerLeft: () => (
-                    <ImageButton
-                        source={require("./assets/back.png")}
-                        imageSize={{ width: 24, height: 24 }}
-                        onPress={() => router.back('/setting')}
-                    />
+                    <TouchableOpacity onPress={() => router.back('/setting')}>
+                        <Ionicons name='chevron-back' size={24} color='white'/>
+                    </TouchableOpacity>
                 ),
                 headerRight: () => (
                     <TouchableOpacity style={styles.button} onPress={toggleEdit}>

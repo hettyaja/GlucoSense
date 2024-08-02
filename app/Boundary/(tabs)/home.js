@@ -266,7 +266,7 @@ const home = () => {
               renderMedicineDetails(item.medicine)
             ) : (
               <Text style={styles.buttonText}>
-                {item.type === 'glucose' && `${item.glucose} mmol/L`}
+                {item.type === 'glucose' && `${item.glucose} mg/dL`}
                 {item.type === 'meal' && `${item.calories} kcal`}
               </Text>
             )}

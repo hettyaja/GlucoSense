@@ -158,7 +158,7 @@ const editGlucose = () => {
                 maxLength={5}
                 color="#808080"
               />
-              <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 12 }}>mmol/L</Text>
+              <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 12 }}>mg/dL</Text>
             </View>
           </View>
           <View style={{ borderBottomWidth: StyleSheet.hairlineWidth, marginHorizontal: 16 }} />
