@@ -1,3 +1,4 @@
+
 import { StyleSheet, Text, View, SafeAreaView, Platform, TouchableOpacity, ScrollView, Image, Alert } from 'react-native';
 import React, { useState, useEffect, useCallback } from 'react';
 import { router, Tabs, useFocusEffect } from 'expo-router';
@@ -20,7 +21,7 @@ const Setting = () => {
   const fetchProfileData = async () => {
     try {
       const profileData = await getProfileController.getProfile(user.uid);
-      setPhotoUri(profileData.image)
+      setPhotoUri(profileData.image);
       setSubscriptionType(profileData.subscriptionType);
       setName(profileData.name);
     } catch (error) {
@@ -85,7 +86,7 @@ const Setting = () => {
         options={{
           title: 'Setting',
           headerStyle: { backgroundColor: '#E58B68' },
-          headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Medium', fontSize:16 },
+          headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Medium', fontSize: 16 },
           headerRight: () =>
             subscriptionType !== 'premium' ? (
               <TouchableOpacity onPress={() => router.push('Boundary/Subscribe')}>
@@ -108,9 +109,9 @@ const Setting = () => {
             {photoUri ? (
               <Image style={styles.profileImage} source={{ uri: photoUri }} />
             ) : (
-              <FontAwesome name='user-circle' color='grey' size={64} style={styles.icon} />
+              <FontAwesome name="user-circle" color="grey" size={64} style={styles.icon} />
             )}
-            
+
             <View>
               <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 16 }}>{name}</Text>
               <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 14 }}>
@@ -133,6 +134,11 @@ const Setting = () => {
           <TouchableOpacity style={styles.button} onPress={() => router.push('reminder')}>
             <MaterialCommunityIcons name="bell-outline" size={24} />
             <Text style={styles.buttonText}>Reminder</Text>
+          </TouchableOpacity>
+          <View style={{ borderBottomColor: '#d9d9d9', borderBottomWidth: 1 }} />
+          <TouchableOpacity style={styles.button} onPress={() => router.push('Boundary/Goals')}>
+            <MaterialIcons name="flag" size={24} />
+            <Text style={styles.buttonText}>Goals</Text>
           </TouchableOpacity>
           {subscriptionType === 'premium' && (
             <View style={{ borderBottomColor: '#d9d9d9', borderBottomWidth: 1 }} />
@@ -215,7 +221,7 @@ const styles = StyleSheet.create({
     marginLeft: 16,
   },
   icon: {
-    paddingRight:16
+    paddingRight: 16,
   },
   iconImage: {
     width: 32,
