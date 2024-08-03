@@ -1,27 +1,47 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView, Modal, FlatList } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { useNavigation } from '@react-navigation/native'; // Import useNavigation
+import { useNavigation } from '@react-navigation/native';
+
+const NumericPicker = ({ visible, onSelect, range, onClose }) => {
+  return (
+    <Modal visible={visible} transparent={true} animationType="slide">
+      <TouchableOpacity style={styles.modalOverlay} onPress={onClose}>
+        <View style={styles.pickerContainer}>
+          <FlatList
+            data={range}
+            renderItem={({ item }) => (
+              <TouchableOpacity style={styles.pickerItem} onPress={() => onSelect(item + ' mg/dL')}>
+                <Text style={styles.pickerText}>{item} mg/dL</Text>
+              </TouchableOpacity>
+            )}
+            keyExtractor={item => item.toString()}
+          />
+        </View>
+      </TouchableOpacity>
+    </Modal>
+  );
+};
 
 const Goals = () => {
-  const navigation = useNavigation(); // Use the hook to get navigation
+  const navigation = useNavigation();
   const [type, setType] = useState("BMR Calculated");
   const [weightGoal, setWeightGoal] = useState("Maintain");
   const [exerciseLevel, setExerciseLevel] = useState("Light");
-  const [calorieGoal, setCalorieGoal] = useState("2000");
-  const [beforeMeal, setBeforeMeal] = useState("80 - 130");
-  const [afterMeal, setAfterMeal] = useState("80 - 180");
+  const [calorieGoal, setCalorieGoal] = useState(2000); // Changed to number for easier manipulation
+  const [beforeMeal, setBeforeMeal] = useState("100 mg/dL"); // Added units
+  const [afterMeal, setAfterMeal] = useState("140 mg/dL"); // Added units
+  const [showBeforeMealPicker, setShowBeforeMealPicker] = useState(false);
+  const [showAfterMealPicker, setShowAfterMealPicker] = useState(false);
 
-  // Function to handle the change of type
-  const handleTypeChange = (itemValue) => {
-    setType(itemValue);
-  };
+  const beforeMealRange = Array.from({ length: 51 }, (_, i) => i + 80); // 80 to 130
+  const afterMealRange = Array.from({ length: 101 }, (_, i) => i + 80); // 80 to 180
 
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.navigate('setting')} style={styles.iconButton}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconButton}>
           <MaterialIcons name="close" size={24} color="white" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Goals</Text>
@@ -36,7 +56,14 @@ const Goals = () => {
           <Text style={styles.label}>Type</Text>
           <Picker
             selectedValue={type}
-            onValueChange={handleTypeChange}
+            onValueChange={(itemValue) => {
+              setType(itemValue);
+              if (itemValue === "BMR Calculated") {
+                setCalorieGoal(2000);
+              } else {
+                setCalorieGoal(""); // Make it editable
+              }
+            }}
             style={styles.picker}
             mode="dropdown"
           >
@@ -51,7 +78,7 @@ const Goals = () => {
               <Text style={styles.label}>Weight Goal</Text>
               <Picker
                 selectedValue={weightGoal}
-                onValueChange={setWeightGoal}
+                onValueChange={(itemValue) => setWeightGoal(itemValue)}
                 style={styles.picker}
                 mode="dropdown"
               >
@@ -65,7 +92,7 @@ const Goals = () => {
               <Text style={styles.label}>Exercise Level</Text>
               <Picker
                 selectedValue={exerciseLevel}
-                onValueChange={setExerciseLevel}
+                onValueChange={(itemValue) => setExerciseLevel(itemValue)}
                 style={styles.picker}
                 mode="dropdown"
               >
@@ -82,29 +109,44 @@ const Goals = () => {
         <View style={styles.inputGroup}>
           <Text style={styles.label}>Calorie Goal</Text>
           <TextInput
-            value={calorieGoal}
-            onChangeText={setCalorieGoal}
+            value={`${calorieGoal} kcal`} // Added units
+            onChangeText={(text) => setCalorieGoal(text.replace(/ kcal/g, ''))} // Remove units on edit
             keyboardType="numeric"
             style={styles.textInputFull}
+            editable={type === "Custom"}
           />
         </View>
 
         <Text style={styles.sectionTitle}>Glucose</Text>
         <View style={styles.inputGroup}>
           <Text style={styles.label}>Before Meal</Text>
-          <TextInput
-            value={beforeMeal}
-            onChangeText={setBeforeMeal}
-            style={styles.textInputFull}
+          <TouchableOpacity onPress={() => setShowBeforeMealPicker(true)} style={styles.pickerInput}>
+            <Text>{beforeMeal}</Text>
+          </TouchableOpacity>
+          <NumericPicker
+            visible={showBeforeMealPicker}
+            onSelect={(value) => {
+              setBeforeMeal(value);
+              setShowBeforeMealPicker(false);
+            }}
+            onClose={() => setShowBeforeMealPicker(false)}
+            range={beforeMealRange}
           />
         </View>
 
         <View style={styles.inputGroup}>
           <Text style={styles.label}>After Meal</Text>
-          <TextInput
-            value={afterMeal}
-            onChangeText={setAfterMeal}
-            style={styles.textInputFull}
+          <TouchableOpacity onPress={() => setShowAfterMealPicker(true)} style={styles.pickerInput}>
+            <Text>{afterMeal}</Text>
+          </TouchableOpacity>
+          <NumericPicker
+            visible={showAfterMealPicker}
+            onSelect={(value) => {
+              setAfterMeal(value);
+              setShowAfterMealPicker(false);
+            }}
+            onClose={() => setShowAfterMealPicker(false)}
+            range={afterMealRange}
           />
         </View>
       </View>
@@ -169,13 +211,44 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     padding: 10,
     borderRadius: 5,
-    width: '60%',  // Adjust width to match design
+    width: '60%',
     textAlign: 'right',
   },
   picker: {
-    width: '60%',  // Adjust width to match design
+    width: '60%',
     height: 50,
   },
+  pickerInput: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 10,
+    borderRadius: 5,
+    width: '60%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+  },
+  pickerContainer: {
+    backgroundColor: 'white',
+    width: '80%',
+    maxHeight: '60%',
+    borderRadius: 20,
+    overflow: 'hidden',
+  },
+  pickerItem: {
+    padding: 20,
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
+  pickerText: {
+    fontSize: 18,
+  }
 });
 
 export default Goals;
