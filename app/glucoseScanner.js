@@ -1,12 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import {CameraView, useCameraPermissions } from 'expo-camera';
+import { View, Text, StyleSheet, TouchableOpacity, Button } from 'react-native';
+import { CameraView, useCameraPermissions } from 'expo-camera';
 import TextRecognition from 'react-native-text-recognition';
+import { launchImageLibrary } from 'react-native-image-picker';
 
 const GlucoseScanner = () => {
   const [permission, requestPermission] = useCameraPermissions();
   const [result, setResult] = useState('');
   const cameraRef = useRef(null);
+  const [image, setImage] = useState(null);
+
 
   if (!permission) {
     // Camera permissions are still loading.
@@ -31,6 +34,20 @@ const GlucoseScanner = () => {
     }
   };
 
+  const handlePickImage = () => {
+    launchImageLibrary({}, response => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else {
+        const imageUri = response.assets[0].uri;
+        console.log('Selected image URI:', imageUri); // Debug log
+        extractTextFromImage(imageUri);
+      }
+    });
+  };
+
   const extractTextFromImage = async (imageUri) => {
     try {
       console.log('Extracting text from image:', imageUri);
@@ -46,23 +63,18 @@ const GlucoseScanner = () => {
     }
   };
 
-  if (permission === null) {
-    return <View />;
-  }
-  if (permission === false) {
-    return <Text>No access to camera</Text>;
-  }
-
   return (
     <View style={styles.container}>
       <CameraView
         ref={cameraRef}
         style={styles.camera}
-        
       />
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.button} onPress={handleCapture}>
           <Text style={styles.buttonText}>Capture</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={handlePickImage}>
+          <Text style={styles.buttonText}>Pick Image</Text>
         </TouchableOpacity>
       </View>
       {result ? <Text style={styles.resultText}>Result: {result}</Text> : null}

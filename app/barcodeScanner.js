@@ -52,7 +52,7 @@ export default function App() {
       <View style={styles.cameraContainer}>
         <CameraView
           ref={cameraRef}
-          onBarcodeScanned={handleBarCodeScanned}
+          onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
           style={styles.camera}
         />
       </View>
