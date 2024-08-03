@@ -53,8 +53,8 @@ const recipePage = () => {
             value={query}
             onChangeText={setQuery}
             />
-            {/* <Button title="Search" onPress={handleSearch} /> */}
         </View>
+        
         <Text style={styles.title}>Recommended for you</Text>
         <View style={styles.recipeList}>
             {recipes.map((recipe) => (

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Button, TouchableOpacity } from 'react-native';
 import { useLocalSearchParams, Stack, router } from 'expo-router';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import Header from './components/Header';
 
 const FoodDetails = () => {
   const { item } = useLocalSearchParams();
@@ -41,85 +42,79 @@ const FoodDetails = () => {
 
   return (
     <>
-      <Stack.Screen
-        options={{
-          title: 'Meal',
-          headerStyle: { backgroundColor: '#E58B68' },
-          headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Medium', fontSize: 16 },
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => router.back()}>
-              <Ionicons name='chevron-back' size={24} color='white' />
-            </TouchableOpacity>
-          ),
-          headerRight: () => (
-            <TouchableOpacity style={styles.button} onPress={handleSave}>
-              <Text style={{ padding: 2, marginHorizontal: 8, fontFamily: 'Poppins-SemiBold', fontSize: 16, color: 'white' }}>Save</Text>
-            </TouchableOpacity>
-          ),
-          headerTitle: 'Add meal',
-          headerTitleAlign: 'center',
-        }}
-      />
+    <Header
+      title = 'Meal'
+      leftButton='Back'
+      onLeftButtonPress={() => router.back()}
 
-      <View style={styles.container}>
-        <Text style={styles.title}>{food.label}</Text>
-        <View style={styles.section}>
-          <View style={styles.subSection}>
-            <Text style={styles.sectionText}>Serving size</Text>
-            <View style={{flexDirection:'row', alignItems:'center'}}>
-              <Button title="-" onPress={handleDecrease}/>
-              <Text style={styles.sectionText}>{servings}</Text>
-              <Button title="+" onPress={handleIncrease} />
-            </View>
+      rightButton= 'Save'
+      onRightButtonPress={() => handleSave()}
+    />
+
+    <View style={styles.container}>
+      <Text style={styles.title}>{food.label}</Text>
+      <View style={styles.section}>
+        <View style={styles.subSection}>
+          <Text style={styles.sectionText}>Serving size</Text>
+          <View style={{flexDirection:'row', alignItems:'center'}}>
+            <TouchableOpacity style={styles.button} onPress={handleDecrease}>
+              <Text style={styles.buttonText}>-</Text>
+            </TouchableOpacity>
+            <Text style={styles.sectionText}>{servings}</Text>
+            <TouchableOpacity style={styles.button} onPress={handleIncrease}>
+              <Text style={styles.buttonText}>+</Text>
+            </TouchableOpacity>
+            
           </View>
         </View>
-
-
-        <Text style={styles.subHeaderText}>Nutrition Facts</Text>
-        {nutrients && (
-          <View style={styles.section}>
-            {nutrients.ENERC_KCAL !== undefined && (
-              <>
-                <View style={styles.subSection}>
-                <Text style={styles.sectionText}>Calories</Text>
-                <Text style={styles.sectionText}>{(nutrients.ENERC_KCAL * servings).toFixed(2)} kcal</Text>
-
-                </View>
-                <View style={{borderBottomWidth:0.5, marginHorizontal:16}}/>
-                
-              </>
-
-            )}
-            {nutrients.FAT !== undefined && (
-              <>
-              <View style={styles.subSection}>
-              <Text style={styles.sectionText}>Fat</Text>
-              <Text style={styles.sectionText}>{(nutrients.FAT * servings).toFixed(2)} g</Text>
-              </View>
-              <View style={{borderBottomWidth:0.5, marginHorizontal:16}}/>
-              </>
-            )}
-            {nutrients.PROCNT !== undefined && (
-              <>
-              <View style={styles.subSection}>
-              <Text style={styles.sectionText}>Protein</Text>
-              <Text style={styles.sectionText}>{(nutrients.PROCNT * servings).toFixed(2)} g</Text>
-              
-              </View>
-              <View style={{borderBottomWidth:0.5, marginHorizontal:16}}/>
-              </>
-            )}
-            {nutrients.CHOCDF !== undefined && (
-              <>
-              <View style={styles.subSection}>
-              <Text style={styles.sectionText}>Carbohydrates</Text>
-              <Text style={styles.sectionText}>{(nutrients.CHOCDF * servings).toFixed(2)} g</Text>
-              </View>
-              </>
-            )}
-          </View>
-        )}
       </View>
+
+
+      <Text style={styles.subHeaderText}>Nutrition Facts</Text>
+      {nutrients && (
+        <View style={styles.section}>
+          {nutrients.ENERC_KCAL !== undefined && (
+            <>
+              <View style={styles.subSection}>
+              <Text style={styles.sectionText}>Calories</Text>
+              <Text style={styles.sectionText}>{(nutrients.ENERC_KCAL * servings).toFixed(2)} kcal</Text>
+
+              </View>
+              <View style={{borderBottomWidth:0.5, marginHorizontal:16}}/>
+              
+            </>
+
+          )}
+          {nutrients.FAT !== undefined && (
+            <>
+            <View style={styles.subSection}>
+            <Text style={styles.sectionText}>Fat</Text>
+            <Text style={styles.sectionText}>{(nutrients.FAT * servings).toFixed(2)} g</Text>
+            </View>
+            <View style={{borderBottomWidth:0.5, marginHorizontal:16}}/>
+            </>
+          )}
+          {nutrients.PROCNT !== undefined && (
+            <>
+            <View style={styles.subSection}>
+            <Text style={styles.sectionText}>Protein</Text>
+            <Text style={styles.sectionText}>{(nutrients.PROCNT * servings).toFixed(2)} g</Text>
+            
+            </View>
+            <View style={{borderBottomWidth:0.5, marginHorizontal:16}}/>
+            </>
+          )}
+          {nutrients.CHOCDF !== undefined && (
+            <>
+            <View style={styles.subSection}>
+            <Text style={styles.sectionText}>Carbohydrates</Text>
+            <Text style={styles.sectionText}>{(nutrients.CHOCDF * servings).toFixed(2)} g</Text>
+            </View>
+            </>
+          )}
+        </View>
+      )}
+    </View>
     </>
   );
 };
@@ -169,8 +164,20 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   button: {
-    // Add styles for your button if needed
+    backgroundColor: '#E58B68',
+    paddingHorizontal: 10, 
+    borderRadius: 5, 
+    marginHorizontal: 5,
+
+
   },
+  buttonText: {
+    color: '#FFFFFF', 
+    fontSize: 18,
+    fontFamily: 'Poppins-Medium',
+  },
+    
+ 
 });
 
 export default FoodDetails;

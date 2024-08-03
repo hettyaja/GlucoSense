@@ -5,7 +5,8 @@ import { Stack, router} from 'expo-router'
 import { images } from './constants/images';
 import { Picker } from '@react-native-picker/picker';
 import ImageButton from './components/ImageButton';
-import Ionicons from 'react-native-vector-icons/Ionicons'
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import Header from './components/Header';
 
 const preReg = () => {
   const [quantity, setQuantity] = useState(1);
