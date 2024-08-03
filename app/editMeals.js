@@ -117,7 +117,7 @@ const editMeals = () => {
       <Stack.Screen options={{
         title: 'Edit meal',
         headerStyle: { backgroundColor: '#E58B68' },
-        headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold' },
+        headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Medium', fontSize: 16 },
         headerLeft: () => (
           <TouchableOpacity onPress={() => router.back('Boundary/home')}>
             <AntDesign name='close' size={24} color='white' />
@@ -195,15 +195,15 @@ const editMeals = () => {
             <Text style={styles.itemTitle}>Notes{"\n\n\n"}</Text>
             <TextInput
               style={styles.itemTitle}
-              placeholder='Add your notes'
+              placeholder='Add notes'
               value={notes}
               onChangeText={(text) => setNotes(text)}
             />
           </View>
         </View>
-        <Text>{"\n\n\n\n\n\n\n"}</Text>
+        <Text>{"\n\n\n"}</Text>
 
-        <View style={styles.section}>
+        <View style={styles.deleteSection}>
         <TouchableOpacity style={{padding: 16, alignItems: 'center' }} onPress={() => confirmDelete()}>
             <Text style={{ fontFamily: 'Poppins-Medium', fontSize:16, color:'red'}}>Delete</Text>
           </TouchableOpacity>
@@ -226,6 +226,13 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderBottomWidth: 1,
     marginVertical: 24,
+  },
+  deleteSection:{
+    backgroundColor: 'white',
+    borderColor: '#808080',
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    marginVertical: 1,
   },
   buttonContainer: {
     backgroundColor:'white',
@@ -257,7 +264,7 @@ const styles = StyleSheet.create({
   },
   picker: {
     fontFamily: 'Poppins-Regular',
-    width: '50%',
+    width: '55%',
     marginLeft: 170,
     color: '#808080',
   },

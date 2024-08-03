@@ -8,6 +8,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useAuth } from '../../service/AuthContext';
 import RetrieveGlucoseLogsController from '../../Controller/RetrieveGlucoseLogsController';
 import RetrieveMealLogsController from '../../Controller/RetrieveMealLogsController';
+import Header from '../../components/Header';
 
 const Insight = () => {
   const screenWidth = Dimensions.get("window").width;
@@ -70,13 +71,18 @@ const Insight = () => {
 
   return (
     <>
-      <Tabs.Screen options={{
+      <Header
+        title = 'Insight'
+      />
+
+      
+      {/* <Tabs.Screen options={{
         title: 'Insight',
         headerStyle: { backgroundColor: '#E58B68' },
         headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Medium', fontSize:16 },
         headerTitle: 'Insight',
         headerTitleAlign: 'center',
-      }} />
+      }} /> */}
       <ScrollView style={styles.container}>
         <TouchableOpacity style={styles.centeredChart} onPress={() => router.push('/glucoseInsight')}>
           <View style={styles.chartContainer}>

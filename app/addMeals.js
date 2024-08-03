@@ -1,18 +1,21 @@
 import { View, Text, StyleSheet, Alert, Button, TouchableOpacity, ScrollView, TextInput } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
-import { images } from './constants/images';
 import { Picker } from '@react-native-picker/picker';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import { addMealLog } from './service/diaryService';
 import Feather from 'react-native-vector-icons/Feather'
 import { useAuth } from './service/AuthContext';
 import CreateMealLogsController from './Controller/CreateMealLogsController';
+import Header from './components/Header';
 
-const preReg = () => {
+const handleBackButton = () => {
+  router.back()
+}
+
+const addMeals = () => {
   const { user } = useAuth();
   const [selectedButton, setSelectedButton] = useState(null);
   const [selectedValue, setSelectedValue] = useState("Before breakfast");
@@ -24,14 +27,22 @@ const preReg = () => {
   const [carbs, setCarbs] = useState(parsedMealData?.carbs || 0);
   const [protein, setProtein] = useState(parsedMealData?.protein || 0);
   const [notes, setNotes] = useState('');
+  const [isSaveDisabled, setIsSaveDisabled] = useState(true); // New state variable
 
-  
+  useEffect(() => {
+    if (parsedMealData && selectedDate) {
+      setIsSaveDisabled(false);
+    } else {
+      setIsSaveDisabled(true);
+    }
+  }, [parsedMealData, selectedDate]);
+
   const getSingaporeTime = () => {
     const now = new Date();
     const options = { timeZone: 'Asia/Singapore', hour12: false, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' };
     const formatter = new Intl.DateTimeFormat('en-GB', options);
     const parts = formatter.formatToParts(now);
-  
+
     const singaporeTime = new Date(`${parts.find(p => p.type === 'year').value}-${parts.find(p => p.type === 'month').value}-${parts.find(p => p.type === 'day').value}T${parts.find(p => p.type === 'hour').value}:${parts.find(p => p.type === 'minute').value}:${parts.find(p => p.type === 'second').value}`);
     
     if (isNaN(singaporeTime.getTime())) {
@@ -111,29 +122,22 @@ const preReg = () => {
 
   const handleConfirm = (date) => {
     setSelectedDate(date);
-    console.warn("A date has been picked: ", date);
+    console.log("A date has been picked: ", date);
     hideDatePicker();
   };
 
   return (
     <>
-      <Stack.Screen options={{
-        title: 'Add meal',
-        headerStyle: { backgroundColor: '#E58B68' },
-        headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold' },
-        headerLeft: () => (
-          <TouchableOpacity onPress={() => router.back('/home')}>
-            <AntDesign name='close' size={24} color='white' />
-          </TouchableOpacity>
-        ), headerRight: () => (
-          <TouchableOpacity onPress={() => saveMeals()}>
-            <Text style={{ padding: 2, marginHorizontal: 8, fontFamily: 'Poppins-SemiBold', fontSize: 16, color: 'white' }}>Save</Text>
-          </TouchableOpacity>
-        ),
-        headerTitle: 'Meal',
-        headerTitleAlign: 'center',
-      }} />
-
+      <Header
+        title='Meal'
+        leftButton='Close'
+        onLeftButtonPress={() => handleBackButton()}
+        rightButton='Save'
+        onRightButtonPress={saveMeals}
+        rightButtonStyle={isSaveDisabled ? styles.disabledButton : styles.enabledButton} // Updated style
+        rightButtonDisabled={isSaveDisabled} // Disable the button if no meal data
+      />
+      
       <ScrollView style={{ flex: 1, backgroundColor: '#f5f5f5' }}>
         <View style={styles.section}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16}}>
@@ -142,6 +146,7 @@ const preReg = () => {
               <Text>{selectedDate.toLocaleString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', hour: 'numeric', minute: 'numeric' })}</Text>
             </TouchableOpacity>
           </View>
+
           <View style={{ borderBottomWidth: StyleSheet.hairlineWidth, marginHorizontal: 16 }} />
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16 }}>
             <Text style={{ fontSize: 16, fontFamily: 'Poppins-Medium' }}>Period</Text>
@@ -160,16 +165,18 @@ const preReg = () => {
             </Picker>
           </View>
         </View>
+
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={[styles.button, {borderRightColor:'#808080', borderRightWidth:0.5}]} onPress={() => router.push('/searchFood')}>
             <Text style={styles.buttonText}>Search</Text>
             <Fontisto name="search" size={24} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button}  onPress={() => router.push('/barcodeScanner')}>
+          <TouchableOpacity style={styles.button} onPress={() => router.push('/barcodeScanner')}>
             <Text style={styles.buttonText}>Scan</Text>
             <MaterialCommunityIcons name='barcode-scan' size={32} />
           </TouchableOpacity>
         </View>
+
         {parsedMealData && (
           <View style={{flexDirection:'row', borderRadius:8, backgroundColor:'white',marginHorizontal:24, marginTop:16, padding:16, justifyContent:'space-between'}}>
             <Text style={styles.itemTitle}>{parsedMealData.label}</Text>
@@ -187,25 +194,34 @@ const preReg = () => {
             <Text style={styles.itemTitle}>Calories</Text>
             <Text style={styles.itemTitle}>{calories} kcal</Text>
           </View>
+
           <View style={{ borderBottomWidth: StyleSheet.hairlineWidth, marginHorizontal: 16 }} />
           <View style={styles.item}>
             <Text style={styles.itemTitle}>Carbs</Text>
             <Text style={styles.itemTitle}>{carbs} g</Text>
           </View>
+
           <View style={{ borderBottomWidth: StyleSheet.hairlineWidth, marginHorizontal: 16 }} />
           <View style={styles.item}>
             <Text style={styles.itemTitle}>Protein</Text>
             <Text style={styles.itemTitle}>{protein} g</Text>
           </View>
+
           <View style={{ borderBottomWidth: StyleSheet.hairlineWidth, marginHorizontal: 16 }} />
           <View style={styles.item}>
             <Text style={styles.itemTitle}>Fat</Text>
             <Text style={styles.itemTitle}>{fat} g</Text>
           </View>
+
           <View style={{ borderBottomWidth: StyleSheet.hairlineWidth, marginHorizontal: 16 }} />
           <View style={styles.item}>
             <Text style={styles.itemTitle}>Notes{"\n\n\n"}</Text>
-            <TextInput style={styles.itemTitle} placeholder='Add your notes'></TextInput>
+            <TextInput 
+              style={styles.notesTitle} 
+              placeholder='Add notes'
+              onChangeText={setNotes}
+              value={notes}
+            />
           </View>
           
         </View>
@@ -220,6 +236,7 @@ const preReg = () => {
     </>
   )
 }
+
 const styles = StyleSheet.create({
   section: {
     backgroundColor: 'white',
@@ -248,7 +265,11 @@ const styles = StyleSheet.create({
   },
   itemTitle: {
     fontSize:14,
-    fontFamily: "Poppins-Medium"
+    fontFamily: "Poppins-Medium",
+  },
+  notesTitle: {
+    fontSize:14,
+    fontFamily: "Poppins-Medium",
   },
   buttonText: {
     fontSize: 14,
@@ -258,7 +279,7 @@ const styles = StyleSheet.create({
   },
   picker: {
     fontFamily: 'Poppins-Regular',
-    width: '50%',
+    width: '55%',
     marginLeft: 170,
     color: '#808080',
   },
@@ -268,5 +289,12 @@ const styles = StyleSheet.create({
     height: 36,
     marginHorizontal: 16
   },
+  disabledButton: {
+    opacity: 0.5,
+  },
+  enabledButton: {
+    opacity: 1, 
+  },
 });
-export default preReg;
+
+export default addMeals;

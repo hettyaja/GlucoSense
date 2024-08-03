@@ -32,12 +32,8 @@ const RecipeDetails = () => {
         source={require('../app/assets/loadingFood.gif')}
         style={styles.imageGif}
       />
-    </View>)
-    
-    // return <Image source={require('../app/assets/loadingFood.gif')}
-    //         style={{width:100, height: 100, flex:1, justifyContent: 'center', alignItems: 'center'}}
-    //       />
-    // return <Text>Loading...</Text>;
+    </View>
+    )
   }
 
   const getNutrient = (name) => {
