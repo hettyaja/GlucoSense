@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View, Alert } from 'react-native';
 import { CameraView, useCameraPermissions} from 'expo-camera';
 import { searchFoodByBarcode } from '../server';
@@ -6,6 +6,7 @@ import { Stack, useRouter } from 'expo-router';
 import food from './foodOrder';
 
 export default function App() {
+  const cameraRef = useRef(null);
   const router = useRouter();
   const [permission, requestPermission] = useCameraPermissions();
   const [scanned, setScanned] = useState(false);
@@ -26,9 +27,12 @@ export default function App() {
   }
 
   const handleBarCodeScanned = async ({ type, data }) => {
+    if (scanned) {
+      return;
+    }
     setScanned(true);
     Alert.alert(`Bar code with type ${type} and data ${data} has been scanned!`);
-    
+
     try {
       const foodData = await searchFoodByBarcode(data);
       console.log(foodData);
@@ -37,6 +41,7 @@ export default function App() {
         params: { item: JSON.stringify({ food: foodData }) },
       });
     } catch (error) {
+      console.error('Error searching for food:', error);
       Alert.alert('Error', 'Failed to fetch food details. Please try again.');
       setScanned(false);
     }
@@ -46,7 +51,8 @@ export default function App() {
     return (
       <View style={styles.cameraContainer}>
         <CameraView
-        onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
+          ref={cameraRef}
+          onBarcodeScanned={handleBarCodeScanned}
           style={styles.camera}
         />
       </View>
