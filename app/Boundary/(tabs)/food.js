@@ -1,4 +1,3 @@
-// app/food.js
 import { useRouter } from 'expo-router';
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
@@ -65,19 +64,23 @@ const Food = () => {
           {featuredMenu.map((menu) => (
             <TouchableOpacity key={menu.id} style={styles.menuCard} onPress={() => router.push('foodOrder')}>
               <Image source={{ uri: menu.image }} style={styles.menuImage} />
-              <Text style={styles.menuTitle}>{menu.title}</Text>
-              <Text style={styles.menuPrice}>${menu.price}</Text>
+              <View style={styles.menuTextContainer}>
+                <Text style={styles.menuTitle}>{menu.title}</Text>
+                <Text style={styles.menuPrice}>${menu.price}</Text>
+              </View>
             </TouchableOpacity>
           ))}
         </ScrollView>
 
-        <Text style={styles.sectionTitle}>Diet plan choices</Text>
+        <Text style={styles.sectionTitle}>Diet Plan</Text>
         <ScrollView horizontal contentContainerStyle={styles.featuredMenuContainer}>
           {dietPlans.map((plan) => (
             <TouchableOpacity key={plan.id} style={styles.menuCard} onPress={() => router.push('Boundary/ViewDietPlan')}>
-              {/* <Image source={{ uri: plan.meals.dinner.image || 'https://via.placeholder.com/150' }} style={styles.menuImage} /> */}
-              <Text style={styles.menuTitle}>{plan.planName}</Text>
-              <Text style={styles.menuPrice}>{plan.price}</Text>
+              <Image source={{ uri: plan.planImage || 'https://via.placeholder.com/150' }} style={styles.menuImage} />
+              <View style={styles.menuTextContainer}>
+                <Text style={styles.menuTitle}>{plan.planName}</Text>
+                <Text style={styles.menuPrice}>{plan.price}</Text>
+              </View>
             </TouchableOpacity>
           ))}
         </ScrollView>
@@ -127,34 +130,36 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   featuredMenuContainer: {
-    padding: 16,
+    paddingLeft: 16,
   },
   menuCard: {
     backgroundColor: 'white',
     borderRadius: 8,
     borderWidth: 0.5,
-    width: 120, // Decreased width
+    borderColor: '#808080',
+    width: 200,
     marginRight: 16,
-    padding: 8, // Decreased padding
-    alignItems: 'center',
-    height: 150,
+    height: 160,
   },
   menuImage: {
-    width: 80, // Decreased width
-    height: 50, // Decreased height
-    borderRadius: 8,
-    marginBottom: 8,
+    flex: 3, // Takes 3/4 of the card height
+    width: '100%',
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
+  },
+  menuTextContainer: {
+    flex: 1, // Takes 1/4 of the card height
+    padding: 8,
+    justifyContent: 'center',
   },
   menuTitle: {
     fontFamily: 'Poppins-SemiBold',
     fontSize: 14,
-    textAlign: 'center',
   },
   menuPrice: {
     fontFamily: 'Poppins-Regular',
     fontSize: 12,
-    color: '#666',
-    marginTop: 4,
+    color: '#808080',
   },
 });
 

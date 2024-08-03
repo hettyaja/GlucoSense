@@ -16,6 +16,7 @@ import { uploadImage } from './service/storageService'; // Add this import
 const Profile = () => {
     const { profileData } = useProfile();
     const { user } = useAuth();
+    const [previousImage, setPreviousImage] = useState('')
     const [photoUri, setPhotoUri] = useState('');
     const [localUsername, setUsername] = useState('');
     const [localName, setName] = useState('');
@@ -49,7 +50,8 @@ const Profile = () => {
                 console.log('Is Valid Date:', isValidDate);
 
                 setBirthdate(isValidDate ? birthdate : new Date());
-
+                
+                setPreviousImage(profileData.image)
                 setPhotoUri(profileData.image);
                 setUsername(profileData.username);
                 setName(profileData.name);
@@ -80,7 +82,7 @@ const Profile = () => {
             try {
                 let imageUrl = photoUri;
                 if (photoUri) {
-                    imageUrl = await uploadImage(user.uid, photoUri, profileData.image);
+                    imageUrl = await uploadImage(user.uid, photoUri, previousImage);
                 }
                 await setAccountProfileController.setAccProfile(user.uid, imageUrl, localName, localEmail, localUsername);
                 await setBodyProfileController.setBodProfile(user.uid, localGender, localBirthdate, localWeight, localHeight, localDiabetesType);
