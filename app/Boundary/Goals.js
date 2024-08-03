@@ -1,23 +1,50 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView, Modal, FlatList } from 'react-native';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView, Modal } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
 
-const NumericPicker = ({ visible, onSelect, range, onClose }) => {
+const NumericRangePicker = ({ visible, onSelect, range, onClose }) => {
+  const [lowerBound, setLowerBound] = useState(range[0]);
+  const [upperBound, setUpperBound] = useState(range[range.length - 1]);
+
   return (
     <Modal visible={visible} transparent={true} animationType="slide">
       <TouchableOpacity style={styles.modalOverlay} onPress={onClose}>
         <View style={styles.pickerContainer}>
-          <FlatList
-            data={range}
-            renderItem={({ item }) => (
-              <TouchableOpacity style={styles.pickerItem} onPress={() => onSelect(item + ' mg/dL')}>
-                <Text style={styles.pickerText}>{item} mg/dL</Text>
-              </TouchableOpacity>
-            )}
-            keyExtractor={item => item.toString()}
-          />
+          <View style={styles.rangeSelector}>
+            <Text>Lower Bound: {lowerBound} mg/dL</Text>
+            <Picker
+              selectedValue={lowerBound}
+              onValueChange={itemValue => setLowerBound(itemValue)}
+              style={styles.picker}
+            >
+              {range.map(item => (
+                <Picker.Item key={item} label={`${item} mg/dL`} value={item} />
+              ))}
+            </Picker>
+          </View>
+          <View style={styles.rangeSelector}>
+            <Text>Upper Bound: {upperBound} mg/dL</Text>
+            <Picker
+              selectedValue={upperBound}
+              onValueChange={itemValue => setUpperBound(itemValue)}
+              style={styles.picker}
+            >
+              {range.map(item => (
+                <Picker.Item key={item} label={`${item} mg/dL`} value={item} />
+              ))}
+            </Picker>
+          </View>
+          <TouchableOpacity
+            style={{ padding: 10, alignItems: 'center', justifyContent: 'center' }}
+            onPress={() => {
+              onSelect(`${lowerBound}-${upperBound} mg/dL`);
+              onClose();
+            }}
+          >
+            <Text>Done</Text>
+          </TouchableOpacity>
         </View>
       </TouchableOpacity>
     </Modal>
@@ -30,8 +57,8 @@ const Goals = () => {
   const [weightGoal, setWeightGoal] = useState("Maintain");
   const [exerciseLevel, setExerciseLevel] = useState("Light");
   const [calorieGoal, setCalorieGoal] = useState(2000); // Changed to number for easier manipulation
-  const [beforeMeal, setBeforeMeal] = useState("100 mg/dL"); // Added units
-  const [afterMeal, setAfterMeal] = useState("140 mg/dL"); // Added units
+  const [beforeMeal, setBeforeMeal] = useState("80-130 mg/dL"); // Set to default range
+  const [afterMeal, setAfterMeal] = useState("80-180 mg/dL"); // Set to default range
   const [showBeforeMealPicker, setShowBeforeMealPicker] = useState(false);
   const [showAfterMealPicker, setShowAfterMealPicker] = useState(false);
 
@@ -44,14 +71,14 @@ const Goals = () => {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconButton}>
           <MaterialIcons name="close" size={24} color="white" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Goals</Text>
+        <Text style={styles.headerTitle}>Set Goals</Text>
         <TouchableOpacity onPress={() => console.log('Save Pressed')} style={styles.iconButton}>
           <Text style={styles.saveButton}>Save</Text>
         </TouchableOpacity>
       </View>
 
       <View style={styles.form}>
-        <Text style={styles.sectionTitle}>Calorie</Text>
+        <Text style={styles.sectionTitle}>Calorie Goals</Text>
         <View style={styles.inputGroup}>
           <Text style={styles.label}>Type</Text>
           <Picker
@@ -117,13 +144,13 @@ const Goals = () => {
           />
         </View>
 
-        <Text style={styles.sectionTitle}>Glucose</Text>
+        <Text style={styles.sectionTitle}>Glucose Goals</Text>
         <View style={styles.inputGroup}>
           <Text style={styles.label}>Before Meal</Text>
           <TouchableOpacity onPress={() => setShowBeforeMealPicker(true)} style={styles.pickerInput}>
             <Text>{beforeMeal}</Text>
           </TouchableOpacity>
-          <NumericPicker
+          <NumericRangePicker
             visible={showBeforeMealPicker}
             onSelect={(value) => {
               setBeforeMeal(value);
@@ -139,7 +166,7 @@ const Goals = () => {
           <TouchableOpacity onPress={() => setShowAfterMealPicker(true)} style={styles.pickerInput}>
             <Text>{afterMeal}</Text>
           </TouchableOpacity>
-          <NumericPicker
+          <NumericRangePicker
             visible={showAfterMealPicker}
             onSelect={(value) => {
               setAfterMeal(value);
@@ -240,14 +267,9 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     overflow: 'hidden',
   },
-  pickerItem: {
+  rangeSelector: {
     padding: 20,
     alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-  },
-  pickerText: {
-    fontSize: 18,
   }
 });
 
