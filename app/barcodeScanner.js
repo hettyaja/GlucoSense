@@ -69,7 +69,12 @@ export default function App() {
     <View style={styles.container}>
       <Text style={styles.title}>Welcome to the Barcode Scanner App!</Text>
       <Text style={styles.paragraph}>Scan a barcode to start your job.</Text>
-      {renderCamera()}
+      <View style={styles.cameraContainer}>
+        <CameraView
+        onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
+          style={styles.camera}
+        />
+      </View>
       <TouchableOpacity
         style={styles.button}
         onPress={() => setScanned(false)}
