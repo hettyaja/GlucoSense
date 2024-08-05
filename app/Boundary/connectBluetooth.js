@@ -1,202 +1,151 @@
-import React, { useCallback, useMemo, useState, useEffect } from 'react';
-import { View, Text, Button, FlatList, TouchableOpacity, ActivityIndicator, Alert, StyleSheet, PermissionsAndroid, Platform } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Button, FlatList, TouchableOpacity, ActivityIndicator, StyleSheet, PermissionsAndroid, Platform } from 'react-native';
 import { BleManager } from 'react-native-ble-plx';
+import { Buffer } from 'buffer';
 
-const SmartWearablePage = ({ route, navigation }) => {
-  const manager = useMemo(() => new BleManager(), []);
-  const [scannedDevices, setScannedDevices] = useState([]);
-  const [isScanning, setIsScanning] = useState(false);
-  const [connectedDevice, setConnectedDevice] = useState(null);
-  const [glucoseData, setGlucoseData] = useState([]);
+const connectBluetooth = () => {
+  const [manager] = useState(new BleManager());
+  const [devices, setDevices] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [glucoseValue, setGlucoseValue] = useState()
 
   useEffect(() => {
-    if (connectedDevice) {
-      const subscription = manager.onDeviceDisconnected(connectedDevice.id, (error, device) => {
-        if (error) {
-          console.log('Device disconnected:', error);
-          setConnectedDevice(null);
-        }
-      });
-
-      return () => {
-        subscription.remove();
-      };
-    }
-  }, [connectedDevice, manager]);
-
-  const requestPermissions = async () => {
-    if (Platform.OS === 'android') {
-      try {
+    const requestPermissions = async () => {
+      if (Platform.OS === 'android' && Platform.Version >= 23) {
         const granted = await PermissionsAndroid.requestMultiple([
           PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
           PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
           PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
         ]);
-
-        const allGranted = Object.values(granted).every((result) => result === PermissionsAndroid.RESULTS.GRANTED);
-        return allGranted;
-      } catch (err) {
-        console.warn(err);
-        return false;
+        if (
+          granted['android.permission.ACCESS_FINE_LOCATION'] !== PermissionsAndroid.RESULTS.GRANTED ||
+          granted['android.permission.BLUETOOTH_SCAN'] !== PermissionsAndroid.RESULTS.GRANTED ||
+          granted['android.permission.BLUETOOTH_CONNECT'] !== PermissionsAndroid.RESULTS.GRANTED
+        ) {
+          console.log('Permissions denied');
+        }
       }
-    } else {
-      return true;
-    }
-  };
-
-  const checkBluetooth = useCallback(async () => {
-    try {
-      const isEnabled = await manager.state();
-      if (isEnabled !== 'PoweredOn') {
-        Alert.alert('Bluetooth is not enabled');
-        return false;
-      }
-      return true;
-    } catch (error) {
-      console.log(error);
-      return false;
-    }
+    };
+    requestPermissions();
+    return () => {
+      manager.destroy();
+    };
   }, [manager]);
 
-  const startDeviceScanning = useCallback(async () => {
-    try {
-      const isEnabled = await checkBluetooth();
-      if (!isEnabled) {
+  const scanDevices = () => {
+    setDevices([]);
+    setLoading(true);
+
+    manager.startDeviceScan(null, null, (error, device) => {
+      if (error) {
+        console.log('Scan error:', error);
+        setLoading(false);
         return;
       }
-
-      const permission = await requestPermissions();
-      if (!permission) {
-        return;
-      }
-
-      setIsScanning(true);
-      setScannedDevices([]);
-
-      manager.startDeviceScan(null, null, (error, scannedDevice) => {
-        if (error) {
-          console.error(error);
-          return;
+      setDevices((prevDevices) => {
+        if (!prevDevices.some((d) => d.id === device.id)) {
+          return [...prevDevices, device];
         }
-
-        if (!scannedDevice.name) {
-          return;
-        }
-
-        setScannedDevices((prevDevices) => {
-          if (!prevDevices.find((device) => device.id === scannedDevice.id)) {
-            return [...prevDevices, scannedDevice];
-          }
-          return prevDevices;
-        });
+        return prevDevices;
       });
+    });
 
-      setTimeout(() => {
-        manager.stopDeviceScan();
-        setIsScanning(false);
-      }, 20000);
-    } catch (error) {
-      console.log(error);
-    }
-  }, [checkBluetooth, manager]);
-
-  const actionOnTap = async (item) => {
-    console.log('Connecting to device:', item.name);
-    try {
-      const device = await manager.connectToDevice(item.id, { autoConnect: true });
-      console.log('Connected to device:', item.id);
-      setConnectedDevice(device);
-      await setupNotifications(device);
-    } catch (error) {
-      console.log('Connection error:', error);
-    }
+    setTimeout(() => {
+      manager.stopDeviceScan();
+      setLoading(false);
+    }, 10000);
   };
 
-  const setupNotifications = async (device) => {
+  const connectToDevice = async (device) => {
+    manager.stopDeviceScan();
+    setLoading(true);
+
     try {
-      await device.discoverAllServicesAndCharacteristics();
-      const services = await device.services();
+      const connectedDevice = await manager.connectToDevice(device.id);
+      console.log(`Connected to device: ${connectedDevice.id}`);
 
-      console.log('Discovered services:', services);
+      await connectedDevice.discoverAllServicesAndCharacteristics();
+      console.log(`Discovered services and characteristics for device: ${connectedDevice.id}`);
 
-      const glucoseServiceUUID = '00001808-0000-1000-8000-00805f9b34fb';
-      const glucoseCharacteristicUUID = '00002a18-0000-1000-8000-00805f9b34fb';
+      const services = await connectedDevice.services();
+      for (const service of services) {
+        console.log(`Service UUID: ${service.uuid}`);
+        const characteristics = await service.characteristics();
+        for (const characteristic of characteristics) {
+          console.log(`Characteristic UUID: ${characteristic.uuid}, Properties: ${JSON.stringify(characteristic.properties)}`);
+        }
+      }
 
-      const glucoseService = services.find(service => service.uuid === glucoseServiceUUID);
-      if (glucoseService) {
-        console.log('Glucose service found');
-
-        device.monitorCharacteristicForService(glucoseServiceUUID, glucoseCharacteristicUUID, (error, characteristic) => {
+      // Monitor Glucose Measurement Characteristic
+      manager.monitorCharacteristicForDevice(device.id,
+        '00001808-0000-1000-8000-00805f9b34fb', // Glucose Service UUID
+        '00002a52-0000-1000-8000-00805f9b34fb', // Glucose Measurement Characteristic UUID
+        (error, characteristic) => {
           if (error) {
-            console.error('Characteristic monitor error:', error);
+            console.log('Monitoring error:', error);
             return;
           }
-          const glucoseValue = decodeGlucoseMeasurement(characteristic.value);
-          console.log('Glucose measurement data:', glucoseValue);
-          setGlucoseData(prevData => [...prevData, glucoseValue]);
-        });
-      }
+          console.log('Raw characteristic value:', characteristic.value);
+          glucoseValue = getValueFromBase64(characteristic.value);
+          console.log(`Glucose: ${JSON.stringify(glucoseValue)}`);
+        },
+        'monitor-transaction-id' // Optional transaction ID for tracking
+      );
+      console.log(glucoseValue)
+      console.log('Monitoring started');
     } catch (error) {
-      console.error('Setup notifications error:', error);
+      console.log('Connection error:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const decodeGlucoseMeasurement = (value) => {
-    const buffer = Buffer.from(value, 'base64');
-    const flags = buffer.readUInt8(0);
-    let offset = 1;
-    const glucoseConcentration = buffer.readUInt16LE(offset) / 100.0;
+  const parseGlucoseMeasurement = (buffer) => {
+    let offset = 0;
+    const flags = buffer.readUInt8(offset++);
+    const glucoseConcentration = buffer.readUInt16LE(offset);
     offset += 2;
 
-    let unit = 'kg/L';
-    if (flags & 0x01) {
-      unit = 'mol/L';
+    let timeOffset, typeSampleLocation, sensorStatus;
+    if (flags & 0x01) { // Time Offset present
+      timeOffset = buffer.readInt16LE(offset);
+      offset += 2;
+    }
+    if (flags & 0x02) { // Type and Sample Location present
+      typeSampleLocation = buffer.readUInt8(offset++);
+    }
+    if (flags & 0x04) { // Sensor Status Annunciation present
+      sensorStatus = buffer.readUInt16LE(offset);
+      offset += 2;
     }
 
-    return `${glucoseConcentration} ${unit}`;
+    return {
+      glucoseConcentration,
+      timeOffset,
+      typeSampleLocation,
+      sensorStatus
+    };
   };
 
-  const unpairDevice = async (device) => {
-    try {
-      await manager.cancelDeviceConnection(device.id);
-      console.log('Device unpaired:', device.id);
-      Alert.alert('Device unpaired successfully');
-      setConnectedDevice(null);
-    } catch (error) {
-      console.error('Unpairing failed:', error);
-    }
+  const getValueFromBase64 = (base64String) => {
+    const buffer = Buffer.from(base64String, 'base64');
+    console.log('Raw buffer:', buffer);
+    return parseGlucoseMeasurement(buffer);
   };
 
   return (
     <View style={styles.container}>
-      <View style={styles.scannedDataView}>
-        <Text>Scanned Devices</Text>
-      </View>
-      <Button title="Scan for Devices" onPress={startDeviceScanning} />
-      {isScanning && <ActivityIndicator size="large" color="#0000ff" />}
+      <Button title="Scan for Devices" onPress={scanDevices} />
+      {loading && <ActivityIndicator size="large" color="#0000ff" />}
       <FlatList
-        data={scannedDevices}
+        data={devices}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <TouchableOpacity style={styles.device} onPress={() => actionOnTap(item)}>
-            <Text>{item.name}</Text>
-            <Text>{item.id}</Text>
+          <TouchableOpacity onPress={() => connectToDevice(item)}>
+            <Text style={styles.deviceText}>{item.name}</Text>
           </TouchableOpacity>
         )}
       />
-      {connectedDevice && (
-        <View style={styles.glucoseDataView}>
-          <Button title="Unpair Device" onPress={() => unpairDevice(connectedDevice)} />
-        </View>
-      )}
-      {glucoseData.length > 0 && (
-        <View style={styles.glucoseDataView}>
-          <Text>Glucose Data:</Text>
-          {glucoseData.map((data, index) => (
-            <Text key={index}>{data}</Text>
-          ))}
-        </View>
-      )}
     </View>
   );
 };
@@ -204,25 +153,17 @@ const SmartWearablePage = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
     padding: 20,
   },
-  device: {
+  deviceText: {
+    fontSize: 18,
     padding: 10,
+    backgroundColor: '#f9f9f9',
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
   },
-  scannedDataView: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-  },
-  glucoseDataView: {
-    marginTop: 20,
-    padding: 10,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    alignItems: 'center',
-  },
 });
 
-export default SmartWearablePage;
+export default connectBluetooth;

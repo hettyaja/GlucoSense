@@ -11,6 +11,11 @@ const FoodOrder = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [menuData, setMenuData] = useState([]);
 
+  const handlePress = (menu) => {
+    // console.log(menu)
+    router.push({ pathname: 'Boundary/MenuDetailsUI', params: { menuData: JSON.stringify(menu) } });
+  };
+
   useEffect(() => {
     const fetchMenuItems = async () => {
       try {
@@ -58,7 +63,11 @@ const FoodOrder = () => {
 
         <ScrollView contentContainerStyle={{ padding: 20 }}>
           {filteredMenu.map((menu) => (
-            <TouchableOpacity key={menu.id} style={styles.container1} onPress={() => router.push('details')}>
+            <TouchableOpacity 
+              key={menu.id} // Add a unique key prop here
+              style={styles.container1} 
+              onPress={() => handlePress(menu)} // Pass the id to handlePress function
+            >
               <View style={styles.container2}>
                 {/* Image component can be added here if image URL is available in menu data */}
               </View>

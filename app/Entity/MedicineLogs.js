@@ -23,7 +23,8 @@ class MedicineLogs {
           await updateDoc(medicineLogsRef, {
             time: medicineData.time,
             medicine: medicineData.medicine,
-            notes: medicineData.notes
+            notes: medicineData.notes,
+            period: medicineData.period
           });
           console.log('Medicine log updated successfully:', medicineData);
         } catch (error) {

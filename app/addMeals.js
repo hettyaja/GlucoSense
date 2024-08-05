@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, Alert, Button, TouchableOpacity, ScrollView, TextInput } from 'react-native';
 import React, { useState, useEffect } from 'react';
-import { Stack, router, useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { Picker } from '@react-native-picker/picker';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';

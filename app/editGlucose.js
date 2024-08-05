@@ -9,6 +9,7 @@ import { deleteLog } from './service/diaryService'; // Update service
 import UpdateGlucoseLogsController from './Controller/UpdateGlucoseLogsController';
 import { Picker } from '@react-native-picker/picker';
 import DeleteGlucoseLogsController from './Controller/DeleteGlucoseLogsController';
+import Header from './components/Header';
 
 const editGlucose = () => {
   const { user } = useAuth();
@@ -19,10 +20,7 @@ const editGlucose = () => {
   const [glucoseValue, setGlucoseValue] = useState(parsedGlucoseData.glucose.toString());
 
   const handleChange = (text) => {
-    // Allow only numbers and a single decimal point
     const newText = text.replace(/[^0-9.]/g, '');
-
-    // Allow only one decimal point
     if (newText.split('.').length > 2) {
       return;
     }
@@ -95,23 +93,13 @@ const editGlucose = () => {
 
   return (
     <>
-      <Stack.Screen options={{
-        title: 'Edit glucose',
-        headerStyle: { backgroundColor: '#E58B68' },
-        headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold' },
-        headerLeft: () => (
-          <TouchableOpacity onPress={() => router.back('Boundary/home')}>
-            <AntDesign name='close' size={24} color='white' />
-          </TouchableOpacity>
-        ),
-        headerRight: () => (
-          <TouchableOpacity onPress={() => saveGlucose()}>
-            <Text style={{ padding: 2, marginHorizontal: 8, fontFamily: 'Poppins-SemiBold', fontSize: 16, color: 'white' }}>Save</Text>
-          </TouchableOpacity>
-        ),
-        headerTitle: 'Edit glucose',
-        headerTitleAlign: 'center',
-      }} />
+      <Header
+        title = 'Glucose'
+        leftButton='Close'
+        onLeftButtonPress={()=> router.back('Boundary/home')}
+        rightButton='Save'
+        onRightButtonPress={()=> saveGlucose()}
+      />
 
       <ScrollView style={{ flex: 1, backgroundColor: '#f5f5f5' }}>
         <View style={styles.section}>
@@ -212,8 +200,8 @@ const styles = StyleSheet.create({
   section: {
     backgroundColor: 'white',
     borderColor: '#808080',
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
+    borderTopWidth: 0.5,
+    borderBottomWidth: 0.5,
     marginVertical: 24,
   },
   picker: {

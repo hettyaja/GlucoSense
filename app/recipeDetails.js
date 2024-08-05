@@ -27,7 +27,7 @@ const RecipeDetails = () => {
   }, [recipeId]);
 
   if (!recipe) {
-    return (<View style={styles.containerGif}>
+    return (<View style={[styles.containerGif, styles.background]}>
       <Image
         source={require('../app/assets/loadingFood.gif')}
         style={styles.imageGif}
@@ -135,4 +135,9 @@ const styles = StyleSheet.create({
     marginTop: 5,
     paddingVertical: 5,
   },
+
+  background:{
+    flex:1,
+    backgroundColor: 'white'
+  }
 });

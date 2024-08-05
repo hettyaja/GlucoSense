@@ -54,7 +54,7 @@ const recipePage = () => {
             onChangeText={setQuery}
             />
         </View>
-        
+
         <Text style={styles.title}>Recommended for you</Text>
         <View style={styles.recipeList}>
             {recipes.map((recipe) => (

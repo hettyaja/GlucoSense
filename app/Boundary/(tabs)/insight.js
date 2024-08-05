@@ -74,15 +74,6 @@ const Insight = () => {
       <Header
         title = 'Insight'
       />
-
-      
-      {/* <Tabs.Screen options={{
-        title: 'Insight',
-        headerStyle: { backgroundColor: '#E58B68' },
-        headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Medium', fontSize:16 },
-        headerTitle: 'Insight',
-        headerTitleAlign: 'center',
-      }} /> */}
       <ScrollView style={styles.container}>
         <TouchableOpacity style={styles.centeredChart} onPress={() => router.push('/glucoseInsight')}>
           <View style={styles.chartContainer}>

@@ -9,6 +9,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import { useAuth } from '../service/AuthContext';
 import { addGlucoseLog } from '../service/diaryService';
 import CreateGlucoseLogsController from '../Controller/CreateGlucoseLogsController';
+import Header from '../components/Header';
 
 const preReg = () => {
   const { user } = useAuth();
@@ -62,10 +63,10 @@ const preReg = () => {
 
       try {
         await CreateGlucoseLogsController.createGlucoseLogs(user.uid, newGlucoseLog);
-        console.log('Meal log saved:', newGlucoseLog);
+        console.log('Glucose log saved:', newGlucoseLog);
         router.replace('Boundary/home');
       } catch (error) {
-        console.error('Error saving meal log:', error);
+        console.error('Error saving glucose log:', error);
       }
     }
   }
@@ -82,28 +83,19 @@ const preReg = () => {
 
   const handleConfirm = (date) => {
     setSelectedDate(date);
-    console.warn("A date has been picked: ", date);
+    console.log("A date has been picked: ", date);
     hideDatePicker();
   };
 
   return (
     <>
-      <Stack.Screen options={{
-        title: 'Add glucose',
-        headerStyle: { backgroundColor: '#E58B68' },
-        headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Medium', fontSize: 16 },
-        headerLeft: () => (
-          <TouchableOpacity onPress={() => router.back('/home')}>
-            <AntDesign name='close' size={24} color='white' />
-          </TouchableOpacity>
-        ),
-        headerRight: () => (
-          <TouchableOpacity onPress={() => saveGlucose()}>
-            <Text style={styles.saveButtonText}>Save</Text>
-          </TouchableOpacity>
-        ),
-        headerTitleAlign: 'center',
-      }} />
+      <Header
+        title = 'Glucose'
+        leftButton= 'Close'
+        onLeftButtonPress={() => router.back('/home')}
+        rightButton= 'Save'
+        onRightButtonPress={() => saveGlucose()}
+      />
 
       <ScrollView style={styles.scrollView}>
         <View style={styles.section}>

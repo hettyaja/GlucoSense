@@ -7,13 +7,15 @@ import { useAuth } from './service/AuthContext';
 import { updateMedicineLog, deleteLog } from './service/diaryService';
 import UpdateMedicineLogsController from './Controller/UpdateMedicineLogsController';
 import DeleteMedicineLogsController from './Controller/DeleteMedicineLogsController';
+import { Picker } from '@react-native-picker/picker';
+import Header from './components/Header';
 
 
 const editMeds = () => {
   const { user } = useAuth();
   const { medicineData } = useLocalSearchParams();
   const [parsedMedicineData, setParsedMedicineData] = useState(medicineData ? JSON.parse(medicineData) : null);
-
+  const [selectedValue, setSelectedValue] = useState(parsedMedicineData.period);
   const [selectedDate, setSelectedDate] = useState(new Date(parsedMedicineData.time.seconds * 1000));
   const [medicineAmount, setMedicineAmount] = useState(parsedMedicineData.medicine || {});
   const [notes, setNotes] = useState(parsedMedicineData.notes);
@@ -31,7 +33,8 @@ const editMeds = () => {
         id: parsedMedicineData.id,
         time: selectedDate,
         medicine: medicineAmount,
-        notes: notes
+        notes: notes,
+        period: selectedValue,
       };
 
       try {
@@ -85,22 +88,13 @@ const editMeds = () => {
 
   return (
     <>
-      <Stack.Screen options={{
-        title: 'Edit meds',
-        headerStyle: { backgroundColor: '#E58B68' },
-        headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold' },
-        headerLeft: () => (
-          <TouchableOpacity onPress={() => router.back('Boundary/home')}>
-            <AntDesign name='close' size={24} color='white' />
-          </TouchableOpacity>
-        ), headerRight: () => (
-          <TouchableOpacity onPress={() => saveMeds()}>
-            <Text style={{ padding: 2, marginHorizontal: 8, fontFamily: 'Poppins-SemiBold', fontSize: 16, color: 'white' }}>Save</Text>
-          </TouchableOpacity>
-        ),
-        headerTitle: 'Edit meds',
-        headerTitleAlign: 'center',
-      }} />
+      <Header
+        title = 'Edit'
+        leftButton='Close'
+        onLeftButtonPress={()=> router.back('Boundary/home')}
+        rightButton='Save'
+        onRightButtonPress={()=> saveMeds}
+      />
 
       <ScrollView style={{ flex: 1, backgroundColor: '#f5f5f5' }}>
         <View style={styles.section}>
@@ -110,6 +104,24 @@ const editMeds = () => {
               <Text>{selectedDate.toLocaleString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', hour: 'numeric', minute: 'numeric' })}</Text>
             </TouchableOpacity>
           </View>
+          <View style={{ borderBottomWidth: StyleSheet.hairlineWidth, marginHorizontal: 16 }} />
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16 }}>
+            <Text style={{ fontSize: 16, fontFamily: 'Poppins-Medium' }}>Period</Text>
+            <Picker
+              selectedValue={selectedValue}
+              style={styles.picker}
+              itemStyle={styles.pickerItem}
+              onValueChange={(itemValue) => setSelectedValue(itemValue)}
+            >
+              <Picker.Item label="Before breakfast" value="Before breakfast" />
+              <Picker.Item label="After breakfast" value="After breakfast" />
+              <Picker.Item label="Before lunch" value="Before lunch" />
+              <Picker.Item label="After lunch" value="After lunch" />
+              <Picker.Item label="Before dinner" value="Before dinner" />
+              <Picker.Item label="After dinner" value="After dinner" />
+            </Picker>
+          </View>
+         
         </View>
         <View style={styles.section}>
           {Object.keys(medicineAmount).map((medicineName) => (
@@ -140,7 +152,7 @@ const editMeds = () => {
         </View>
 
         <View style={styles.section}>
-        <TouchableOpacity style={{padding: 16, alignItems: 'center' }} onPress={() => confirmDelete()}>
+          <TouchableOpacity style={{padding: 16, alignItems: 'center' }} onPress={() => confirmDelete()}>
             <Text style={{ fontFamily: 'Poppins-Medium', fontSize:16, color:'red'}}>Delete</Text>
           </TouchableOpacity>
         </View>
@@ -165,7 +177,7 @@ const styles = StyleSheet.create({
   },
   picker: {
     fontFamily: 'Poppins-Regular',
-    width: '50%',
+    width: '55%',
     marginLeft: 170,
     color: '#808080',
   },

@@ -1,10 +1,10 @@
-import { auth, db } from '../../firebase'; // Adjust the path according to your project structure
+import { auth, db} from '../../firebase'; // Adjust the path according to your project structure
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, deleteUser as firebaseDeleteUser } from 'firebase/auth';
 import { doc, setDoc, deleteDoc, getDocs, Timestamp, collection, updateDoc, getDoc, addDoc, query, where } from 'firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-// import admin from '../../firebaseAdmin'; // Import Firebase Admin SDK instance
+import axios from 'axios';
 
-
+const CLOUD_FUNCTION_URL = 'https://us-central1-glucosense-24-s2-07.cloudfunctions.net/expressApi';
 
 class BusinessPartner {
   constructor(id, entityName, UEN, city, address, postal, name, phoneNum, email, registerTime, status, userType) {
@@ -139,7 +139,8 @@ class BusinessPartner {
     try {
       const businessPartnerDocRef = doc(db, 'businessPartner', uid);
       await deleteDoc(businessPartnerDocRef);
-      // await admin.auth().deleteUser(uid);
+      // await adminAuth.deleteUser(uid);
+      await axios.delete(`${CLOUD_FUNCTION_URL}/deleteUser/${uid}`);
       return true;
     } catch (error) {
       console.error('Error rejecting business partner:', error);
