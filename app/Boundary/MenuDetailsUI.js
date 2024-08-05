@@ -66,50 +66,44 @@ const MenuDetails = () => {
         onLeftButtonPress={() => router.back('./food')}
       />
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-       
         <View>
-        <Image source={{ uri: menuItem.image }} style={styles.image} />
+          <Image source={{ uri: menuItem.image }} style={styles.image} />
         </View>
-
-        <View style ={styles.itemContainer}>
-          <View style={{flexDirection:'row', justifyContent:'space-between'}}>
+        <View style={styles.itemContainer}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
             <Text style={styles.title}>{menuItem.foodName}</Text>
-          <View>
-            <Text style={styles.price}>${menuItem.price}</Text>
-            <Text style={styles.basePrice}>Base price</Text>
-          </View>
+            <View>
+              <Text style={styles.price}>${menuItem.price}</Text>
+              <Text style={styles.basePrice}>Base price</Text>
+            </View>
           </View>
           <Text style={styles.description}>{menuItem.description}</Text>
-          
         </View>
-          <Text style={styles.subtitle}>Ingredients</Text>
-          <View style={styles.ingredientsContainer}>
-
-            {menuItem.ingredients ? (
-              menuItem.ingredients.split(',').map((ingredient, i) => (
-                <Text key={i} style={styles.ingredient}>• {ingredient.trim()}</Text>
-              ))
-            ) : (
-              <Text style={styles.ingredient}>No ingredients listed</Text>
-            )}
-          </View>
-          
-       
-        <View style ={styles.checkOut}>
-        <View style={styles.quantityContainer}>
-            <TouchableOpacity onPress={decrement} style={styles.quantityButton}>
-              <AntDesign name="minus" size={24} color="black" />
-            </TouchableOpacity>
-            <Text style={styles.quantity}>{quantity}</Text>
-            <TouchableOpacity onPress={increment} style={styles.quantityButton}>
-              <AntDesign name="plus" size={24} color="black" />
-            </TouchableOpacity>
-        </View>
-            <TouchableOpacity style={styles.buyButton}>
-              <Text style={styles.buyButtonText}>Buy</Text>
-            </TouchableOpacity>
+        <Text style={styles.subtitle}>Ingredients</Text>
+        <View style={styles.ingredientsContainer}>
+          {menuItem.ingredients ? (
+            menuItem.ingredients.split(',').map((ingredient, i) => (
+              <Text key={i} style={styles.ingredient}>• {ingredient.trim()}</Text>
+            ))
+          ) : (
+            <Text style={styles.ingredient}>No ingredients listed</Text>
+          )}
         </View>
       </ScrollView>
+      <View style={styles.footer}>
+        <View style={styles.quantityContainer}>
+          <TouchableOpacity onPress={decrement} style={styles.quantityButton}>
+            <AntDesign name="minus" size={24} color="black" />
+          </TouchableOpacity>
+          <Text style={styles.quantity}>{quantity}</Text>
+          <TouchableOpacity onPress={increment} style={styles.quantityButton}>
+            <AntDesign name="plus" size={24} color="black" />
+          </TouchableOpacity>
+        </View>
+        <TouchableOpacity style={styles.buyButton}>
+          <Text style={styles.buyButtonText}>Buy</Text>
+        </TouchableOpacity>
+      </View>
     </>
   );
 };
@@ -118,11 +112,11 @@ const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
     padding: 6,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
+    paddingBottom: 80, // Add padding to avoid content being hidden behind the footer
   },
   itemContainer: {
     backgroundColor: 'white',
-    // padding: 8,
     marginVertical: 8,
     borderRadius: 10,
     shadowColor: '#000',
@@ -137,13 +131,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 16,
   },
-  imagePlaceholder: {
-    width: '100%',
-    height: 200,
-    borderRadius: 10,
-    backgroundColor: '#e0e0e0',
-    marginBottom: 16,
-  },
   title: {
     fontSize: 16,
     fontFamily: 'Poppins-Medium',
@@ -155,11 +142,11 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Bold',
     marginBottom: 8,
   },
-  basePrice:{
-    fontFamily: 'Poppins-Regular', 
-    fontSize: 10, 
+  basePrice: {
+    fontFamily: 'Poppins-Regular',
+    fontSize: 10,
     marginRight: 20,
-    alignSelf: 'flex-end' 
+    alignSelf: 'flex-end',
   },
   description: {
     fontSize: 14,
@@ -200,18 +187,22 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 5,
     alignItems: 'center',
+    marginTop: 16,
   },
   buyButtonText: {
     fontSize: 16,
     fontFamily: 'Poppins-Bold',
     color: 'white',
   },
-  checkOut:{
-    backgroundColor: 'red',
-    borderRadius: 1000,
-
-
-  }
+  footer: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+    padding: 16,
+    backgroundColor: '#ffffff',
+    borderTopWidth: 1,
+    borderTopColor: '#e0e0e0',
+  },
 });
 
 export default MenuDetails;

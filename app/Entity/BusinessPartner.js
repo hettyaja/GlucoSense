@@ -139,7 +139,6 @@ class BusinessPartner {
     try {
       const businessPartnerDocRef = doc(db, 'businessPartner', uid);
       await deleteDoc(businessPartnerDocRef);
-      // await adminAuth.deleteUser(uid);
       await axios.delete(`${CLOUD_FUNCTION_URL}/deleteUser/${uid}`);
       return true;
     } catch (error) {
