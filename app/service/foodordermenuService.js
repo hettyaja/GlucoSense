@@ -15,6 +15,7 @@ export const fetchMenuData = async () => {
         const menuData = menuDoc.data();
         menuCollection.push({
           id: menuDoc.id,
+          bpId:businessPartnerDoc.id,
           title: menuData.foodName || 'No Title',
           price: menuData.price || 'No Price',
           ...menuData

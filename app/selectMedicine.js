@@ -59,7 +59,7 @@ const selectMedicine = () => {
         leftButton='Back'
         onLeftButtonPress={handleBackPress}
         rightButton='Save'
-        onRightButtonPress={saveMeds}
+        onRightButtonPress={() => saveMeds()}
       />
       <ScrollView style={{ flex: 1, backgroundColor: '#f5f5f5' }}>
         {medicines.map((medicine, index) => (
@@ -123,11 +123,14 @@ const styles = StyleSheet.create({
   medicineName: {
     fontSize: 14,
     fontFamily: 'Poppins-Regular',
+    paddingTop: 10,
+    paddingLeft: 10,
   },
   unit: {
     fontSize: 12,
     fontFamily: 'Poppins-Regular',
     color: '#808080',
+    
   },
   createButton: {
     padding: 16,

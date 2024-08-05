@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Dimensions, ScrollView, TouchableOpacity } from 'react-native';
-import { Tabs } from 'expo-router';
+import { View, Text, StyleSheet, Dimensions, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { Tabs, router } from 'expo-router';
 import { LineChart } from 'react-native-chart-kit';
 import { useAuth } from './service/AuthContext';
 import RetrieveMealLogsController from './Controller/RetrieveMealLogsController';
 import RetrieveMealLogsController1 from './Controller/RetrieveMealLogsController1';
+import Header from './components/Header';
 
 const Insight = () => {
   const screenWidth = Dimensions.get("window").width;
@@ -14,7 +15,10 @@ const Insight = () => {
   const [dailyStats, setDailyStats] = useState({ average: null, low: null, high: null });
   const [weeklyStats, setWeeklyStats] = useState({ average: null, low: null, high: null });
   const [monthlyStats, setMonthlyStats] = useState({ average: null, low: null, high: null });
-  
+
+  const handleBackButton = () => {
+    router.back()
+  }
 
   useEffect(() => {
     const calculateStats = (logs) => {
@@ -54,20 +58,24 @@ const Insight = () => {
   }, [user.uid]);
 
   if (loading) {
-    return <Text>Loading...</Text>;
+    return (<View style={[styles.containerGif, styles.background]}>
+      <Image
+        source={require('../app/assets/loading.gif')}
+        style={styles.imageGif}
+      />
+    </View>
+    )
   }
 
   console.log('Graph data in component:', mealGraphData);
 
   return (
     <>
-      <Tabs.Screen options={{
-        title: 'Calories Insight',
-        headerStyle: { backgroundColor: '#E58B68' },
-        headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold' },
-        headerTitle: 'Calories Insight',
-        headerTitleAlign: 'center',
-      }} />
+     <Header
+        title= 'Calories Insight'
+        leftButton = 'Back'
+        onLeftButtonPress={()=> handleBackButton()}
+      />
       <ScrollView style={styles.container}>
       <View style={styles.centeredChart}>
           <View style = {styles.chartContainer}>
@@ -211,4 +219,19 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: 'black',
   },
+
+  containerGif: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  imageGif: {
+    width: 100,
+    height: 100,
+  },
+
+  background:{
+    flex:1,
+    backgroundColor: 'white'
+  }
 });

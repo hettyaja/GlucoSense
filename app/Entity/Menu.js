@@ -1,5 +1,5 @@
 // entities/Menu.js
-import {doc, deleteDoc, updateDoc, collection, addDoc} from 'firebase/firestore';
+import {doc, deleteDoc, updateDoc, collection, addDoc, getDoc} from 'firebase/firestore';
 import {db} from '../../firebase';
 class Menu {
     constructor(foodName, price, ingredients, photoURL) {
@@ -47,8 +47,27 @@ class Menu {
         console.error ('Error updating menu log:', error);
         throw error;
       }
-    }
+    };
 
+    static async fetchMenu(bpId, menuId) {
+        try {
+          // Reference to the specific menu document within the 'menu' collection of the 'businessPartner'
+          const menuDocRef = doc(db, 'businessPartner', bpId, 'menu', menuId);
+          const menuDoc = await getDoc(menuDocRef);
+    
+          if (menuDoc.exists()) {
+            // Return the menu data if the document exists
+            return { id: menuDoc.id, ...menuDoc.data() };
+          } else {
+            throw new Error('Menu item does not exist');
+          }
+    
+        } catch (error) {
+          console.error('Error fetching menu item:', error);
+          throw error;
+        }
+      }
+    
   }
   
   export default Menu;

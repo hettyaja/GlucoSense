@@ -42,7 +42,7 @@ const RootLayout = () => {
       <Stack.Screen name="Boundary/addGlucose" />
       <Stack.Screen name="ViewAndSearchDietPlan" />
       <Stack.Screen name="searchFood" />
-      <Stack.Screen name="details" options={{
+      <Stack.Screen name="Boundary/MenuDetailsUI" options={{
         title: 'Details',
         headerStyle: { backgroundColor: '#E58B68' },
         headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold' },

@@ -1,19 +1,22 @@
 import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useAuth } from './service/AuthContext';
 import { addMedicineLog, getMedicineByName } from './service/diaryService';
 import CreateMedicineLogsController from './Controller/CreateMedicineLogsController';
+import Header from './components/Header';
+import { Picker } from '@react-native-picker/picker';
 
-const preReg = () => {
+
+const addMeds = () => {
   const { user } = useAuth();
   const { selectedMedicineNames } = useLocalSearchParams();
   const [selectedMedicines, setSelectedMedicines] = useState([]);
   const [medicineAmount, setMedicineAmount] = useState({});
   const [notes, setNotes] = useState('');
+  const [selectedValue, setSelectedValue] = useState("Breakfast");
 
   useEffect(() => {
     const fetchSelectedMedicines = async () => {
@@ -64,12 +67,25 @@ const preReg = () => {
       return;
     }
 
+    const isAllMedicineFilled = selectedMedicines.every(
+      (medicine) => medicineAmount[medicine.medicineName] && medicineAmount[medicine.medicineName].trim() !== ''
+    );
+
+    if (!isAllMedicineFilled) {
+      Alert.alert(
+        "Incomplete Information",
+        "Please input quantity for all selected medicines.",
+        [{ text: "OK" }]
+      );
+      return;
+    }
 
     if (user) {
       const newMedicineLog = {
         time: selectedDate,
         medicine: medicineAmount,
-        notes: notes
+        notes: notes,
+        period: selectedValue
       };
 
       try {
@@ -100,24 +116,13 @@ const preReg = () => {
 
   return (
     <>
-      <Stack.Screen options={{
-        title: 'Add meds',
-        headerStyle: { backgroundColor: '#E58B68' },
-        headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold' },
-        headerLeft: () => (
-          <TouchableOpacity onPress={() => router.back('/home')}>
-            <AntDesign name='close' size={24} color='white' />
-          </TouchableOpacity>
-        ), headerRight: () => (
-          <TouchableOpacity onPress={saveMeds}>
-            <Text style={{ padding: 2, marginHorizontal: 8, fontFamily: 'Poppins-SemiBold', fontSize: 16, color: 'white' }}>Save</Text>
-          </TouchableOpacity>
-        ),
-        headerTitle: 'Add meds',
-        headerTitleAlign: 'center',
-        
-      }} />
-
+      <Header
+        title='Medicine'
+        leftButton='Close'
+        onLeftButtonPress={() => router.back('/home')}
+        rightButton='Save'
+        onRightButtonPress={saveMeds}
+      />
       <ScrollView style={{ flex: 1, backgroundColor: '#f5f5f5' }}>
         <View style={styles.section}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16 }}>
@@ -126,7 +131,25 @@ const preReg = () => {
               <Text>{selectedDate.toLocaleString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', hour: 'numeric', minute: 'numeric' })}</Text>
             </TouchableOpacity>
           </View>
-        </View>
+          <View style={{borderBottomWidth: StyleSheet.hairlineWidth, marginHorizontal:16}}/>
+            <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center', padding:16}}>
+              <Text style={{fontSize: 16, fontFamily: 'Poppins-Medium'}}>Period</Text>
+              <Picker
+                selectedValue={selectedValue}
+                style={styles.picker}
+                itemStyle={styles.pickerItem}
+                onValueChange={(itemValue) => setSelectedValue(itemValue)}
+                >
+                  <Picker.Item label="Before breakfast" value="Before breakfast" />
+                  <Picker.Item label="After breakfast" value="After breakfast" />
+                  <Picker.Item label="Before lunch" value="Before lunch" />
+                  <Picker.Item label="After lunch" value="After lunch" />
+                  <Picker.Item label="Before dinner" value="Before dinner" />
+                  <Picker.Item label="After dinner" value="After dinner" />
+                </Picker>
+            </View>
+          </View>
+        
         <View style={styles.section}>
           {selectedMedicines.map((medicine) => (
             <View key={medicine.id} style={styles.medicineContainer}>
@@ -197,8 +220,8 @@ const styles = StyleSheet.create({
   section: {
     backgroundColor: 'white',
     borderColor: '#808080',
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
+    borderTopWidth: 0.5,
+    borderBottomWidth: 0.5,
     marginTop: 24
   },
   picker: {
@@ -228,7 +251,15 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'Poppins-Regular',
     paddingLeft: 8
-  }
+  },
+  picker: {
+    fontFamily: 'Poppins-Regular',
+    // width: '50%',
+    height: 100,
+    width: 200,
+    marginLeft: 10,
+    color: '#808080',
+  },
 });
 
-export default preReg;
+export default addMeds;
