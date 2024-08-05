@@ -207,7 +207,6 @@ class GlucoseLogs {
         const a1c = (averageBloodGlucoseMgDl + 46.7) / 28.7;
         return a1c.toFixed(2);
       } catch (error) {
-        console.error('Error calculating A1C:', error);
         return 0; // Return 0 in case of error
       }
     }

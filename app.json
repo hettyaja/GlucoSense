@@ -40,7 +40,9 @@
         "CAMERA",
         "android.permission.RECEIVE_BOOT_COMPLETED",
         "android.permission.VIBRATE",
-        "android.permission.WAKE_LOCK"
+        "android.permission.WAKE_LOCK",
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
       ],
       "package": "com.anonymous.GlucoSense",
       "useNextNotificationsApi": true
@@ -70,6 +72,7 @@
       "eas": {
         "projectId": "a5e1c20d-11fc-4b02-a82a-25c5e13b0490"
       }
-    }
+    },
+    "owner": "glucosense"
   }
 }

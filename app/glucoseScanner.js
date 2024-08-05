@@ -1,15 +1,22 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Button } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
+import * as ImagePicker from 'expo-image-picker';
 import TextRecognition from 'react-native-text-recognition';
-import { launchImageLibrary } from 'react-native-image-picker';
 
 const GlucoseScanner = () => {
   const [permission, requestPermission] = useCameraPermissions();
   const [result, setResult] = useState('');
   const cameraRef = useRef(null);
-  const [image, setImage] = useState(null);
 
+  useEffect(() => {
+    (async () => {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        alert('Sorry, we need media library permissions to make this work!');
+      }
+    })();
+  }, []);
 
   if (!permission) {
     // Camera permissions are still loading.
@@ -34,18 +41,27 @@ const GlucoseScanner = () => {
     }
   };
 
-  const handlePickImage = () => {
-    launchImageLibrary({}, response => {
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
-      } else {
-        const imageUri = response.assets[0].uri;
-        console.log('Selected image URI:', imageUri); // Debug log
-        extractTextFromImage(imageUri);
-      }
+  const handlePickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      aspect: [4, 3],
+      quality: 1,
     });
+
+    if (!result.canceled) {
+      try {
+        console.log('Extracting text from image:', result.assets[0].uri);
+        const recognizedText = await TextRecognition.recognize(result.assets[0].uri);
+        console.log('OCR result:', recognizedText); // Debug log
+    
+        // Process recognized text
+        const numbers = recognizedText.filter(item => !isNaN(item));
+        setResult(numbers.join(' '));
+      } catch (err) {
+        console.error('Error performing OCR:', err);
+        setResult('Error reading text');
+      }
+    }
   };
 
   const extractTextFromImage = async (imageUri) => {
