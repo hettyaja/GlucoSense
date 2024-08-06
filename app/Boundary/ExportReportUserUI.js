@@ -389,8 +389,8 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   divider: {
-    height: 0.5,
-    backgroundColor: 'black',
+    borderBottomWidth: 0.5,
+    borderColor: '#808080',
     marginHorizontal: 16,
   },
 });

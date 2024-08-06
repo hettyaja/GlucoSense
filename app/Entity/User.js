@@ -1,6 +1,6 @@
 import { auth, db } from '../../firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail } from 'firebase/auth';
-import { doc, setDoc, deleteDoc, getDocs, updateDoc, Timestamp, collection, getDoc, query, where} from 'firebase/firestore';
+import { doc, setDoc, deleteDoc, getDocs, updateDoc, Timestamp, collection, getDoc, query, where, addDoc} from 'firebase/firestore';
 import { deleteUser as firebaseDeleteUser } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
@@ -299,6 +299,24 @@ static async setAccountProfile(uid, image, name, email, username){
       throw error;
     }
   };
+
+  static async fetchPaymentDetails(userId) {
+    try {
+      const paymentDetailsCollection = await getDocs(collection(db, 'users', userId, 'paymentDetails'))
+      return paymentDetailsCollection.docs.map(doc => ({ ...doc.data(), id:doc.id}))
+    } catch(error) {
+      throw error
+    }
+  }
+
+  static async setPaymentDetails(userId, cardDetails) {
+    try {
+      const cardDocs = collection(db, 'users', userId, 'paymentDetails');
+      await addDoc(cardDocs, cardDetails);
+    } catch(error) {
+      throw error
+    }
+  }
 }
 
 export default User;
