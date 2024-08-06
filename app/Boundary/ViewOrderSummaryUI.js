@@ -1,39 +1,51 @@
-import { View, Text, StyleSheet, Image, Button, TouchableOpacity, Touchable, TextInput, ScrollView,} from 'react-native'
+import { View, Text, StyleSheet, Image,TouchableOpacity, TextInput, ScrollView,} from 'react-native'
 import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Stack, router} from 'expo-router'
-import { images } from './constants/images';
-import { Picker } from '@react-native-picker/picker';
+import { Stack, router, useLocalSearchParams} from 'expo-router'
 import Ionicons from 'react-native-vector-icons/Ionicons'
+import Header from '../components/Header';
+import AntDesign from 'react-native-vector-icons/AntDesign'
 
-const preReg = () => {
 
+
+const ViewOrderSummaryUI = () => {
+  const {menuData} = useLocalSearchParams();
+  const [parsedMenuData, setParsedMenuData] = useState(menuData ? JSON.parse(menuData) : null);
+  const orderDetails = JSON.parse(menuData);
+  const {address, setAddress} = useState()
+  
+  
   const handleButtonPress = (buttonIndex) => {
     setSelectedButton(buttonIndex === selectedButton ? null : buttonIndex);
   }
   return (
     <>
-    <Stack.Screen options={{
-        title: 'Order Confirmation',
-        headerStyle: { backgroundColor: '#E58B68' },
-        headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold'},
-        headerLeft: () => (
-            <TouchableOpacity onPress={() => router.back('/food')}>
-                <Ionicons name="chevron-back" size={32} color='white'/>
-            </TouchableOpacity>
-        ),
-        headerTitle: 'Order Confirmation',
-        headerTitleAlign: 'center',
-    }}/>
-
+    <Header
+      title = 'Order Summary'
+      leftButton='Back'
+      onLeftButtonPress={()=> router.back('Boundary/MenuDetailsUI')}    
+    />
+  
       <View style={{backgroundColor:'#f5f5f5'}}>
-            <View style={styles.container1}>
-              <Text style={{fontFamily: 'Poppins-Medium', fontSize: 14, marginLeft: 70, marginTop: 12}}>Address</Text>
-              <Text style={{fontFamily: 'Poppins-Medium', fontSize: 14, marginLeft: 70}}>Add address</Text>
-              <View style={{borderBottomWidth: StyleSheet.hairlineWidth, borderColor: '#808080', width: 370, alignSelf: 'center', marginTop: 20}}/>
-              <Text>{'\n\n\n\n'}</Text>
+        <View style={styles.container1}>
+              {address?(
+                 <Text>{address}</Text>
+              ):(
+                <TouchableOpacity
+                  style={styles.addAddressButton}
+                  onPress={() => router.push('Boundary/CreateAddressUI')}
+                >
+                
+                <AntDesign name='plus' size={20} />
+                <Text style = {styles.textAddress}>Add shipping address</Text>
+                </TouchableOpacity>
+               )}
+              {/* <View style={{borderBottomWidth: StyleSheet.hairlineWidth, borderColor: '#808080', width: 370, alignSelf: 'center', marginTop: 20}}/> */}
+              {/* <Text>{'\n\n\n\n'}</Text> */}
             </View>
+
             <View style={styles.container3}>
+              
               <Text style={[styles.commonText, { marginLeft: 70 }]}>YummyStore</Text>
               <View style = {{flexDirection: 'row'}}>
                 <View style = {styles.container2}/>
@@ -48,6 +60,10 @@ const preReg = () => {
                 <Text style={[styles.commonText, { marginLeft: 20 }]}>Notes:</Text>
               </View>
               <View style={{borderBottomWidth: StyleSheet.hairlineWidth, borderColor: '#808080', width: 370, alignSelf: 'center', marginVertical: 8}}/>
+              <Text style={styles.header}>Order Summary</Text>
+              <Text style={styles.label}>Food Name: {orderDetails.foodName}</Text>
+              <Text style={styles.label}>Quantity: {orderDetails.quantity}</Text>
+              <Text style={styles.label}>Price: ${orderDetails.price}</Text>
               <View style = {{flexDirection: 'row', justifyContent: 'space-between'}}>
                 <Text style={[styles.commonText, { marginLeft: 20 }]}>Order Total:</Text>
                 <Text style={[styles.commonText, { marginRight: 20 }]}>$4.50</Text>
@@ -85,6 +101,25 @@ const preReg = () => {
   )
 }
 const styles = StyleSheet.create({
+  addAddressButton:{
+    borderRadius: 8,
+    marginHorizontal: 16,
+    marginTop: 8,
+    marginBottom: 8,
+    backgroundColor: '#F0F0F0',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems:'center'
+
+  },
+
+  textAddress:{
+    padding:8,
+    fontFamily: 'Poppins-Medium',
+    textAlign: 'center',
+    fontSize: 14
+    
+  },
   smallText: {
     fontFamily: 'Poppins-Medium',
     fontSize: 10,
@@ -164,7 +199,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   container3: {
-    marginTop: 20,
+    marginVertical: 8,
     backgroundColor: 'white',
     paddingVertical: 8,
   },
@@ -200,4 +235,4 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
 });
-export default preReg
+export default ViewOrderSummaryUI

@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
   title:{
     fontSize: 14,
     paddingHorizontal:10,
-    fontFamily: 'poppins-medium',
+    fontFamily: 'Poppins-Medium',
   },
   
   h3:{
@@ -234,11 +234,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    fontFamily: 'Poppins',
+    fontFamily: 'Poppins-Regular',
     paddingVertical: 16,
-    
-    // paddingVertical: 1,
-    // paddingLeft: 10,
   },
   
   itemContainer: {
@@ -266,7 +263,7 @@ const styles = StyleSheet.create({
   },
 
   h1:{
-    fontFamily: 'poppins-semiBold'
+    fontFamily: 'Poppins-SemiBold'
   },
   
   unit: {

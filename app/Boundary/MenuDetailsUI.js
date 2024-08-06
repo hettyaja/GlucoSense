@@ -25,6 +25,15 @@ const MenuDetails = () => {
     }
   };
 
+  const handleSave = () => {
+    const orderDetails = {
+      ...parsedMenuData,
+      quantity,
+    }
+    console.log('Menu: ', orderDetails)
+    router.push({pathname: 'Boundary/ViewOrderSummaryUI', params:{menuData: JSON.stringify(orderDetails)}})
+  }
+
   useEffect(() => {
     if (!menuData) {
       setError(new Error('Missing menuId or userId'));
@@ -79,17 +88,49 @@ const MenuDetails = () => {
           </View>
           <Text style={styles.description}>{menuItem.description}</Text>
         </View>
-        <Text style={styles.subtitle}>Ingredients</Text>
-        <View style={styles.ingredientsContainer}>
-          {menuItem.ingredients ? (
-            menuItem.ingredients.split(',').map((ingredient, i) => (
-              <Text key={i} style={styles.ingredient}>• {ingredient.trim()}</Text>
-            ))
-          ) : (
-            <Text style={styles.ingredient}>No ingredients listed</Text>
-          )}
-        </View>
+
+          <View style={styles.itemContainer}>
+          <Text style={styles.subtitle}>Ingredients</Text>
+          <View style={styles.ingredientsContainer}>
+            {menuItem.ingredients ? (
+              menuItem.ingredients.split(',').map((ingredient, i) => (
+                <Text key={i} style={styles.ingredient}>• {ingredient.trim()}</Text>
+              ))
+            ) : (
+              <Text style={styles.ingredient}>No ingredients listed</Text>
+            )}
+             </View>
+          </View>
+
+          <View style = {[styles.itemContainer, {marginBottom:160}]}>
+            <Text style={styles.title} >Nutrition fact</Text>
+            
+            <View style={{flexDirection: 'row', justifyContent:'space-between', alignItems: 'center'}}>
+              <Text style={styles.details}> Calorie </Text>
+              <Text style={styles.unit}>{menuItem.calories} cal</Text>
+            </View>
+
+            <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5}} />
+            <View style={{flexDirection: 'row', justifyContent:'space-between', alignItems: 'center'}}>
+              <Text style={styles.details}>Fat</Text>
+              <Text style={styles.unit}>{menuItem.fat} g</Text>
+            </View>
+
+
+            <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5}} />
+            <View style={{flexDirection: 'row', justifyContent:'space-between', alignItems: 'center'}}>
+              <Text style={styles.details}>Carbohydrate</Text>
+              <Text style={styles.unit}>{menuItem.carbs} g</Text>
+            </View>
+
+              <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5}} />
+                <View style={{flexDirection: 'row', justifyContent:'space-between', alignItems: 'center'}}>
+                <Text style={styles.details}>Protein</Text>
+                <Text style={styles.unit}>{menuItem.protein} g</Text>
+              </View>
+          </View>
       </ScrollView>
+
       <View style={styles.footer}>
         <View style={styles.quantityContainer}>
           <TouchableOpacity onPress={decrement} style={styles.quantityButton}>
@@ -99,11 +140,19 @@ const MenuDetails = () => {
           <TouchableOpacity onPress={increment} style={styles.quantityButton}>
             <AntDesign name="plus" size={24} color="black" />
           </TouchableOpacity>
+          <TouchableOpacity onPress={decrement} style={styles.quantityButton}>
+            <AntDesign name="minus" size={24} color="black" />
+          </TouchableOpacity>
+          <Text style={styles.quantity}>{quantity}</Text>
+          <TouchableOpacity onPress={increment} style={styles.quantityButton}>
+            <AntDesign name="plus" size={24} color="black" />
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.buyButton}>
+        <TouchableOpacity style={styles.buyButton} onPress = {()=> handleSave()}>
           <Text style={styles.buyButtonText}>Buy</Text>
         </TouchableOpacity>
       </View>
+   
     </>
   );
 };
@@ -118,7 +167,6 @@ const styles = StyleSheet.create({
   itemContainer: {
     backgroundColor: 'white',
     marginVertical: 8,
-    borderRadius: 10,
     shadowColor: '#000',
     shadowOpacity: 0.2,
     shadowRadius: 5,
@@ -133,19 +181,21 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    fontFamily: 'Poppins-Medium',
+    fontFamily: 'Poppins-SemiBold',
     marginBottom: 8,
     paddingTop: 8,
+    paddingHorizontal: 4
   },
   price: {
     fontSize: 16,
-    fontFamily: 'Poppins-Bold',
-    marginBottom: 8,
+    fontFamily: 'Poppins-SemiBold',
+    paddingTop: 8
   },
   basePrice: {
     fontFamily: 'Poppins-Regular',
     fontSize: 10,
     marginRight: 20,
+    alignSelf: 'flex-end',
     alignSelf: 'flex-end',
   },
   description: {
@@ -153,14 +203,16 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Regular',
     color: 'gray',
     marginBottom: 16,
+    paddingHorizontal: 4,
+    paddingVertical: 8,
   },
   subtitle: {
     fontSize: 16,
-    fontFamily: 'Poppins-Bold',
-    marginBottom: 8,
+    fontFamily: 'Poppins-SemiBold',
+    padding: 4
   },
   ingredientsContainer: {
-    marginBottom: 16,
+    paddingHorizontal:4
   },
   ingredient: {
     fontSize: 14,
@@ -194,6 +246,10 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Bold',
     color: 'white',
   },
+  checkOut:{
+    backgroundColor: 'red',
+    borderRadius: 1000,
+  },
   footer: {
     position: 'absolute',
     bottom: 0,
@@ -202,7 +258,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     borderTopWidth: 1,
     borderTopColor: '#e0e0e0',
-  },
+  }, 
+  details:{
+    borderBottomColor: '#d9d9d9',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    fontFamily: 'Poppins-Regular',
+    paddingVertical: 16,
+  }
 });
 
 export default MenuDetails;
