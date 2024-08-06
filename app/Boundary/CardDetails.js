@@ -36,7 +36,7 @@ const CardDetails = () => {
       }
 
       await CreatePaymentDetailsController.createPaymentDetails(user.uid, cardDetails)
-      router.back()
+      router.replace('Boundary/PaymentMethod')
     }
   }
 

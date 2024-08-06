@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
-import { Tabs } from 'expo-router';
+import { router } from 'expo-router';
+import Header from '../components/Header';
 
 const dietPlans = [
   {
@@ -36,13 +37,11 @@ const dietPlans = [
 const ViewDietPlan = () => {
   return (
     <>
-      <Tabs.Screen options={{
-        title: 'Diet Plan',
-        headerStyle: { backgroundColor: '#E58B68' },
-        headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold' },
-        headerTitle: 'Diet Plan',
-        headerTitleAlign: 'center',
-      }} />
+      <Header
+        title='Diet Plan'
+        leftButton='Back'
+        onLeftButtonPress={() => router.back()}
+      />
       <View style={styles.container}>
         <ScrollView contentContainerStyle={styles.scrollViewContent}>
           {dietPlans.map(plan => (

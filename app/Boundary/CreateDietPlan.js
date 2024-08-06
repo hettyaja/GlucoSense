@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { SafeAreaView, StyleSheet, Text, ScrollView, View, TouchableOpacity, TextInput, Image } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -7,6 +7,7 @@ import DietPlanEntry from './DietPlanEntry';
 import { useAuth } from '../service/AuthContext';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import * as ImagePicker from 'expo-image-picker';
+import { uploadDietPlanImage } from '../service/storageService';
 
 const initialDietPlanState = {
   Monday: { Lunch: { image: '', name: '', description: '', ingredients: '' }, Dinner: { image: '', name: '', description: '', ingredients: '' } },
@@ -23,7 +24,7 @@ const CreateDietPlan = () => {
   const [dietPlans, setDietPlans] = useState(initialDietPlanState);
   const [planName, setPlanName] = useState('');
   const [price, setPrice] = useState('');
-  const [planImage, setPlanImage] = useState()
+  const [planImage, setPlanImage] = useState('');
   const router = useRouter();
 
   const setEntry = (day, mealType, entry) => {
@@ -37,14 +38,30 @@ const CreateDietPlan = () => {
   };
 
   const handleSave = async () => {
-    const completeDietPlan = {
-      planName,
-      price,
-      planImage,
-      ...dietPlans,
-    };
-
     try {
+      // Upload plan image
+      const planImageURL = await uploadDietPlanImage(user.uid, planImage);
+      setPlanImage(planImageURL);
+
+      // Upload diet plan images
+      const updatedDietPlans = { ...dietPlans };
+      for (const day in updatedDietPlans) {
+        for (const mealType in updatedDietPlans[day]) {
+          const meal = updatedDietPlans[day][mealType];
+          if (meal.image) {
+            const imageURL = await uploadDietPlanImage(user.uid, meal.image);
+            updatedDietPlans[day][mealType].image = imageURL;
+          }
+        }
+      }
+
+      const completeDietPlan = {
+        planName,
+        price,
+        planImage: planImageURL,
+        ...updatedDietPlans,
+      };
+
       await CreateDietPlanController.createDietPlan(user.uid, completeDietPlan);
       router.push('/Boundary/planBP'); // Ensure this path is correct
     } catch (error) {
@@ -107,7 +124,7 @@ const CreateDietPlan = () => {
             </View>
             <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5}} />
             <View style={styles.inputContainer}>
-              <Text style={styles.label}>Price per day</Text>
+              <Text style={styles.label}>Price per week</Text>
               <View>
                 <TextInput
                   placeholder='Enter price'

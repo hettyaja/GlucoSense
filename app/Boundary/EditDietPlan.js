@@ -1,13 +1,14 @@
-import React, { useState, useContext, useEffect } from 'react';
-import { SafeAreaView, StyleSheet, Text, ScrollView, View, TouchableOpacity, TextInput, Image } from 'react-native';
-import { DietPlanContext } from '../context/DietPlanContext';
-import { Stack, useRouter, useLocalSearchParams } from 'expo-router';
+import React, { useState, useEffect } from 'react';
+import { SafeAreaView, StyleSheet, Text, ScrollView, View, TouchableOpacity, TextInput, Image, ActivityIndicator } from 'react-native';
+import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import DietPlanEntry from './DietPlanEntry';
 import { useAuth } from '../service/AuthContext';
 import UpdateDietPlanController from '../Controller/UpdateDietPlanController';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import * as ImagePicker from 'expo-image-picker';
+import { decode as atob } from 'base-64';
+import { uploadDietPlanImage, deleteImage } from '../service/storageService';
 
 const initialDietPlanState = {
   planName: '',
@@ -26,8 +27,10 @@ const dayOrder = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Satur
 
 const EditDietPlan = () => {
   const { user } = useAuth();
-  const { dietPlan: dietPlanParam } = useLocalSearchParams();
-  const [dietPlan, setDietPlan] = useState(dietPlanParam ? JSON.parse(dietPlanParam) : initialDietPlanState);
+  const { dietPlanData } = useLocalSearchParams();
+  const [dietPlan, setDietPlan] = useState(dietPlanData ? JSON.parse(atob(dietPlanData)) : initialDietPlanState);
+  const [tempImageUri, setTempImageUri] = useState(null);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const setEntry = (day, mealType, entry) => {
@@ -41,12 +44,29 @@ const EditDietPlan = () => {
   };
 
   const handleSave = async () => {
+    setLoading(true);
     try {
-      console.log(dietPlan)
-      await UpdateDietPlanController.updateDietPlan(user.uid, dietPlan);
-      router.push('/Boundary/planBP'); // Ensure this path is correct
+      let updatedDietPlan = { ...dietPlan };
+      
+      if (tempImageUri) {
+        const newImageUrl = await uploadDietPlanImage(user.uid, tempImageUri);
+        const previousImage = dietPlan.planImage;
+        
+          await deleteImage(previousImage);
+        
+        updatedDietPlan = {
+          ...updatedDietPlan,
+          planImage: newImageUrl
+        };
+      }
+
+      console.log('during saving', updatedDietPlan);
+      await UpdateDietPlanController.updateDietPlan(user.uid, updatedDietPlan);
+      router.replace('/Boundary/planBP'); // Ensure this path is correct
     } catch (error) {
       console.error("Error updating document: ", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -65,10 +85,7 @@ const EditDietPlan = () => {
     });
 
     if (!result.canceled) {
-      setDietPlan((prevDietPlan) => ({
-        ...prevDietPlan,
-        planImage: result.assets[0].uri,
-      }));
+      setTempImageUri(result.assets[0].uri);
     }
   };
 
@@ -86,8 +103,8 @@ const EditDietPlan = () => {
           </TouchableOpacity>
         ),
         headerRight: () => (
-          <TouchableOpacity onPress={handleSave}>
-            <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 14, color: 'white' }}>Save</Text>
+          <TouchableOpacity onPress={handleSave} disabled={loading}>
+            {loading ? <ActivityIndicator size="small" color="#fff" /> : <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 14, color: 'white' }}>Save</Text>}
           </TouchableOpacity>
         ),
       }} />
@@ -118,14 +135,14 @@ const EditDietPlan = () => {
                 />
               </View>
             </View>
-            <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5}} />
+            <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5 }} />
             <View style={styles.inputContainer}>
               <Text style={styles.label}>Photo</Text>
               <TouchableOpacity onPress={addImage} style={styles.imageUpload}>
-                {dietPlan.planImage ? (
-                  <Image source={{ uri: dietPlan.planImage }} style={styles.uploadedImage} />
+                {tempImageUri || dietPlan.planImage ? (
+                  <Image source={{ uri: tempImageUri || dietPlan.planImage }} style={styles.uploadedImage} />
                 ) : (
-                  <MaterialIcons name='add-photo-alternate' size={56} color='#E58B68'/>
+                  <MaterialIcons name='add-photo-alternate' size={56} color='#E58B68' />
                 )}
               </TouchableOpacity>
             </View>

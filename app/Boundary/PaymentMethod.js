@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Header from '../components/Header';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { useAuth } from '../service/AuthContext';
 import GetPaymentDetailsController from '../Controller/GetPaymentDetailsController';
 import Ionicons from 'react-native-vector-icons/Ionicons'
@@ -23,9 +23,15 @@ const PaymentMethod = () => {
     }
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchData()
+    }, [])
+  )
+
+  const handleEdit = () => {
+    router.push({pathname: 'Boundary/ManageCard', params: {}})
+  }
 
   return (
     <>
@@ -44,7 +50,7 @@ const PaymentMethod = () => {
           ) : (
             cardDetails.map((card, index) => (
               <View key={index}>
-                <TouchableOpacity style={styles.row}>
+                <TouchableOpacity style={styles.row} onPress={() => handleEdit(card)}>
                   <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <FontAwesome name='cc-visa' size={24} color='grey' style={{ paddingRight: 8 }} />
                     <Text style={styles.label}>Visa (**** **** **** {card.cardNumber.slice(-4)})</Text>
@@ -58,7 +64,7 @@ const PaymentMethod = () => {
           <TouchableOpacity style={styles.row} onPress={() => router.push('Boundary/CardDetails')}>
             <View style={{flexDirection:'row', alignItems:'center'}}>
               <FontAwesome name='credit-card-alt' size={24} color='grey' style={{paddingRight:8}}/>
-              <Text style={styles.label}>Add credit/debit card</Text>
+              <Text style={styles.label}>Add Credit/Debit Card</Text>
             </View>
             <Ionicons name='chevron-forward' size={24} color='black' />
           </TouchableOpacity>

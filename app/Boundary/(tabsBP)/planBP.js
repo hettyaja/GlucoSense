@@ -14,6 +14,7 @@ import Fontisto from 'react-native-vector-icons/Fontisto'
 import DeleteDietPlanController from '../../Controller/DeleteDietPlanController';
 import { useAuth } from '../../service/AuthContext';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { encode as btoa } from 'base-64';
  
 const planBP = () => {
   const { user } = useAuth()
@@ -21,6 +22,7 @@ const planBP = () => {
   const [ dietPlans, setDietPlans] = useState([])
   const [searchQuery, setSearchQuery] = useState('');
   const router = useRouter();
+  
 
   const fetchDietPlans = async () => {
     try {
@@ -38,11 +40,14 @@ const planBP = () => {
   }, [user]);
 
   const handleEdit = (dietPlan) => {
+    console.log('before', dietPlan);
+    const encodedDietPlan = btoa(JSON.stringify(dietPlan));
     router.push({
       pathname: '/Boundary/EditDietPlan',
-      params: { dietPlan: JSON.stringify(dietPlan), userId},
+      params: { dietPlanData: encodedDietPlan },
     });
   };
+  
 
   const handleDelete = async (dietPlanId) => {
     await DeleteDietPlanController.deleteDietPlan(user.uid, dietPlanId)
@@ -50,8 +55,7 @@ const planBP = () => {
   }
 
   const filteredDietPlans = dietPlans.filter((dietPlan) =>
-  dietPlan.planName.toLowerCase().includes(searchQuery.toLowerCase())
-);
+  dietPlan.planName.toLowerCase().includes(searchQuery.toLowerCase()));
 
   return (
     <>
@@ -75,7 +79,7 @@ const planBP = () => {
           </View>
           <View style={styles.cardContainer}>
           {filteredDietPlans.map((dietPlan) => (
-          <DietPlanCard key={dietPlan.id} dietPlan={dietPlan} onEdit={handleEdit} onDelete={handleDelete} />
+          <DietPlanCard key={dietPlan.id} dietPlan={dietPlan} onEdit={() => handleEdit(dietPlan)} onDelete={handleDelete} />
         ))}
           </View>
 
