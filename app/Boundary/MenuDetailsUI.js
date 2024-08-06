@@ -5,6 +5,8 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import Header from '../components/Header';
 import { useAuth } from '../service/AuthContext';
 import MenuDetailsController from '../Controller/MenuDetailsController';
+import CreateAddressController from '../Controller/CreateAddressController';
+
 
 const MenuDetails = () => {
   const { menuData } = useLocalSearchParams();
@@ -14,6 +16,7 @@ const MenuDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { user } = useAuth();
+  const [addresses, setAddresses] = useState([]);
 
   const increment = () => {
     setQuantity(quantity + 1);
@@ -32,7 +35,8 @@ const MenuDetails = () => {
     }
     console.log('Menu: ', orderDetails)
     router.push({pathname: 'Boundary/ViewOrderSummaryUI', params:{menuData: JSON.stringify(orderDetails)}})
-  }
+  };
+
 
   useEffect(() => {
     if (!menuData) {
@@ -133,13 +137,6 @@ const MenuDetails = () => {
 
       <View style={styles.footer}>
         <View style={styles.quantityContainer}>
-          <TouchableOpacity onPress={decrement} style={styles.quantityButton}>
-            <AntDesign name="minus" size={24} color="black" />
-          </TouchableOpacity>
-          <Text style={styles.quantity}>{quantity}</Text>
-          <TouchableOpacity onPress={increment} style={styles.quantityButton}>
-            <AntDesign name="plus" size={24} color="black" />
-          </TouchableOpacity>
           <TouchableOpacity onPress={decrement} style={styles.quantityButton}>
             <AntDesign name="minus" size={24} color="black" />
           </TouchableOpacity>

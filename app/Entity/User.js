@@ -317,6 +317,24 @@ static async setAccountProfile(uid, image, name, email, username){
       throw error
     }
   }
+
+  static async fetchAddress(userId){
+    try{
+      const addressDetailsCollection = await getDocs(collection(db, 'users', userId, 'addressDetails'))
+      return addressDetailsCollection.docs.map(doc => ({...doc.data(), id:doc.id}))
+    }catch(error){
+      throw error
+    }
+  }
+  
+  static async setAddress (userId, addressDetails){
+    try {
+      const addressDocs = collection(db, 'users', userId, 'addressDetails');
+      await addDoc(addressDocs, addressDetails);
+    } catch(error) {
+      throw error
+    }
+  }
 }
 
 export default User;

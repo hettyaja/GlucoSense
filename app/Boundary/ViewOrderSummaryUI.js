@@ -1,23 +1,39 @@
 import { View, Text, StyleSheet, Image,TouchableOpacity, TextInput, ScrollView,} from 'react-native'
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack, router, useLocalSearchParams} from 'expo-router'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import Header from '../components/Header';
 import AntDesign from 'react-native-vector-icons/AntDesign'
-
+import { useAuth } from '../service/AuthContext';
+import GetAddressController from '../Controller/GetAddressController';
 
 
 const ViewOrderSummaryUI = () => {
   const {menuData} = useLocalSearchParams();
   const [parsedMenuData, setParsedMenuData] = useState(menuData ? JSON.parse(menuData) : null);
   const orderDetails = JSON.parse(menuData);
-  const {address, setAddress} = useState()
-  
+  const [address, setAddress]= useState([]);
+  const {user} = useAuth();
+
+ 
   
   const handleButtonPress = (buttonIndex) => {
     setSelectedButton(buttonIndex === selectedButton ? null : buttonIndex);
   }
+
+  const fetchAddresses = async () => {
+    try {
+      const fetchedAddresses = await GetAddressController.getAddress(user.uid);
+      setAddress(fetchedAddresses);
+    } catch (error) {
+      console.error('Failed to fetch addresses:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchAddresses();
+  }, []);
   return (
     <>
     <Header
@@ -28,8 +44,18 @@ const ViewOrderSummaryUI = () => {
   
       <View style={{backgroundColor:'#f5f5f5'}}>
         <View style={styles.container1}>
-              {address?(
-                 <Text>{address}</Text>
+              {address.length > 0 ?(
+                  address.map((address, index) => (
+                    <View key={index} style={styles.addressItem}>
+                      <Text>{address.name}</Text>
+                      <Text>{address.phoneNumber}</Text>
+                      <Text>{address.address}</Text>
+                      <Text>{address.unit}</Text>
+                      <Text>{address.postCode}</Text>
+                      <Text>{address.details}</Text>
+                    </View>
+                  ))
+                
               ):(
                 <TouchableOpacity
                   style={styles.addAddressButton}

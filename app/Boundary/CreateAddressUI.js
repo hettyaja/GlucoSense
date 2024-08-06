@@ -2,8 +2,11 @@ import React, { useState } from 'react';
 import Header from '../components/Header';
 import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { router } from 'expo-router';
+import CreateAddressController from '../Controller/CreateAddressController';
+import {useAuth} from '../service/AuthContext'
 
 const CreateAddressUI = () => {
+    const {user} = useAuth()
     const [address, setAddress] = useState('');
     const [name, setName] = useState('');
     const [phoneNumber, setPhoneNum] = useState('');
@@ -11,6 +14,7 @@ const CreateAddressUI = () => {
     const [unit, setUnit] = useState('');
     const [details, setDetails] = useState('');
     const [errors, setErrors] = useState({});
+
 
     const validate = () => {
         const errors = {};
@@ -22,10 +26,19 @@ const CreateAddressUI = () => {
         return Object.keys(errors).length === 0;
     };
 
-    const handleSave = () => {
+    const handleSave = async () => {
         if (validate()) {
-            Alert.alert('Validation', 'All inputs are valid');
-            // Proceed with saving the address or other actions
+            const addressDetails = {
+                address,
+                name,
+                phoneNumber,
+                postCode,
+                unit,
+                details
+            }
+            await CreateAddressController.createAddress(user.uid, addressDetails)
+            router.back()
+            console.log('Details: ', addressDetails)
         } else {
             console.log('Validation', 'Please correct the errors');
         }
