@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Dimensions, ScrollView, TouchableOpacity, Image } from 'react-native';
-import { Tabs, router } from 'expo-router';
 import { LineChart } from 'react-native-chart-kit';
 import { useAuth } from './service/AuthContext';
 import RetrieveMealLogsController from './Controller/RetrieveMealLogsController';
 import RetrieveMealLogsController1 from './Controller/RetrieveMealLogsController1';
 import Header from './components/Header';
+import { Tabs, router } from 'expo-router';
+
 
 const Insight = () => {
   const screenWidth = Dimensions.get("window").width;
@@ -15,6 +16,7 @@ const Insight = () => {
   const [dailyStats, setDailyStats] = useState({ average: null, low: null, high: null });
   const [weeklyStats, setWeeklyStats] = useState({ average: null, low: null, high: null });
   const [monthlyStats, setMonthlyStats] = useState({ average: null, low: null, high: null });
+  const [caloriesConsumed, setCaloriesConsumed] = useState({ consumed: 1425, goal: 2000 });
 
   const handleBackButton = () => {
     router.back()
@@ -67,8 +69,6 @@ const Insight = () => {
     )
   }
 
-  console.log('Graph data in component:', mealGraphData);
-
   return (
     <>
      <Header
@@ -104,7 +104,6 @@ const Insight = () => {
                 strokeWidth: "1",
               }
             }}
-            
             style={{
               marginVertical: 8,
 
@@ -164,6 +163,12 @@ const Insight = () => {
             </View>
           </View>
           </View>
+
+          {/* Calories Burned Card */}
+          <View style={styles.caloriesBurnedContainer}>
+          <Text style={styles.caloriesBurnedHeader}>Calories Goals</Text>
+          <Text style={styles.caloriesBurnedText}>{`${caloriesConsumed.consumed} / ${caloriesConsumed.goal} kcal`}</Text>
+        </View>
         </View>
       </ScrollView>
     </>
@@ -219,7 +224,20 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: 'black',
   },
-
+  caloriesBurnedContainer: {
+    backgroundColor: 'white',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 10,
+    marginBottom: 20,
+  },
+  caloriesBurnedText: {
+    fontFamily: 'Poppins-Bold',
+    fontSize: 24,
+    color: 'black',
+  },
   containerGif: {
     flex: 1,
     justifyContent: 'center',
@@ -229,9 +247,36 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
   },
-
-  background:{
-    flex:1,
+  background: {
     backgroundColor: 'white'
-  }
+  },
+  caloriesBurnedContainer: {
+    backgroundColor: '#FFF', // White background
+    padding: 20,
+    marginHorizontal: 20,
+    marginTop: 16,
+    marginBottom: 20,
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  caloriesBurnedHeader: {
+    fontFamily: 'Poppins-SemiBold',
+    fontSize: 18,
+    color: '#FF6347', // Tomato color for header text
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+  caloriesBurnedText: {
+    fontFamily: 'Poppins-Bold',
+    fontSize: 24,
+    color: 'black',
+    textAlign: 'center',
+  },
 });
