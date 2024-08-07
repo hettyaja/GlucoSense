@@ -1,3 +1,4 @@
+// Goals.js
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView, Modal } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
@@ -65,6 +66,69 @@ const Goals = () => {
   const beforeMealRange = Array.from({ length: 51 }, (_, i) => i + 80); // 80 to 130
   const afterMealRange = Array.from({ length: 101 }, (_, i) => i + 80); // 80 to 180
 
+  const calculateBMR = () => {
+    // Replace these with actual values from user input or context
+    const weight = 70; // kg
+    const height = 175; // cm
+    const age = 30; // years
+    const gender = 'male'; // or 'female'
+
+    let bmr;
+    if (gender === 'male') {
+      bmr = 88.362 + (13.397 * weight) + (4.799 * height) - (5.677 * age);
+    } else {
+      bmr = 447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age);
+    }
+
+    let activityMultiplier;
+    switch (exerciseLevel) {
+      case 'Sedentary':
+        activityMultiplier = 1.2;
+        break;
+      case 'Light':
+        activityMultiplier = 1.375;
+        break;
+      case 'Moderate':
+        activityMultiplier = 1.55;
+        break;
+      case 'Active':
+        activityMultiplier = 1.725;
+        break;
+      case 'Very Active':
+        activityMultiplier = 1.9;
+        break;
+      default:
+        activityMultiplier = 1.2;
+    }
+    
+
+    return bmr * activityMultiplier;
+  };
+
+// Inside handleSave function in Goals.js
+
+const handleSave = () => {
+  if (type === 'BMR Calculated') {
+    const bmrCalorieGoal = calculateBMR();
+    setCalorieGoal(bmrCalorieGoal);
+  }
+
+  // Log the data before navigating
+  console.log({
+    calorieGoal,
+    beforeMeal,
+    afterMeal,
+  });
+
+  // Navigate to the calorieInsight page and pass the data
+  navigation.navigate('caloriesInsight', {
+    calorieGoal: Number(calorieGoal),  // Ensure it's a number
+    beforeMeal,
+    afterMeal,
+  });
+};
+
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
@@ -72,7 +136,7 @@ const Goals = () => {
           <MaterialIcons name="close" size={24} color="white" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Set Goals</Text>
-        <TouchableOpacity onPress={() => console.log('Save Pressed')} style={styles.iconButton}>
+        <TouchableOpacity onPress={handleSave} style={styles.iconButton}>
           <Text style={styles.saveButton}>Save</Text>
         </TouchableOpacity>
       </View>
@@ -86,7 +150,7 @@ const Goals = () => {
             onValueChange={(itemValue) => {
               setType(itemValue);
               if (itemValue === "BMR Calculated") {
-                setCalorieGoal(2000);
+                setCalorieGoal(calculateBMR());
               } else {
                 setCalorieGoal(""); // Make it editable
               }
@@ -143,6 +207,7 @@ const Goals = () => {
             editable={type === "Custom"}
           />
         </View>
+        
 
         <Text style={styles.sectionTitle}>Glucose Goals</Text>
         <View style={styles.inputGroup}>
