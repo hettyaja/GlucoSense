@@ -32,11 +32,12 @@ const CardDetails = () => {
         cardNumber,
         expiryMonth,
         expiryYear,
-        cvc
+        cvc,
+        default: true
       }
 
       await CreatePaymentDetailsController.createPaymentDetails(user.uid, cardDetails)
-      router.replace('Boundary/PaymentMethod')
+      router.back()
     }
   }
 

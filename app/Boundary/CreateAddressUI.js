@@ -34,7 +34,8 @@ const CreateAddressUI = () => {
                 phoneNumber,
                 postCode,
                 unit,
-                details
+                details,
+                default: true
             }
             await CreateAddressController.createAddress(user.uid, addressDetails)
             router.back()

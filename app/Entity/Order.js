@@ -4,7 +4,7 @@ import {doc, addDoc, collection} from 'firebase/firestore';
 class Order{
     static async createOrder(orderData){
         try{
-            const orderCollection = collection(db, 'users', orderData.userId, 'orders');
+            const orderCollection = collection(db, 'users', orderData.userId, 'foodOrders');
             await addDoc(orderCollection, orderData);
         } catch (error) {
             throw error

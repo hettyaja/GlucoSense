@@ -145,6 +145,11 @@ const Setting = () => {
             <MaterialIcons name="payment" size={24} />
             <Text style={styles.buttonText}>Payments</Text>
           </TouchableOpacity>
+          <View style={{ borderBottomColor: '#d9d9d9', borderBottomWidth: 1 }} />
+          <TouchableOpacity style={styles.button} onPress={() => router.push('Boundary/ManageAddress')}>
+            <MaterialCommunityIcons name="map-marker-radius-outline" size={24} />
+            <Text style={styles.buttonText}>Address</Text>
+          </TouchableOpacity>
           {subscriptionType === 'premium' && (
             <View style={{ borderBottomColor: '#d9d9d9', borderBottomWidth: 1 }} />
           )}

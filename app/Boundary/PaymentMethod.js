@@ -54,6 +54,7 @@ const PaymentMethod = () => {
                   <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <FontAwesome name='cc-visa' size={24} color='grey' style={{ paddingRight: 8 }} />
                     <Text style={styles.label}>Visa (**** **** **** {card.cardNumber.slice(-4)})</Text>
+                    {card.default && <Text style={styles.defaultLabel}>[DEFAULT]</Text>}
                   </View>
                   <Ionicons name='chevron-forward' size={24} color='black' />
                 </TouchableOpacity>
@@ -103,5 +104,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  }
+  },
+  defaultLabel: {
+    fontSize: 12,
+    fontFamily: 'Poppins-Bold',
+    color:'green',
+    marginLeft:8
+  },
 });

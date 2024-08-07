@@ -15,22 +15,22 @@ import GetPaymentDetailsController from '../Controller/GetPaymentDetailsControll
 const ViewOrderSummaryUI = () => {
   const { menuData } = useLocalSearchParams();
   const [parsedMenuData, setParsedMenuData] = useState(menuData ? JSON.parse(atob(menuData)) : null);
-  const orderDetails = JSON.parse(atob(menuData));
   const [address, setAddress] = useState();
+  const [payment, setPayment] = useState();
   const { user } = useAuth();
   const [totalPayment, setTotalPayment] = useState(0);
-  const [payment, setPayment] = useState();
-  console.log(payment)
+  const [gstFee, setGstFee] = useState(0);
+  const [notes, setNotes] = useState('');
 
   useEffect(() => {
     fetchAddresses();
+    fetchPayment();
     calculateTotalPayment();
-    fetchPayment()
-  }, [address, orderDetails]);
+  }, []);
 
   const fetchAddresses = async () => {
     try {
-      const fetchedAddresses = await GetAddressController.getAddress(user.uid);
+      const fetchedAddresses = await GetAddressController.getDefaultAddress(user.uid);
       setAddress(fetchedAddresses);
     } catch (error) {
       console.error('Failed to fetch addresses:', error);
@@ -38,29 +38,44 @@ const ViewOrderSummaryUI = () => {
   };
 
   const fetchPayment = async () => {
-    try{
-      const fetchedPayment = await GetPaymentDetailsController.getPaymentDetails(user.uid);
+    try {
+      const fetchedPayment = await GetPaymentDetailsController.getDefaultPaymentDetails(user.uid);
       setPayment(fetchedPayment);
-    }catch(error){
+    } catch (error) {
       console.error('Failed to fetch payment:', error);
     }
-  }
+  };
 
   const calculateTotalPayment = () => {
-    const subtotal = orderDetails.price * orderDetails.quantity;
-    const deliveryFee = 5; 
-    const serviceFee = 1.5; 
-    const total = subtotal + deliveryFee + serviceFee;
+    const subtotal = parsedMenuData.price * parsedMenuData.quantity;
+    const gstFee = subtotal * 0.09; // GST fee is 9% of the subtotal
+    const deliveryFee = 5;
+    const total = subtotal + gstFee + deliveryFee;
     setTotalPayment(total);
+    setGstFee(gstFee);
+  };
+
+  const generateOrderRefNumber = () => {
+    const now = new Date();
+    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const year = String(now.getFullYear()).slice(-2);
+    const randomNum = String(Math.floor(10000 + Math.random() * 90000)).padStart(5, '0');
+    return `#${day}${month}${year}${randomNum}`;
   };
 
   const handleOrder = async () => {
+    const orderRefNumber = generateOrderRefNumber();
     const orderData = {
       userId: user.uid,
       businessPartnerId: parsedMenuData.bpId,
       menuId: parsedMenuData.id,
       quantity: parsedMenuData.quantity,
+      notes,
       deliveryAddress: address,
+      orderRefNumber, // Add the order reference number here
+      totalPayment, // Add the total payment here
+      gstFee, // Add the GST fee here
     };
     await CreateOrderController.createOrder(orderData);
     router.push('Boundary/OrderHistory');
@@ -78,18 +93,16 @@ const ViewOrderSummaryUI = () => {
         {/* Address Part */}
         <View style={styles.container1}>
           {address ? (
-            address.map((address, index) => (
-              <TouchableOpacity key={index} style={styles.addressBox} onPress={() => router.push('Boundary/ViewAddress')}>
-                <View style={styles.topRow}>
-                  <Text style={styles.nameStyle}>{address.name} | {address.phoneNumber}</Text>
-                  <EvilIcons name="chevron-right" size={24} color="gray" />
-                </View>
-                <View style={styles.addressDetails}>
-                  <Text style={styles.addressStyle}>{address.address} {address.unit} {address.details}</Text>
-                  <Text style={styles.addressStyle}>{address.postCode}</Text>
-                </View>
-              </TouchableOpacity>
-            ))
+            <TouchableOpacity style={styles.addressBox} onPress={() => router.push('Boundary/ViewAddress')}>
+              <View style={styles.topRow}>
+                <Text style={{ fontFamily: 'Poppins-SemiBold' }}>{address.name} | {address.phoneNumber}</Text>
+                <EvilIcons name="chevron-right" size={24} color="gray" />
+              </View>
+              <View style={styles.addressDetails}>
+                <Text style={{ fontFamily: 'Poppins-Medium' }}>{address.address} {address.unit} {address.details}</Text>
+                <Text style={{ fontFamily: 'Poppins-Medium' }}>{address.postCode}</Text>
+              </View>
+            </TouchableOpacity>
           ) : (
             <TouchableOpacity
               style={styles.addAddressButton}
@@ -101,59 +114,78 @@ const ViewOrderSummaryUI = () => {
           )}
         </View>
 
+        {/* Menu Details Part */}
         <View style={styles.container3}>
-          <Text>{orderDetails.entityName}</Text>
-
+          <Text>{parsedMenuData.entityName}</Text>
           <View style={styles.box}>
             <Image source={{ uri: parsedMenuData.image }} style={styles.orderImage} />
             <View>
-              <Text style={styles.commonText}>{orderDetails.foodName}</Text>
-              <Text style={styles.commonText}>${orderDetails.price}</Text>
+              <Text style={styles.commonText}>{parsedMenuData.foodName}</Text>
+              <Text style={styles.commonText}>${parsedMenuData.price}</Text>
             </View>
           </View>
-
           <Text style={styles.notesStyle}>Notes:</Text>
           <TextInput
             style={[styles.commonText, { flex: 1 }]}
             placeholder="Enter your notes here"
             placeholderTextColor="#999"
+            value={notes}
+            onChangeText={setNotes}
           />
         </View>
 
+        {/* Payment Method Part */}
+        <View style={styles.container3}>
+          <Text style={styles.header}>Payment Method</Text>
+          {payment ? (
+            <TouchableOpacity style={styles.paymentBox} onPress={() => router.push('Boundary/ViewPaymentMethods')}>
+              <View style={styles.topRow}>
+                <Text style={{ fontFamily: 'Poppins-SemiBold' }}>{payment.cardHolderName}</Text>
+                <EvilIcons name="chevron-right" size={24} color="gray" />
+              </View>
+              <Text style={{ fontFamily: 'Poppins-Medium' }}>{payment.cardNumber}</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              style={styles.addPaymentButton}
+              onPress={() => router.push('Boundary/AddPaymentMethod')}
+            >
+              <AntDesign name="plus" size={20} />
+              <Text style={styles.textPayment}>Add payment method</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+
+        {/* Order Summary Part */}
         <View style={styles.container3}>
           <Text style={styles.header}>Order Summary</Text>
-
           <View style={styles.orderItem}>
             <Text>Subtotal</Text>
-            <Text>${orderDetails.price * orderDetails.quantity}</Text>
+            <Text>${parsedMenuData.price * parsedMenuData.quantity}</Text>
           </View>
-
           <View style={styles.orderItem}>
             <Text>Delivery fee</Text>
             <Text>$5</Text>
           </View>
-
           <View style={styles.orderItem}>
-            <Text>Service fee</Text>
-            <Text>$2</Text>
+            <Text>GST fee</Text>
+            <Text>${gstFee.toFixed(2)}</Text>
           </View>
-
           <View style={styles.orderItem}>
             <Text>Total Payment</Text>
-            <Text>${totalPayment}</Text>
+            <Text>${totalPayment.toFixed(2)}</Text>
           </View>
-
         </View>
       </ScrollView>
 
       <View style={[styles.container5, { flexDirection: 'row', justifyContent: 'flex-end' }]}>
         <View>
-          <Text style={styles.orderItem}>Total Payment</Text>
-          <Text style={styles.orderItem}>${totalPayment}</Text>
+          <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 14, marginRight: 5 }}>Total Payment</Text>
+          <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 14, alignSelf: 'flex-end', marginRight: 5 }}>${totalPayment.toFixed(2)}</Text>
         </View>
-        <TouchableOpacity style={{ alignSelf: 'flex-end' }} onPress={() => handleOrder()}>
+        <TouchableOpacity style={{ alignSelf: 'flex-end' }} onPress={handleOrder}>
           <View style={{ backgroundColor: "#D96B41", width: 120, height: 47, justifyContent: 'center' }}>
-            <Text style={{ fontSize: 16, fontFamily: "Poppins-Bold", textAlign: 'center', color: '#FAF5E1' }}>Place Order</Text>
+            <Text style={{ fontSize: 14, fontFamily: "Poppins-Bold", textAlign: 'center', color: '#FAF5E1' }}>Place Order</Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -162,17 +194,20 @@ const ViewOrderSummaryUI = () => {
 };
 
 const styles = StyleSheet.create({
-  addressStyle:{
-    fontFamily: 'Poppins-Regular'
-  },
-  nameStyle:{
-    fontFamily: 'Poppins-SemiBold', 
-    fontSize: 16
-  },
   box: {
     flexDirection: 'row',
   },
   addAddressButton: {
+    borderRadius: 8,
+    marginHorizontal: 16,
+    marginTop: 8,
+    marginBottom: 8,
+    backgroundColor: '#F0F0F0',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  addPaymentButton: {
     borderRadius: 8,
     marginHorizontal: 16,
     marginTop: 8,
@@ -189,15 +224,25 @@ const styles = StyleSheet.create({
     padding: 8,
     fontFamily: 'Poppins-Medium',
     textAlign: 'center',
-    fontSize: 16,
+    fontSize: 14,
+  },
+  textPayment: {
+    padding: 8,
+    fontFamily: 'Poppins-Medium',
+    textAlign: 'center',
+    fontSize: 14,
+  },
+  smallText: {
+    fontFamily: 'Poppins-Medium',
+    fontSize: 10,
   },
   commonText: {
     fontFamily: 'Poppins-Medium',
-    fontSize: 20,
+    fontSize: 14,
   },
   container1: {
     backgroundColor: 'white',
-    // paddingVertical: 8,
+    paddingVertical: 8,
     paddingHorizontal: 16,
   },
   container3: {
@@ -230,12 +275,12 @@ const styles = StyleSheet.create({
   },
   notesStyle: {
     fontFamily: 'Poppins-Medium',
-    fontSize: 14,
+    fontSize: 12,
     paddingTop: 8,
   },
   header: {
     fontFamily: 'Poppins-SemiBold',
-    fontSize: 16,
+    fontSize: 14,
   },
   orderItem: {
     flexDirection: 'row',

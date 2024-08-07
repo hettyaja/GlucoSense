@@ -8,6 +8,14 @@ class GetAddressController {
             throw error
         }
     }
+
+    static async getDefaultAddress(userId){
+        try {
+            return await User.fetchDefaultAddress(userId);
+        } catch (error) {
+            throw error
+        }
+    }
 }
 
 export default GetAddressController;

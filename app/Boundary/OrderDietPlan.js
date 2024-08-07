@@ -3,7 +3,7 @@ import { SafeAreaView, StyleSheet, Text, View, ScrollView, Image, TouchableOpaci
 import Header from '../components/Header';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useAuth } from '../service/AuthContext';
-import { decode } from 'base-64';
+import { decode, encode } from 'base-64';
 
 const OrderDietPlan = () => {
   const { user } = useAuth();
@@ -37,10 +37,25 @@ const OrderDietPlan = () => {
                       <Text style={styles.mealName}>{meal.name}</Text>
                       <Text style={styles.mealDescription}>{meal.description}</Text>
                       <Text style={styles.mealIngredients}>{meal.ingredients}</Text>
-                      <Text style={styles.mealNutrition}>Carbs: {meal.carbs}g</Text>
-                      <Text style={styles.mealNutrition}>Protein: {meal.protein}g</Text>
-                      <Text style={styles.mealNutrition}>Calories: {meal.calorie}</Text>
-                      <Text style={styles.mealNutrition}>Fat: {meal.fat}g</Text>
+                      <View style={{flexDirection:'row'}}>
+                        <View style={{alignItems:'center', marginRight:8}}>
+                          <Text style={styles.mealNutrition}>Carbs</Text>
+                          <Text style={styles.mealNutrition}>{meal.carbs}g</Text>
+                        </View>
+                        
+                        <View style={{alignItems:'center', marginRight:8}}>
+                          <Text style={styles.mealNutrition}>Protein</Text>
+                          <Text style={styles.mealNutrition}>{meal.protein}g</Text>
+                        </View>
+                        <View style={{alignItems:'center', marginRight:8}}>
+                          <Text style={styles.mealNutrition}>Calories</Text>
+                          <Text style={styles.mealNutrition}>{meal.carbs}</Text>
+                        </View>
+                        <View style={{alignItems:'center', marginRight:8}}>
+                          <Text style={styles.mealNutrition}>Fat</Text>
+                          <Text style={styles.mealNutrition}>{meal.fat}g</Text>
+                        </View>
+                      </View>
                     </View>
                   </View>
                 ) : (
@@ -55,8 +70,14 @@ const OrderDietPlan = () => {
   };
 
   const handleOrder = () => {
-    // Add your order logic here
-    console.log(`Order placed for ${quantity} weeks`);
+    const orderData = {
+      ...parsedPlanData,
+      userId: user.uid,
+      quantity
+    }
+    console.log(orderData)
+    router.push({pathname:'Boundary/ViewDietPlanOrderSummary', params: {orderData: encode(JSON.stringify(orderData))}})
+
   };
 
   const incrementQuantity = () => {
@@ -148,7 +169,7 @@ const styles = StyleSheet.create({
     fontFamily:'Poppins-Regular'
   },
   daySection: {
-    marginVertical: 8,
+    marginTop: 8,
   },
   dayTitle: {
     fontSize: 14,
@@ -163,17 +184,15 @@ const styles = StyleSheet.create({
     borderColor: '#ddd',
   },
   mealTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 5,
+    fontSize: 14,
+    fontFamily:'Poppins-SemiBold'
   },
   mealContent: {
     flexDirection: 'row',
-    alignItems: 'center',
   },
   mealImage: {
-    width: 50,
-    height: 50,
+    width: 80,
+    height: 80,
     marginRight: 10,
     borderRadius: 8,
   },
@@ -182,7 +201,7 @@ const styles = StyleSheet.create({
   },
   mealName: {
     fontSize: 14,
-    fontWeight: 'bold',
+    fontFamily: 'Poppins-Medium',
   },
   mealDescription: {
     fontSize: 12,
@@ -243,7 +262,7 @@ const styles = StyleSheet.create({
   },
   orderButtonText: {
     color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 14,
+    fontFamily:'Poppins-Medium'
   },
 });

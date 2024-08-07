@@ -8,6 +8,14 @@ class GetPaymentDetailsController {
       throw error
     }
   }
+
+  static async getDefaultPaymentDetails(userId) {
+    try {
+      return await User.fetchDefaultPaymentDetails(userId);
+    } catch(error) {
+      throw error
+    }
+  }
 }
 
 export default GetPaymentDetailsController;
