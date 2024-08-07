@@ -81,12 +81,12 @@ const ViewOrderSummaryUI = () => {
             address.map((address, index) => (
               <TouchableOpacity key={index} style={styles.addressBox} onPress={() => router.push('Boundary/ViewAddress')}>
                 <View style={styles.topRow}>
-                  <Text style={{ fontFamily: 'Poppins-SemiBold' }}>{address.name} | {address.phoneNumber}</Text>
+                  <Text style={styles.nameStyle}>{address.name} | {address.phoneNumber}</Text>
                   <EvilIcons name="chevron-right" size={24} color="gray" />
                 </View>
                 <View style={styles.addressDetails}>
-                  <Text style={{ fontFamily: 'Poppins-Medium' }}>{address.address} {address.unit} {address.details}</Text>
-                  <Text style={{ fontFamily: 'Poppins-Medium' }}>{address.postCode}</Text>
+                  <Text style={styles.addressStyle}>{address.address} {address.unit} {address.details}</Text>
+                  <Text style={styles.addressStyle}>{address.postCode}</Text>
                 </View>
               </TouchableOpacity>
             ))
@@ -148,12 +148,12 @@ const ViewOrderSummaryUI = () => {
 
       <View style={[styles.container5, { flexDirection: 'row', justifyContent: 'flex-end' }]}>
         <View>
-          <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 14, marginRight: 5 }}>Total Payment</Text>
-          <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 14, alignSelf: 'flex-end', marginRight: 5 }}>${totalPayment}</Text>
+          <Text style={styles.orderItem}>Total Payment</Text>
+          <Text style={styles.orderItem}>${totalPayment}</Text>
         </View>
         <TouchableOpacity style={{ alignSelf: 'flex-end' }} onPress={() => handleOrder()}>
           <View style={{ backgroundColor: "#D96B41", width: 120, height: 47, justifyContent: 'center' }}>
-            <Text style={{ fontSize: 14, fontFamily: "Poppins-Bold", textAlign: 'center', color: '#FAF5E1' }}>Place Order</Text>
+            <Text style={{ fontSize: 16, fontFamily: "Poppins-Bold", textAlign: 'center', color: '#FAF5E1' }}>Place Order</Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -162,6 +162,13 @@ const ViewOrderSummaryUI = () => {
 };
 
 const styles = StyleSheet.create({
+  addressStyle:{
+    fontFamily: 'Poppins-Regular'
+  },
+  nameStyle:{
+    fontFamily: 'Poppins-SemiBold', 
+    fontSize: 16
+  },
   box: {
     flexDirection: 'row',
   },
@@ -182,19 +189,15 @@ const styles = StyleSheet.create({
     padding: 8,
     fontFamily: 'Poppins-Medium',
     textAlign: 'center',
-    fontSize: 14,
-  },
-  smallText: {
-    fontFamily: 'Poppins-Medium',
-    fontSize: 10,
+    fontSize: 16,
   },
   commonText: {
     fontFamily: 'Poppins-Medium',
-    fontSize: 14,
+    fontSize: 20,
   },
   container1: {
     backgroundColor: 'white',
-    paddingVertical: 8,
+    // paddingVertical: 8,
     paddingHorizontal: 16,
   },
   container3: {
@@ -227,12 +230,12 @@ const styles = StyleSheet.create({
   },
   notesStyle: {
     fontFamily: 'Poppins-Medium',
-    fontSize: 12,
+    fontSize: 14,
     paddingTop: 8,
   },
   header: {
     fontFamily: 'Poppins-SemiBold',
-    fontSize: 14,
+    fontSize: 16,
   },
   orderItem: {
     flexDirection: 'row',
