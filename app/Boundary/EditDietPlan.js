@@ -14,13 +14,13 @@ const initialDietPlanState = {
   planName: '',
   price: '',
   planImage: '',
-  Monday: { Lunch: { image: '', name: '', description: '', ingredients: '' }, Dinner: { image: '', name: '', description: '', ingredients: '' } },
-  Tuesday: { Lunch: { image: '', name: '', description: '', ingredients: '' }, Dinner: { image: '', name: '', description: '', ingredients: '' } },
-  Wednesday: { Lunch: { image: '', name: '', description: '', ingredients: '' }, Dinner: { image: '', name: '', description: '', ingredients: '' } },
-  Thursday: { Lunch: { image: '', name: '', description: '', ingredients: '' }, Dinner: { image: '', name: '', description: '', ingredients: '' } },
-  Friday: { Lunch: { image: '', name: '', description: '', ingredients: '' }, Dinner: { image: '', name: '', description: '', ingredients: '' } },
-  Saturday: { Lunch: { image: '', name: '', description: '', ingredients: '' }, Dinner: { image: '', name: '', description: '', ingredients: '' } },
-  Sunday: { Lunch: { image: '', name: '', description: '', ingredients: '' }, Dinner: { image: '', name: '', description: '', ingredients: '' } },
+  Monday: { Lunch: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '' }, Dinner: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '' } },
+  Tuesday: { Lunch: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '' }, Dinner: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '' } },
+  Wednesday: { Lunch: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '' }, Dinner: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '' } },
+  Thursday: { Lunch: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '' }, Dinner: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '' } },
+  Friday: { Lunch: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '' }, Dinner: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '' } },
+  Saturday: { Lunch: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '' }, Dinner: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '' } },
+  Sunday: { Lunch: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '' }, Dinner: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '' } },
 };
 
 const dayOrder = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -29,6 +29,7 @@ const EditDietPlan = () => {
   const { user } = useAuth();
   const { dietPlanData } = useLocalSearchParams();
   const [dietPlan, setDietPlan] = useState(dietPlanData ? JSON.parse(atob(dietPlanData)) : initialDietPlanState);
+  const [tempImages, setTempImages] = useState({});
   const [tempImageUri, setTempImageUri] = useState(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -52,12 +53,31 @@ const EditDietPlan = () => {
         const newImageUrl = await uploadDietPlanImage(user.uid, tempImageUri);
         const previousImage = dietPlan.planImage;
         
+        if (previousImage) {
           await deleteImage(previousImage);
+        }
         
         updatedDietPlan = {
           ...updatedDietPlan,
           planImage: newImageUrl
         };
+      }
+
+      for (const day of dayOrder) {
+        for (const mealType of ['Lunch', 'Dinner']) {
+          const entry = updatedDietPlan[day][mealType];
+          const tempUri = tempImages[`${day}_${mealType}`];
+          if (tempUri) {
+            const previousImage = entry.image;
+            const newImageUrl = await uploadDietPlanImage(user.uid, tempUri);
+            
+            if (previousImage) {
+              await deleteImage(previousImage);
+            }
+            
+            entry.image = newImageUrl;
+          }
+        }
       }
 
       console.log('during saving', updatedDietPlan);
@@ -86,6 +106,29 @@ const EditDietPlan = () => {
 
     if (!result.canceled) {
       setTempImageUri(result.assets[0].uri);
+    }
+  };
+
+  const addEntryImage = async (day, mealType) => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      alert('Sorry, we need camera roll permissions to make this work!');
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setTempImages((prev) => ({
+        ...prev,
+        [`${day}_${mealType}`]: result.assets[0].uri,
+      }));
+      // setEntry(day, mealType, { ...dietPlan[day][mealType], image: result.assets[0].uri });
     }
   };
 
@@ -154,14 +197,18 @@ const EditDietPlan = () => {
               <DietPlanEntry
                 day={day}
                 mealType="Lunch"
-                entry={dietPlan[day]?.Lunch}
+                entry={dietPlan[day]?.Lunch || { image: '', name: '', description: '', ingredients: '' }}
                 setEntry={setEntry}
+                addEntryImage={addEntryImage}
+                tempImages={tempImages}
               />
               <DietPlanEntry
                 day={day}
                 mealType="Dinner"
-                entry={dietPlan[day]?.Dinner}
+                entry={dietPlan[day]?.Dinner || { image: '', name: '', description: '', ingredients: '' }}
                 setEntry={setEntry}
+                addEntryImage={addEntryImage}
+                tempImages={tempImages}
               />
             </View>
           ))}

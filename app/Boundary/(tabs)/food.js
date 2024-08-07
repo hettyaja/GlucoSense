@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'rea
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Header from '../../components/Header';
 import { fetchMenuData, fetchDietPlans } from '../../service/foodordermenuService'; // Import the updated menu service
+import { encode } from 'base-64'
 
 const Food = () => {
   const router = useRouter();
@@ -33,6 +34,10 @@ const Food = () => {
     };
     fetchDietPlansData();
   }, []);
+
+  const handleOrder = (plan) => {
+    router.push({pathname:'Boundary/OrderDietPlan', params: {planData: encode(JSON.stringify(plan))}})
+  }
 
   return (
     <>
@@ -78,11 +83,13 @@ const Food = () => {
 
         <View style={styles.row}>
           <Text style={styles.sectionTitle}>Diet Plan</Text>
-          <Ionicons name='chevron-forward' size={24} color='black' />
+          <TouchableOpacity onPress={() => router.push('Boundary/ViewDietPlan')}>
+            <Ionicons name='chevron-forward' size={24} color='black' />
+          </TouchableOpacity>
         </View>
         <ScrollView horizontal contentContainerStyle={styles.featuredMenuContainer}>
           {dietPlans.map((plan) => (
-            <TouchableOpacity key={plan.id} style={styles.menuCard} onPress={() => router.push('Boundary/ViewDietPlan')}>
+            <TouchableOpacity key={plan.id} style={styles.menuCard} onPress={() => handleOrder(plan)}>
               <Image source={{ uri: plan.planImage || 'https://via.placeholder.com/150' }} style={styles.menuImage} />
               <View style={styles.menuTextContainer}>
                 <Text style={styles.menuTitle}>{plan.planName}</Text>

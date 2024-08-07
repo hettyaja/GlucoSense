@@ -18,7 +18,6 @@ import { encode as btoa } from 'base-64';
  
 const planBP = () => {
   const { user } = useAuth()
-  const { userId } = useState(user.uid)
   const [ dietPlans, setDietPlans] = useState([])
   const [searchQuery, setSearchQuery] = useState('');
   const router = useRouter();

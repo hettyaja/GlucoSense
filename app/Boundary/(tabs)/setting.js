@@ -158,7 +158,7 @@ const Setting = () => {
 
         <View style={styles.section}>
           <TouchableOpacity style={styles.button} onPress={() => router.push('ReportProblem')}>
-            <FontAwesome name="question-circle" size={24} color="#000" />
+            <FontAwesome name="question-circle" size={24}/>
             <Text style={styles.buttonText}>Help & Feedback</Text>
           </TouchableOpacity>
         </View>

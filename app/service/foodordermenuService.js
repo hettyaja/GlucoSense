@@ -42,7 +42,9 @@ export const fetchDietPlans = async () => {
       dietPlanSnapshot.forEach((dietPlanDoc) => {
         const dietPlanData = dietPlanDoc.data();
         dietPlanCollection.push({
-          id: dietPlanDoc.id,
+          dietPlanId: dietPlanDoc.id,
+          bpId: businessPartnerDoc.id,
+          entityName: businessPartnerDoc.data().entityName,
           ...dietPlanData
         });
       });

@@ -229,6 +229,41 @@ class BusinessPartner {
       throw error
     }
   }
+
+  // static async fetchDietPlans(userId) {
+  //   const dietPlanCollection = collection(db, `businessPartner/${userId}/dietplan`);
+  //   const dietPlanSnapshot = await getDocs(dietPlanCollection);
+  //   return dietPlanSnapshot.docs.map(doc => ({
+  //     ...doc.data(), id: doc.id,
+  //   }));
+  // }
+
+  static async fetchAllDietPlans() {
+    try {
+      const businessPartnerCollection = collection(db, 'businessPartner');
+      const businessPartnerSnapshot = await getDocs(businessPartnerCollection);
+      
+      const dietPlans = [];
+      
+      for (const businessPartnerDoc of businessPartnerSnapshot.docs) {
+        const dietPlanCollection = collection(db, `businessPartner/${businessPartnerDoc.id}/dietplan`);
+        const dietPlanSnapshot = await getDocs(dietPlanCollection);
+        
+        dietPlanSnapshot.docs.forEach(dietPlanDoc => {
+          dietPlans.push({
+            ...dietPlanDoc.data(),
+            id: dietPlanDoc.id,
+            businessPartnerId: businessPartnerDoc.id,
+          });
+        });
+      }
+  
+      return dietPlans;
+    } catch (error) {
+      console.error("Error fetching diet plans:", error);
+      throw error;
+    }
+  }
 }
 
 export default BusinessPartner;

@@ -1,40 +1,33 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, ActivityIndicator, Alert } from 'react-native';
 import { router } from 'expo-router';
 import Header from '../components/Header';
-
-const dietPlans = [
-  {
-    id: '1',
-    title: 'Weight Loss Program (7 Days)',
-    description: 'Lunch & Dinner',
-    price: '49.90',
-    image: 'https://via.placeholder.com/150',
-  },
-  {
-    id: '2',
-    title: 'Weight Loss Program (30 Days)',
-    description: 'Lunch & Dinner',
-    price: '99.90',
-    image: 'https://via.placeholder.com/150',
-  },
-  {
-    id: '3',
-    title: 'Diabetes Program (7 Days)',
-    description: 'Lunch & Dinner',
-    price: '49.90',
-    image: 'https://via.placeholder.com/150',
-  },
-  {
-    id: '4',
-    title: 'Diabetes Program (30 Days)',
-    description: 'Lunch & Dinner',
-    price: '99.90',
-    image: 'https://via.placeholder.com/150',
-  },
-];
+import { useAuth } from '../service/AuthContext';
+import ViewDietPlanController from '../Controller/ViewDietPlanController';
 
 const ViewDietPlan = () => {
+  const { user } = useAuth();
+  const [dietPlans, setDietPlans] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchDietPlans = async () => {
+    try {
+      const dietPlansData = await ViewDietPlanController.fetchAllDietPlans();
+      setDietPlans(dietPlansData);
+      
+    } catch (error) {
+      console.error("Error fetching diet plans: ", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (user) {
+      fetchDietPlans();
+    }
+  }, [user]);
+
   return (
     <>
       <Header
@@ -42,20 +35,23 @@ const ViewDietPlan = () => {
         leftButton='Back'
         onLeftButtonPress={() => router.back()}
       />
-      <View style={styles.container}>
-        <ScrollView contentContainerStyle={styles.scrollViewContent}>
-          {dietPlans.map(plan => (
-            <View key={plan.id} style={styles.planCard}>
-              <Image source={{ uri: plan.image }} style={styles.planImage} />
-              <View style={styles.planInfo}>
-                <Text style={styles.planTitle}>{plan.title}</Text>
-                <Text style={styles.planDescription}>{plan.description}</Text>
-                <Text style={styles.planPrice}>S$ {plan.price}</Text>
-              </View>
-            </View>
-          ))}
-        </ScrollView>
-      </View>
+      <ScrollView style={styles.container}>
+        {loading ? (
+          <ActivityIndicator size="large" color="#E58B68" />
+        ) : (
+          <ScrollView style={styles.scrollViewContent}>
+            {dietPlans.map(plan => (
+              <TouchableOpacity key={plan.id} style={styles.planCard}>
+                <Image source={{ uri: plan.planImage }} style={styles.planImage} />
+                <View style={styles.planInfo}>
+                  <Text style={styles.planName}>{plan.planName}</Text>
+                  <Text style={styles.planPrice}>S$ {plan.price}</Text>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        )}
+      </ScrollView>
     </>
   );
 };
@@ -64,9 +60,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
-  },
-  scrollViewContent: {
-    padding: 16,
+    padding:16
   },
   planCard: {
     flexDirection: 'row',
@@ -83,16 +77,17 @@ const styles = StyleSheet.create({
   },
   planInfo: {
     flex: 1,
-    justifyContent: 'space-between',
   },
   planTitle: {
     fontFamily: 'Poppins-SemiBold',
     fontSize: 16,
+    marginBottom: 8,
   },
   planDescription: {
     fontFamily: 'Poppins-Regular',
     fontSize: 14,
     color: '#666',
+    marginBottom: 8,
   },
   planPrice: {
     fontFamily: 'Poppins-Regular',
