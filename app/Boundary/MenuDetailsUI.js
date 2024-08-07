@@ -6,17 +6,19 @@ import Header from '../components/Header';
 import { useAuth } from '../service/AuthContext';
 import MenuDetailsController from '../Controller/MenuDetailsController';
 import CreateAddressController from '../Controller/CreateAddressController';
+import { decode as atob} from 'base-64'
+import { encode as btoa } from 'base-64'
 
 
 const MenuDetails = () => {
   const { menuData } = useLocalSearchParams();
-  const [parsedMenuData, setParsedMenuData] = useState(menuData ? JSON.parse(menuData) : null);
+  const [parsedMenuData, setParsedMenuData] = useState(menuData ? JSON.parse(atob(menuData)) : null);
+  console.log('ini details', parsedMenuData)
   const [quantity, setQuantity] = useState(1);
   const [menuItem, setMenuItem] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { user } = useAuth();
-  const [addresses, setAddresses] = useState([]);
 
   const increment = () => {
     setQuantity(quantity + 1);
@@ -34,7 +36,7 @@ const MenuDetails = () => {
       quantity,
     }
     console.log('Menu: ', orderDetails)
-    router.push({pathname: 'Boundary/ViewOrderSummaryUI', params:{menuData: JSON.stringify(orderDetails)}})
+    router.push({pathname: 'Boundary/ViewOrderSummaryUI', params:{menuData: btoa(JSON.stringify(orderDetails))}})
   };
 
 
