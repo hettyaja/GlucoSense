@@ -1,6 +1,7 @@
 apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
+apply plugin: 'com.google.gms.google-services'
 
 def projectRoot = rootDir.getAbsoluteFile().getParentFile().getAbsolutePath()
 
@@ -20,7 +21,7 @@ def jscFlavor = 'org.webkit:android-jsc:+'
 android {
     ndkVersion rootProject.ext.ndkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
-    compileSdk rootProject.ext.compileSdkVersion
+    compileSdkVersion rootProject.ext.compileSdkVersion
 
     namespace 'com.anonymous.GlucoSense'
     defaultConfig {
@@ -29,6 +30,7 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0.0"
+        multiDexEnabled true
     }
     signingConfigs {
         debug {
@@ -71,6 +73,22 @@ android {
 
 dependencies {
     implementation("com.facebook.react:react-android")
+    //implementation 'com.google.mlkit:text-recognition:16.0.0'
+    //implementation 'com.google.mlkit:vision-common:17.0.0'
+    //implementation 'com.google.mlkit:vision-common:17.0.0'
+    //implementation 'com.google.android.gms:play-services-mlkit-text-recognition-chinese:16.0.0'
+    //implementation 'com.google.android.gms:play-services-mlkit-text-recognition-devanagari:16.0.0'
+    //implementation 'com.google.android.gms:play-services-mlkit-text-recognition-japanese:16.0.0'
+    //implementation 'com.google.android.gms:play-services-mlkit-text-recognition-korean:16.0.0'
+    implementation 'com.google.android.gms:play-services-basement:17.6.0' 
+    implementation 'androidx.multidex:multidex:2.0.1'
+    implementation 'com.google.android.gms:play-services-base:17.6.0'
+    implementation 'com.google.android.gms:play-services-tasks:17.2.1'
+    implementation 'com.google.android.gms:play-services-measurement-base:17.6.0'
+    implementation 'com.google.android.gms:play-services-measurement-sdk-api:17.6.0'
+    implementation 'com.google.android.gms:play-services-mlkit-text-recognition:18.0.2'
+    //implementation 'com.google.mlkit:vision-text-recognition:16.0.0' 
+    //implementation 'com.google.android.gms:play-services-mlkit-vision:17.0.0'
 
     def isGifEnabled = (findProperty('expo.gif.enabled') ?: "") == "true";
     def isWebpEnabled = (findProperty('expo.webp.enabled') ?: "") == "true";
@@ -97,9 +115,34 @@ dependencies {
 configurations.all {
     resolutionStrategy.eachDependency { details ->
         if (details.requested.group == 'com.google.android.gms' && !details.requested.name.contains('multidex')) {
-            details.useVersion '17.0.0'
+            if (details.requested.name == 'play-services-mlkit-text-recognition-chinese') {
+                details.useVersion '16.0.0'
+            } else if (details.requested.name == 'play-services-mlkit-text-recognition-devanagari') {
+                details.useVersion '16.0.0'
+            } else if (details.requested.name == 'play-services-mlkit-text-recognition-japanese') {
+                details.useVersion '16.0.0'
+            } else if (details.requested.name == 'play-services-mlkit-text-recognition-korean') {
+                details.useVersion '16.0.0'
+            } else if (details.requested.name == 'play-services-measurement-sdk-api'){
+                details.useVersion '17.6.0'
+            } else if (details.requested.name == 'play-services-basement'){
+                details.useVersion '17.6.0'
+            } else if (details.requested.name == 'play-services-base'){
+                details.useVersion '17.6.0'
+            }else if (details.requested.name == 'play-services-measurement-base'){
+                details.useVersion '17.6.0'
+            }else if (details.requested.name == 'play-services-tasks'){
+                details.useVersion '17.2.1'
+            
+            }else if (details.requested.name == 'play-services-mlkit-text-recognition'){
+                details.useVersion '18.0.2'
+            
+            }else if (details.requested.name == 'play-services-mlkit-vision'){ // Added
+                details.useVersion '17.0.0'
+            } else {
+                details.useVersion '17.0.0'
+            }
         }
-       
     }
 }
 

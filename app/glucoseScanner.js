@@ -2,8 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Button } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
+//import TextRecognition from 'react-native-text-recognition';
 import TextRecognition from 'react-native-text-recognition';
-
+import { launchImageLibrary } from 'react-native-image-picker'
+//import TextRecognition from '@react-native-ml-kit/text-recognition';
 const GlucoseScanner = () => {
   const [permission, requestPermission] = useCameraPermissions();
   const [result, setResult] = useState('');
@@ -11,8 +13,12 @@ const GlucoseScanner = () => {
 
   useEffect(() => {
     (async () => {
-      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (status !== 'granted') {
+      const { status: cameraStatus } = await Camera.requestPermissionsAsync();
+      if (cameraStatus !== 'granted') {
+        alert('Sorry, we need camera permissions to make this work!');
+      }
+      const { status: mediaStatus } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (mediaStatus !== 'granted') {
         alert('Sorry, we need media library permissions to make this work!');
       }
     })();
@@ -50,12 +56,16 @@ const GlucoseScanner = () => {
 
     if (!result.canceled) {
       try {
+        console.log(result);
         console.log('Extracting text from image:', result.assets[0].uri);
-        const recognizedText = await TextRecognition.recognize(result.assets[0].uri);
+        const options = { visionIgnoreThreshold: 0.5 };
+        const recognizedText = await TextRecognition.recognize(result.assets[0].uriyou);
+        console.log('1');
         console.log('OCR result:', recognizedText); // Debug log
-    
+        
         // Process recognized text
         const numbers = recognizedText.filter(item => !isNaN(item));
+        console.log('2');
         setResult(numbers.join(' '));
       } catch (err) {
         console.error('Error performing OCR:', err);
