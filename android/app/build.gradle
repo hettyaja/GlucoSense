@@ -73,6 +73,10 @@ android {
 
 dependencies {
     implementation("com.facebook.react:react-android")
+    //implementation platform('com.google.firebase:firebase-bom:33.1.2')
+    //implementation 'com.google.firebase:firebase-analytics'
+    
+
     //implementation 'com.google.mlkit:text-recognition:16.0.0'
     //implementation 'com.google.mlkit:vision-common:17.0.0'
     //implementation 'com.google.mlkit:vision-common:17.0.0'
@@ -114,7 +118,13 @@ dependencies {
 
 configurations.all {
     resolutionStrategy.eachDependency { details ->
-        if (details.requested.group == 'com.google.android.gms' && !details.requested.name.contains('multidex')) {
+        if (details.requested.group == 'com.google.firebase') {
+            if (details.requested.name == 'firebase-bom') {
+                details.useVersion '33.1.2'
+            }
+            
+        }
+        else if (details.requested.group == 'com.google.android.gms' && !details.requested.name.contains('multidex')) {
             if (details.requested.name == 'play-services-mlkit-text-recognition-chinese') {
                 details.useVersion '16.0.0'
             } else if (details.requested.name == 'play-services-mlkit-text-recognition-devanagari') {
