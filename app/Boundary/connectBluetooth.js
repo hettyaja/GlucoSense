@@ -103,9 +103,9 @@ const ConnectBluetooth = () => {
             console.log('Glucose measurement notification error:', error);
             return;
           }
-          const glucoseMeasurement = decodeBuffer(characteristic.value);
+          const glucoseMeasurement = Buffer.from(characteristic.value, 'base64');
           console.log(`Glucose Measurement: ${JSON.stringify(glucoseMeasurement)}`);
-          setGlucoseValues((prevValues) => [...prevValues, glucoseMeasurement]);
+          setGlucoseValues((prevValues) => [...prevValues, glucoseMeasurement[12]]);
         }
       );
 
@@ -121,9 +121,9 @@ const ConnectBluetooth = () => {
 
       console.log('Write to RACP successful');
 
-      return () => {
-        subscription.remove();
-      };
+      // return () => {
+      //   subscription.remove();
+      // };
 
     } catch (err) {
       console.error('Error syncing all readings:', err);
@@ -134,6 +134,7 @@ const ConnectBluetooth = () => {
     const buf = Buffer.from(base64String, 'base64');
     console.log('Raw buffer:', buf);
 
+    const glucoseValue = buf[12]
     const flags = buf.readUInt8(0);
     const glucoseConcentration = buf.readUInt16LE(1);
     const timeOffset = buf.readInt16LE(3);
@@ -141,6 +142,7 @@ const ConnectBluetooth = () => {
     const sensorStatus = buf.readUInt16LE(6);
 
     return {
+      glucoseValue,
       flags,
       glucoseConcentration,
       timeOffset,
@@ -149,28 +151,6 @@ const ConnectBluetooth = () => {
     };
   };
 
-  const decodeRACPResponse = (base64String) => {
-    const buf = Buffer.from(base64String, 'base64');
-    console.log('RACP Raw buffer:', buf);
-
-    const opCode = buf.readUInt8(0);
-    const operator = buf.readUInt8(1);
-    const operand = buf.slice(2);
-
-    let operandDescription;
-    if (opCode === 0x06) {
-      const numberOfRecords = operand.readUInt16LE(0);
-      operandDescription = `Number of stored records: ${numberOfRecords}`;
-    } else {
-      operandDescription = operand.toString('hex');
-    }
-
-    return {
-      opCode,
-      operator,
-      operand: operandDescription
-    };
-  };
 
   return (
     <View style={styles.container}>
@@ -191,11 +171,7 @@ const ConnectBluetooth = () => {
         <View>
           {glucoseValues.map((value, index) => (
             <View key={index}>
-              <Text>Flags: {value.flags}</Text>
-              <Text>Glucose Concentration: {value.glucoseConcentration}</Text>
-              <Text>Time Offset: {value.timeOffset}</Text>
-              <Text>Type Sample Location: {value.typeSampleLocation}</Text>
-              <Text>Sensor Status: {value.sensorStatus}</Text>
+              <Text>Glucose value: {value} mg/dL</Text>
             </View>
           ))}
         </View>
