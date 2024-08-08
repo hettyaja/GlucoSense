@@ -8,6 +8,14 @@ class CreateOrderController {
             throw error
         }
     }
+    
+    static async createDietPlanOrder(orderData) {
+        try {
+            return Order.createDietPlanOrder(orderData)
+        } catch (error) {
+            throw error
+        }
+    }
 }
 
 export default CreateOrderController
