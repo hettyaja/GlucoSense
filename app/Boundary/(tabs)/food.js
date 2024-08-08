@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'rea
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Header from '../../components/Header';
 import { fetchMenuData, fetchDietPlans } from '../../service/foodordermenuService'; // Import the updated menu service
+import { encode } from 'base-64'
 
 const Food = () => {
   const router = useRouter();
@@ -26,7 +27,7 @@ const Food = () => {
     const fetchDietPlansData = async () => {
       try {
         const dietPlanCollection = await fetchDietPlans(); // Fetch diet plan data
-        setDietPlans(dietPlanCollection);
+        setDietPlans(dietPlanCollection.slice(0,5));
       } catch (error) {
         console.error('Error fetching diet plan data:', error);
       }
@@ -34,10 +35,14 @@ const Food = () => {
     fetchDietPlansData();
   }, []);
 
+  const handleOrder = (plan) => {
+    router.push({pathname:'Boundary/OrderDietPlan', params: {planData: encode(JSON.stringify(plan))}})
+  }
+
   return (
     <>
       <Header title='Food' />
-      <View style={styles.container}>
+      <ScrollView style={styles.container}>
         <View style={styles.statusContainer}>
           <View style={styles.statusHeader}>
             <Text style={styles.statusHeaderText}>My Food</Text>
@@ -55,11 +60,15 @@ const Food = () => {
         </View>
 
         <TouchableOpacity style={styles.recipeBox} onPress={() => router.push('recipePage')}>
-          <Text>Discover our recipe</Text>
-          <Ionicons name='chevron-forward' size={32} color='black' />
+          <Text style={styles.recipeText}>Discover our recipe</Text>
+          <Ionicons name='chevron-forward' size={24} color='black' />
         </TouchableOpacity>
 
-        <Text style={styles.sectionTitle}>Featured menu</Text>
+        <View style={styles.row}>
+          <Text style={styles.sectionTitle}>Featured menu</Text>
+          <Ionicons name='chevron-forward' size={24} color='black' />
+        </View>
+        
         <ScrollView horizontal contentContainerStyle={styles.featuredMenuContainer}>
           {featuredMenu.map((menu) => (
             <TouchableOpacity key={menu.id} style={styles.menuCard} onPress={() => router.push('foodOrder')}>
@@ -72,19 +81,24 @@ const Food = () => {
           ))}
         </ScrollView>
 
-        <Text style={styles.sectionTitle}>Diet Plan</Text>
+        <View style={styles.row}>
+          <Text style={styles.sectionTitle}>Diet Plan</Text>
+          <TouchableOpacity onPress={() => router.push('Boundary/ViewDietPlan')}>
+            <Ionicons name='chevron-forward' size={24} color='black' />
+          </TouchableOpacity>
+        </View>
         <ScrollView horizontal contentContainerStyle={styles.featuredMenuContainer}>
           {dietPlans.map((plan) => (
-            <TouchableOpacity key={plan.id} style={styles.menuCard} onPress={() => router.push('Boundary/ViewDietPlan')}>
+            <TouchableOpacity key={plan.id} style={styles.menuCard} onPress={() => handleOrder(plan)}>
               <Image source={{ uri: plan.planImage || 'https://via.placeholder.com/150' }} style={styles.menuImage} />
               <View style={styles.menuTextContainer}>
                 <Text style={styles.menuTitle}>{plan.planName}</Text>
-                <Text style={styles.menuPrice}>{plan.price}</Text>
+                <Text style={styles.menuPrice}>Start from ${plan.price}</Text>
               </View>
             </TouchableOpacity>
           ))}
         </ScrollView>
-      </View>
+      </ScrollView>
     </>
   );
 };
@@ -103,9 +117,8 @@ const styles = StyleSheet.create({
     width: '48%',
   },
   statusHeaderText: {
-    fontFamily: 'Poppins-Regular',
-    fontSize: 14,
-    paddingBottom: 8,
+    fontFamily: 'Poppins-Medium',
+    fontSize: 16,
   },
   statusBox: {
     backgroundColor: 'white',
@@ -117,20 +130,25 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 8,
     borderWidth: 0.5,
-    margin: 16,
+    marginHorizontal: 16,
+    marginBottom:16,
     padding: 16,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
+  recipeText: {
+    fontFamily:'Poppins-Medium',
+    fontSize:14
+  },
   sectionTitle: {
-    fontFamily: 'Poppins-Regular',
+    fontFamily: 'Poppins-Medium',
     fontSize: 16,
-    marginLeft: 16,
-    marginTop: 16,
   },
   featuredMenuContainer: {
-    paddingLeft: 16,
+    marginLeft: 16,
+    marginBottom:16,
+    marginTop:8
   },
   menuCard: {
     backgroundColor: 'white',
@@ -161,6 +179,12 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#808080',
   },
+  row: {
+    flexDirection:'row',
+    justifyContent:'space-between',
+    alignItems:'center',
+    marginHorizontal:16
+  }
 });
 
 export default Food;

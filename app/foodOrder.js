@@ -5,6 +5,8 @@ import { Tabs, router } from 'expo-router';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { fetchMenuData } from './service/foodordermenuService'; // Updated import
 import { useAuth } from './service/AuthContext'; // Import your auth context
+import Header from './components/Header';
+import { encode as btoa  } from 'base-64'
 
 const FoodOrder = () => {
   const { user } = useAuth(); // Get the current user
@@ -13,7 +15,7 @@ const FoodOrder = () => {
 
   const handlePress = (menu) => {
     // console.log(menu)
-    router.push({ pathname: 'Boundary/MenuDetailsUI', params: { menuData: JSON.stringify(menu) } });
+    router.push({ pathname: 'Boundary/MenuDetailsUI', params: { menuData: btoa(JSON.stringify(menu)) } });
   };
 
   useEffect(() => {
@@ -39,14 +41,12 @@ const FoodOrder = () => {
 
   return (
     <>
-      <Tabs.Screen options={{
-        title: 'Food Order',
-        headerStyle: { backgroundColor: '#E58B68' },
-        headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold' },
-        headerTitle: 'Food Order',
-        headerTitleAlign: 'center',
-      }} />
-
+      <Header
+        title = 'Food Order'
+        leftButton= 'Back'
+        onLeftButtonPress={()=>router.back()}
+      />
+    
       <View style={{ flex: 1, backgroundColor: '#f5f5f5' }}>
         <View style={styles.searchContainer}>
           <View style={styles.searchBar}>

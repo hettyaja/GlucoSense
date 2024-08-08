@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Dimensions, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Tabs, router } from 'expo-router';
 import { LineChart } from 'react-native-chart-kit';
 //import { ScatterChart, YAxis, XAxis, Grid } from 'react-native-svg-charts';
@@ -62,7 +62,9 @@ const Insight = () => {
   };
 
   if (loading) {
-    return <Text>Loading...</Text>;
+    return <View style={styles.loadingContainer}>
+    <ActivityIndicator size={32} color="#E68B67" />
+  </View>;
   }
 
   console.log('Glucose Graph Data:', glucoseGraphData);
@@ -173,5 +175,10 @@ const styles = StyleSheet.create({
   },
   chartContainer: {
     backgroundColor: 'white',
-  }
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });

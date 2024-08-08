@@ -90,18 +90,16 @@ const preReg = () => {
   return (
     <>
       <Header
-        title = 'Glucose'
-        leftButton= 'Close'
+        title='Glucose'
+        leftButton='Close'
         onLeftButtonPress={() => router.back('/home')}
-        rightButton= 'Save'
+        rightButton='Save'
         onRightButtonPress={() => saveGlucose()}
       />
 
       <ScrollView style={styles.scrollView}>
         <View style={styles.section}>
-          
           <View style={styles.row}>
-            
             <Text style={styles.label}>Time</Text>
             <TouchableOpacity onPress={showDatePicker}>
               <Text style={styles.value}>{selectedDate.toLocaleString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', hour: 'numeric', minute: 'numeric' })}</Text>
@@ -113,7 +111,6 @@ const preReg = () => {
             <Picker
               selectedValue={selectedValue}
               style={styles.picker}
-              itemStyle={styles.pickerItem}
               onValueChange={(itemValue) => setSelectedValue(itemValue)}
             >
               <Picker.Item label="Before breakfast" value="Before breakfast" />
@@ -169,42 +166,42 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
     backgroundColor: '#f5f5f5',
+    marginTop:16
   },
   section: {
     backgroundColor: 'white',
-    marginVertical: 24,
-    padding: 16,
-    borderTopWidth:0.5,
-    borderBottomWidth:0.5,
-    borderColor:'#808080'
+    borderTopWidth: 0.5,
+    borderBottomWidth: 0.5,
+    borderColor: '#808080',
   },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 8,
   },
   label: {
-    fontSize: 16,
-    fontFamily: 'Poppins-Medium',
-    color: '#333',
+    fontSize: 12,
+    fontFamily: 'Poppins-Regular',
+    color: '#black',
+    paddingHorizontal: 16,
+    paddingVertical: 16,
   },
   value: {
-    fontSize: 16,
+    fontSize: 12,
     fontFamily: 'Poppins-Regular',
     color: '#808080',
   },
   separator: {
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#ccc',
-    marginVertical: 8,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#808080',
   },
   picker: {
-    width: '55%',
+    width: '50%', // Adjusted width to make it smaller
+    height: 40, // Adjusted height to make it more compact
     color: '#808080',
   },
   pickerItem: {
-    fontSize: 14,
+    fontSize: 12, // Reduced font size
     fontFamily: 'Poppins-Regular',
   },
   centered: {
@@ -218,11 +215,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 16,
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowRadius: 1,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 5,
+    elevation: 4,
     flexDirection: 'row',
   },
   buttonText: {
@@ -237,7 +230,7 @@ const styles = StyleSheet.create({
   },
   glucoseInput: {
     fontFamily: 'Poppins-Medium',
-    fontSize: 16,
+    fontSize: 12,
     marginRight: 8,
     width: 50,
   },
@@ -248,7 +241,7 @@ const styles = StyleSheet.create({
   },
   notesInput: {
     fontFamily: 'Poppins-Medium',
-    fontSize: 16,
+    fontSize: 12,
     flex: 1,
     textAlign: 'right',
   },
@@ -256,7 +249,7 @@ const styles = StyleSheet.create({
     padding: 2,
     marginHorizontal: 8,
     fontFamily: 'Poppins-SemiBold',
-    fontSize: 16,
+    fontSize: 12,
     color: 'white',
   },
 });

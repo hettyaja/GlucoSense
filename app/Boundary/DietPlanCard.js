@@ -14,7 +14,6 @@ const DietPlanCard = ({ dietPlan, onEdit, onDelete }) => {
 
   const handleDelete = async () => {
     try {
-      // await DeleteDietPlanController.deleteDietPlan(user.uid, dietPlan.id);
       onDelete(dietPlan.id);
     } catch (error) {
       console.error("Error deleting document: ", error);

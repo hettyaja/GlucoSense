@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import FetchUsersController from '../../Controller/FetchUsersController';
 import SuspendUserController from '../../Controller/SuspendUserController';
@@ -96,6 +96,14 @@ const UserSA = () => {
       </View>
     </TouchableOpacity>
   );
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size={80} color="#E68B67"/>
+      </View>
+    )
+  }
 
   return (
     <>
@@ -320,6 +328,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 14,
   },
+  loadingContainer: {
+    flex:1,
+    justifyContent:'center',
+    alignItems:'center'
+  }
 });
 
 export default UserSA;

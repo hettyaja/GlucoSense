@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { SafeAreaView, StyleSheet, Text, ScrollView, View, TouchableOpacity, TextInput, Image } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -7,23 +7,26 @@ import DietPlanEntry from './DietPlanEntry';
 import { useAuth } from '../service/AuthContext';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import * as ImagePicker from 'expo-image-picker';
+import { uploadDietPlanImage } from '../service/storageService';
 
 const initialDietPlanState = {
-  Monday: { Lunch: { image: '', name: '', description: '', ingredients: '' }, Dinner: { image: '', name: '', description: '', ingredients: '' } },
-  Tuesday: { Lunch: { image: '', name: '', description: '', ingredients: '' }, Dinner: { image: '', name: '', description: '', ingredients: '' } },
-  Wednesday: { Lunch: { image: '', name: '', description: '', ingredients: '' }, Dinner: { image: '', name: '', description: '', ingredients: '' } },
-  Thursday: { Lunch: { image: '', name: '', description: '', ingredients: '' }, Dinner: { image: '', name: '', description: '', ingredients: '' } },
-  Friday: { Lunch: { image: '', name: '', description: '', ingredients: '' }, Dinner: { image: '', name: '', description: '', ingredients: '' } },
-  Saturday: { Lunch: { image: '', name: '', description: '', ingredients: '' }, Dinner: { image: '', name: '', description: '', ingredients: '' } },
-  Sunday: { Lunch: { image: '', name: '', description: '', ingredients: '' }, Dinner: { image: '', name: '', description: '', ingredients: '' } },
+  Monday: { Lunch: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '' }, Dinner: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '' } },
+  Tuesday: { Lunch: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '' }, Dinner: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '' } },
+  Wednesday: { Lunch: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '' }, Dinner: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '' } },
+  Thursday: { Lunch: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '' }, Dinner: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '' } },
+  Friday: { Lunch: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '' }, Dinner: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '' } },
+  Saturday: { Lunch: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '' }, Dinner: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '' } },
+  Sunday: { Lunch: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '' }, Dinner: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '' } },
 };
+
 
 const CreateDietPlan = () => {
   const { user } = useAuth();
   const [dietPlans, setDietPlans] = useState(initialDietPlanState);
   const [planName, setPlanName] = useState('');
   const [price, setPrice] = useState('');
-  const [planImage, setPlanImage] = useState()
+  const [planImage, setPlanImage] = useState('');
+  const [tempImages, setTempImages] = useState({});
   const router = useRouter();
 
   const setEntry = (day, mealType, entry) => {
@@ -37,14 +40,31 @@ const CreateDietPlan = () => {
   };
 
   const handleSave = async () => {
-    const completeDietPlan = {
-      planName,
-      price,
-      planImage,
-      ...dietPlans,
-    };
-
     try {
+      // Upload plan image
+      const planImageURL = await uploadDietPlanImage(user.uid, planImage);
+      setPlanImage(planImageURL);
+
+      // Upload diet plan images
+      const updatedDietPlans = { ...dietPlans };
+      for (const day in updatedDietPlans) {
+        for (const mealType in updatedDietPlans[day]) {
+          const meal = updatedDietPlans[day][mealType];
+          const tempUri = tempImages[`${day}_${mealType}`];
+          if (tempUri) {
+            const imageURL = await uploadDietPlanImage(user.uid, tempUri);
+            updatedDietPlans[day][mealType].image = imageURL;
+          }
+        }
+      }
+
+      const completeDietPlan = {
+        planName,
+        price,
+        planImage: planImageURL,
+        ...updatedDietPlans,
+      };
+
       await CreateDietPlanController.createDietPlan(user.uid, completeDietPlan);
       router.push('/Boundary/planBP'); // Ensure this path is correct
     } catch (error) {
@@ -68,6 +88,29 @@ const CreateDietPlan = () => {
 
     if (!result.canceled) {
       setPlanImage(result.assets[0].uri);
+    }
+  };
+
+  const addEntryImage = async (day, mealType) => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      alert('Sorry, we need camera roll permissions to make this work!');
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setTempImages((prev) => ({
+        ...prev,
+        [`${day}_${mealType}`]: result.assets[0].uri,
+      }));
+      setEntry(day, mealType, { ...dietPlans[day][mealType], image: result.assets[0].uri });
     }
   };
 
@@ -107,7 +150,7 @@ const CreateDietPlan = () => {
             </View>
             <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5}} />
             <View style={styles.inputContainer}>
-              <Text style={styles.label}>Price per day</Text>
+              <Text style={styles.label}>Price per week</Text>
               <View>
                 <TextInput
                   placeholder='Enter price'
@@ -140,12 +183,16 @@ const CreateDietPlan = () => {
                 mealType="Lunch"
                 entry={dietPlans[day].Lunch}
                 setEntry={setEntry}
+                addEntryImage={addEntryImage}
+                tempImages={tempImages}
               />
               <DietPlanEntry
                 day={day}
                 mealType="Dinner"
                 entry={dietPlans[day].Dinner}
                 setEntry={setEntry}
+                addEntryImage={addEntryImage}
+                tempImages={tempImages}
               />
             </View>
           ))}

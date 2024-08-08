@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import { collection, getDocs } from 'firebase/firestore';
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import { db } from '../../../firebase'; // Ensure this path is correct
 import Header from '../../components/Header';
 import { PieChart } from 'react-native-chart-kit';
@@ -8,14 +7,14 @@ import { Dimensions } from 'react-native';
 import ViewValueableDataController from '../../Controller/ViewValuableDataController';
 import { useAuth } from '../../service/AuthContext';
 
-
 const InsightSA = () => {
-  const { user } = useAuth()
+  const { user } = useAuth();
+  const [loading, setLoading] = useState(true);
   const [totalUsers, setTotalUsers] = useState(0);
   const [activeUsers, setActiveUsers] = useState(0);
   const [premiumUsers, setPremiumUsers] = useState(0);
   const [totalPartnerships, setTotalPartnerships] = useState(0);
-  const [activePartnerships, setActivePartnerships] = useState(0)
+  const [activePartnerships, setActivePartnerships] = useState(0);
   const [pendingPartnerships, setPendingPartnerships] = useState(0);
   const [logsCount, setLogsCount] = useState({
     totalGlucoseLogsCount: 0,
@@ -27,14 +26,16 @@ const InsightSA = () => {
     const fetchUserData = async () => {
       try {
         setLogsCount(await ViewValueableDataController.viewValuableData());
-        setTotalUsers(await ViewValueableDataController.viewTotalUser())
-        setActiveUsers(await ViewValueableDataController.viewActiveUser())
-        setPremiumUsers(await ViewValueableDataController.viewPremiumUser())
-        setTotalPartnerships(await ViewValueableDataController.viewTotalPartnership())
-        setActivePartnerships(await ViewValueableDataController.viewActivePartnership())
-        setPendingPartnerships(await ViewValueableDataController.viewPendingPartnership())
+        setTotalUsers(await ViewValueableDataController.viewTotalUser());
+        setActiveUsers(await ViewValueableDataController.viewActiveUser());
+        setPremiumUsers(await ViewValueableDataController.viewPremiumUser());
+        setTotalPartnerships(await ViewValueableDataController.viewTotalPartnership());
+        setActivePartnerships(await ViewValueableDataController.viewActivePartnership());
+        setPendingPartnerships(await ViewValueableDataController.viewPendingPartnership());
       } catch (error) {
         console.error('Error fetching user data: ', error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -64,6 +65,14 @@ const InsightSA = () => {
       legendFontSize: 15,
     },
   ];
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size={80} color="#E68B67" />
+      </View>
+    );
+  }
 
   return (
     <>
@@ -105,22 +114,22 @@ const InsightSA = () => {
         </View>
         <Text style={styles.title}>Logs Statistics</Text>
         <View style={styles.userCard}>
-        <PieChart
-          data={data}
-          width={Dimensions.get('window').width - 32}
-          height={160}
-          chartConfig={{
-            backgroundColor: '#ffffff',
-            backgroundGradientFrom: '#ffffff',
-            backgroundGradientTo: '#ffffff',
-            decimalPlaces: 2,
-            color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-            labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-          }}
-          accessor="population"
-          backgroundColor="transparent"
-          absolute
-        />
+          <PieChart
+            data={data}
+            width={Dimensions.get('window').width - 32}
+            height={160}
+            chartConfig={{
+              backgroundColor: '#ffffff',
+              backgroundGradientFrom: '#ffffff',
+              backgroundGradientTo: '#ffffff',
+              decimalPlaces: 2,
+              color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+              labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+            }}
+            accessor="population"
+            backgroundColor="transparent"
+            absolute
+          />
         </View>
       </ScrollView>
     </>
@@ -167,6 +176,11 @@ const styles = StyleSheet.create({
   cardValue: {
     fontSize: 18,
     fontFamily: 'Poppins-SemiBold',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

@@ -1,6 +1,6 @@
 import { auth, db } from '../../firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail } from 'firebase/auth';
-import { doc, setDoc, deleteDoc, getDocs, updateDoc, Timestamp, collection, getDoc, query, where} from 'firebase/firestore';
+import { doc, setDoc, deleteDoc, getDocs, updateDoc, Timestamp, collection, getDoc, query, where, addDoc, writeBatch} from 'firebase/firestore';
 import { deleteUser as firebaseDeleteUser } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
@@ -299,6 +299,110 @@ static async setAccountProfile(uid, image, name, email, username){
       throw error;
     }
   };
+
+  static async fetchPaymentDetails(userId) {
+    try {
+      const paymentDetailsCollection = await getDocs(collection(db, 'users', userId, 'paymentDetails'))
+      return paymentDetailsCollection.docs.map(doc => ({ ...doc.data(), id:doc.id}))
+    } catch(error) {
+      throw error
+    }
+  }
+
+  static async setPaymentDetails(userId, cardDetails) {
+    try {
+      const userPaymentCollection = collection(db, 'users', userId, 'paymentDetails');
+      
+      // Query for any existing default payment card
+      const q = query(userPaymentCollection, where('default', '==', true));
+      const querySnapshot = await getDocs(q);
+      
+      // Use a batch to update all existing default payment cards to false
+      const batch = writeBatch(db);
+      querySnapshot.forEach(doc => {
+          batch.update(doc.ref, { default: false });
+      });
+
+      // Commit the batch
+      await batch.commit();
+
+      // Add the new payment card with default: true
+      await addDoc(userPaymentCollection, cardDetails);
+  } catch (error) {
+      throw error;
+  }
+  }
+
+  static async fetchAddress(userId){
+    try{
+      const addressDetailsCollection = await getDocs(collection(db, 'users', userId, 'addressDetails'))
+      return addressDetailsCollection.docs.map(doc => ({...doc.data(), id:doc.id}))
+    }catch(error){
+      throw error
+    }
+  }
+  
+  static async setAddress (userId, addressDetails){
+    try {
+      const userAddressCollection = collection(db, 'users', userId, 'addressDetails');
+      
+      // Query for any existing default address
+      const q = query(userAddressCollection, where('default', '==', true));
+      const querySnapshot = await getDocs(q);
+      
+      // Use a batch to update all existing default addresses to false
+      const batch = writeBatch(db);
+      querySnapshot.forEach(doc => {
+          batch.update(doc.ref, { default: false });
+      });
+
+      // Commit the batch
+      await batch.commit();
+
+      // Add the new address with default: true
+      await addDoc(userAddressCollection, addressDetails);
+  } catch (error) {
+      throw error;
+  }
+  }
+
+  static async fetchDefaultAddress (userId) {
+    try {
+      const userAddressCollection = collection(db, 'users', userId, 'addressDetails');
+      const q = query(userAddressCollection, where('default', '==', true));
+      const querySnapshot = await getDocs(q);
+      
+      if (!querySnapshot.empty) {
+          // Assuming there is only one default address
+          const defaultAddress = querySnapshot.docs[0].data();
+          return defaultAddress;
+      } else {
+          // No default address found
+          return null;
+      }
+  } catch (error) {
+      throw error;
+  }
+  }
+
+  static async fetchDefaultPaymentDetails (userId) {
+    try {
+      const userPaymentCollection = collection(db, 'users', userId, 'paymentDetails');
+      const q = query(userPaymentCollection, where('default', '==', true));
+      const querySnapshot = await getDocs(q);
+      
+      if (!querySnapshot.empty) {
+          // Assuming there is only one default address
+          const defaultPayment = querySnapshot.docs[0].data();
+          return defaultPayment;
+      } else {
+          // No default address found
+          return null;
+      }
+  } catch (error) {
+      throw error;
+  }
+  }
 }
 
 export default User;

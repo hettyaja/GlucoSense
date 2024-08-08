@@ -140,6 +140,16 @@ const Setting = () => {
             <MaterialIcons name="flag" size={24} />
             <Text style={styles.buttonText}>Goals</Text>
           </TouchableOpacity>
+          <View style={{ borderBottomColor: '#d9d9d9', borderBottomWidth: 1 }} />
+          <TouchableOpacity style={styles.button} onPress={() => router.push('Boundary/PaymentMethod')}>
+            <MaterialIcons name="payment" size={24} />
+            <Text style={styles.buttonText}>Payments</Text>
+          </TouchableOpacity>
+          <View style={{ borderBottomColor: '#d9d9d9', borderBottomWidth: 1 }} />
+          <TouchableOpacity style={styles.button} onPress={() => router.push('Boundary/ManageAddress')}>
+            <MaterialCommunityIcons name="map-marker-radius-outline" size={24} />
+            <Text style={styles.buttonText}>Address</Text>
+          </TouchableOpacity>
           {subscriptionType === 'premium' && (
             <View style={{ borderBottomColor: '#d9d9d9', borderBottomWidth: 1 }} />
           )}
@@ -153,7 +163,7 @@ const Setting = () => {
 
         <View style={styles.section}>
           <TouchableOpacity style={styles.button} onPress={() => router.push('ReportProblem')}>
-            <FontAwesome name="question-circle" size={24} color="#000" />
+            <FontAwesome name="question-circle" size={24}/>
             <Text style={styles.buttonText}>Help & Feedback</Text>
           </TouchableOpacity>
         </View>
@@ -164,7 +174,7 @@ const Setting = () => {
           </TouchableOpacity>
           <View style={{ borderBottomColor: '#d9d9d9', borderBottomWidth: 1 }} />
           <TouchableOpacity style={styles.button} onPress={handleSignOut}>
-            <MaterialIcons name="logout" size={24} style={styles.icon} />
+            <MaterialIcons name="logout" size={24}/>
             <Text style={styles.buttonText}>Log out</Text>
           </TouchableOpacity>
         </View>
@@ -219,9 +229,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Medium',
     fontSize: 16,
     marginLeft: 16,
-  },
-  icon: {
-    paddingRight: 16,
   },
   iconImage: {
     width: 32,

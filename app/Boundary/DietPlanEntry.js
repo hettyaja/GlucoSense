@@ -1,36 +1,18 @@
 import React from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-const DietPlanEntry = ({ day, mealType, entry = { image: '', name: '', description: '', ingredients: '' }, setEntry }) => {
-  const addImage = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      alert('Sorry, we need camera roll permissions to make this work!');
-      return;
-    }
-
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      setEntry(day, mealType, { ...entry, image: result.assets[0].uri });
-    }
-  };
+const DietPlanEntry = ({ day, mealType, entry = { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '' }, setEntry, addEntryImage, tempImages = {}}) => {
+  const tempUri = tempImages[`${day}_${mealType}`];
 
   return (
     <View style={styles.section}>
       <Text style={styles.dayTitle}>{mealType}</Text>
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Photo</Text>
-        <TouchableOpacity onPress={addImage} style={styles.imageUpload}>
-          {entry.image ? (
-            <Image source={{ uri: entry.image }} style={styles.uploadedImage} />
+        <TouchableOpacity onPress={() => addEntryImage(day, mealType)} style={styles.imageUpload}>
+          {tempUri || entry.image ? (
+            <Image source={{ uri: tempUri || entry.image }} style={styles.uploadedImage} />
           ) : (
             <MaterialIcons name='add-photo-alternate' size={56} color='#E58B68'/>
           )}
@@ -50,6 +32,26 @@ const DietPlanEntry = ({ day, mealType, entry = { image: '', name: '', descripti
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Ingredients</Text>
         <TextInput placeholder="Ingredients" value={entry.ingredients} onChangeText={(text) => setEntry(day, mealType, { ...entry, ingredients: text })} style={styles.input} />
+      </View>
+      <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5}} />
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Carbs (g)</Text>
+        <TextInput placeholder="Carbs" value={entry.carbs} onChangeText={(text) => setEntry(day, mealType, { ...entry, carbs: text })} style={styles.input} />
+      </View>
+      <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5}} />
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Protein (g)</Text>
+        <TextInput placeholder="Protein" value={entry.protein} onChangeText={(text) => setEntry(day, mealType, { ...entry, protein: text })} style={styles.input} />
+      </View>
+      <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5}} />
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Calories</Text>
+        <TextInput placeholder="Calories" value={entry.calorie} onChangeText={(text) => setEntry(day, mealType, { ...entry, calorie: text })} style={styles.input} />
+      </View>
+      <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5}} />
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Fat (g)</Text>
+        <TextInput placeholder="Fat" value={entry.fat} onChangeText={(text) => setEntry(day, mealType, { ...entry, fat: text })} style={styles.input} />
       </View>
     </View>
   );

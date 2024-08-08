@@ -8,6 +8,7 @@ export const fetchMenuData = async () => {
     const businessPartnersSnapshot = await getDocs(collection(db, 'businessPartner'));
 
     for (const businessPartnerDoc of businessPartnersSnapshot.docs) {
+
       const menuRef = collection(db, 'businessPartner', businessPartnerDoc.id, 'menu');
       const menuSnapshot = await getDocs(menuRef);
 
@@ -16,6 +17,7 @@ export const fetchMenuData = async () => {
         menuCollection.push({
           id: menuDoc.id,
           bpId:businessPartnerDoc.id,
+          entityName: businessPartnerDoc.data().entityName,
           title: menuData.foodName || 'No Title',
           price: menuData.price || 'No Price',
           ...menuData
@@ -42,7 +44,9 @@ export const fetchDietPlans = async () => {
       dietPlanSnapshot.forEach((dietPlanDoc) => {
         const dietPlanData = dietPlanDoc.data();
         dietPlanCollection.push({
-          id: dietPlanDoc.id,
+          dietPlanId: dietPlanDoc.id,
+          bpId: businessPartnerDoc.id,
+          entityName: businessPartnerDoc.data().entityName,
           ...dietPlanData
         });
       });

@@ -1,7 +1,13 @@
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { storage } from '../../firebase';
 
-const deleteImage = async (url) => {
+const generateUniqueFileName = () => {
+    const timestamp = Date.now();
+    const randomString = Math.random().toString(36).substring(2, 15);
+    return `${timestamp}-${randomString}`;
+}
+
+export const deleteImage = async (url) => {
     try {
         const storageRef = ref(storage, url);
         await deleteObject(storageRef);
@@ -27,3 +33,16 @@ export const uploadImage = async (userId, uri, currentImageUrl) => {
         return null;
     }
 };
+
+export const uploadDietPlanImage = async (userId, uri) => {
+    try {
+        const response = await fetch(uri)
+        const blob = await response.blob()
+        const storageRef = ref(storage, `dietPlans/${userId}/${Date.now()}`);
+        await uploadBytes(storageRef, blob)
+        const downloadURL = await getDownloadURL(storageRef)
+        return downloadURL
+    } catch (error) {
+        throw error
+    }
+}

@@ -10,18 +10,6 @@ const _layout = () => {
   return (
     <>
       <Tabs>
-        <Tabs.Screen name='homeBP' options={{
-          title: 'Home',
-          headerShown: false,
-          tabBarIcon: () => (
-            <Octicons name='home' size={20} color='#E58B68' />
-          ),
-          tabBarLabel: ({ focused }) => (
-            <Text style={{ fontFamily: focused ? 'Poppins-SemiBold' : 'Poppins-Regular', fontSize:10, color: '#E58B68' }}>
-              Home
-            </Text>
-          ),
-        }} />
         <Tabs.Screen name='OrderBP' options={{
           title: 'Food Order',
           tabBarIcon: () => (

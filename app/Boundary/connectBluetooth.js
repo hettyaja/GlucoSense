@@ -3,11 +3,11 @@ import { View, Text, Button, FlatList, TouchableOpacity, ActivityIndicator, Styl
 import { BleManager } from 'react-native-ble-plx';
 import { Buffer } from 'buffer';
 
-const connectBluetooth = () => {
+const ConnectBluetooth = () => {
   const [manager] = useState(new BleManager());
   const [devices, setDevices] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [glucoseValue, setGlucoseValue] = useState()
+  const [glucoseValue, setGlucoseValue] = useState();
 
   useEffect(() => {
     const requestPermissions = async () => {
@@ -43,7 +43,7 @@ const connectBluetooth = () => {
         return;
       }
       setDevices((prevDevices) => {
-        if (!prevDevices.some((d) => d.id === device.id)) {
+        if (!prevDevices.some((d) => d.id === device.id) && device.name) {
           return [...prevDevices, device];
         }
         return prevDevices;
@@ -79,19 +79,19 @@ const connectBluetooth = () => {
       // Monitor Glucose Measurement Characteristic
       manager.monitorCharacteristicForDevice(device.id,
         '00001808-0000-1000-8000-00805f9b34fb', // Glucose Service UUID
-        '00002a52-0000-1000-8000-00805f9b34fb', // Glucose Measurement Characteristic UUID
+        '00002a18-0000-1000-8000-00805f9b34fb', // Glucose Measurement Characteristic UUID
         (error, characteristic) => {
           if (error) {
             console.log('Monitoring error:', error);
             return;
           }
           console.log('Raw characteristic value:', characteristic.value);
-          glucoseValue = getValueFromBase64(characteristic.value);
-          console.log(`Glucose: ${JSON.stringify(glucoseValue)}`);
+          const glucose = getValueFromBase64(characteristic.value);
+          console.log(`Glucose: ${JSON.stringify(glucose)}`);
+          setGlucoseValue(glucose);
         },
         'monitor-transaction-id' // Optional transaction ID for tracking
       );
-      console.log(glucoseValue)
       console.log('Monitoring started');
     } catch (error) {
       console.log('Connection error:', error);
@@ -137,15 +137,17 @@ const connectBluetooth = () => {
     <View style={styles.container}>
       <Button title="Scan for Devices" onPress={scanDevices} />
       {loading && <ActivityIndicator size="large" color="#0000ff" />}
-      <FlatList
-        data={devices}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => connectToDevice(item)}>
-            <Text style={styles.deviceText}>{item.name}</Text>
-          </TouchableOpacity>
-        )}
-      />
+      {devices.length > 0 && (
+        <FlatList
+          data={devices}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <TouchableOpacity onPress={() => connectToDevice(item)}>
+              <Text style={styles.deviceText}>{item.name}</Text>
+            </TouchableOpacity>
+          )}
+        />
+      )}
     </View>
   );
 };
@@ -166,4 +168,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default connectBluetooth;
+export default ConnectBluetooth;

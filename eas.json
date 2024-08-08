@@ -9,7 +9,7 @@
     },
     "production": {
       "android": {
-        "releaseChannel": "default"
+        "buildType": "apk"
       },
       "ios": {
         "releaseChannel": "default"
