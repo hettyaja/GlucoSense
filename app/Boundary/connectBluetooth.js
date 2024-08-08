@@ -78,21 +78,7 @@ const ConnectBluetooth = () => {
       console.log(`Discovered services and characteristics for device: ${connectedDevice.id}`);
 
       
-      // Enable notifications for glucose measurements
-      manager.monitorCharacteristicForDevice(
-        connectedDevice.id,
-        serviceUUID,
-        characteristicUUIDs.glucoseMeasurement,
-        (error, characteristic) => {
-          if (error) {
-            console.log('Glucose measurement notification error:', error);
-            return;
-          }
-          const glucoseMeasurement = decodeBuffer(characteristic.value);
-          console.log(`Glucose Measurement: ${JSON.stringify(glucoseMeasurement)}`);
-          setGlucoseValues((prevValues) => [...prevValues, glucoseMeasurement]);
-        }
-      );
+
 
       // Write to Record Access Control Point and monitor for indications
       await syncAllReadings(connectedDevice);
@@ -106,6 +92,23 @@ const ConnectBluetooth = () => {
 
   const syncAllReadings = async (device) => {
     try {
+
+      // Enable notifications for glucose measurements
+      manager.monitorCharacteristicForDevice(
+        device.id,
+        serviceUUID,
+        characteristicUUIDs.glucoseMeasurement,
+        (error, characteristic) => {
+          if (error) {
+            console.log('Glucose measurement notification error:', error);
+            return;
+          }
+          const glucoseMeasurement = decodeBuffer(characteristic.value);
+          console.log(`Glucose Measurement: ${JSON.stringify(glucoseMeasurement)}`);
+          setGlucoseValues((prevValues) => [...prevValues, glucoseMeasurement]);
+        }
+      );
+
       const allValuesRetriever = [0x01, 0x01];
       const allValuesRetrieverInBase64 = Buffer.from(allValuesRetriever).toString('base64');
 
@@ -118,26 +121,6 @@ const ConnectBluetooth = () => {
 
       console.log('Write to RACP successful');
 
-      // Monitor for indications from the RACP
-      // const subscription = manager.monitorCharacteristicForDevice(
-      //   device.id,
-      //   serviceUUID,
-      //   characteristicUUIDs.glucoseMeasurement,
-      //   (error, characteristic) => {
-      //     if (error) {
-      //       console.log('RACP indication error:', error);
-      //       return;
-      //     }
-      //     if (characteristic) {
-      //       const response = decodeRACPResponse(characteristic.value);
-      //       console.log(`RACP Response: ${JSON.stringify(response)}`);
-      //       setRacpResponses((prevResponses) => [...prevResponses, response]);
-      //     }
-      //   },
-      //   'racp-monitor-transaction-id'
-      // );
-
-      // Optionally, handle the subscription cleanup if needed
       return () => {
         subscription.remove();
       };
