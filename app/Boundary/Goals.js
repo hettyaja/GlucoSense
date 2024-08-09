@@ -4,6 +4,9 @@ import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView, Modal 
 import { Picker } from '@react-native-picker/picker';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
+import Header from '../components/Header';
+import { router } from 'expo-router';
+
 
 const NumericRangePicker = ({ visible, onSelect, range, onClose }) => {
   const [lowerBound, setLowerBound] = useState(range[0]);
@@ -131,7 +134,15 @@ const handleSave = () => {
 
   return (
     <ScrollView style={styles.container}>
-      <View style={styles.header}>
+      <Header
+        title = 'Goal'
+        leftButton= 'Close'
+        onLeftButtonPress={()=>router.back()}
+        rightButton='Save'
+        onRightButtonPress={()=> handleSave()}
+      />
+
+      {/* <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconButton}>
           <MaterialIcons name="close" size={24} color="white" />
         </TouchableOpacity>
@@ -139,7 +150,7 @@ const handleSave = () => {
         <TouchableOpacity onPress={handleSave} style={styles.iconButton}>
           <Text style={styles.saveButton}>Save</Text>
         </TouchableOpacity>
-      </View>
+      </View> */}
 
       <View style={styles.form}>
         <Text style={styles.sectionTitle}>Calorie Goals</Text>
