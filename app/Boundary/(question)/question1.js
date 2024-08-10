@@ -85,8 +85,8 @@ export default function UserProfile() {
             itemStyle={styles.pickerItem}
             onValueChange={(itemValue) => setGender(itemValue)}
           >
-            <Picker.Item label="Male" value="male" />
-            <Picker.Item label="Female" value="female" />
+            <Picker.Item label="Male" value="Male" />
+            <Picker.Item label="Female" value="Female" />
           </Picker>
         </View>
 
