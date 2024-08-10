@@ -4,6 +4,7 @@ import { BleManager } from 'react-native-ble-plx';
 import { Buffer } from 'buffer';
 import Header from '../components/Header';
 import { router } from 'expo-router';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 
 const serviceUUID = '00001808-0000-1000-8000-00805f9b34fb';
 const characteristicUUIDs = {
@@ -17,8 +18,10 @@ const ConnectBluetooth = () => {
   const [manager] = useState(new BleManager());
   const [devices, setDevices] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [isScanning, setIsScanning] = useState(false);
   const [glucoseValues, setGlucoseValues] = useState([]);
   const [racpResponses, setRacpResponses] = useState([]);
+  const [deviceFound, setDeviceFound] = useState(false)
 
   useEffect(() => {
     const requestPermissions = async () => {
@@ -47,30 +50,29 @@ const ConnectBluetooth = () => {
   const scanDevices = () => {
     setDevices([]);
     setLoading(true);
-  
+    setIsScanning(true);
+    setDeviceFound(false); // Reset device found state to false
+    
     manager.startDeviceScan(null, null, (error, device) => {
       if (error) {
         console.log('Scan error:', error);
         setLoading(false);
+        setIsScanning(false);
         return;
       }
-  
+    
       // Filter devices by the glucose meter service UUID
       if (device.serviceUUIDs && device.serviceUUIDs.includes(serviceUUID)) {
         setDevices((prevDevices) => {
           if (!prevDevices.some((d) => d.id === device.id) && device.name) {
+            setDeviceFound(true); // Set device found state to true when a device is found
             return [...prevDevices, device];
           }
           return prevDevices;
         });
       }
     });
-  
-    setTimeout(() => {
-      manager.stopDeviceScan();
-      setLoading(false);
-    }, 10000);
-  };
+  };  
 
   const connectToDevice = async (device) => {
     manager.stopDeviceScan();
@@ -191,69 +193,144 @@ const ConnectBluetooth = () => {
 
   return (
     <>
-    <Header
-      title='Connect device'
-      leftButton='Back'
-      onLeftButtonPress={() => router.back()}
-    />
-    <View style={styles.container}>
-      <Text style={styles.title}>Quickly Connect and Sync Your Glucose Meter</Text>
-      <Text style={styles.label}>1. Scan for nearby Bluetooth devices.</Text>
-      <Text style={styles.label}>2. Connect your glucose meter easily.</Text>
-      <Text style={styles.label}>3. Sync your glucose readings instantly.</Text>
-      <Text style={styles.label}>4. Keep your health data up-to-date, all in one place!</Text>
-      <TouchableOpacity title="Scan for Devices" onPress={scanDevices} >
-        <Text>Connect</Text>
-      </TouchableOpacity>
-      {loading && <ActivityIndicator size="large" color="#0000ff" />}
-      {devices.length > 0 && (
-        <FlatList
-          data={devices}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <TouchableOpacity onPress={() => connectToDevice(item)}>
-              <Text style={styles.deviceText}>{item.name}</Text>
-            </TouchableOpacity>
-          )}
-        />
-      )}
-      {glucoseValues.length > 0 && (
-        <View>
-          {glucoseValues.map((value, index) => (
-            <View key={index}>
-              <Text>Glucose value: {value.glucose} mg/dL</Text>
-              <Text>Time: {value.time ? value.time.toLocaleString() : 'N/A'}</Text>
-            </View>
-          ))}
-        </View>
-      )}
-    </View>
+      <Header
+        title="Connect device"
+        leftButton="Back"
+        onLeftButtonPress={() => router.back()}
+      />
+      <View style={styles.container}>
+        <Text style={styles.title}>Quickly Connect and Sync Your Glucose Meter</Text>
+        <Text style={styles.label}>1. Scan for nearby Bluetooth devices.</Text>
+        <Text style={styles.label}>2. Connect your glucose meter easily.</Text>
+        <Text style={styles.label}>3. Sync your glucose readings instantly.</Text>
+        <Text style={styles.label}>4. Keep your health data up-to-date, all in one place!</Text>
+  
+        {!isScanning ? (
+          <TouchableOpacity style={styles.connectButton} onPress={scanDevices}>
+            <Text style={styles.connectText}>Connect</Text>
+          </TouchableOpacity>
+        ) : (
+          <>
+            <Text style={styles.scanningText}>
+              {deviceFound ? "Select your glucose meter" : "Looking for devices..."}
+            </Text>
+            {!deviceFound && <ActivityIndicator size="large" color="#E58B68" />}
+          </>
+        )}
+  
+        {devices.length > 0 && (
+            <FlatList
+              data={devices}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  onPress={() => connectToDevice(item)}
+                  style={styles.deviceButton}
+                >
+                  <MaterialIcons name="sensors" size={32} />
+                  <View style={{ paddingHorizontal: 8 }}>
+                    <Text style={styles.deviceText}>{item.name}</Text>
+                    <Text style={styles.deviceText2}>{item.id}</Text>
+                  </View>
+                </TouchableOpacity>
+              )}
+              ListFooterComponent={
+                deviceFound ? (
+                  <>
+                  <Text style={styles.moreDevicesText}>Not yours?</Text>
+                  <Text style={styles.moreDevicesText2}>We are scanning for more...</Text>
+                  </>
+                ) : null
+              }
+            />
+        )}
+  
+        {glucoseValues.length > 0 && (
+          <View>
+            {glucoseValues.map((value, index) => (
+              <View key={index}>
+                <Text>Glucose value: {value.glucose} mg/dL</Text>
+                <Text>
+                  Time: {value.time ? value.time.toLocaleString() : "N/A"}
+                </Text>
+              </View>
+            ))}
+          </View>
+        )}
+      </View>
     </>
   );
+  
+  
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor:'white'
+    backgroundColor: "white",
   },
   title: {
-    fontFamily:'Poppins-SemiBold',
-    fontSize:14
+    fontFamily: "Poppins-SemiBold",
+    fontSize: 14,
   },
   label: {
-    fontFamily:'Poppins-Regular',
-    fontSize:12
+    fontFamily: "Poppins-Regular",
+    fontSize: 12,
+  },
+  connectButton: {
+    backgroundColor: "#E58B68",
+    borderRadius: 8,
+    padding: 16,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 40,
+  },
+  connectText: {
+    fontFamily: "Poppins-SemiBold",
+    fontSize: 14,
+    color: "white",
+  },
+  scanningText: {
+    fontFamily: "Poppins-Regular",
+    fontSize: 14,
+    color: "#000",
+    marginTop: 40,
+    marginBottom: 16,
+    textAlign: "center",
+  },
+  moreDevicesText: {
+    fontFamily: "Poppins-Regular",
+    fontSize: 12,
+    color: "#808080",
+    marginTop: 16,
+    textAlign: "center",
+  },
+  moreDevicesText2: {
+    fontFamily: "Poppins-Regular",
+    fontSize: 12,
+    color: "#808080",
+    textAlign: "center",
+  },
+  deviceButton: {
+    borderTopWidth: 0.5,
+    borderBottomWidth: 0.5,
+    borderColor: "#808080",
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 4,
+    paddingHorizontal:4
   },
   deviceText: {
-    fontSize: 18,
-    padding: 10,
-    backgroundColor: '#f9f9f9',
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    fontSize: 14,
+    fontFamily: "Poppins-SemiBold",
+  },
+  deviceText2: {
+    fontSize: 12,
+    fontFamily: "Poppins-Regular",
   },
 });
+
 
 export default ConnectBluetooth;
 
