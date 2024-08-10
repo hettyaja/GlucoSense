@@ -47,21 +47,25 @@ const ConnectBluetooth = () => {
   const scanDevices = () => {
     setDevices([]);
     setLoading(true);
-
+  
     manager.startDeviceScan(null, null, (error, device) => {
       if (error) {
         console.log('Scan error:', error);
         setLoading(false);
         return;
       }
-      setDevices((prevDevices) => {
-        if (!prevDevices.some((d) => d.id === device.id) && device.name) {
-          return [...prevDevices, device];
-        }
-        return prevDevices;
-      });
+  
+      // Filter devices by the glucose meter service UUID
+      if (device.serviceUUIDs && device.serviceUUIDs.includes(serviceUUID)) {
+        setDevices((prevDevices) => {
+          if (!prevDevices.some((d) => d.id === device.id) && device.name) {
+            return [...prevDevices, device];
+          }
+          return prevDevices;
+        });
+      }
     });
-
+  
     setTimeout(() => {
       manager.stopDeviceScan();
       setLoading(false);
@@ -193,7 +197,14 @@ const ConnectBluetooth = () => {
       onLeftButtonPress={() => router.back()}
     />
     <View style={styles.container}>
-      <Button title="Scan for Devices" onPress={scanDevices} />
+      <Text style={styles.title}>Quickly Connect and Sync Your Glucose Meter</Text>
+      <Text style={styles.label}>1. Scan for nearby Bluetooth devices.</Text>
+      <Text style={styles.label}>2. Connect your glucose meter easily.</Text>
+      <Text style={styles.label}>3. Sync your glucose readings instantly.</Text>
+      <Text style={styles.label}>4. Keep your health data up-to-date, all in one place!</Text>
+      <TouchableOpacity title="Scan for Devices" onPress={scanDevices} >
+        <Text>Connect</Text>
+      </TouchableOpacity>
       {loading && <ActivityIndicator size="large" color="#0000ff" />}
       {devices.length > 0 && (
         <FlatList
@@ -224,9 +235,16 @@ const ConnectBluetooth = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
+    padding: 16,
+    backgroundColor:'white'
+  },
+  title: {
+    fontFamily:'Poppins-SemiBold',
+    fontSize:14
+  },
+  label: {
+    fontFamily:'Poppins-Regular',
+    fontSize:12
   },
   deviceText: {
     fontSize: 18,
@@ -238,3 +256,4 @@ const styles = StyleSheet.create({
 });
 
 export default ConnectBluetooth;
+
