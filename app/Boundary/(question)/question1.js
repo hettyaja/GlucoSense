@@ -43,12 +43,11 @@ export default function UserProfile() {
       gender,
       birthdate: birthdate.toISOString(),
       weight,
-      height
+      height,
     };
     
     try {
       await CreateBodyProfileController.createBodyProfile(user.uid, bodyProfileData)
-      // await setBodyProfile(user.uid, gender, birthdate.toISOString(), weight, height);
     } catch (error) {
       alert(error.message);
     }

@@ -86,7 +86,7 @@ const settingBP = () => {
             style={styles.profileImage}
             source={{ uri: photoUri }} 
           /> ) : (
-             <FontAwesome name='user-circle' size={16} style={styles.icon} />
+            <FontAwesome name="user-circle" color="grey" size={64} style={{marginRight:16}} />
            )}
 
             {/* // <Image style={styles.profileImage} source={{ uri: photoUri }} /> */}

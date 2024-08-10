@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View, TextInput, Alert, Image } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View, TextInput, Alert, Image, ActivityIndicator } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { Stack, router } from 'expo-router';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -12,6 +12,7 @@ import setAccountProfileController from './Controller/SetAccountProfileControlle
 import setDiabetesTypeController from './Controller/setDiabetesTypeController';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { uploadImage } from './service/storageService'; // Add this import
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const Profile = () => {
     const { profileData } = useProfile();
@@ -28,6 +29,7 @@ const Profile = () => {
     const [localDiabetesType, setDiabetesType] = useState('');
     const [isEditable, setIsEditable] = useState(false);
     const [showDatePicker, setShowDatePicker] = useState(false);
+    const [loading, setLoading] = useState(true)
 
     const maxBirthdate = new Date();
     maxBirthdate.setFullYear(maxBirthdate.getFullYear() - 10);
@@ -62,6 +64,8 @@ const Profile = () => {
                 setDiabetesType(profileData.diabetesType);
             } catch (error) {
                 console.error(error);
+            } finally {
+                setLoading(false);  // Set loading to false after fetching data
             }
         };
 
@@ -92,6 +96,14 @@ const Profile = () => {
         }
         setIsEditable(!isEditable);
     };
+
+    if (loading) {
+        return (
+            <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color="#E58B68" />
+            </View>
+        );
+    }
 
     const onDateChange = (event, selectedDate) => {
         setShowDatePicker(false);
@@ -144,9 +156,13 @@ const Profile = () => {
             }} />
 
             <ScrollView style={styles.safeArea} keyboardShouldPersistTaps="handled">
-                <TouchableOpacity style={{ alignItems: 'center', margin: 24 }} onPress={isEditable ? pickImage : null}>
+            <TouchableOpacity style={{ alignItems: 'center', margin: 24 }} onPress={isEditable ? pickImage : null}>
+                {photoUri ? (
                     <Image style={styles.profileImage} source={{ uri: photoUri }} />
-                    {isEditable && <Text style={styles.changePhotoText}>Change Photo</Text>}
+                ) : (
+                    <FontAwesome name="user-circle" color="grey" size={80} />
+                )}
+                {isEditable && <Text style={styles.changePhotoText}>Change Photo</Text>}
                 </TouchableOpacity>
 
                 <Text style={styles.sectionText}>ACCOUNT DETAILS</Text>
@@ -277,8 +293,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#f5f5f5',
     },
     profileImage: {
-        borderWidth: 1,
-        borderColor: 'black',
         borderRadius: 100,
         width: 80,
         height: 80,
@@ -313,5 +327,10 @@ const styles = StyleSheet.create({
     },
     picker: {
         width: '50%',
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
 });

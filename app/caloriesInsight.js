@@ -7,11 +7,11 @@ import { useAuth } from './service/AuthContext';
 import RetrieveMealLogsController from './Controller/RetrieveMealLogsController';
 import RetrieveMealLogsController1 from './Controller/RetrieveMealLogsController1';
 import Header from './components/Header';
+import UserGoalsController from './Controller/UserGoalsController';
 
 const CaloriesInsight = () => {
   const navigation = useNavigation(); // Hook to get navigation
   const route = useRoute(); // Hook to get route
-  const { calorieGoal = 2000, beforeMeal = "80-130 mg/dL", afterMeal = "80-180 mg/dL" } = route.params || {};
 
   const screenWidth = Dimensions.get("window").width;
   const { user } = useAuth();
@@ -20,7 +20,9 @@ const CaloriesInsight = () => {
   const [dailyStats, setDailyStats] = useState({ average: null, low: null, high: null });
   const [weeklyStats, setWeeklyStats] = useState({ average: null, low: null, high: null });
   const [monthlyStats, setMonthlyStats] = useState({ average: null, low: null, high: null });
-  const [caloriesConsumed, setCaloriesConsumed] = useState({ consumed: 1000, goal: calorieGoal });
+  const [caloriesConsumed, setCaloriesConsumed] = useState();
+  const [BMRCalorieGoal, setBMRCalorieGoal] = useState();
+  const [customCalorieGoal, setCustomCalorieGoal] = useState()
 
   const handleBackButton = () => {
     // This will navigate back to the previous screen in the stack, which should be the main Insight page
@@ -33,19 +35,25 @@ const CaloriesInsight = () => {
         return { average: null, low: null, high: null };
       }
       const values = logs.map(log => parseFloat(log.calories));
+      const sum = values.reduce((sum, value) => sum + value, 0)
       const average = values.reduce((sum, value) => sum + value, 0) / values.length;
       const low = Math.min(...values);
       const high = Math.max(...values);
-      return { average, low, high };
+      return { average, low, high, sum };
     };
 
     const prepareDataForGraphs = async () => {
       try {
+        const userGoals = await UserGoalsController.fetchUserGoals(user.uid);
+        setBMRCalorieGoal(userGoals.goals.BMRGoals.calorieGoals);
+        setCustomCalorieGoal(userGoals.goals.customGoals.calorieGoals || 0);
+
         const mealData = await RetrieveMealLogsController.retrieveMealLogs(user.uid);
         setMealGraphData(mealData ? mealData : { labels: [], datasets: [{ data: [] }] });
 
         const dailyLogs = await RetrieveMealLogsController1.retrieveMealLogs(user.uid, 'daily');
         setDailyStats(calculateStats(dailyLogs));
+        setCaloriesConsumed(calculateStats(dailyLogs).sum || 0)
 
         const weeklyLogs = await RetrieveMealLogsController1.retrieveMealLogs(user.uid, 'weekly');
         setWeeklyStats(calculateStats(weeklyLogs));
@@ -116,6 +124,19 @@ const CaloriesInsight = () => {
             />
           </View>
         </View>
+          {/* Calories Burned Card */}
+          <View style={{flexDirection:'row', justifyContent:'center'}}>
+          <View style={styles.caloriesBurnedContainer}>
+            <Text style={styles.caloriesBurnedHeader}>Calories Goals (BMR)</Text>
+            <Text style={styles.caloriesBurnedText}>{`${caloriesConsumed} / ${BMRCalorieGoal}`}</Text>
+            <Text style={[styles.caloriesBurnedText, {marginBottom:8, fontFamily:'Poppins-Regular'}]}>kcal</Text>
+          </View>
+          <View style={styles.caloriesBurnedContainer}>
+            <Text style={styles.caloriesBurnedHeader}>Calories Goals (Custom)</Text>
+            <Text style={styles.caloriesBurnedText}>{`${caloriesConsumed} / ${customCalorieGoal}`}</Text>
+            <Text style={[styles.caloriesBurnedText, {marginBottom:8, fontFamily:'Poppins-Regular'}]}>kcal</Text>
+          </View>
+          </View>
         <View style={styles.statsContainer}>
           <View style={{ backgroundColor: 'white', justifyContent: 'flex-end', paddingBottom: 10 }}>
             <Text style={styles.statsHeader}>Daily Stats</Text>
@@ -170,11 +191,7 @@ const CaloriesInsight = () => {
             </View>
           </View>
 
-          {/* Calories Burned Card */}
-          <View style={styles.caloriesBurnedContainer}>
-            <Text style={styles.caloriesBurnedHeader}>Calories Goals</Text>
-            <Text style={styles.caloriesBurnedText}>{`${caloriesConsumed.consumed} / ${caloriesConsumed.goal} kcal`}</Text>
-          </View>
+
         </View>
       </ScrollView>
     </>
@@ -230,20 +247,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: 'black',
   },
-  caloriesBurnedContainer: {
-    backgroundColor: 'white',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 10,
-    marginBottom: 20,
-  },
-  caloriesBurnedText: {
-    fontFamily: 'Poppins-Bold',
-    fontSize: 24,
-    color: 'black',
-  },
   containerGif: {
     flex: 1,
     justifyContent: 'center',
@@ -258,31 +261,22 @@ const styles = StyleSheet.create({
   },
   caloriesBurnedContainer: {
     backgroundColor: '#FFF', // White background
-    padding: 20,
-    marginHorizontal: 20,
+    padding: 8,
+    marginHorizontal:8,
     marginTop: 16,
-    marginBottom: 20,
-    borderRadius: 10,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    borderRadius: 8,
     elevation: 5,
+    width:'45%'
   },
   caloriesBurnedHeader: {
-    fontFamily: 'Poppins-SemiBold',
-    fontSize: 18,
-    color: '#FF6347', // Tomato color for header text
-    textAlign: 'center',
+    fontFamily: 'Poppins-Medium',
+    fontSize: 12,
+    textAlign: 'left',
     marginBottom: 8,
   },
   caloriesBurnedText: {
     fontFamily: 'Poppins-Bold',
-    fontSize: 24,
-    color: 'black',
+    fontSize: 14,
     textAlign: 'center',
   },
 });

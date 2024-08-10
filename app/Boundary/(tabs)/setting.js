@@ -109,7 +109,7 @@ const Setting = () => {
             {photoUri ? (
               <Image style={styles.profileImage} source={{ uri: photoUri }} />
             ) : (
-              <FontAwesome name="user-circle" color="grey" size={64} style={styles.icon} />
+              <FontAwesome name="user-circle" color="grey" size={64} style={{marginRight:16}} />
             )}
 
             <View>

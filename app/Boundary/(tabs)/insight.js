@@ -1,9 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, Dimensions, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { Tabs, router } from 'expo-router';
+import { Tabs, router, useFocusEffect } from 'expo-router';
 import { LineChart } from 'react-native-chart-kit';
-//import { ScatterChart, YAxis, XAxis, Grid } from 'react-native-svg-charts';
-import { Circle, G } from 'react-native-svg';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useAuth } from '../../service/AuthContext';
 import RetrieveGlucoseLogsController from '../../Controller/RetrieveGlucoseLogsController';
@@ -18,33 +16,27 @@ const Insight = () => {
   const [scatterGraphData, setScatterGraphData] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const prepareDataForGraphs = async () => {
-      try {
-        const glucoseData = await RetrieveGlucoseLogsController.retrieveGlucoseLogs(user.uid);
-        console.log('Blood Glucose data:', glucoseData);
-        setGlucoseGraphData(glucoseData);
+  const prepareDataForGraphs = async () => {
+    try {
+      const glucoseData = await RetrieveGlucoseLogsController.retrieveGlucoseLogs(user.uid);
+      console.log('Blood Glucose data:', glucoseData);
+      setGlucoseGraphData(glucoseData);
 
-        const mealData = await RetrieveMealLogsController.retrieveMealLogs(user.uid);
-        console.log('Calorie Consumption data:', mealData);
-        setMealGraphData(mealData);
+      const mealData = await RetrieveMealLogsController.retrieveMealLogs(user.uid);
+      console.log('Calorie Consumption data:', mealData);
+      setMealGraphData(mealData);
 
-        // Combine data for scatter plot
-        const combinedData = combineGlucoseAndMealData(glucoseData, mealData);
-        console.log('Combined Scatter Data:', combinedData);  // Log combined data
-        setScatterGraphData(combinedData);
+      // Combine data for scatter plot
+      const combinedData = combineGlucoseAndMealData(glucoseData, mealData);
+      console.log('Combined Scatter Data:', combinedData);  // Log combined data
+      setScatterGraphData(combinedData);
 
-      } catch (error) {
-        console.error('Error preparing data for graphs:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (user.uid) {
-      prepareDataForGraphs();
+    } catch (error) {
+      console.error('Error preparing data for graphs:', error);
+    } finally {
+      setLoading(false);
     }
-  }, [user.uid]);
+  };
 
   const combineGlucoseAndMealData = (glucoseData, mealData) => {
     const combinedData = [];
@@ -61,20 +53,26 @@ const Insight = () => {
     return combinedData;
   };
 
-  if (loading) {
-    return <View style={styles.loadingContainer}>
-    <ActivityIndicator size={32} color="#E68B67" />
-  </View>;
-  }
+  useFocusEffect(
+    useCallback(() => {
+      if (user.uid) {
+        prepareDataForGraphs();
+      }
+    }, [user.uid])
+  );
 
-  console.log('Glucose Graph Data:', glucoseGraphData);
-  console.log('Meal Graph Data:', mealGraphData);
-  console.log('Scatter Graph Data:', scatterGraphData);
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size={32} color="#E68B67" />
+      </View>
+    );
+  }
 
   return (
     <>
       <Header
-        title = 'Insight'
+        title='Insight'
       />
       <ScrollView style={styles.container}>
         <TouchableOpacity style={styles.centeredChart} onPress={() => router.push('/glucoseInsight')}>
@@ -145,7 +143,6 @@ const Insight = () => {
             />
           </View>
         </TouchableOpacity>
-        
       </ScrollView>
     </>
   );
