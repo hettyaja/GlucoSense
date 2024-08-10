@@ -4,12 +4,12 @@ import { Stack, router, useLocalSearchParams } from 'expo-router';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import Feather from 'react-native-vector-icons/Feather';
-import { useAuth } from './service/AuthContext';
-import { deleteLog } from './service/diaryService'; // Update service
-import UpdateGlucoseLogsController from './Controller/UpdateGlucoseLogsController';
+import { useAuth } from '../service/AuthContext';
+import { deleteLog } from '../service/diaryService'; // Update service
+import UpdateGlucoseLogsController from '../Controller/UpdateGlucoseLogsController';
 import { Picker } from '@react-native-picker/picker';
-import DeleteGlucoseLogsController from './Controller/DeleteGlucoseLogsController';
-import Header from './components/Header';
+import DeleteGlucoseLogsController from '../Controller/DeleteGlucoseLogsController';
+import Header from '../components/Header';
 
 const editGlucose = () => {
   const { user } = useAuth();

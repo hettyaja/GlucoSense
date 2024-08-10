@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Button, FlatList, TouchableOpacity, ActivityIndicator, StyleSheet, PermissionsAndroid, Platform } from 'react-native';
 import { BleManager } from 'react-native-ble-plx';
 import { Buffer } from 'buffer';
+import Header from '../components/Header';
+import { router } from 'expo-router';
 
 const serviceUUID = '00001808-0000-1000-8000-00805f9b34fb';
 const characteristicUUIDs = {
@@ -103,9 +105,18 @@ const ConnectBluetooth = () => {
             console.log('Glucose measurement notification error:', error);
             return;
           }
-          const glucoseMeasurement = Buffer.from(characteristic.value, 'base64');
-          console.log(`Glucose Measurement: ${JSON.stringify(glucoseMeasurement)}`);
-          setGlucoseValues((prevValues) => [...prevValues, glucoseMeasurement[12]]);
+          // const glucoseMeasurement = Buffer.from(characteristic.value, 'base64');
+          const decodedData = decodeBuffer(characteristic.value);
+        
+          // console.log('Decoded Glucose Measurement:', decodedData);
+          // console.log(`Glucose Measurement: ${JSON.stringify(glucoseMeasurement)}`);
+          setGlucoseValues((prevValues) => [
+            ...prevValues,
+            {
+              glucose: decodedData.glucoseConcentration,
+              time: decodedData.exactTime,
+            },
+          ]);
         }
       );
 
@@ -133,26 +144,54 @@ const ConnectBluetooth = () => {
   const decodeBuffer = (base64String) => {
     const buf = Buffer.from(base64String, 'base64');
     console.log('Raw buffer:', buf);
-
-    const glucoseValue = buf[12]
-    const flags = buf.readUInt8(0);
-    const glucoseConcentration = buf.readUInt16LE(1);
-    const timeOffset = buf.readInt16LE(3);
-    const typeSampleLocation = buf.readUInt8(5);
-    const sensorStatus = buf.readUInt16LE(6);
-
+  
+    const flags = buf.readUInt8(0);  // Byte 0: Flags
+    let index = 3;
+  
+    // Base Time (Bytes 3-9)
+    let year = buf.readUInt16LE(index); // Bytes 3-4
+    let month = buf.readUInt8(index + 2); // Byte 5
+    let day = buf.readUInt8(index + 3); // Byte 6
+    let hours = buf.readUInt8(index + 4); // Byte 7
+    let minutes = buf.readUInt8(index + 5); // Byte 8
+    let seconds = buf.readUInt8(index + 6); // Byte 9
+    index += 7;
+  
+    // Adjust the year correctly (ensure no early 1900s interpretation)
+    if (year < 1900) {
+      year += 2000; // Adjust for the century if needed
+    }
+  
+    const baseTime = new Date(year, month - 1, day, hours, minutes, seconds);
+  
+    // Time Offset (Bytes 10-11)
+    let timeOffset = buf.readInt16LE(index);
+    index += 2;
+  
+    let exactTime = new Date(baseTime);
+    if (timeOffset !== null && !isNaN(timeOffset)) {
+      exactTime.setUTCMinutes(baseTime.getUTCMinutes() + timeOffset);
+    }
+  
+    console.log('Decoded Base Time (UTC):', baseTime);
+    console.log('Decoded Exact Time with Offset (UTC):', exactTime);
+    console.log('Decoded Glucose Concentration:', buf.readUInt8(12)); // Assuming glucose concentration is at byte 12
+  
     return {
-      glucoseValue,
-      flags,
-      glucoseConcentration,
+      glucoseConcentration: buf.readUInt8(12),
+      baseTime,
       timeOffset,
-      typeSampleLocation,
-      sensorStatus
+      exactTime,
     };
   };
 
-
   return (
+    <>
+    <Header
+      title='Connect device'
+      leftButton='Back'
+      onLeftButtonPress={() => router.back()}
+    />
     <View style={styles.container}>
       <Button title="Scan for Devices" onPress={scanDevices} />
       {loading && <ActivityIndicator size="large" color="#0000ff" />}
@@ -171,20 +210,14 @@ const ConnectBluetooth = () => {
         <View>
           {glucoseValues.map((value, index) => (
             <View key={index}>
-              <Text>Glucose value: {value} mg/dL</Text>
+              <Text>Glucose value: {value.glucose} mg/dL</Text>
+              <Text>Time: {value.time ? value.time.toLocaleString() : 'N/A'}</Text>
             </View>
           ))}
         </View>
       )}
-      {racpResponses.length > 0 && (
-        <View>
-          <Text>RACP Responses:</Text>
-          {racpResponses.map((response, index) => (
-            <Text key={index}>{JSON.stringify(response)}</Text>
-          ))}
-        </View>
-      )}
     </View>
+    </>
   );
 };
 

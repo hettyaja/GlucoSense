@@ -3,10 +3,10 @@ import React, { useEffect, useState } from 'react';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { useAuth } from './service/AuthContext';
-import { addMedicineLog, getMedicineByName } from './service/diaryService';
-import CreateMedicineLogsController from './Controller/CreateMedicineLogsController';
-import Header from './components/Header';
+import { useAuth } from '../service/AuthContext';
+import { addMedicineLog, getMedicineByName } from '../service/diaryService';
+import CreateMedicineLogsController from '../Controller/CreateMedicineLogsController';
+import Header from '../components/Header';
 import { Picker } from '@react-native-picker/picker';
 
 

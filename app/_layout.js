@@ -38,7 +38,6 @@ const RootLayout = () => {
       <Stack.Screen name="Boundary/(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="Boundary/(tabsBP)" options={{ headerShown: false }} />
       <Stack.Screen name="Boundary/(tabsSA)" options={{ headerShown: false }} />
-      <Stack.Screen name="addMeds" />
       <Stack.Screen name="Boundary/addGlucose" />
       <Stack.Screen name="ViewAndSearchDietPlan" />
       <Stack.Screen name="searchFood" />
@@ -59,7 +58,6 @@ const RootLayout = () => {
       }} />
       {/* <Stack.Screen name="Subscribe" options={{ headerShown: false }} /> */}
       <Stack.Screen name="Boundary/ProfileBpPage" />
-      <Stack.Screen name="addMeals" />
       <Stack.Screen name="selectMedicine" />
       <Stack.Screen name='ReportProblem' options={{
         title: 'ReportProblem',
@@ -74,21 +72,6 @@ const RootLayout = () => {
           />
         ),
         headerTitle: 'Help & Feedback',
-        headerTitleAlign: 'center',
-      }} />
-      <Stack.Screen name='Notification' options={{
-        title: 'Notification',
-        headerStyle: { backgroundColor: '#E58B68' },
-        headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold' },
-        headerLeft: () => (
-          <ImageButton
-            source={require("./assets/back.png")}
-            imageSize={{ width: 24, height: 24 }}
-            customStyle={{ paddingLeft: 10 }}
-            onPress={() => router.back('/settingBP')}
-          />
-        ),
-        headerTitle: 'Notification',
         headerTitleAlign: 'center',
       }} />
       <Stack.Screen name='profile' />

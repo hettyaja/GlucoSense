@@ -253,15 +253,6 @@ const profileBP = () => {
 
          
         </View>
-        <View style={styles.section}>
-          <View style={styles.item}>
-              <TouchableOpacity onPress={()=> router.push('resetPwd1')}>
-                <Text style={styles.resetPasswordText}>Reset Password</Text>
-              </TouchableOpacity>
-          </View>
-        </View>
-        
-      
         </ScrollView>
      
     </>

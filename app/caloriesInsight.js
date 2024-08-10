@@ -7,7 +7,7 @@ import { useAuth } from './service/AuthContext';
 import RetrieveMealLogsController from './Controller/RetrieveMealLogsController';
 import RetrieveMealLogsController1 from './Controller/RetrieveMealLogsController1';
 import Header from './components/Header';
-import UserGoalsController from './Controller/UserGoalsController';
+import ViewUserGoalsController from './Controller/ViewUserGoalsController';
 
 const CaloriesInsight = () => {
   const navigation = useNavigation(); // Hook to get navigation
@@ -44,7 +44,7 @@ const CaloriesInsight = () => {
 
     const prepareDataForGraphs = async () => {
       try {
-        const userGoals = await UserGoalsController.fetchUserGoals(user.uid);
+        const userGoals = await ViewUserGoalsController.viewUserGoals(user.uid);
         setBMRCalorieGoal(userGoals.goals.BMRGoals.calorieGoals);
         setCustomCalorieGoal(userGoals.goals.customGoals.calorieGoals || 0);
 

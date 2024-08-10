@@ -18,8 +18,8 @@ import FetchA1cController from '../../Controller/FetchA1cController';
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu'; // Import from react-native-popup-menu
 import Modal from 'react-native-modal'; // Import from react-native-modal
 
-
 import BottomSheetModal from './add';
+
 const formatDate = (time) => {
   const date = new Date(time.seconds * 1000);
   const today = new Date();

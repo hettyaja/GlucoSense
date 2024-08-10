@@ -3,8 +3,9 @@ import { StyleSheet, View, Text, TextInput, ScrollView } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import Header from '../components/Header';
 import { router } from 'expo-router';
-import UserGoalsController from '../Controller/UserGoalsController';
 import { useAuth } from '../service/AuthContext';
+import ViewUserGoalsController from '../Controller/ViewUserGoalsController';
+import UpdateUserGoalsController from '../Controller/UpdateUserGoalsController';
 
 const Goals = () => {
   const { user } = useAuth();
@@ -26,7 +27,7 @@ const Goals = () => {
   useEffect(() => {
     const loadProfileData = async () => {
       try {
-        const profileData = await UserGoalsController.fetchUserGoals(user.uid);
+        const profileData = await ViewUserGoalsController.viewUserGoals(user.uid);
         
         // Set profile data
         setWeight(profileData.weight);
@@ -138,7 +139,7 @@ const Goals = () => {
         }
       };
 
-      await UserGoalsController.saveUserGoals(user.uid, updatedGoals);
+      await UpdateUserGoalsController.updateUserGoals(user.uid, updatedGoals);
       router.back()
 
       console.log('Goals updated successfully');

@@ -16,6 +16,7 @@ const preReg = () => {
   const [selectedButton, setSelectedButton] = useState(null);
   const [selectedValue, setSelectedValue] = useState("Breakfast");
   const [glucoseValue, setGlucoseValue] = useState('');
+  const [notes, setNotes] = useState()
 
   const getSingaporeTime = () => {
     const now = new Date();
@@ -147,7 +148,12 @@ const preReg = () => {
           <View style={styles.separator} />
           <View style={styles.row}>
             <Text style={styles.label}>Notes</Text>
-            <TextInput style={styles.notesInput} placeholder='Add your notes' />
+            <TextInput
+              style={styles.notesInput}
+              placeholder='Add your notes'
+              value={notes}
+              onChangeText={(text) => setNotes(text)}
+              />
           </View>
         </View>
       </ScrollView>
@@ -180,16 +186,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   label: {
-    fontSize: 12,
+    fontSize: 14,
     fontFamily: 'Poppins-Regular',
     color: '#black',
     paddingHorizontal: 16,
     paddingVertical: 16,
   },
   value: {
-    fontSize: 12,
+    fontSize: 14,
     fontFamily: 'Poppins-Regular',
     color: '#808080',
+    marginHorizontal:16
   },
   separator: {
     borderBottomWidth: 0.5,
@@ -201,7 +208,7 @@ const styles = StyleSheet.create({
     color: '#808080',
   },
   pickerItem: {
-    fontSize: 12, // Reduced font size
+    fontSize: 14, // Reduced font size
     fontFamily: 'Poppins-Regular',
   },
   centered: {
@@ -227,29 +234,29 @@ const styles = StyleSheet.create({
   glucoseInputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginHorizontal:16
   },
   glucoseInput: {
     fontFamily: 'Poppins-Medium',
-    fontSize: 12,
-    marginRight: 8,
-    width: 50,
+    fontSize: 14,
+    width: 30,
   },
   unit: {
     fontFamily: 'Poppins-Regular',
-    fontSize: 12,
-    color: '#808080',
+    fontSize: 14,
   },
   notesInput: {
     fontFamily: 'Poppins-Medium',
-    fontSize: 12,
+    fontSize: 14,
     flex: 1,
     textAlign: 'right',
+    marginHorizontal:16
   },
   saveButtonText: {
     padding: 2,
     marginHorizontal: 8,
     fontFamily: 'Poppins-SemiBold',
-    fontSize: 12,
+    fontSize: 14,
     color: 'white',
   },
 });
