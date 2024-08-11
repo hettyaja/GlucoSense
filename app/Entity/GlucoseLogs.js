@@ -10,13 +10,28 @@ class GlucoseLogs {
         this.glucose = glucose
     }
 
-    static async createGlucoseLogs(uid, glucoseData) {
-        try {
-            const glucoseLogsRef = collection(db, 'users', uid, 'glucoseLogs');
-            await addDoc(glucoseLogsRef, glucoseData);
-          } catch (error) {
-            throw error;
+    static async createGlucoseLogs(uid, glucoseData, isFromBluetooth = false) {
+      try {
+        const glucoseLogsRef = collection(db, 'users', uid, 'glucoseLogs');
+        
+        if (isFromBluetooth) {
+          // Perform a duplicate check
+          const q = query(glucoseLogsRef, where('glucose', '==', glucoseData.glucose), where('time', '==', glucoseData.time));
+          const querySnapshot = await getDocs(q);
+          if (!querySnapshot.empty) {
+            console.log('Duplicate entry found, skipping insertion.');
+            return false; // Exit the function if a duplicate is found
           }
+        }
+  
+        // If no duplicates are found, or if it's not from Bluetooth, add the log
+        await addDoc(glucoseLogsRef, glucoseData);
+        console.log('Glucose log added successfully.');
+        return true
+      } catch (error) {
+        console.error('Error adding glucose log:', error);
+        throw error;
+      }
     }
 
     static async updateGlucoseLogs(uid, glucoseData) {

@@ -7,12 +7,32 @@ import { ProfileProvider } from './context/ProfileContext';
 import { DietPlanProvider } from './context/DietPlanContext';
 import { AuthProvider, useAuth } from './service/AuthContext';
 import { MenuProvider } from 'react-native-popup-menu';
-
+import * as Notifications from 'expo-notifications';
 
 const RootLayout = () => {
   const { user, userType } = useAuth();
 
   useEffect(() => {
+    // Request permissions for notifications
+    const requestPermissions = async () => {
+      const { status } = await Notifications.requestPermissionsAsync();
+      if (status !== 'granted') {
+        alert('Failed to get push token for push notification!');
+        return;
+      }
+
+      // Handle foreground notifications (optional)
+      Notifications.setNotificationHandler({
+        handleNotification: async () => ({
+          shouldShowAlert: true,
+          shouldPlaySound: true,
+          shouldSetBadge: false,
+        }),
+      });
+    };
+
+    requestPermissions();
+
     if (user) {
       if (userType === 'user' && !user.bodyProfileComplete) {
         router.replace('Boundary/question1')
