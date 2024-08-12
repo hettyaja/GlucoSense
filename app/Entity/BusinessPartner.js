@@ -52,6 +52,22 @@ class BusinessPartner {
   static async deleteBP(uid) {
     try {
       const businessPartnerDocRef = doc(db, 'businessPartner', uid);
+
+      // Function to recursively delete all subcollections
+      const deleteSubcollections = async (docRef) => {
+        const collections = await getDocs(collection(db, docRef.path));
+        for (const subCollectionRef of collections.docs) {
+          const subCollectionPath = collection(db, docRef.path, subCollectionRef.id);
+          const subCollectionDocs = await getDocs(subCollectionPath);
+          for (const doc of subCollectionDocs.docs) {
+            await deleteDoc(doc.ref);
+          }
+          await deleteDoc(subCollectionRef.ref); // Finally delete the subcollection document itself
+        }
+      };
+
+      await deleteSubcollections(businessPartnerDocRef);
+        
       await deleteDoc(businessPartnerDocRef);
       await AsyncStorage.clear();
       const currentUser = auth.currentUser;

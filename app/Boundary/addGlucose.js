@@ -16,7 +16,7 @@ const preReg = () => {
   const [selectedButton, setSelectedButton] = useState(null);
   const [selectedValue, setSelectedValue] = useState("Breakfast");
   const [glucoseValue, setGlucoseValue] = useState('');
-  const [notes, setNotes] = useState()
+  const [notes, setNotes] = useState('')
 
   const getSingaporeTime = () => {
     const now = new Date();
@@ -59,7 +59,8 @@ const preReg = () => {
       const newGlucoseLog = {
         time: selectedDate,
         period: selectedValue,
-        glucose: glucoseValue
+        glucose: glucoseValue,
+        notes: notes
       }
 
       try {

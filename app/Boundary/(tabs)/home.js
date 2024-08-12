@@ -91,7 +91,7 @@ const home = () => {
   const [isModalVisible, setModalVisible] = useState(false);
 
 
-  const fetchAllLogs = async () => {
+  const fetchAllLogs = useCallback (async () => {
     if (user) {
       try {
         const [mealLogs, glucoseLogs, medicineLogs] = await Promise.all([
@@ -113,11 +113,11 @@ const home = () => {
         console.error('Error fetching logs:', error);
       }
     }
-  };
+  }, [user]);
 
   useEffect(() => {
     fetchAllLogs();
-  }, [user]);
+  }, [fetchAllLogs]);
 
   useEffect(() => {
     if (logsLoaded) {
@@ -129,7 +129,8 @@ const home = () => {
     useCallback(() => {
       // Refresh the A1C component when the screen is focused
       setRefreshA1C(prevState => !prevState);
-    }, [])
+      fetchAllLogs()
+    }, [fetchAllLogs])
   );
 
   const calculateGlucoseStats = (glucoseLogs) => {

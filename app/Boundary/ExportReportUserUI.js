@@ -260,7 +260,14 @@ const exportReportUserUI = () => {
   const onEndDateChange = (event, selectedDate) => {
     setShowEndDatePicker(false);
     if (selectedDate !== undefined) {
-      setEndDate(selectedDate);
+      const today = new Date();
+      // If the selected end date is later than today, set it to today
+      if (selectedDate > today) {
+        setEndDate(today);
+        Alert.alert('Invalid Date', 'End date cannot be in the future.');
+      } else {
+        setEndDate(selectedDate);
+      }
     }
   };
 

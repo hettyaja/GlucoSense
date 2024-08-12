@@ -231,7 +231,7 @@ const RegisterBPUI = ({}) => {
         </View>
 
         <View style={{ paddingBottom: 10, alignItems: 'center', marginTop: 24 }}>
-          <TouchableOpacity onPress={handleSignUp} style={styles.registerButtonContainer}>
+          <TouchableOpacity onPress={() => handleSignUp()} style={styles.registerButtonContainer}>
             <Text style={styles.registerButtonText}>Register</Text>
           </TouchableOpacity>
         </View>

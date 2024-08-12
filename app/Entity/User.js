@@ -114,14 +114,37 @@ class User {
   static async deleteUser(uid) {
     try {
       const userDocRef = doc(db, 'users', uid);
+  
+      // Function to recursively delete all subcollections
+      const deleteSubcollections = async (docRef) => {
+        const collections = await getDocs(collection(db, docRef.path));
+        for (const subCollectionRef of collections.docs) {
+          const subCollectionPath = collection(db, docRef.path, subCollectionRef.id);
+          const subCollectionDocs = await getDocs(subCollectionPath);
+          for (const doc of subCollectionDocs.docs) {
+            await deleteDoc(doc.ref);
+          }
+          await deleteDoc(subCollectionRef.ref); // Finally delete the subcollection document itself
+        }
+      };
+  
+      // Delete all subcollections of the user document
+      await deleteSubcollections(userDocRef);
+  
+      // Delete the user document
       await deleteDoc(userDocRef);
+  
+      // Clear AsyncStorage
       await AsyncStorage.clear();
+  
+      // Delete the user from Firebase Auth
       const currentUser = auth.currentUser;
       if (currentUser) {
         await firebaseDeleteUser(currentUser);
       } else {
         throw new Error('No user is currently signed in');
       }
+  
       return true;
     } catch (error) {
       console.error('Error deleting user profile:', error);
