@@ -14,7 +14,6 @@ const FoodOrder = () => {
   const [menuData, setMenuData] = useState([]);
 
   const handlePress = (menu) => {
-    // console.log(menu)
     router.push({ pathname: 'Boundary/MenuDetailsUI', params: { menuData: btoa(JSON.stringify(menu)) } });
   };
 

@@ -107,7 +107,7 @@ const Setting = () => {
       <ScrollView style={styles.safeArea}>
         <TouchableOpacity
           style={[styles.profileCard, Platform.OS === 'ios' && styles.shadow]}
-          onPress={() => router.push('profile')}
+          onPress={() => router.push('Boundary/ProfileUI')}
         >
           <View style={{ flexDirection: 'row', alignItems: 'center', padding: 24 }}>
             {photoUri ? (

@@ -94,7 +94,21 @@ const RootLayout = () => {
         headerTitle: 'Help & Feedback',
         headerTitleAlign: 'center',
       }} />
-      <Stack.Screen name='profile' />
+      <Stack.Screen name='Notification' options={{
+        title: 'Notification',
+        headerStyle: { backgroundColor: '#E58B68' },
+        headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold' },
+        headerLeft: () => (
+          <ImageButton
+            source={require("./assets/back.png")}
+            imageSize={{ width: 24, height: 24 }}
+            customStyle={{ paddingLeft: 10 }}
+            onPress={() => router.back('/settingBP')}
+          />
+        ),
+        headerTitle: 'Notification',
+        headerTitleAlign: 'center',
+      }} />
       <Stack.Screen name='createMedicine' />
     </Stack>
   );

@@ -4,14 +4,14 @@ import { Stack, router } from 'expo-router';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
 import * as ImagePicker from 'expo-image-picker';
-import { useProfile } from './context/ProfileContext';
-import { useAuth } from './service/AuthContext';
-import getProfileController from './Controller/getProfileController';
-import setBodyProfileController from './Controller/SetBodyProfileController';
-import setAccountProfileController from './Controller/SetAccountProfileController';
-import setDiabetesTypeController from './Controller/setDiabetesTypeController';
+import { useProfile } from '../context/ProfileContext';
+import { useAuth } from '../service/AuthContext';
+import getProfileController from '../Controller/getProfileController';
+import setBodyProfileController from '../Controller/SetBodyProfileController';
+import updateAccountProfileController from '../Controller/UpdateAccountProfileController';
+import setDiabetesTypeController from '../Controller/setDiabetesTypeController';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { uploadImage } from './service/storageService'; // Add this import
+import { uploadImage } from '../service/storageService'; // Add this import
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const Profile = () => {
@@ -88,7 +88,7 @@ const Profile = () => {
                 if (photoUri) {
                     imageUrl = await uploadImage(user.uid, photoUri, previousImage);
                 }
-                await setAccountProfileController.setAccProfile(user.uid, imageUrl, localName, localEmail, localUsername);
+                await updateAccountProfileController.setAccProfile(user.uid, imageUrl, localName, localEmail, localUsername);
                 await setBodyProfileController.setBodProfile(user.uid, localGender, localBirthdate, localWeight, localHeight, localDiabetesType);
             } catch (error) {
                 alert(error.message);
