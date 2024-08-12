@@ -15,6 +15,7 @@ const Goals = () => {
   const [height, setHeight] = useState(0);
   const [birthdate, setBirthdate] = useState('');
   
+  const [defaultGoal, setDefaultGoal] = useState('BMR')
   const [weightGoal, setWeightGoal] = useState("Maintain");
   const [exerciseLevel, setExerciseLevel] = useState("Light");
   const [BMRCalorieGoal, setBMRCalorieGoal] = useState(2000);
@@ -35,7 +36,16 @@ const Goals = () => {
         setHeight(profileData.height);
         setBirthdate(profileData.birthdate);
         
-        // Set the fetched goals data to state variables
+        // Determine which goal set is the default
+        const bmrGoals = profileData.goals.BMRGoals;
+        const customGoals = profileData.goals.customGoals;
+
+        if (bmrGoals.default) {
+          setDefaultGoal('BMR')
+        } else if (customGoals.default) {
+          setDefaultGoal('Custom');
+        }
+
         setWeightGoal(profileData.goals.BMRGoals.weightGoals);
         setExerciseLevel(profileData.goals.BMRGoals.activityLevel);
         setBMRCalorieGoal(profileData.goals.BMRGoals.calorieGoals);
@@ -121,22 +131,27 @@ const Goals = () => {
 
   const saveUserGoals = async () => {
     try {
-      // Save the updated goals to Firestore
+      // Determine which goal set is the default
+      const isBMRDefault = defaultGoal === 'BMR';
+      
+      // Prepare the updated goals object
       const updatedGoals = {
         BMRGoals: {
           weightGoals: weightGoal,
           activityLevel: exerciseLevel,
           calorieGoals: BMRCalorieGoal,
+          default: isBMRDefault, // Set default based on selected value
         },
         customGoals: {
           calorieGoals: customCalorieGoal || null,
+          default: !isBMRDefault, // Inverse of the BMR default
         },
         glucoseGoals: {
           beforeMealLowerBound: parseInt(beforeMealLowerBound, 10),
           beforeMealUpperBound: parseInt(beforeMealUpperBound, 10),
           afterMealLowerBound: parseInt(afterMealLowerBound, 10),
           afterMealUpperBound: parseInt(afterMealUpperBound, 10),
-        }
+        },
       };
 
       await UpdateUserGoalsController.updateUserGoals(user.uid, updatedGoals);
@@ -161,6 +176,21 @@ const Goals = () => {
         onRightButtonPress={saveUserGoals}
       />
       <ScrollView style={styles.container}>
+      <Text style={styles.sectionTitle}>Set your default goals</Text>
+        <View style={styles.section}>
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Default Calorie Goal</Text>
+            <Picker
+              selectedValue={defaultGoal}
+              onValueChange={(itemValue) => setDefaultGoal(itemValue)}
+              style={styles.picker}
+              mode="dropdown"
+            >
+              <Picker.Item label="BMR" value="BMR" />
+              <Picker.Item label="Custom" value="Custom" />
+            </Picker>
+          </View>
+        </View>
         <Text style={styles.sectionTitle}>Calorie Goals (BMR Calculation)</Text>
         <View style={styles.section}>
           <View style={styles.inputGroup}>

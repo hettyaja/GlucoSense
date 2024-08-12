@@ -214,11 +214,11 @@ const home = () => {
 
   const handleEdit = (item) => {
     if (item.type === 'meal') {
-      router.push({ pathname: 'editMeals', params: { mealData: JSON.stringify(item) } });
+      router.push({ pathname: 'Boundary/editMeals', params: { mealData: JSON.stringify(item) } });
     } else if (item.type === 'medicine') {
-      router.push({ pathname: 'editMeds', params: { medicineData: JSON.stringify(item) } });
+      router.push({ pathname: 'Boundary/editMeds', params: { medicineData: JSON.stringify(item) } });
     } else if (item.type === 'glucose') {
-      router.push({ pathname: 'editGlucose', params: { glucoseData: JSON.stringify(item) } });
+      router.push({ pathname: 'Boundary/editGlucose', params: { glucoseData: JSON.stringify(item) } });
     }
   };
 

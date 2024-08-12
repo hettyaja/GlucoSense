@@ -54,10 +54,12 @@ class User {
           BMRGoals: {
             weightGoals: 'Maintain',
             activityLevel: 'Light',
-            calorieGoals: null
+            calorieGoals: null,
+            default: true
           },
           customGoals: {
             calorieGoals: null,
+            default: false
           },
           glucoseGoals: {
             beforeMealLowerBound: 80,

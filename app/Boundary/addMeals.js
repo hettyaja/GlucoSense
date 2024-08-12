@@ -10,6 +10,10 @@ import Feather from 'react-native-vector-icons/Feather'
 import { useAuth } from '../service/AuthContext';
 import CreateMealLogsController from '../Controller/CreateMealLogsController';
 import Header from '../components/Header';
+import ViewMealLogsController from '../Controller/ViewMealLogsController';
+import ViewUserGoalsController from '../Controller/ViewUserGoalsController';
+import * as Notifications from 'expo-notifications';
+
 
 const handleBackButton = () => {
   router.back()
@@ -63,7 +67,7 @@ const addMeals = () => {
       );
       return;
     }
-
+  
     if (user) {
       const newMealLog = {
         time: selectedDate,
@@ -74,18 +78,89 @@ const addMeals = () => {
         carbs: parsedMealData.carbs,
         fat: parsedMealData.fat,
         protein: parsedMealData.protein,
-        notes: notes
+        notes: notes,
       };
-
+  
       try {
         await CreateMealLogsController.createMealLogs(user.uid, newMealLog);
         console.log('Meal log saved:', newMealLog);
-        router.replace('Boundary/home')
+  
+        // Fetch user goals
+        const userGoals = await ViewUserGoalsController.viewUserGoals(user.uid);
+        const BMRCalorieGoal = userGoals.goals.BMRGoals.calorieGoals
+        const customCalorieGoal = userGoals.goals.customGoals.calorieGoals || 0
+  
+        // Fetch meal logs for today
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Set time to start of day
+        const mealLogs = await ViewMealLogsController.viewMealLogs(user.uid);
+  
+        // Calculate total calories consumed today
+        const totalCaloriesConsumed = mealLogs.reduce((total, log) => {
+          const logDate = log.time.toDate(); // Assuming `time` is a Firestore timestamp
+          if (logDate >= today) {
+            return total + log.calories;
+          }
+          return total;
+        }, 0);
+  
+        // Check if total calories exceed the goal
+        if (totalCaloriesConsumed > BMRCalorieGoal || totalCaloriesConsumed > customCalorieGoal ) {
+          // Send notification
+          sendCalorieExceededNotification(totalCaloriesConsumed);
+        }
+  
+        router.replace('Boundary/home');
       } catch (error) {
         console.error('Error saving meal log:', error);
       }
     }
   };
+
+  const sendCalorieExceededNotification = async (totalCalories) => {
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: "Calorie Goal Exceeded",
+        body: `You have consumed ${totalCalories} kcal today, which exceeds your daily BMR/Custom calorie goals.`,
+        data: { totalCalories },
+      },
+      trigger: null, // Send immediately
+    });
+  };
+
+  // const saveMeals = async () => {
+  //   if (!parsedMealData) {
+  //     Alert.alert(
+  //       "No Food Selected",
+  //       "Please select food before saving.",
+  //       [{ text: "OK" }]
+  //     );
+  //     return;
+  //   }
+
+  //   if (user) {
+  //     const newMealLog = {
+  //       time: selectedDate,
+  //       period: selectedValue,
+  //       mealName: parsedMealData.label,
+  //       servings: parsedMealData.servings,
+  //       calories: parsedMealData.calories,
+  //       carbs: parsedMealData.carbs,
+  //       fat: parsedMealData.fat,
+  //       protein: parsedMealData.protein,
+  //       notes: notes
+  //     };
+
+  //     try {
+  //       await CreateMealLogsController.createMealLogs(user.uid, newMealLog);
+        
+  //       console.log('Meal log saved:', newMealLog);
+  //       router.replace('Boundary/home')
+  //     } catch (error) {
+  //       console.error('Error saving meal log:', error);
+  //     }
+  //   }
+  // };
 
   const removeData = () => {
     setParsedMealData(null),

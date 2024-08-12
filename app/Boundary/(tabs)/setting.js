@@ -1,5 +1,4 @@
-
-import { StyleSheet, Text, View, SafeAreaView, Platform, TouchableOpacity, ScrollView, Image, Alert, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, Platform, TouchableOpacity, ScrollView, Image, Alert, ActivityIndicator, Modal } from 'react-native';
 import React, { useState, useEffect, useCallback } from 'react';
 import { router, Tabs, useFocusEffect } from 'expo-router';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -17,7 +16,8 @@ const Setting = () => {
   const [photoUri, setPhotoUri] = useState('');
   const [subscriptionType, setSubscriptionType] = useState('');
   const [name, setName] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); // Loading state
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false); // Modal visibility state
 
   const fetchProfileData = async () => {
     try {
@@ -42,28 +42,26 @@ const Setting = () => {
     await LogoutController.logout();
   };
 
-  const createTwoButtonAlert = () =>
-  Alert.alert('Delete account', 'Are you sure you want to delete?', [
-    {
-      text: 'Cancel',
-      onPress: () => console.log('Cancel Pressed'),
-      style: 'cancel',
-    },
-    {
-      text: 'Delete',
-      onPress: async () => {
-        setIsLoading(true); // Start loading
-        try {
-          await DeleteUserController.deleteUser(user.uid);
-          router.replace('Boundary/welcomePage');
-        } catch (error) {
-          console.error('Error deleting user profile:', error);
-        } finally {
-          setIsLoading(false); // End loading
-        }
-      },
-    },
-  ]);
+  const handleDeleteAccount = async () => {
+    setIsLoading(true); // Start loading
+    try {
+      await DeleteUserController.deleteUser(user.uid);
+      router.replace('Boundary/welcomePage');
+    } catch (error) {
+      console.error('Error deleting user profile:', error);
+    } finally {
+      setIsLoading(false); // End loading
+      setIsDeleteModalVisible(false); // Close the modal
+    }
+  };
+
+  const openDeleteModal = () => {
+    setIsDeleteModalVisible(true);
+  };
+
+  const closeDeleteModal = () => {
+    setIsDeleteModalVisible(false);
+  };
 
   const createSubTwoButtonAlert = () =>
     Alert.alert('Cancel Subscription', 'Are you sure you want to cancel your subscription?', [
@@ -124,6 +122,7 @@ const Setting = () => {
             </View>
           </View>
         </TouchableOpacity>
+
         <View style={styles.section}>
           <TouchableOpacity style={styles.button} onPress={() => router.push('Boundary/connectBluetooth')}>
             <MaterialCommunityIcons name="bluetooth-connect" size={24} color="#000" />
@@ -172,7 +171,7 @@ const Setting = () => {
           </TouchableOpacity>
         </View>
         <View style={styles.section}>
-          <TouchableOpacity style={styles.button} onPress={createTwoButtonAlert}>
+          <TouchableOpacity style={styles.button} onPress={openDeleteModal}>
             <AntDesign name="deleteuser" size={24} />
             <Text style={styles.buttonText}>Delete account</Text>
           </TouchableOpacity>
@@ -184,11 +183,33 @@ const Setting = () => {
         </View>
       </ScrollView>
 
-      {isLoading && (
-        <View style={styles.loadingOverlay}>
-          <ActivityIndicator size="large" color="#E58B68" />
+      {/* Custom Modal for Delete Account */}
+      <Modal
+        transparent={true}
+        animationType="slide"
+        visible={isDeleteModalVisible}
+        onRequestClose={closeDeleteModal}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>Delete account</Text>
+            <Text style={styles.modalMessage}>Are you sure you want to delete your account?</Text>
+
+            {isLoading ? (
+              <ActivityIndicator size="large" color="#E58B68" />
+            ) : (
+              <View style={styles.modalButtons}>
+                <TouchableOpacity style={[styles.modalButton, {borderWidth:1, borderColor:'#E58B68'}]} onPress={closeDeleteModal}>
+                  <Text style={[styles.modalButtonText, { color: '#E58B68'}]}>Cancel</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={[styles.modalButton, { backgroundColor: '#E58B68' }]} onPress={handleDeleteAccount}>
+                  <Text style={[styles.modalButtonText, { color: 'white' }]}>Delete</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
         </View>
-      )}
+      </Modal>
     </>
   );
 };
@@ -240,33 +261,45 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginLeft: 16,
   },
-  iconImage: {
-    width: 32,
-    height: 32,
-  },
-  modal: {
-    margin: 0,
-    justifyContent: 'flex-end',
-  },
-  modalContent: {
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
-    margin: 8,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
-  cancelButton: {
-    backgroundColor: '#f5f5f5',
-    marginTop: 8,
+  modalContainer: {
+    width: 300,
+    backgroundColor: 'white',
+    borderRadius: 8,
+    padding: 16,
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontFamily: 'Poppins-Bold',
+    fontSize: 18,
+    marginBottom: 8,
+  },
+  modalMessage: {
+    fontFamily: 'Poppins-Regular',
+    fontSize: 14,
     marginBottom: 16,
-    padding: 16,
-    width: '98%',
-    borderRadius: 16,
+    textAlign: 'center',
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  modalButton: {
+    flex: 1,
+    padding: 10,
+    marginHorizontal: 5,
+    borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  selectButton: {
-    backgroundColor: '#f5f5f5',
-    padding: 16,
-    width: '98%',
-    justifyContent: 'center',
-    alignItems: 'center',
+  modalButtonText: {
+    fontFamily: 'Poppins-Medium',
+    fontSize: 16,
   },
 });
