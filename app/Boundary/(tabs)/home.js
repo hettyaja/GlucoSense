@@ -15,10 +15,9 @@ import ViewMedicineLogsController from '../../Controller/ViewMedicineLogsControl
 import ViewMealLogsController from '../../Controller/ViewMealLogsController';
 import getProfileController from '../../Controller/getProfileController';
 import FetchA1cController from '../../Controller/FetchA1cController';
-import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu'; // Import from react-native-popup-menu
 import Modal from 'react-native-modal'; // Import from react-native-modal
-
 import BottomSheetModal from './add';
+import ViewUserGoalsController from '../../Controller/ViewUserGoalsController';
 
 const formatDate = (time) => {
   const date = new Date(time.seconds * 1000);
@@ -62,32 +61,49 @@ const home = () => {
   const [refreshA1C, setRefreshA1C] = useState(false);
   const [subscriptionType, setSubscriptionType] = useState('');
   const [a1c, setA1c] = useState('');
+  const [beforeMealLowerBound, setBeforeMealLowerBound] = useState();
+  const [beforeMealUpperBound, setBeforeMealUpperBound] = useState();
+  const [afterMealLowerBound, setAfterMealLowerBound] = useState();
+  const [afterMealUpperBound, setAfterMealUpperBound] = useState();
 
 
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const profileData = await getProfileController.getProfile(user.uid);
-        setSubscriptionType(profileData.subscriptionType);
-        const a1cData = await FetchA1cController.fetchA1C(user.uid);
-        setA1c(a1cData);
-      } catch (error) {
-        console.error(error);
+  // Fetch user goals and logs when the screen is focused
+  useFocusEffect(
+    useCallback(() => {
+      const loadUserGoals = async () => {
+        try {
+          const profileData = await getProfileController.getProfile(user.uid);
+          setSubscriptionType(profileData.subscriptionType);
+
+          const a1cData = await FetchA1cController.fetchA1C(user.uid);
+          setA1c(a1cData);
+
+          const userGoals = await ViewUserGoalsController.viewUserGoals(user.uid);
+          setBeforeMealLowerBound(userGoals.goals.glucoseGoals.beforeMealLowerBound);
+          setBeforeMealUpperBound(userGoals.goals.glucoseGoals.beforeMealUpperBound);
+          setAfterMealLowerBound(userGoals.goals.glucoseGoals.afterMealLowerBound);
+          setAfterMealUpperBound(userGoals.goals.glucoseGoals.afterMealUpperBound);
+
+          if (a1c < 5.7) {
+            setA1cMesssage("Your A1C level is in the normal range! Keep up the great work to maintain your health.");
+          } else if (a1c < 6.4) {
+            setA1cMesssage("Your A1C level is slightly elevated. It's important to take steps to manage your glucose levels.");
+          } else if (a1c >= 6.5) {
+            setA1cMesssage("Your A1C level suggests diabetes. It’s crucial to consult with your healthcare provider to create a management plan.");
+          }
+
+          fetchAllLogs(); // Ensure logs are reloaded with updated goals
+        } catch (error) {
+          console.error('Error fetching user goals:', error);
+        }
+      };
+
+      if (user.uid) {
+        loadUserGoals();
       }
-      if (a1c < 5.7){
-        setA1cMesssage("Your A1C level is in the normal range! Keep up the great work to maintain your health.")
-      } else if(a1c < 6.4){
-        setA1cMesssage("Your A1C level is slightly elevated. It's important to take steps to manage your glucose levels.")
-        
-      } else if( a1c >= 6.5){
-        setA1cMesssage("Your A1C level suggests diabetes. It’s crucial to consult with your healthcare provider to create a management plan.")
-      }
-    };
+    }, [user.uid])
+  );
 
-    if (user.uid) {
-      getData();
-    }
-  }, [user.uid]);
   const [isModalVisible, setModalVisible] = useState(false);
 
 
@@ -127,7 +143,6 @@ const home = () => {
 
   useFocusEffect(
     useCallback(() => {
-      // Refresh the A1C component when the screen is focused
       setRefreshA1C(prevState => !prevState);
       fetchAllLogs()
     }, [fetchAllLogs])
@@ -252,38 +267,54 @@ const home = () => {
     }
   };
 
-  const renderLogItem = ({ item, index, section }) => (
-    <View>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => handleEdit(item)}
-      >
-        {item.type === 'glucose' && <Fontisto name='blood-drop' size={24} color='black' style={{ paddingRight: 16 }} />}
-        {item.type === 'medicine' && <Fontisto name='pills' size={24} color='black' style={{ paddingRight: 8 }} />}
-        {item.type === 'meal' && <MaterialCommunityIcons name='food' size={24} color='black' style={{ paddingRight: 8 }} />}
-        <View style={{ flexDirection: 'row', alignItems: 'center', width: '100%', justifyContent: 'space-between', paddingRight: 8 }}>
-          <View>
-            {item.type === 'medicine' ? (
-              renderMedicineDetails(item.medicine)
-            ) : (
-              <Text style={styles.buttonText}>
-                {item.type === 'glucose' && `${item.glucose} mg/dL`}
-                {item.type === 'meal' && `${item.calories} kcal`}
-              </Text>
-            )}
-            <Text style={styles.buttonText2}>{new Date(item.time.seconds * 1000).toLocaleTimeString()}</Text>
+  const renderLogItem = ({ item, index, section }) => {
+    const isGlucoseOutOfBound = () => {
+      if (item.type !== 'glucose') return false;
+  
+      const glucoseValue = parseFloat(item.glucose);
+      if (item.period.includes('Before')) {
+        return glucoseValue < beforeMealLowerBound || glucoseValue > beforeMealUpperBound;
+      } else if (item.period.includes('After')) {
+        return glucoseValue < afterMealLowerBound || glucoseValue > afterMealUpperBound;
+      }
+      return false;
+    };
+  
+    const glucoseTextStyle = isGlucoseOutOfBound() ? [styles.buttonText, { color: 'red' }] : styles.buttonText;
+  
+    return (
+      <View>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => handleEdit(item)}
+        >
+          {item.type === 'glucose' && <Fontisto name='blood-drop' size={24} color='black' style={{ paddingRight: 16 }} />}
+          {item.type === 'medicine' && <Fontisto name='pills' size={24} color='black' style={{ paddingRight: 8 }} />}
+          {item.type === 'meal' && <MaterialCommunityIcons name='food' size={24} color='black' style={{ paddingRight: 8 }} />}
+          <View style={{ flexDirection: 'row', alignItems: 'center', width: '100%', justifyContent: 'space-between', paddingRight: 8 }}>
+            <View>
+              {item.type === 'medicine' ? (
+                renderMedicineDetails(item.medicine)
+              ) : (
+                <Text style={glucoseTextStyle}>
+                  {item.type === 'glucose' && `${item.glucose} mg/dL`}
+                  {item.type === 'meal' && `${item.calories} kcal`}
+                </Text>
+              )}
+              <Text style={styles.buttonText2}>{new Date(item.time.seconds * 1000).toLocaleTimeString()}</Text>
+            </View>
+            <View style={{ paddingRight: 16 }}>
+              <PopupMenu
+                onEdit={() => handleEdit(item)}
+                onDelete={() => confirmDelete(item)}
+              />
+            </View>
           </View>
-          <View style={{ paddingRight: 16 }}>
-            <PopupMenu
-              onEdit={() => handleEdit(item)}
-              onDelete={() => confirmDelete(item)}
-            />
-          </View>
-        </View>
-      </TouchableOpacity>
-      {index < section.data.length - 1 && <Divider withMargin={false} />}
-    </View>
-  );
+        </TouchableOpacity>
+        {index < section.data.length - 1 && <Divider withMargin={false} />}
+      </View>
+    );
+  };
 
   const handleA1CPress = () => {
     if (subscriptionType === 'premium') {

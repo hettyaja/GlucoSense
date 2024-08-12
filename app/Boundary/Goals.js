@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, TextInput, ScrollView } from 'react-native';
+import { StyleSheet, View, Text, TextInput, ScrollView, Alert } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import Header from '../components/Header';
 import { router } from 'expo-router';
@@ -18,7 +18,7 @@ const Goals = () => {
   const [defaultGoal, setDefaultGoal] = useState('BMR')
   const [weightGoal, setWeightGoal] = useState("Maintain");
   const [exerciseLevel, setExerciseLevel] = useState("Light");
-  const [BMRCalorieGoal, setBMRCalorieGoal] = useState(2000);
+  const [BMRCalorieGoal, setBMRCalorieGoal] = useState();
   const [customCalorieGoal, setCustomCalorieGoal] = useState('');
   const [beforeMealLowerBound, setBeforeMealLowerBound] = useState("80");
   const [beforeMealUpperBound, setBeforeMealUpperBound] = useState("130");
@@ -72,7 +72,18 @@ const Goals = () => {
   }, [weightGoal, exerciseLevel, gender, weight, height, birthdate]);
 
   const calculateBMRAndTDEE = (weightGoal, exerciseLevel) => {
-    const age = new Date().getFullYear() - new Date(birthdate).getFullYear();
+    // Convert Firestore Timestamp to Date object
+    const birthdateObj = new Date(birthdate.seconds * 1000);
+
+    // Calculate the age
+    const currentDate = new Date();
+    const age = currentDate.getFullYear() - birthdateObj.getFullYear();
+    const monthDifference = currentDate.getMonth() - birthdateObj.getMonth();
+
+    // Adjust the age if the current date hasn't reached the birthday in the current year
+    if (monthDifference < 0 || (monthDifference === 0 && currentDate.getDate() < birthdateObj.getDate())) {
+      age--;
+    }
 
     // Calculate BMR
     let BMR;
@@ -131,6 +142,25 @@ const Goals = () => {
 
   const saveUserGoals = async () => {
     try {
+      // Check if 'Custom' is selected as the default and if customCalorieGoal is empty
+      if (defaultGoal === 'Custom' && (!customCalorieGoal || customCalorieGoal.trim() === '')) {
+        Alert.alert(
+          "Invalid Input",
+          "Please enter a custom calorie goal before setting it as the default.",
+          [{ text: "OK" }]
+        );
+        return; // Stop the save operation
+      }
+
+      if (!beforeMealLowerBound || !beforeMealUpperBound || !afterMealLowerBound || !afterMealUpperBound) {
+        Alert.alert(
+            "Invalid Input",
+            "Please ensure all glucose bounds are filled before saving.",
+            [{ text: "OK" }]
+        );
+        return; // Stop the save operation
+    }
+
       // Determine which goal set is the default
       const isBMRDefault = defaultGoal === 'BMR';
       

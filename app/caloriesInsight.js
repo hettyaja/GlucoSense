@@ -21,8 +21,7 @@ const CaloriesInsight = () => {
   const [weeklyStats, setWeeklyStats] = useState({ average: null, low: null, high: null });
   const [monthlyStats, setMonthlyStats] = useState({ average: null, low: null, high: null });
   const [caloriesConsumed, setCaloriesConsumed] = useState();
-  const [BMRCalorieGoal, setBMRCalorieGoal] = useState();
-  const [customCalorieGoal, setCustomCalorieGoal] = useState()
+  const [calorieGoal, setCalorieGoal] = useState();
 
   const handleBackButton = () => {
     // This will navigate back to the previous screen in the stack, which should be the main Insight page
@@ -45,8 +44,13 @@ const CaloriesInsight = () => {
     const prepareDataForGraphs = async () => {
       try {
         const userGoals = await ViewUserGoalsController.viewUserGoals(user.uid);
-        setBMRCalorieGoal(userGoals.goals.BMRGoals.calorieGoals);
-        setCustomCalorieGoal(userGoals.goals.customGoals.calorieGoals || 0);
+      
+        // Fetch only the default calorie goal
+        const calorieGoal = userGoals.goals.BMRGoals.default
+          ? userGoals.goals.BMRGoals.calorieGoals
+          : userGoals.goals.customGoals.calorieGoals;
+          
+        setCalorieGoal(calorieGoal); // Set the calorie goal
 
         const mealData = await RetrieveMealLogsController.retrieveMealLogs(user.uid);
         setMealGraphData(mealData ? mealData : { labels: [], datasets: [{ data: [] }] });
@@ -127,13 +131,8 @@ const CaloriesInsight = () => {
           {/* Calories Burned Card */}
           <View style={{flexDirection:'row', justifyContent:'center'}}>
           <View style={styles.caloriesBurnedContainer}>
-            <Text style={styles.caloriesBurnedHeader}>Calories Goals (BMR)</Text>
-            <Text style={styles.caloriesBurnedText}>{`${caloriesConsumed} / ${BMRCalorieGoal}`}</Text>
-            <Text style={[styles.caloriesBurnedText, {marginBottom:8, fontFamily:'Poppins-Regular'}]}>kcal</Text>
-          </View>
-          <View style={styles.caloriesBurnedContainer}>
-            <Text style={styles.caloriesBurnedHeader}>Calories Goals (Custom)</Text>
-            <Text style={styles.caloriesBurnedText}>{`${caloriesConsumed} / ${customCalorieGoal}`}</Text>
+            <Text style={styles.caloriesBurnedHeader}>Calories Goal</Text>
+            <Text style={styles.caloriesBurnedText}>{`${caloriesConsumed} / ${calorieGoal}`}</Text>
             <Text style={[styles.caloriesBurnedText, {marginBottom:8, fontFamily:'Poppins-Regular'}]}>kcal</Text>
           </View>
           </View>
@@ -261,22 +260,23 @@ const styles = StyleSheet.create({
   },
   caloriesBurnedContainer: {
     backgroundColor: '#FFF', // White background
-    padding: 8,
+    paddingHorizontal: 16,
+    paddingVertical:8,
     marginHorizontal:8,
     marginTop: 16,
     borderRadius: 8,
     elevation: 5,
-    width:'45%'
+    width:'50%'
   },
   caloriesBurnedHeader: {
     fontFamily: 'Poppins-Medium',
-    fontSize: 12,
-    textAlign: 'left',
+    fontSize: 14,
+    textAlign: 'center',
     marginBottom: 8,
   },
   caloriesBurnedText: {
     fontFamily: 'Poppins-Bold',
-    fontSize: 14,
+    fontSize: 16,
     textAlign: 'center',
   },
 });
