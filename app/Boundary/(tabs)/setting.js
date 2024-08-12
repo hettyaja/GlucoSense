@@ -1,5 +1,5 @@
 
-import { StyleSheet, Text, View, SafeAreaView, Platform, TouchableOpacity, ScrollView, Image, Alert } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, Platform, TouchableOpacity, ScrollView, Image, Alert, ActivityIndicator } from 'react-native';
 import React, { useState, useEffect, useCallback } from 'react';
 import { router, Tabs, useFocusEffect } from 'expo-router';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -17,6 +17,7 @@ const Setting = () => {
   const [photoUri, setPhotoUri] = useState('');
   const [subscriptionType, setSubscriptionType] = useState('');
   const [name, setName] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const fetchProfileData = async () => {
     try {
@@ -42,24 +43,27 @@ const Setting = () => {
   };
 
   const createTwoButtonAlert = () =>
-    Alert.alert('Delete account', 'Are you sure you want to delete?', [
-      {
-        text: 'Cancel',
-        onPress: () => console.log('Cancel Pressed'),
-        style: 'cancel',
+  Alert.alert('Delete account', 'Are you sure you want to delete?', [
+    {
+      text: 'Cancel',
+      onPress: () => console.log('Cancel Pressed'),
+      style: 'cancel',
+    },
+    {
+      text: 'Delete',
+      onPress: async () => {
+        setIsLoading(true); // Start loading
+        try {
+          await DeleteUserController.deleteUser(user.uid);
+          router.replace('Boundary/welcomePage');
+        } catch (error) {
+          console.error('Error deleting user profile:', error);
+        } finally {
+          setIsLoading(false); // End loading
+        }
       },
-      {
-        text: 'Delete',
-        onPress: async () => {
-          try {
-            await DeleteUserController.deleteUser(user.uid);
-            router.replace('Boundary/welcomePage');
-          } catch (error) {
-            console.error('Error deleting user profile:', error);
-          }
-        },
-      },
-    ]);
+    },
+  ]);
 
   const createSubTwoButtonAlert = () =>
     Alert.alert('Cancel Subscription', 'Are you sure you want to cancel your subscription?', [
@@ -179,6 +183,12 @@ const Setting = () => {
           </TouchableOpacity>
         </View>
       </ScrollView>
+
+      {isLoading && (
+        <View style={styles.loadingOverlay}>
+          <ActivityIndicator size="large" color="#E58B68" />
+        </View>
+      )}
     </>
   );
 };
