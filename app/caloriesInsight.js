@@ -138,7 +138,7 @@ const CaloriesInsight = () => {
           </View>
         <View style={styles.statsContainer}>
           <View style={{ backgroundColor: 'white', justifyContent: 'flex-end', paddingBottom: 10 }}>
-            <Text style={styles.statsHeader}>Daily Stats</Text>
+            <Text style={styles.statsHeader}>Last 24 hours</Text>
             <View style={styles.statsRow}>
               <View style={styles.statsBox}>
                 <Text style={styles.titleText}>Avg</Text>
@@ -155,7 +155,7 @@ const CaloriesInsight = () => {
             </View>
           </View>
           <View style={{ backgroundColor: 'white', justifyContent: 'flex-end', marginTop: 16, paddingBottom: 10 }}>
-            <Text style={styles.statsHeader}>Weekly Stats</Text>
+            <Text style={styles.statsHeader}>Last 7 days Stats</Text>
             <View style={styles.statsRow}>
               <View style={styles.statsBox}>
                 <Text style={styles.titleText}>Avg</Text>
@@ -172,7 +172,7 @@ const CaloriesInsight = () => {
             </View>
           </View>
           <View style={{ backgroundColor: 'white', justifyContent: 'flex-end', marginTop: 16, paddingBottom: 10 }}>
-            <Text style={styles.statsHeader}>Monthly Stats</Text>
+            <Text style={styles.statsHeader}>Last 30 days</Text>
             <View style={styles.statsRow}>
               <View style={styles.statsBox}>
                 <Text style={styles.titleText}>Avg</Text>

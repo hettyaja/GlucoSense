@@ -178,7 +178,7 @@ const Insight = () => {
             />
           </View>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.centeredChart} onPress={() => router.push('/caloriesInsight')}>
+        <TouchableOpacity style={styles.centeredChart} onPress={() => router.push('/correlationInsight')}>
           <View style={styles.chartContainer}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 15, marginTop: 15 }}>
               <Text style={styles.chartTitle}>Correlation Graph (Past 7 Days)</Text>
