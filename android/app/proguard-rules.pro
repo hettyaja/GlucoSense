@@ -11,6 +11,7 @@
 -keep class com.swmansion.reanimated.** { *; }
 -keep class com.facebook.react.turbomodule.** { *; }
 -keep class com.google.mlkit.** { *; }
--dontwarn com.google.mlkit.**
+-keep class com.google.mlkit.vision.text.** { *; }
+-keepclassmembers class com.google.mlkit.** { *; }
 
 # Add any project specific keep options here:

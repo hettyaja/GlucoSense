@@ -4,13 +4,25 @@ import { CameraView, useCameraPermissions} from 'expo-camera';
 import { searchFoodByBarcode } from '../server';
 import { Stack, useRouter } from 'expo-router';
 import food from './foodOrder';
+import { check, request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 
 export default function App() {
   const cameraRef = useRef(null);
   const router = useRouter();
   const [permission, requestPermission] = useCameraPermissions();
   const [scanned, setScanned] = useState(false);
-
+  
+  const requestCameraPermission = async () => {
+    const result = await request(PERMISSIONS.ANDROID.CAMERA);
+    if (result === RESULTS.GRANTED) {
+      console.log('You can use the camera');
+    } else {
+      console.log('Camera permission denied');
+    }
+  };
+  
+  requestCameraPermission();
+  
   if (!permission) {
     // Camera permissions are still loading.
     return <View />;
@@ -50,7 +62,7 @@ export default function App() {
   const renderCamera = () => {
     return (
       <View style={styles.cameraContainer}>
-        <CameraView
+        <CameraView 
           ref={cameraRef}
           onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
           style={styles.camera}

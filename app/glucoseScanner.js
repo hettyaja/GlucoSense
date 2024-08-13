@@ -2,9 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Button } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
-//import TextRecognition from 'react-native-text-recognition';
 import TextRecognition from 'react-native-text-recognition';
 import { launchImageLibrary } from 'react-native-image-picker'
+import MlkitOcr from 'react-native-mlkit-ocr';
+//import TextRecognition from 'react-native-mlkit-ocr';
+//import MlkitOcr, { MlkitOcrResult } from 'react-native-mlkit-ocr';
 //import TextRecognition from '@react-native-ml-kit/text-recognition';
 const GlucoseScanner = () => {
   const [permission, requestPermission] = useCameraPermissions();
@@ -58,8 +60,7 @@ const GlucoseScanner = () => {
       try {
         console.log(result);
         console.log('Extracting text from image:', result.assets[0].uri);
-        const options = { visionIgnoreThreshold: 0.5 };
-        const recognizedText = await TextRecognition.recognize(result.assets[0].uriyou);
+        const recognizedText = await MlkitOcr.detectFromUri(result.assets[0].uri);
         console.log('1');
         console.log('OCR result:', recognizedText); // Debug log
         

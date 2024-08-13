@@ -1,39 +1,40 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Dimensions, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Tabs, router } from 'expo-router';
+import { View, Text, StyleSheet, Dimensions, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
-//import { ScatterChart, YAxis, XAxis, Grid } from 'react-native-svg-charts';
-import { Circle, G } from 'react-native-svg';
+import { Svg, Circle, Line, Text as SvgText, G } from 'react-native-svg';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useAuth } from '../../service/AuthContext';
 import RetrieveGlucoseLogsController from '../../Controller/RetrieveGlucoseLogsController';
 import RetrieveMealLogsController from '../../Controller/RetrieveMealLogsController';
 import Header from '../../components/Header';
+import * as d3 from 'd3';
 
 const Insight = () => {
+  const screenHeight = 220;
   const screenWidth = Dimensions.get("window").width;
   const { user } = useAuth();
   const [glucoseGraphData, setGlucoseGraphData] = useState(null);
   const [mealGraphData, setMealGraphData] = useState(null);
-  const [scatterGraphData, setScatterGraphData] = useState([]);
+  const [scatterGraphData, setScatterGraphData] = useState({
+    data: [],
+    xScale: null,
+    yScale: null,
+    xTicks: [],
+    yTicks: [],
+    trendLine: { x1: 0, y1: 0, x2: 0, y2: 0 }
+  });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const prepareDataForGraphs = async () => {
       try {
         const glucoseData = await RetrieveGlucoseLogsController.retrieveGlucoseLogs(user.uid);
-        console.log('Blood Glucose data:', glucoseData);
-        setGlucoseGraphData(glucoseData);
-
         const mealData = await RetrieveMealLogsController.retrieveMealLogs(user.uid);
-        console.log('Calorie Consumption data:', mealData);
-        setMealGraphData(mealData);
-
-        // Combine data for scatter plot
         const combinedData = combineGlucoseAndMealData(glucoseData, mealData);
-        console.log('Combined Scatter Data:', combinedData);  // Log combined data
+        setGlucoseGraphData(glucoseData);
+        setMealGraphData(mealData);
         setScatterGraphData(combinedData);
-
       } catch (error) {
         console.error('Error preparing data for graphs:', error);
       } finally {
@@ -47,35 +48,63 @@ const Insight = () => {
   }, [user.uid]);
 
   const combineGlucoseAndMealData = (glucoseData, mealData) => {
-    const combinedData = [];
-    const glucoseEntries = glucoseData.datasets[0].data;
-    const mealEntries = mealData.datasets[0].data;
+    const xValues = mealData.datasets[0].data;
+    const yValues = glucoseData.datasets[0].data;
+    const xScale = d3.scaleLinear()
+      .domain([0, d3.max(xValues)])  // Ensure 0 is included in the domain
+      .range([40, screenWidth - 40]); // Increased padding for axis labels
+    const yScale = d3.scaleLinear()
+      .domain([0, d3.max(yValues)])  // Ensure 0 is included in the domain
+      .range([screenHeight - 40, 20]); // Invert y axis to show higher values at the top
 
-    for (let i = 0; i < glucoseEntries.length; i++) {
-      combinedData.push({
-        x: mealEntries[i],
-        y: glucoseEntries[i]
-      });
-    }
+    const data = xValues.map((x, index) => ({
+      x: xScale(x),
+      y: yScale(yValues[index]),
+    }));
 
-    return combinedData;
+    // Calculate trend line
+    const n = xValues.length;
+    const sumX = d3.sum(xValues);
+    const sumY = d3.sum(yValues);
+    const sumXY = d3.sum(xValues.map((x, i) => x * yValues[i]));
+    const sumX2 = d3.sum(xValues.map(x => x * x));
+
+    const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+    const intercept = (sumY - slope * sumX) / n;
+
+    const x1 = d3.min(xValues);
+    const x2 = d3.max(xValues);
+    const y1 = slope * x1 + intercept;
+    const y2 = slope * x2 + intercept;
+
+    const trendLine = {
+      x1: xScale(x1),
+      y1: yScale(y1),
+      x2: xScale(x2),
+      y2: yScale(y2)
+    };
+
+    return {
+      data,
+      xScale,
+      yScale,
+      xTicks: xScale.ticks(6),
+      yTicks: yScale.ticks(6),
+      trendLine
+    };
   };
 
   if (loading) {
     return <View style={styles.loadingContainer}>
-    <ActivityIndicator size={32} color="#E68B67" />
-  </View>;
+      <ActivityIndicator size="large" color="#E68B67" />
+    </View>;
   }
 
-  console.log('Glucose Graph Data:', glucoseGraphData);
-  console.log('Meal Graph Data:', mealGraphData);
-  console.log('Scatter Graph Data:', scatterGraphData);
+  const { data, xScale, yScale, xTicks, yTicks, trendLine } = scatterGraphData;
 
   return (
     <>
-      <Header
-        title = 'Insight'
-      />
+      <Header title='Insight' />
       <ScrollView style={styles.container}>
         <TouchableOpacity style={styles.centeredChart} onPress={() => router.push('/glucoseInsight')}>
           <View style={styles.chartContainer}>
@@ -145,13 +174,54 @@ const Insight = () => {
             />
           </View>
         </TouchableOpacity>
+        <TouchableOpacity style={styles.centeredChart} onPress={() => router.push('/caloriesInsight')}>
+        <View style={styles.chartContainer}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 15, marginTop: 15 }}>
+              <Text style={styles.chartTitle}>Correlation Graph (Past 7 Days)</Text>
+              <AntDesign name="right" size={16} />
+            </View>
         
+          <Svg height={screenHeight + 40} width={screenWidth} style={styles.scatterChartContainer}>
+            {/* Add horizontal and vertical axes lines */}
+            <Line x1="40" y1={screenHeight - 40} x2={screenWidth - 40} y2={screenHeight - 40} stroke="grey" strokeWidth="2" />
+            <Line x1="40" y1="20" x2="40" y2={screenHeight - 40} stroke="grey" strokeWidth="2" />
+            {data.map((point, index) => (
+              <Circle key={index} cx={point.x} cy={point.y} r="6" fill="black" />
+            ))}
+            {/* Add trend line */}
+            <Line x1={trendLine.x1} y1={trendLine.y1} x2={trendLine.x2} y2={trendLine.y2} stroke="#E58B68" strokeWidth="2" />
+            {/* Add grid lines */}
+            {xTicks.map((tick, index) => (
+              <Line key={index} x1={xScale(tick)} y1="20" x2={xScale(tick)} y2={screenHeight - 40} stroke="grey" strokeDasharray="4, 4" />
+            ))}
+            {yTicks.map((tick, index) => (
+              <Line key={index} x1="40" y1={yScale(tick)} x2={screenWidth - 40} y2={yScale(tick)} stroke="grey" strokeDasharray="4, 4" />
+            ))}
+            
+            {/* Axes labels */}
+            <SvgText fill="black" fontSize="12" x={screenWidth / 2} y={screenHeight} textAnchor="middle">Calories</SvgText>
+            <SvgText fill="black" fontSize="12" x="12" y={screenHeight / 2 } textAnchor="middle" transform={`rotate(-90 10 ${screenHeight / 2})`}>Glucose (mg/dL)</SvgText>
+            {/* Numeric labels for ticks */}
+            {xTicks && xTicks.map((tick, index) => (
+              <G key={index}>
+                <Line x1={xScale(tick)} y1={screenHeight - 40} x2={xScale(tick)} y2={screenHeight - 30} stroke="black" />
+                <SvgText x={xScale(tick)} y={screenHeight - 20} fill="black" fontSize="12" textAnchor="middle">{tick}</SvgText>
+              </G>
+            ))}
+            {yTicks && yTicks.map((tick, index) => (
+              <G key={index}>
+                <Line x1="30" y1={yScale(tick)} x2="30" y2={yScale(tick)} stroke="black" />
+                <SvgText x="30" y={yScale(tick) + 5} fill="black" fontSize="12" textAnchor="end">{tick}</SvgText>
+              </G>
+            ))}
+          </Svg>
+        </View>
+        </TouchableOpacity>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 15, marginTop: 20 }}/>
       </ScrollView>
     </>
   );
-}
-
-export default Insight;
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -168,13 +238,13 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-SemiBold',
     fontSize: 16,
   },
-  section: {
-    backgroundColor: 'white',
-    padding: 16,
-    marginTop: 16,
-  },
   chartContainer: {
     backgroundColor: 'white',
+    padding: 10,
+  },
+  scatterChartContainer: {
+    backgroundColor: 'white',
+    
   },
   loadingContainer: {
     flex: 1,
@@ -182,3 +252,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
+
+export default Insight;
