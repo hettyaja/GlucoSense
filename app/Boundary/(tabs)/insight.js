@@ -11,6 +11,7 @@ import Header from '../../components/Header';
 import * as d3 from 'd3';
 
 const Insight = () => {
+  const [subscriptionType, setSubscriptionType] = useState('');
   const screenHeight = 220;
   const screenWidth = Dimensions.get("window").width;
   const { user } = useAuth();
@@ -73,8 +74,21 @@ const Insight = () => {
     };
   };
 
+  const fetchProfileData = async () => {
+    try {
+      const profileData = await getProfileController.getProfile(user.uid);
+      setSubscriptionType(profileData.subscriptionType);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useFocusEffect(
     useCallback(() => {
+
+      if (user.uid) {
+        fetchProfileData();
+      }
       const prepareDataForGraphs = async () => {
         try {
           const glucoseData = await RetrieveGlucoseLogsController.retrieveGlucoseLogs(user.uid);
