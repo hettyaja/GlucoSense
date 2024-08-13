@@ -21,16 +21,6 @@ class RegisterUserController {
     if (!additionalData.name || additionalData.name.trim() === '') {
       throw new Error('Name cannot be empty');
     }
-
-    // if (!email || email.trim() === '') {
-    //   throw new Error('Email cannot be empty');
-    // }
-
-    // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    // if (!emailRegex.test(email)) {
-    //   throw new Error('Invalid email format');
-    // }
-
     if (password !== confirmPassword) {
       throw new Error('Passwords do not match');
     }

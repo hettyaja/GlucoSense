@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Tabs, router } from 'expo-router';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, Dimensions, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { Tabs, router, useFocusEffect } from 'expo-router';
 import { LineChart } from 'react-native-chart-kit';
 import { Svg, Circle, Line, Text as SvgText, G } from 'react-native-svg';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -25,27 +25,6 @@ const Insight = () => {
     trendLine: { x1: 0, y1: 0, x2: 0, y2: 0 }
   });
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const prepareDataForGraphs = async () => {
-      try {
-        const glucoseData = await RetrieveGlucoseLogsController.retrieveGlucoseLogs(user.uid);
-        const mealData = await RetrieveMealLogsController.retrieveMealLogs(user.uid);
-        const combinedData = combineGlucoseAndMealData(glucoseData, mealData);
-        setGlucoseGraphData(glucoseData);
-        setMealGraphData(mealData);
-        setScatterGraphData(combinedData);
-      } catch (error) {
-        console.error('Error preparing data for graphs:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (user.uid) {
-      prepareDataForGraphs();
-    }
-  }, [user.uid]);
 
   const combineGlucoseAndMealData = (glucoseData, mealData) => {
     const xValues = mealData.datasets[0].data;
@@ -94,10 +73,35 @@ const Insight = () => {
     };
   };
 
+  useFocusEffect(
+    useCallback(() => {
+      const prepareDataForGraphs = async () => {
+        try {
+          const glucoseData = await RetrieveGlucoseLogsController.retrieveGlucoseLogs(user.uid);
+          const mealData = await RetrieveMealLogsController.retrieveMealLogs(user.uid);
+          const combinedData = combineGlucoseAndMealData(glucoseData, mealData);
+          setGlucoseGraphData(glucoseData);
+          setMealGraphData(mealData);
+          setScatterGraphData(combinedData);
+        } catch (error) {
+          console.error('Error preparing data for graphs:', error);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      if (user.uid) {
+        prepareDataForGraphs();
+      }
+    }, [user.uid])
+  );
+
   if (loading) {
-    return <View style={styles.loadingContainer}>
-      <ActivityIndicator size="large" color="#E68B67" />
-    </View>;
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#E68B67" />
+      </View>
+    );
   }
 
   const { data, xScale, yScale, xTicks, yTicks, trendLine } = scatterGraphData;
@@ -175,47 +179,47 @@ const Insight = () => {
           </View>
         </TouchableOpacity>
         <TouchableOpacity style={styles.centeredChart} onPress={() => router.push('/caloriesInsight')}>
-        <View style={styles.chartContainer}>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 15, marginTop: 15 }}>
+          <View style={styles.chartContainer}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 15, marginTop: 15 }}>
               <Text style={styles.chartTitle}>Correlation Graph (Past 7 Days)</Text>
               <AntDesign name="right" size={16} />
             </View>
         
-          <Svg height={screenHeight + 40} width={screenWidth} style={styles.scatterChartContainer}>
-            {/* Add horizontal and vertical axes lines */}
-            <Line x1="40" y1={screenHeight - 40} x2={screenWidth - 40} y2={screenHeight - 40} stroke="grey" strokeWidth="2" />
-            <Line x1="40" y1="20" x2="40" y2={screenHeight - 40} stroke="grey" strokeWidth="2" />
-            {data.map((point, index) => (
-              <Circle key={index} cx={point.x} cy={point.y} r="6" fill="black" />
-            ))}
-            {/* Add trend line */}
-            <Line x1={trendLine.x1} y1={trendLine.y1} x2={trendLine.x2} y2={trendLine.y2} stroke="#E58B68" strokeWidth="2" />
-            {/* Add grid lines */}
-            {xTicks.map((tick, index) => (
-              <Line key={index} x1={xScale(tick)} y1="20" x2={xScale(tick)} y2={screenHeight - 40} stroke="grey" strokeDasharray="4, 4" />
-            ))}
-            {yTicks.map((tick, index) => (
-              <Line key={index} x1="40" y1={yScale(tick)} x2={screenWidth - 40} y2={yScale(tick)} stroke="grey" strokeDasharray="4, 4" />
-            ))}
-            
-            {/* Axes labels */}
-            <SvgText fill="black" fontSize="12" x={screenWidth / 2} y={screenHeight} textAnchor="middle">Calories</SvgText>
-            <SvgText fill="black" fontSize="12" x="12" y={screenHeight / 2 } textAnchor="middle" transform={`rotate(-90 10 ${screenHeight / 2})`}>Glucose (mg/dL)</SvgText>
-            {/* Numeric labels for ticks */}
-            {xTicks && xTicks.map((tick, index) => (
-              <G key={index}>
-                <Line x1={xScale(tick)} y1={screenHeight - 40} x2={xScale(tick)} y2={screenHeight - 30} stroke="black" />
-                <SvgText x={xScale(tick)} y={screenHeight - 20} fill="black" fontSize="12" textAnchor="middle">{tick}</SvgText>
-              </G>
-            ))}
-            {yTicks && yTicks.map((tick, index) => (
-              <G key={index}>
-                <Line x1="30" y1={yScale(tick)} x2="30" y2={yScale(tick)} stroke="black" />
-                <SvgText x="30" y={yScale(tick) + 5} fill="black" fontSize="12" textAnchor="end">{tick}</SvgText>
-              </G>
-            ))}
-          </Svg>
-        </View>
+            <Svg height={screenHeight + 40} width={screenWidth - 10} style={styles.scatterChartContainer}>
+              {/* Add horizontal and vertical axes lines */}
+              <Line x1="40" y1={screenHeight - 40} x2={screenWidth - 40} y2={screenHeight - 40} stroke="grey" strokeWidth="2" />
+              <Line x1="40" y1="20" x2="40" y2={screenHeight - 40} stroke="grey" strokeWidth="2" />
+              {data.map((point, index) => (
+                <Circle key={index} cx={point.x} cy={point.y} r="6" fill="black" />
+              ))}
+              {/* Add trend line */}
+              <Line x1={trendLine.x1} y1={trendLine.y1} x2={trendLine.x2} y2={trendLine.y2} stroke="#E58B68" strokeWidth="2" />
+              {/* Add grid lines */}
+              {xTicks.map((tick, index) => (
+                <Line key={index} x1={xScale(tick)} y1="20" x2={xScale(tick)} y2={screenHeight - 40} stroke="grey" strokeDasharray="4, 4" />
+              ))}
+              {yTicks.map((tick, index) => (
+                <Line key={index} x1="40" y1={yScale(tick)} x2={screenWidth - 40} y2={yScale(tick)} stroke="grey" strokeDasharray="4, 4" />
+              ))}
+              
+              {/* Axes labels */}
+              <SvgText fill="black" fontSize="12" x={screenWidth / 2} y={screenHeight} textAnchor="middle">Calories</SvgText>
+              <SvgText fill="black" fontSize="12" x="12" y={screenHeight / 2} textAnchor="middle" transform={`rotate(-90 10 ${screenHeight / 2})`}>Glucose (mg/dL)</SvgText>
+              {/* Numeric labels for ticks */}
+              {xTicks && xTicks.map((tick, index) => (
+                <G key={index}>
+                  <Line x1={xScale(tick)} y1={screenHeight - 40} x2={xScale(tick)} y2={screenHeight - 30} stroke="black" />
+                  <SvgText x={xScale(tick)} y={screenHeight - 20} fill="black" fontSize="12" textAnchor="middle">{tick}</SvgText>
+                </G>
+              ))}
+              {yTicks && yTicks.map((tick, index) => (
+                <G key={index}>
+                  <Line x1="40" y1={yScale(tick)} x2="30" y2={yScale(tick)} stroke="black" />
+                  <SvgText x="20" y={yScale(tick) + 5} fill="black" fontSize="12" textAnchor="end">{tick}</SvgText>
+                </G>
+              ))}
+            </Svg>
+          </View>
         </TouchableOpacity>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 15, marginTop: 20 }}/>
       </ScrollView>

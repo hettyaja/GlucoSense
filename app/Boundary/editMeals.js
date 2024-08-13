@@ -3,12 +3,11 @@ import React, { useState, useEffect } from 'react';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import { useAuth } from './service/AuthContext';
-import { updateMealLog, deleteLog } from './service/diaryService';
 import Feather from 'react-native-vector-icons/Feather'
 import { Picker } from '@react-native-picker/picker';
-import UpdateMealController from './Controller/UpdateMealLogsController';
-import DeleteMealController from './Controller/DeleteMealLogsController';
+import UpdateMealController from '../Controller/UpdateMealLogsController';
+import DeleteMealController from '../Controller/DeleteMealLogsController';
+import { useAuth } from '../service/AuthContext';
 
 const editMeals = () => {
   const { user } = useAuth();

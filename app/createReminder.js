@@ -8,33 +8,12 @@ import { useAuth } from './service/AuthContext';
 import CreateReminderController from './Controller/CreateReminderController';
 import { Picker } from '@react-native-picker/picker';
 
-// Request notification permissions
-async function requestNotificationPermissions() {
-  const { status } = await Notifications.requestPermissionsAsync();
-  if (status !== 'granted') {
-    alert('Permission to access notifications was denied');
-  }
-}
-
-// Notification handler
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: false,
-  }),
-});
-
 const createReminder = () => {
   const { user } = useAuth();
   const [selectedType, setSelectedType] = useState('Glucose');
   const [selectedDay, setSelectedDay] = useState('Everyday');
   const [selectedTime, setSelectedTime] = useState(new Date());
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-
-  useEffect(() => {
-    requestNotificationPermissions();
-  }, []);
 
   const handleLeftButton = () => {
     router.back();

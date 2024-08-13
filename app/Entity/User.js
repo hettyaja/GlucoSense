@@ -1,12 +1,11 @@
 import { auth, db } from '../../firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail } from 'firebase/auth';
 import { doc, setDoc, deleteDoc, getDocs, updateDoc, Timestamp, collection, getDoc, query, where, addDoc, writeBatch} from 'firebase/firestore';
-import { deleteUser as firebaseDeleteUser } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
 
-const BASE_URL = 'https://us-central1-glucosense-24-s2-07.cloudfunctions.net/api'; 
+const CLOUD_FUNCTION_URL = 'https://us-central1-glucosense-24-s2-07.cloudfunctions.net/expressApi';
 
 class User {
   constructor(id, username, name, email, userType, registerTime, status, weight, gender, height, birthdate, bodyProfileComplete) {
@@ -50,7 +49,25 @@ class User {
         subscriptionType: 'free',
         registerTime: registerTime,
         status: 'active',
-        bodyProfileComplete: false
+        bodyProfileComplete: false,
+        goals: {
+          BMRGoals: {
+            weightGoals: 'Maintain',
+            activityLevel: 'Light',
+            calorieGoals: null,
+            default: true
+          },
+          customGoals: {
+            calorieGoals: null,
+            default: false
+          },
+          glucoseGoals: {
+            beforeMealLowerBound: 80,
+            beforeMealUpperBound: 130,
+            afterMealLowerBound: 80,
+            afterMealUpperBound: 180,
+          }
+        }
       });
       return new User(user.uid, additionalData.username, additionalData.name, email, 'free', registerTime, 'active', false);
     } catch (error) {
@@ -95,38 +112,111 @@ class User {
     }
   }
 
+
   static async deleteUser(uid) {
     try {
-      const userDocRef = doc(db, 'users', uid);
-      await deleteDoc(userDocRef);
+      const businessPartnerDocRef = doc(db, 'businessPartner', uid);
+      await deleteDoc(businessPartnerDocRef);
+      await axios.delete(`${CLOUD_FUNCTION_URL}/deleteUser/${uid}`);
       await AsyncStorage.clear();
-      const currentUser = auth.currentUser;
-      if (currentUser) {
-        await firebaseDeleteUser(currentUser);
-      } else {
-        throw new Error('No user is currently signed in');
-      }
       return true;
     } catch (error) {
-      console.error('Error deleting user profile:', error);
+      console.error('Error rejecting business partner:', error);
       throw error;
     }
   }
 
   static async createBodyProfile(uid, bodyProfileData) {
     try {
-      const bodyProfileRef = doc(db, 'users', uid);
-      await setDoc(bodyProfileRef, {
-        gender: bodyProfileData.gender,
-        birthdate: bodyProfileData.birthdate,
-        weight: bodyProfileData.weight,
-        height: bodyProfileData.height,
-        bodyProfileComplete: true
-      }, { merge: true });
+        const bodyProfileRef = doc(db, 'users', uid);
+
+        // Retrieve current goals from the user's document
+        const userDoc = await getDoc(bodyProfileRef);
+        const userData = userDoc.data();
+        const goals = userData.goals || {};
+
+        // Access the existing BMR goal object
+        const currentBMRGoal = goals.BMRGoals;
+
+        if (!currentBMRGoal) {
+            throw new Error('No BMR-related goal found in the user document.');
+        }
+
+        const { weight, height, birthdate, gender } = bodyProfileData;
+        const age = new Date().getFullYear() - new Date(birthdate).getFullYear();
+
+        // Calculate BMR based on gender
+        let BMR;
+        if (gender === 'Male') {
+            BMR = 88.362 + (13.397 * weight) + (4.799 * height) - (5.677 * age);
+        } else if (gender === 'Female') {
+            BMR = 447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age);
+        } else {
+            throw new Error('Gender must be either "Male" or "Female".');
+        }
+
+        // Determine the activity level multiplier from the existing goal
+        let activityMultiplier;
+        switch (currentBMRGoal.activityLevel) {
+            case 'Sedentary':
+                activityMultiplier = 1.2;
+                break;
+            case 'Light':
+                activityMultiplier = 1.375;
+                break;
+            case 'Moderate':
+                activityMultiplier = 1.55;
+                break;
+            case 'Very':
+                activityMultiplier = 1.725;
+                break;
+            case 'Super':
+                activityMultiplier = 1.9;
+                break;
+            default:
+                activityMultiplier = 1.55; // Default to moderate if not specified
+        }
+
+        // Calculate TDEE
+        const TDEE = BMR * activityMultiplier;
+
+        // Adjust for Weight Goals from the existing goal
+        let calorieGoals;
+        switch (currentBMRGoal.weightGoals) {
+            case 'Maintain':
+                calorieGoals = TDEE;
+                break;
+            case 'Weight Loss':
+                calorieGoals = TDEE - 500; // Adjust to TDEE - 500 to TDEE - 1000 as needed
+                break;
+            case 'Weight Gain':
+                calorieGoals = TDEE + 500; // Adjust to TDEE + 500 to TDEE + 1000 as needed
+                break;
+            default:
+                calorieGoals = TDEE; // Default to maintenance if not specified
+        }
+
+        // Update the BMR goal object with the calculated calorieGoals
+        goals.BMRGoals = {
+            ...goals.BMRGoals,
+            calorieGoals: Math.round(calorieGoals)
+        };
+
+        // Update the body profile information and goals in Firestore
+        await setDoc(bodyProfileRef, {
+            gender,
+            birthdate,
+            weight,
+            height,
+            bodyProfileComplete: true,
+            goals: goals
+        }, { merge: true });
+
     } catch (error) {
-      throw new Error(`Error creating body profile: ${error.message}`);
+        throw new Error(`Error creating body profile: ${error.message}`);
     }
-  }
+}
+
 
   static async fetchUsers() {
     try {
@@ -402,6 +492,53 @@ static async setAccountProfile(uid, image, name, email, username){
   } catch (error) {
       throw error;
   }
+  }
+  
+  static async fetchUserGoals (userId) {
+    try {
+      // Reference to the user's document in Firestore
+      const bodyProfileRef = doc(db, 'users', userId);
+
+      // Fetch the document
+      const userDoc = await getDoc(bodyProfileRef);
+
+      // Check if the document exists
+      if (!userDoc.exists()) {
+          throw new Error('User not found');
+      }
+
+      // Extract the necessary fields from the document data
+      const userData = userDoc.data();
+      const { height, weight, birthdate, goals, gender } = userData;
+
+      // Return the fetched data
+      return {
+          height,
+          weight,
+          birthdate,
+          goals,
+          gender
+      };
+
+  } catch (error) {
+      console.error('Error fetching body profile:', error);
+      throw new Error(`Error fetching body profile: ${error.message}`);
+  }
+  }
+
+  static async setUserGoals(userId, goals) {
+    try {
+      // Reference to the user's document in Firestore
+      const userRef = doc(db, 'users', userId);
+
+      // Update the user's goals in Firestore
+      await setDoc(userRef, { goals }, { merge: true });
+
+      console.log('User goals successfully updated');
+    } catch (error) {
+      console.error('Error updating user goals:', error);
+      throw new Error('Failed to save user goals. Please try again.');
+    }
   }
 }
 

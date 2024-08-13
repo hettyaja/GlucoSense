@@ -22,7 +22,7 @@ const Subscribe = () =>
             leftButton='Back'
             onLeftButtonPress={() => handleBackButton()}
         />
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
             <View style={styles.subtitle}>
                 <Text style={styles.h3}>Unlock Exclusive Features in Our Diabetes Management App!</Text>
             </View>
@@ -61,7 +61,7 @@ const Subscribe = () =>
                     <Text style={styles.buttonText}>Get Started</Text>
                 </TouchableOpacity>
             </View>
-        </View>
+        </ScrollView>
         </>
     );
 };
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
     price:{
         backgroundColor:'#ffff',
         marginTop:100,
-        paddingBottom:180,
+        paddingBottom:80,
         borderRadius:24,
         // borderWidth: 10,
         // borderColor: 'red',

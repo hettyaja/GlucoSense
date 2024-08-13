@@ -8,11 +8,11 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { fetchBPProfile } from '../../service/profileBPService';
 import { useFocusEffect } from '@react-navigation/native';
-import { useAuth } from '../../service/AuthContext';
 import DeleteBPController from '../../Controller/DeleteBPController';
 import LogoutController from '../../Controller/LogoutController';
 import Header from '../../components/Header';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useAuth } from '../../service/AuthContext';
 
 const settingBP = () => {
   const { user } = useAuth();
@@ -86,7 +86,7 @@ const settingBP = () => {
             style={styles.profileImage}
             source={{ uri: photoUri }} 
           /> ) : (
-             <FontAwesome name='user-circle' size={16} style={styles.icon} />
+            <FontAwesome name="user-circle" color="grey" size={64} style={{marginRight:16}} />
            )}
 
             {/* // <Image style={styles.profileImage} source={{ uri: photoUri }} /> */}
@@ -122,7 +122,7 @@ const settingBP = () => {
         </TouchableOpacity>
 
         <View style={{borderBottomColor:'#d9d9d9', borderBottomWidth:1}}/>
-        <TouchableOpacity style={styles.optionButton} onPress={() => createTwoButtonAlert()}>
+        <TouchableOpacity style={styles.optionButton} onPress={createTwoButtonAlert}>
           <AntDesign name='deleteuser' size={24} style={styles.icon} />
           <Text style={styles.optionButtonText}>Delete business account</Text>
         </TouchableOpacity>

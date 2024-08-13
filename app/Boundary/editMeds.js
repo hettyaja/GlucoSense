@@ -3,12 +3,11 @@ import React, { useState, useEffect } from 'react';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import { useAuth } from './service/AuthContext';
-import { updateMedicineLog, deleteLog } from './service/diaryService';
-import UpdateMedicineLogsController from './Controller/UpdateMedicineLogsController';
-import DeleteMedicineLogsController from './Controller/DeleteMedicineLogsController';
+import { useAuth } from '../service/AuthContext';
+import UpdateMedicineLogsController from '../Controller/UpdateMedicineLogsController';
+import DeleteMedicineLogsController from '../Controller/DeleteMedicineLogsController';
 import { Picker } from '@react-native-picker/picker';
-import Header from './components/Header';
+import Header from '../components/Header';
 
 
 const editMeds = () => {

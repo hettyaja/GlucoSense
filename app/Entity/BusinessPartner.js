@@ -1,7 +1,8 @@
 import { auth, db} from '../../firebase'; // Adjust the path according to your project structure
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, deleteUser as firebaseDeleteUser } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut} from 'firebase/auth';
 import { doc, setDoc, deleteDoc, getDocs, Timestamp, collection, updateDoc, getDoc, addDoc, query, where } from 'firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {firebaseDeleteUser } from 'firebase/auth';
 import axios from 'axios';
 
 const CLOUD_FUNCTION_URL = 'https://us-central1-glucosense-24-s2-07.cloudfunctions.net/expressApi';
@@ -49,21 +50,17 @@ class BusinessPartner {
     }
   }
 
+
   static async deleteBP(uid) {
     try {
       const businessPartnerDocRef = doc(db, 'businessPartner', uid);
       await deleteDoc(businessPartnerDocRef);
+      await axios.delete(`${CLOUD_FUNCTION_URL}/deleteUser/${uid}`);
       await AsyncStorage.clear();
-      const currentUser = auth.currentUser;
-      if (currentUser) {
-          await firebaseDeleteUser(currentUser);
-      } else {
-          throw new Error('No user is currently signed in');
-      }
       return true;
     } catch (error) {
-        console.error('Error deleting user profile:', error);
-        throw error;
+      console.error('Error rejecting business partner:', error);
+      throw error;
     }
   }
 

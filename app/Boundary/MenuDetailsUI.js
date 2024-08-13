@@ -6,6 +6,7 @@ import Header from '../components/Header';
 import { useAuth } from '../service/AuthContext';
 import MenuDetailsController from '../Controller/MenuDetailsController';
 import CreateAddressController from '../Controller/CreateAddressController';
+import { ActivityIndicator } from 'react-native';
 import { decode as atob} from 'base-64'
 import { encode as btoa } from 'base-64'
 
@@ -62,7 +63,8 @@ const MenuDetails = () => {
   }, [menuData]);
 
   if (loading) {
-    return <Text>Loading...</Text>;
+    return <ActivityIndicator size="large" color="#E58B68" style={styles.loader} />;
+    
   }
 
   if (error) {
@@ -264,6 +266,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     fontFamily: 'Poppins-Regular',
     paddingVertical: 16,
+  },
+  loader:{
+    marginTop: 10
   }
 });
 

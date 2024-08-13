@@ -35,7 +35,7 @@ const FoodDetails = () => {
     };
 
     router.push({
-      pathname: '/addMeals',
+      pathname: 'Boundary/addMeals',
       params: { mealData: JSON.stringify(mealData) },
     });
   };
