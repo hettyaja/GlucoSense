@@ -3,7 +3,7 @@ import { StyleSheet, Text, TouchableOpacity, View, Alert, Button } from 'react-n
 import { CameraView, useCameraPermissions} from 'expo-camera';
 import { searchFoodByBarcode } from '../server';
 import { Stack, useRouter } from 'expo-router';
-import food from './foodOrder';
+import food from './Boundary/ViewMenu';
 import { check, request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 
 export default function App() {
