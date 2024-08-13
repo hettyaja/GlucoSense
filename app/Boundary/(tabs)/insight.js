@@ -5,6 +5,7 @@ import { LineChart } from 'react-native-chart-kit';
 import { Svg, Circle, Line, Text as SvgText, G } from 'react-native-svg';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useAuth } from '../../service/AuthContext';
+import getProfileController from '../../Controller/getProfileController';
 import RetrieveGlucoseLogsController from '../../Controller/RetrieveGlucoseLogsController';
 import RetrieveMealLogsController from '../../Controller/RetrieveMealLogsController';
 import Header from '../../components/Header';
@@ -192,7 +193,7 @@ const Insight = () => {
             />
           </View>
         </TouchableOpacity>
-        <View style={styles.centeredChart}>
+        <TouchableOpacity style={styles.centeredChart} onPress={() => router.push('/correlationInsight')}>
           <View style={styles.chartContainer}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 15, marginTop: 15 }}>
               <Text style={styles.chartTitle}>Correlation Graph (Past 7 Days)</Text>
@@ -233,7 +234,7 @@ const Insight = () => {
               ))}
             </Svg>
           </View>
-        </View>
+        </TouchableOpacity>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 15, marginTop: 20 }}/>
       </ScrollView>
     </>
