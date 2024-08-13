@@ -75,7 +75,7 @@ const ViewOrderSummaryUI = () => {
       deliveryAddress: address,
       orderRefNumber, // Add the order reference number here
       totalPayment, // Add the total payment here
-      gstFee, // Add the GST fee here
+      status: 'waiting'
     };
     await CreateOrderController.createOrder(orderData);
     router.push('Boundary/OrderHistory');

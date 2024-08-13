@@ -15,7 +15,7 @@ const Food = () => {
     const fetchFeaturedMenu = async () => {
       try {
         const menuCollection = await fetchMenuData(); // Fetch menu data
-        setFeaturedMenu(menuCollection.slice(0, 4)); // Assuming you want to show the first 4 items as featured
+        setFeaturedMenu(menuCollection.slice(0, 5)); // Assuming you want to show the first 4 items as featured
       } catch (error) {
         console.error('Error fetching menu data:', error);
       }
@@ -35,7 +35,11 @@ const Food = () => {
     fetchDietPlansData();
   }, []);
 
-  const handleOrder = (plan) => {
+  const handleFoodOrder = (menu) => {
+    router.push({pathname:'Boundary/MenuDetailsUI', params: {menuData: encode(JSON.stringify(menu))}})
+  }
+
+  const handleDietPlanOrder = (plan) => {
     router.push({pathname:'Boundary/OrderDietPlan', params: {planData: encode(JSON.stringify(plan))}})
   }
 
@@ -65,17 +69,19 @@ const Food = () => {
         </TouchableOpacity>
 
         <View style={styles.row}>
-          <Text style={styles.sectionTitle}>Featured menu</Text>
-          <Ionicons name='chevron-forward' size={24} color='black' />
+          <Text style={styles.sectionTitle}>Featured Menu</Text>
+          <TouchableOpacity onPress={() => router.push('Boundary/ViewMenu')}>
+            <Ionicons name='chevron-forward' size={24} color='black' />
+          </TouchableOpacity>
         </View>
         
         <ScrollView horizontal contentContainerStyle={styles.featuredMenuContainer}>
           {featuredMenu.map((menu) => (
-            <TouchableOpacity key={menu.id} style={styles.menuCard} onPress={() => router.push('foodOrder')}>
+            <TouchableOpacity key={menu.id} style={styles.menuCard} onPress={() => handleFoodOrder(menu)}>
               <Image source={{ uri: menu.image }} style={styles.menuImage} />
               <View style={styles.menuTextContainer}>
                 <Text style={styles.menuTitle}>{menu.title}</Text>
-                <Text style={styles.menuPrice}>${menu.price}</Text>
+                <Text style={styles.menuPrice}>$ {menu.price}</Text>
               </View>
             </TouchableOpacity>
           ))}
@@ -89,11 +95,11 @@ const Food = () => {
         </View>
         <ScrollView horizontal contentContainerStyle={styles.featuredMenuContainer}>
           {dietPlans.map((plan) => (
-            <TouchableOpacity key={plan.id} style={styles.menuCard} onPress={() => handleOrder(plan)}>
+            <TouchableOpacity key={plan.id} style={styles.menuCard} onPress={() => handleDietPlanOrder(plan)}>
               <Image source={{ uri: plan.planImage || 'https://via.placeholder.com/150' }} style={styles.menuImage} />
               <View style={styles.menuTextContainer}>
                 <Text style={styles.menuTitle}>{plan.planName}</Text>
-                <Text style={styles.menuPrice}>Start from ${plan.price}</Text>
+                <Text style={styles.menuPrice}>Start from $ {plan.price}</Text>
               </View>
             </TouchableOpacity>
           ))}

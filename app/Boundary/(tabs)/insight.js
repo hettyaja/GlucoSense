@@ -192,11 +192,10 @@ const Insight = () => {
             />
           </View>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.centeredChart} onPress={() => router.push('/correlationInsight')}>
+        <View style={styles.centeredChart}>
           <View style={styles.chartContainer}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 15, marginTop: 15 }}>
               <Text style={styles.chartTitle}>Correlation Graph (Past 7 Days)</Text>
-              <AntDesign name="right" size={16} />
             </View>
         
             <Svg height={screenHeight + 40} width={screenWidth - 10} style={styles.scatterChartContainer}>
@@ -234,7 +233,7 @@ const Insight = () => {
               ))}
             </Svg>
           </View>
-        </TouchableOpacity>
+        </View>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 15, marginTop: 20 }}/>
       </ScrollView>
     </>

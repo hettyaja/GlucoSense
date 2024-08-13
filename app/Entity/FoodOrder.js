@@ -1,7 +1,7 @@
 import { auth, db} from '../../firebase';
 import {doc, addDoc, collection} from 'firebase/firestore';
 
-class Order{
+class FoodOrder{
     static async createOrder(orderData){
         try{
             const orderCollection = collection(db, 'users', orderData.userId, 'foodOrders');
@@ -10,15 +10,6 @@ class Order{
             throw error
         }
     }
-
-    static async createDietPlanOrder(orderData) {
-        try {
-            const orderCollection = collection(db, 'users', orderData.userId, 'dietPlanOrders')
-            await addDoc(orderCollection, orderData)
-        } catch(error) {
-            throw error
-        }
-    }
 }
 
-export default Order
+export default FoodOrder

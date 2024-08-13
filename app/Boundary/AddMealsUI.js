@@ -4,7 +4,6 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { Picker } from '@react-native-picker/picker';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import Feather from 'react-native-vector-icons/Feather'
 import { useAuth } from '../service/AuthContext';
@@ -13,7 +12,6 @@ import Header from '../components/Header';
 import ViewMealLogsController from '../Controller/ViewMealLogsController';
 import ViewUserGoalsController from '../Controller/ViewUserGoalsController';
 import * as Notifications from 'expo-notifications';
-
 
 const handleBackButton = () => {
   router.back()
@@ -67,7 +65,6 @@ const addMeals = () => {
       );
       return;
     }
-  
     if (user) {
       const newMealLog = {
         time: selectedDate,
@@ -102,7 +99,7 @@ const addMeals = () => {
   
         // Calculate total calories consumed today
         const totalCaloriesConsumed = mealLogs.reduce((total, log) => {
-          const logDate = log.time.toDate(); // Assuming `time` is a Firestore timestamp
+          const logDate = log.time.toDate(); 
           if (logDate >= today) {
             return total + parseFloat(log.calories); // Ensure calories are treated as numbers
           }

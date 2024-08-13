@@ -8,9 +8,9 @@ import Header from '../components/Header';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useAuth } from '../service/AuthContext';
 import GetAddressController from '../Controller/GetAddressController';
-import CreateOrderController from '../Controller/CreateOrderController';
 import { decode as atob } from 'base-64';
 import GetPaymentDetailsController from '../Controller/GetPaymentDetailsController';
+import CreateDietPlanOrderController from '../Controller/CreateDietPlanOrderController';
 
 const ViewDietPlanOrderSummary = () => {
   const { orderData } = useLocalSearchParams();
@@ -66,17 +66,26 @@ const ViewDietPlanOrderSummary = () => {
 
   const handleOrder = async () => {
     const orderRefNumber = generateOrderRefNumber();
+
+    // Calculate startDate and endDate based on quantity
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() + 1); // Start date is the next day
+    
+    const endDate = new Date(startDate);
+    endDate.setDate(endDate.getDate() + (parsedOrderData.quantity * 7) - 1); // End date is start date + (quantity * 7) - 1 days
+
     const orderData = {
+      orderRefNumber, // Add the order reference number here
       userId: user.uid,
       businessPartnerId: parsedOrderData.bpId,
       dietPlanId: parsedOrderData.dietPlanId,
-      quantity: parsedOrderData.quantity,
-      notes,
       deliveryAddress: address,
-      orderRefNumber, // Add the order reference number here
       totalPayment, // Add the total payment here
+      startDate, // Add the start date here
+      endDate, // Add the end date here
+      notes,
     };
-    await CreateOrderController.createDietPlanOrder(orderData);
+    await CreateDietPlanOrderController.createDietPlanOrder(orderData);
     router.push('Boundary/OrderHistory');
   };
 

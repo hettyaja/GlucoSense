@@ -2,17 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Alert, ScrollView } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter, Stack } from 'expo-router';
-import { fetchBPProfile, updateProfile } from '../service/profileBPService'; // Adjust the import according to your file structure
 import { useAuth } from '../service/AuthContext';
-import ImageButton from '../components/ImageButton';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { deleteImage, uploadProfileImage } from '../service/storageService';
 import UpdateBpProfileController from '../Controller/UpdateBpProfileController';
-import ViewProfileBpController from '../Controller/ViewProfileBpController'
+import ViewProfileBpController from '../Controller/ViewProfileBpController';
 
 const profileBP = () => {
   const router = useRouter();
-  const { user } = useAuth()
+  const { user } = useAuth();
   const uid = user.uid;
   const [photoUri, setPhotoUri] = useState('');
+  const [tempPhotoUri, setTempPhotoUri] = useState(null);
   const [entityName, setEntityName] = useState('');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -28,7 +30,7 @@ const profileBP = () => {
     const getBPProfile = async () => {
       if (uid) {
         try {
-          const data = await  ViewProfileBpController.viewProfileBp(uid);
+          const data = await ViewProfileBpController.viewProfileBp(uid);
           if (data) {
             setPhotoUri(data.photoUri || '');
             setName(data.name || '');
@@ -66,13 +68,28 @@ const profileBP = () => {
       });
 
       if (!result.canceled) {
-        setPhotoUri(result.assets[0].uri);
+        setTempPhotoUri(result.assets[0].uri);
       }
     }
   };
 
   const toggleEdit = async () => {
     if (isEditable) {
+      if (!name || !email || !phoneNum || !address) {
+        Alert.alert('Empty Fields', 'Please fill out all required fields.');
+        return;
+      }
+
+      let finalPhotoUri = photoUri;
+
+      if (tempPhotoUri) {
+        if (photoUri) {
+          await deleteImage(photoUri); // Delete the previous image if it exists
+        }
+        finalPhotoUri = await uploadProfileImage(uid, tempPhotoUri); // Upload the new image and get its URL
+        setPhotoUri(finalPhotoUri); // Update the photoUri state with the new URL
+      }
+
       const updatedDetails = {
         name,
         email,
@@ -83,26 +100,14 @@ const profileBP = () => {
         UEN,
         postal,
         city,
-        photoUri,
+        photoUri: finalPhotoUri,
       };
-      if (!name) {
-        Alert.alert('Empty Field', 'Name cannot be empty.');
-        return;
-      } else if (!email) {
-        Alert.alert('Empty Field', 'Email cannot be empty.');
-        return;
-      } else if (!phoneNum) {
-        Alert.alert('Empty Field', 'Phone number cannot be empty');
-        return;
-      } else if (!address) {
-        Alert.alert('Empty Field', 'Address not be empty');
-        return;
-      }
+
       try {
         await UpdateBpProfileController.updateBpProfile(uid, updatedDetails);
         console.log('Profile updated successfully!');
       } catch (error) {
-        alert(error.message);
+        Alert.alert('Error', error.message);
       }
     }
     setIsEditable(!isEditable);
@@ -110,19 +115,15 @@ const profileBP = () => {
 
   return (
     <>
-     
       <Stack.Screen
         options={{
           title: 'Edit profile',
           headerStyle: { backgroundColor: '#E58B68' },
           headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Medium', fontSize: 16},
           headerLeft: () => (
-            <ImageButton
-              source={require('../assets/back.png')}
-              imageSize={{ width: 24, height: 24 }}
-              customStyle={{ paddingLeft: 10 }}
-              onPress={() => router.back('/profileBP')}
-            />
+            <TouchableOpacity onPress={() => router.back()}>
+              <Ionicons name='chevron-back' size={24} color='white' />
+            </TouchableOpacity>
           ),
           headerRight: () => (
             <TouchableOpacity style={styles.button} onPress={toggleEdit}>
@@ -137,14 +138,17 @@ const profileBP = () => {
       />
       <ScrollView>
         <View style={styles.photoSection}>
-          <TouchableOpacity style={styles.changePhotoButton} onPress={addImage} editable={isEditable}>
-            <Image
-              source={photoUri ? { uri: photoUri } : { uri: '' }}
-              style={styles.profilePhoto}
-              resizeMode="cover"
-            />
+          <TouchableOpacity style={{ alignItems: 'center', margin: 24 }} onPress={isEditable ? addImage : null}>
+            {tempPhotoUri ? (
+              <Image style={styles.profileImage} source={{ uri: tempPhotoUri }} />
+            ) : (
+              photoUri ? (
+                <Image style={styles.profileImage} source={{ uri: photoUri }} />
+              ) : (
+                <FontAwesome name="user-circle" color="grey" size={80} />
+              )
+            )}
             {isEditable && <Text style={styles.changePhotoText}>Change Photo</Text>}
-
           </TouchableOpacity>
         </View>
 
@@ -185,7 +189,7 @@ const profileBP = () => {
           </View>
         </View>
 
-        <Text style={styles.subheader}> Business Information </Text>
+        <Text style={styles.subheader}>Business Information</Text>
 
         <View style={styles.section}>
           <View style={styles.item}>
@@ -216,13 +220,11 @@ const profileBP = () => {
           </View>
         </View>
 
-        <Text style={styles.subheader}> Address Information </Text>
+        <Text style={styles.subheader}>Address Information</Text>
         <View style={styles.section}>
           <View style={styles.item}>
             <Text style={styles.text}>City/Town</Text>
-            <TextInput style={styles.input} 
-              value={city} 
-              editable={false} />
+            <TextInput style={styles.input} value={city} editable={false} />
           </View>
 
           <View style={styles.item}>
@@ -247,13 +249,6 @@ const profileBP = () => {
             />
           </View>
         </View>
-        <View style={styles.section}>
-          <View style={styles.item}>
-            <TouchableOpacity onPress={() => router.push('resetPwd1')}>
-              <Text style={styles.resetPasswordText}>Reset Password</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
       </ScrollView>
     </>
   );
@@ -264,29 +259,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 20,
   },
-  profilePhoto: {
+  profileImage: {
     width: 100,
     height: 100,
     borderRadius: 50,
     backgroundColor: '#ccc',
   },
-  changePhotoButton: {
-    marginTop: 10,
-  },
-  form: {
-    marginTop: 20,
-    paddingHorizontal: 20,
-  },
-  formRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginVertical: 10,
-  },
-  resetPasswordText: {
-    fontFamily: 'Poppins-Regular',
+  changePhotoText: {
+    fontFamily: 'Poppins-Medium',
     fontSize: 14,
-    color: 'red',
+    color: 'blue',
+    marginTop: 8,
   },
   section: {
     backgroundColor: 'white',
@@ -319,13 +302,6 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontFamily: 'Poppins-Regular',
   },
-
-  changePhotoText: {
-    fontFamily: 'Poppins-Medium',
-    fontSize: 14,
-    color: 'blue',
-    marginTop: 8,
-},
 });
 
 export default profileBP;

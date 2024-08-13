@@ -88,8 +88,6 @@ const settingBP = () => {
           /> ) : (
             <FontAwesome name="user-circle" color="grey" size={64} style={{marginRight:16}} />
            )}
-
-            {/* // <Image style={styles.profileImage} source={{ uri: photoUri }} /> */}
             <View>
               <Text style={{ fontFamily: 'Poppins-Bold', fontSize: 16 }}>{entityName}</Text>
               <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 14 }}>
