@@ -1,59 +1,75 @@
 import React, { useState } from 'react';
-import { SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, Image, ScrollView, FlatList, } from 'react-native';
-import { AntDesign } from '@expo/vector-icons';
-import * as ImagePicker from 'expo-image-picker';
+import { SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, Image, ScrollView } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import * as ImagePicker from 'expo-image-picker';
 import { useAuth } from '../service/AuthContext';
 import { router, useLocalSearchParams, Stack } from 'expo-router';
 import UpdateMenuController from '../Controller/UpdateMenuController';
+import { decode } from 'base-64';
+import { deleteImage, uploadMenuImage } from '../service/storageService';
+
 
 const EditMenuPage = () => {
   const { user } = useAuth();
   const { menuData } = useLocalSearchParams();
-  const [parsedMenuData, setParsedMenuData] = useState(menuData ? JSON.parse(menuData) : null);
+  const [parsedMenuData, setParsedMenuData] = useState(menuData ? JSON.parse(decode(menuData)) : null);
   const [image, setImage] = useState(parsedMenuData.image);
+  const [tempImage, setTempImage] = useState(null)
   const [foodName, setFoodName] = useState(parsedMenuData.foodName);
   const [price, setPrice] = useState(parsedMenuData.price.toString());
   const [description, setDesc] = useState(parsedMenuData.description);
-  const [status, setStatus] = useState(parsedMenuData.status);
-  const [isEditable, setIsEditable] = useState(false);  const [ingredients, setIngredients] = useState(parsedMenuData.ingredients);
+  const [isEditable, setIsEditable] = useState(false);
+  const [ingredients, setIngredients] = useState(parsedMenuData.ingredients);
   const [calories, setCal] = useState(parsedMenuData.calories);
   const [protein, setProtein] = useState(parsedMenuData.protein);
   const [carbs, setCarbs] = useState(parsedMenuData.carbs);
   const [fat, setFat] = useState(parsedMenuData.fat);
 
   const saveMenu = async () => {
-    if (user) {
-      const updateMenu = {
-        id: parsedMenuData.id,
-        foodName,
-        price,
-        description,
-        image,
-        status,
-        ingredients,
-        calories,
-        protein,
-        carbs,
-        fat
-      };
-
-      try {
-        await UpdateMenuController.updateMenu(user.uid, updateMenu);
-        console.log('Menu log updated:', updateMenu);
-        router.replace('Boundary/foodBP');
-      } catch (error) {
-        console.error('Error updating menu:', error);
-      }
+    if (!image || !foodName || !description || !ingredients || !calories || !protein || !carbs || !fat || !price) {
+      Alert.alert('Missing Information', 'Please fill out all fields and select an image before saving.');
+      return;
     }
+
+    let finalImage = image;
+  
+  if (tempImage) {
+    const previousImage = parsedMenuData.image;
+    if (previousImage) {
+      await deleteImage(previousImage); // Delete the previous image if it exists
+    }
+    finalImage = await uploadMenuImage(user.uid, tempImage); // Upload the new image and get its URL
+    setImage(finalImage); // Update the image state with the new URL
+  }
+
+  const updateMenu = {
+    id: parsedMenuData.id,
+    foodName,
+    price,
+    description,
+    image: finalImage,
+    ingredients,
+    calories,
+    protein,
+    carbs,
+    fat,
+  };
+
+  try {
+    await UpdateMenuController.updateMenu(user.uid, updateMenu);
+    console.log('Menu log updated:', updateMenu);
+    router.replace('Boundary/foodBP');
+  } catch (error) {
+    console.error('Error updating menu:', error);
+  }
   };
 
   const toggleEdit = () => {
     if (isEditable) {
-        saveMenu();
+      saveMenu();
     }
     setIsEditable(!isEditable);
-};
+  };
 
   const addImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -70,7 +86,7 @@ const EditMenuPage = () => {
     });
 
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      setTempImage(result.assets[0].uri);
     }
   };
 
@@ -79,22 +95,18 @@ const EditMenuPage = () => {
       <Stack.Screen options={{
         title: 'Edit menu',
         headerStyle: { backgroundColor: '#E58B68' },
-        headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold' },
+        headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Medium', fontSize:16 },
         headerLeft: () => (
           <TouchableOpacity onPress={() => router.back('Boundary/foodBP')}>
-            <AntDesign name='close' size={24} color='white' />
+            <Ionicons name='chevron-back' size={24} color='white' />
           </TouchableOpacity>
-        ), headerRight: () => (
-            <TouchableOpacity style={styles.button}
-                  onPress={toggleEdit}>
-                  <Text style={{fontFamily: 'Poppins-SemiBold', fontSize:14, color:'white'}}>
-                    {isEditable ? 'Save' : 'Edit'}
-                  </Text>
-                </TouchableOpacity>
-
-          // <TouchableOpacity onPress={() => saveMenu()}>
-          //   <Text style={{ padding: 2, marginHorizontal: 8, fontFamily: 'Poppins-SemiBold', fontSize: 16, color: 'white' }}>Save</Text>
-          // </TouchableOpacity>
+        ),
+        headerRight: () => (
+          <TouchableOpacity style={styles.button} onPress={toggleEdit}>
+            <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 14, color: 'white' }}>
+              {isEditable ? 'Save' : 'Edit'}
+            </Text>
+          </TouchableOpacity>
         ),
         headerTitle: 'Menu',
         headerTitleAlign: 'center',
@@ -102,27 +114,26 @@ const EditMenuPage = () => {
 
       <SafeAreaView style={styles.safeArea}>
         <ScrollView contentContainerStyle={styles.scrollContainer}>
-
-          <View style={styles.itemContainer}>
+          <Text style={styles.title}>Menu Info</Text>
+          <View style={styles.section}>
             <View style={styles.fieldSection}>
-              <View style={styles.textBox}>
-                <Text style={styles.title}>Image</Text>
-                <Text style={styles.h3}>Upload image {"\n"}to let the user know </Text>
-              </View>
-              {image && <Image source={{ uri: image }} style={styles.image} />}
-              {!image && (
-                // Updated button style to align text below the icon
-                <TouchableOpacity onPress={addImage} style={styles.uploadButton}>
-                  <Image source={require('../assets/iconCarrier.png')} />
-                  {/* Updated to style the text below the image icon */}
-                  <Text style={styles.uploadText}>{image ? 'Edit' : 'Upload'} Menu photo</Text>
-                </TouchableOpacity>
-              )}
+              <Text style={styles.label}>Menu Image</Text>
+              <TouchableOpacity 
+                onPress={addImage} 
+                style={styles.uploadButton} 
+                disabled={!isEditable} // Disable if not editable
+              >
+                {tempImage ? (
+                  <Image source={{ uri: tempImage }} style={styles.image} />
+                ) : (
+                  <Image source={{ uri: image }} style={styles.image} />
+                )}
+              </TouchableOpacity>
             </View>
-
+            <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5 }} />
             <View style={styles.fieldSection}>
-              <Text style={styles.title}>Food Name</Text>
-              {isEditable?(
+              <Text style={styles.label}>Food Name</Text>
+              {isEditable ? (
                 <TextInput
                   placeholder="Food Name"
                   value={foodName}
@@ -131,12 +142,12 @@ const EditMenuPage = () => {
                 />
               ) : (
                 <Text style={styles.textInput}>{foodName}</Text>
-              )}   
+              )}
             </View>
-
+            <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5 }} />
             <View style={styles.fieldSection}>
-              <Text style={styles.title}>Price</Text>
-              {isEditable?(
+              <Text style={styles.label}>Price</Text>
+              {isEditable ? (
                 <TextInput
                   placeholder="Price"
                   value={price}
@@ -144,14 +155,14 @@ const EditMenuPage = () => {
                   style={styles.textInput}
                   editable={isEditable}
                 />
-              ):(
+              ) : (
                 <Text style={styles.textInput}>{price}</Text>
               )}
             </View>
-
+            <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5 }} />
             <View style={styles.fieldSection}>
-              <Text style={styles.title}>Description</Text>
-              {isEditable?(
+              <Text style={styles.label}>Description</Text>
+              {isEditable ? (
                 <TextInput
                   style={styles.ingredientsInput}
                   value={description}
@@ -160,14 +171,14 @@ const EditMenuPage = () => {
                   multiline
                   editable={isEditable}
                 />
-              ) : ( 
+              ) : (
                 <Text style={styles.ingredientsInput}>{description}</Text>
               )}
             </View>
-
+            <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5 }} />
             <View style={styles.fieldSection}>
-              <Text style={styles.title}>Ingredients</Text>
-              {isEditable?(
+              <Text style={styles.label}>Ingredients</Text>
+              {isEditable ? (
                 <TextInput
                   style={styles.ingredientsInput}
                   value={ingredients}
@@ -176,88 +187,90 @@ const EditMenuPage = () => {
                   multiline
                   editable={isEditable}
                 />
-              ):( 
+              ) : (
                 <Text style={styles.ingredientsInput}>{ingredients}</Text>
               )}
             </View>
           </View>
 
-          <View style={styles.factContainer}>
-          <Text style={styles.h1}>Nutrition Fact</Text>
+          <Text style={styles.title}>Nutrition Fact</Text>
+          <View style={styles.section}>
             <View style={styles.fieldSection}>
-              <Text style={styles.title}>Calories</Text>
+              <Text style={styles.label}>Calories</Text>
               <View style={styles.infoContainer}>
-                {isEditable? (
+                {isEditable ? (
                   <TextInput
                     value={calories}
                     placeholder='Add food calorie'
                     onChangeText={setCal}
                     keyboardType='numeric'
                     editable={isEditable}
+                    style={styles.textInput}
                   />
-                ):(
+                ) : (
                   <Text style={styles.textInput}>{calories}</Text>
                 )}
-                <Text style={styles.unit}>cal</Text>
+                <Text style={styles.unit}>kcal</Text>
               </View>
             </View>
-          
+            <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5 }} />
             <View style={styles.fieldSection}>
-              <Text style={styles.title}>Fat</Text>
+              <Text style={styles.label}>Fat</Text>
               <View style={styles.infoContainer}>
-              {isEditable? (
-                <TextInput
-                  value={fat}
-                  placeholder='Add food fat'
-                  onChangeText={setFat}
-                  keyboardType='numeric'
-                  editable={isEditable}
-                />
-              ):(
-                <Text style={styles.textInput}>{fat}</Text>
+                {isEditable ? (
+                  <TextInput
+                    value={fat}
+                    placeholder='Add food fat'
+                    onChangeText={setFat}
+                    keyboardType='numeric'
+                    editable={isEditable}
+                    style={styles.textInput}
+                  />
+                ) : (
+                  <Text style={styles.textInput}>{fat}</Text>
                 )}
                 <Text style={styles.unit}>g</Text>
               </View>
             </View>
-
+            <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5 }} />
             <View style={styles.fieldSection}>
-              <Text style={styles.title}>Carbohydrate</Text>
+              <Text style={styles.label}>Carbohydrate</Text>
               <View style={styles.infoContainer}>
-                {isEditable?(
+                {isEditable ? (
                   <TextInput
                     value={carbs}
                     placeholder='Add food carbohydrate'
                     onChangeText={setCarbs}
                     keyboardType='numeric'
                     editable={isEditable}
+                    style={styles.textInput}
                   />
-                ):(
+                ) : (
                   <Text style={styles.textInput}>{carbs}</Text>
                 )}
                 <Text style={styles.unit}>g</Text>
               </View>
             </View>
-
+            <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5 }} />
             <View style={styles.fieldSection}>
-              <Text style={styles.title}>Protein</Text>
+              <Text style={styles.label}>Protein</Text>
               <View style={styles.infoContainer}>
-                {isEditable?(
-                <TextInput
-                  value={protein}
-                  placeholder='Add food protein'
-                  onChangeText={setProtein}
-                  keyboardType='numeric'
-                  editable = {isEditable}
-                />
-                ):(
+                {isEditable ? (
+                  <TextInput
+                    value={protein}
+                    placeholder='Add food protein'
+                    onChangeText={setProtein}
+                    keyboardType='numeric'
+                    editable={isEditable}
+                    style={styles.textInput}
+                  />
+                ) : (
                   <Text style={styles.textInput}>{protein}</Text>
                 )}
                 <Text style={styles.unit}>g</Text>
               </View>
             </View>
-
-
-        </View>
+          </View>
         </ScrollView>
       </SafeAreaView>
     </>
@@ -265,77 +278,65 @@ const EditMenuPage = () => {
 };
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1 },
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+  },
   scrollContainer: {
     flexGrow: 1,
   },
-
-  title:{
-    fontSize: 14,
-    paddingHorizontal:10,
+  title: {
+    fontSize: 12,
     fontFamily: 'Poppins-Medium',
+    marginTop: 16,
+    marginHorizontal: 16,
+    color: '#808080',
   },
-  
-  h3:{
-    fontSize:14,
-    paddingHorizontal: 10,
-    color: 'gray',
-    marginTop: 8,
-  },
-
-  textBox:{
-    paddingVertical: 10,
-  },
-  
-  fieldSection: {
-    borderBottomColor: '#d9d9d9',
-    borderBottomWidth: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  label: {
+    fontSize: 14,
     fontFamily: 'Poppins-Regular',
-    paddingVertical: 16,
   },
-  
-  itemContainer: {
-    backgroundColor: 'white',
-    paddingHorizontal: 16,
-  },
-
-  ingredientsInput: {
-    borderColor: 'gray',
-    paddingHorizontal: 90,
-    paddingVertical: 5,
+  fieldSection: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    paddingVertical: 16,
+    alignItems: 'center',
   },
-
-  factContainer: {
+  textInput: {
+    fontFamily: 'Poppins-Regular',
+    fontSize: 14,
+    textAlign: 'right',
+  },
+  section: {
     backgroundColor: 'white',
     paddingHorizontal: 16,
-    marginTop: 20,
+    borderColor: '#808080',
+    borderTopWidth: 0.5,
+    borderBottomWidth: 0.5,
   },
-
+  ingredientsInput: {
+    textAlign: 'right',
+  },
   infoContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
   },
-
-  h1:{
-    fontFamily: 'Poppins-SemiBold'
-  },
-  
   unit: {
     fontSize: 14,
-    color: 'gray',
-    paddingHorizontal: 5,
+    fontFamily: 'Poppins-Regular',
+    paddingLeft: 8,
   },
   image: {
-    width: 150,
-    height: 150,
-    borderRadius: 10,
+    width: 80,
+    height: 80,
+    borderRadius: 8,
     marginVertical: 10,
-  }
-
+  },
+  uploadButton: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
 
 export default EditMenuPage;

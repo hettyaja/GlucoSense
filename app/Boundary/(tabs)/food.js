@@ -15,7 +15,7 @@ const Food = () => {
     const fetchFeaturedMenu = async () => {
       try {
         const menuCollection = await fetchMenuData(); // Fetch menu data
-        setFeaturedMenu(menuCollection.slice(0, 4)); // Assuming you want to show the first 4 items as featured
+        setFeaturedMenu(menuCollection.slice(0, 5)); // Assuming you want to show the first 4 items as featured
       } catch (error) {
         console.error('Error fetching menu data:', error);
       }

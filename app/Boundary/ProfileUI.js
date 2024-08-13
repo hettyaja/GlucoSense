@@ -11,13 +11,13 @@ import setBodyProfileController from '../Controller/SetBodyProfileController';
 import updateAccountProfileController from '../Controller/UpdateAccountProfileController';
 import setDiabetesTypeController from '../Controller/setDiabetesTypeController';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { uploadImage } from '../service/storageService'; // Add this import
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { deleteImage, uploadProfileImage } from '../service/storageService';
 
 const Profile = () => {
     const { profileData } = useProfile();
     const { user } = useAuth();
-    const [previousImage, setPreviousImage] = useState('')
+    const [previousImage, setPreviousImage] = useState('');
     const [photoUri, setPhotoUri] = useState('');
     const [localUsername, setUsername] = useState('');
     const [localName, setName] = useState('');
@@ -29,7 +29,7 @@ const Profile = () => {
     const [localDiabetesType, setDiabetesType] = useState('');
     const [isEditable, setIsEditable] = useState(false);
     const [showDatePicker, setShowDatePicker] = useState(false);
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(true);
 
     const maxBirthdate = new Date();
     maxBirthdate.setFullYear(maxBirthdate.getFullYear() - 10);
@@ -52,8 +52,8 @@ const Profile = () => {
                 console.log('Is Valid Date:', isValidDate);
 
                 setBirthdate(isValidDate ? birthdate : new Date());
-                
-                setPreviousImage(profileData.image)
+
+                setPreviousImage(profileData.image);
                 setPhotoUri(profileData.image);
                 setUsername(profileData.username);
                 setName(profileData.name);
@@ -65,7 +65,7 @@ const Profile = () => {
             } catch (error) {
                 console.error(error);
             } finally {
-                setLoading(false);  // Set loading to false after fetching data
+                setLoading(false); // Set loading to false after fetching data
             }
         };
 
@@ -85,16 +85,28 @@ const Profile = () => {
             }
             try {
                 let imageUrl = photoUri;
-                if (photoUri) {
+                if (photoUri && photoUri !== previousImage) {
                     imageUrl = await uploadImage(user.uid, photoUri, previousImage);
                 }
                 await updateAccountProfileController.setAccProfile(user.uid, imageUrl, localName, localEmail, localUsername);
                 await setBodyProfileController.setBodProfile(user.uid, localGender, localBirthdate, localWeight, localHeight, localDiabetesType);
             } catch (error) {
-                alert(error.message);
+                Alert.alert("Error", error.message);
             }
         }
         setIsEditable(!isEditable);
+    };
+
+    const uploadImage = async (uid, imageUri, previousImageUri) => {
+        try {
+            if (previousImageUri) {
+                await deleteImage(previousImageUri); // Delete previous image if it exists
+            }
+            return await uploadProfileImage(uid, imageUri); // Upload new image and return its URL
+        } catch (error) {
+            console.error("Error uploading image: ", error);
+            throw new Error("Failed to upload image. Please try again.");
+        }
     };
 
     if (loading) {
@@ -156,13 +168,13 @@ const Profile = () => {
             }} />
 
             <ScrollView style={styles.safeArea} keyboardShouldPersistTaps="handled">
-            <TouchableOpacity style={{ alignItems: 'center', margin: 24 }} onPress={isEditable ? pickImage : null}>
-                {photoUri ? (
-                    <Image style={styles.profileImage} source={{ uri: photoUri }} />
-                ) : (
-                    <FontAwesome name="user-circle" color="grey" size={80} />
-                )}
-                {isEditable && <Text style={styles.changePhotoText}>Change Photo</Text>}
+                <TouchableOpacity style={{ alignItems: 'center', margin: 24 }} onPress={isEditable ? pickImage : null}>
+                    {photoUri ? (
+                        <Image style={styles.profileImage} source={{ uri: photoUri }} />
+                    ) : (
+                        <FontAwesome name="user-circle" color="grey" size={80} />
+                    )}
+                    {isEditable && <Text style={styles.changePhotoText}>Change Photo</Text>}
                 </TouchableOpacity>
 
                 <Text style={styles.sectionText}>ACCOUNT DETAILS</Text>

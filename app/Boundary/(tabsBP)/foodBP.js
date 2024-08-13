@@ -10,6 +10,7 @@ import DeleteMenuController from '../../Controller/DeleteMenuController';
 import { useAuth } from '../../service/AuthContext';
 import UpdateMenuController from '../../Controller/UpdateMenuController';
 import Header from '../../components/Header';
+import { encode } from 'base-64';
 
 const foodBP = () => {
   const {user} = useAuth()
@@ -31,11 +32,11 @@ const foodBP = () => {
   }, [user]);
 
   const filteredMenu = menuData.filter(menu =>
-    menu.title && menu.title.toLowerCase().includes(searchQuery.toLowerCase())
+    menu.foodName && menu.foodName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handleEdit = (menu) =>{
-    router.push({pathname: 'Boundary/EditMenuPage', params: {menuData: JSON.stringify(menu)}})
+    router.push({pathname: 'Boundary/EditMenuPage', params: {menuData: encode(JSON.stringify(menu))}})
   }
 
   const confirmDelete = (menu) => {
@@ -83,8 +84,8 @@ const foodBP = () => {
           </View>
         </View>
 
-        <ScrollView contentContainerStyle={{ padding: 20 }}>
-          {menuData.map((menu) => (
+        <ScrollView contentContainerStyle={{ padding: 16 }}>
+          {filteredMenu.map((menu) => (
             <View key={menu.id} style={styles.menuCard}>
               <MenuCard menu={menu} onDelete={()=> confirmDelete(menu)} onEdit={() => handleEdit(menu)} />
             </View>
@@ -94,12 +95,6 @@ const foodBP = () => {
     </>
   );
 };
-
-
-
-
-
-
 
 const styles = StyleSheet.create({
   tabButton: {

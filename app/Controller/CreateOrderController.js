@@ -1,21 +1,15 @@
-import Order from "../Entity/Order";
+import FoodOrder from "../Entity/FoodOrder";
 
 class CreateOrderController {
     static async createOrder(orderData) {
         try {
-            return Order.createOrder(orderData)
+            return FoodOrder.createOrder(orderData)
         } catch(error) {
             throw error
         }
     }
     
-    static async createDietPlanOrder(orderData) {
-        try {
-            return Order.createDietPlanOrder(orderData)
-        } catch (error) {
-            throw error
-        }
-    }
+
 }
 
 export default CreateOrderController

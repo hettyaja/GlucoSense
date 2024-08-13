@@ -6,15 +6,14 @@ import { router } from 'expo-router';
 import PopupMenu from './PopupMenu';
 import DeleteMenuController from '../Controller/DeleteMenuController';
 import { useAuth } from '../service/AuthContext';
-
+import { encode } from 'base-64';
  
 const MenuCard = ({ menu, onDelete , onEdit}) => {
 
   const {user} = useAuth()
 
   return (
-    <TouchableOpacity onPress={() => router.push({ pathname: 'Boundary/EditMenuPage', params: { menuData: JSON.stringify(menu) } })}>      
-    <View style={styles.card}>
+    <TouchableOpacity style={styles.card} onPress={() => router.push({ pathname: 'Boundary/EditMenuPage', params: {menuData: encode(JSON.stringify(menu))} })}>      
       {menu.image && <Image source={{ uri: menu.image }} style={styles.image} />}
       <View style={styles.infoContainer}>
         <Text style={styles.title}>{menu.foodName}</Text>
@@ -28,20 +27,8 @@ const MenuCard = ({ menu, onDelete , onEdit}) => {
           onDelete={() => onDelete(menu.id)}
         />
       </View>
-    </View>
   </TouchableOpacity>
 );
-};
-
-MenuCard.propTypes = {
-  menu: PropTypes.shape({
-    image: PropTypes.string,
-    foodName: PropTypes.string.isRequired,
-    price: PropTypes.number.isRequired,
-    isSoldOut: PropTypes.bool,
-  }).isRequired,
-  onDelete: PropTypes.func.isRequired,
-  onEdit : PropTypes.func.isRequired
 };
 
 const styles = StyleSheet.create({
@@ -49,13 +36,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: '#fff',
     borderRadius: 10,
-    overflow: 'hidden',
     marginBottom: 10,
     elevation: 2,
   },
   image: {
     width: 100,
     height: 100,
+    borderTopLeftRadius:8,
+    borderBottomLeftRadius:8
   },
   infoContainer: {
     padding: 10,
