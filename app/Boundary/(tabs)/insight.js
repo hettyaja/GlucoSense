@@ -214,8 +214,8 @@ const Insight = () => {
               ))}
               {yTicks && yTicks.map((tick, index) => (
                 <G key={index}>
-                  <Line x1="40" y1={yScale(tick)} x2="30" y2={yScale(tick)} stroke="black" />
-                  <SvgText x="20" y={yScale(tick) + 5} fill="black" fontSize="12" textAnchor="end">{tick}</SvgText>
+                  <Line x1="30" y1={yScale(tick)} x2="30" y2={yScale(tick)} stroke="black" />
+                  <SvgText x="30" y={yScale(tick) + 5} fill="black" fontSize="12" textAnchor="end">{tick}</SvgText>
                 </G>
               ))}
             </Svg>
