@@ -76,8 +76,8 @@ const Food = () => {
         </View>
         
         <ScrollView horizontal contentContainerStyle={styles.featuredMenuContainer}>
-          {featuredMenu.map((menu) => (
-            <TouchableOpacity key={menu.id} style={styles.menuCard} onPress={() => handleFoodOrder(menu)}>
+          {featuredMenu.map((menu, index) => (
+            <TouchableOpacity key={index} style={styles.menuCard} onPress={() => handleFoodOrder(menu)}>
               <Image source={{ uri: menu.image }} style={styles.menuImage} />
               <View style={styles.menuTextContainer}>
                 <Text style={styles.menuTitle}>{menu.title}</Text>
@@ -94,8 +94,8 @@ const Food = () => {
           </TouchableOpacity>
         </View>
         <ScrollView horizontal contentContainerStyle={styles.featuredMenuContainer}>
-          {dietPlans.map((plan) => (
-            <TouchableOpacity key={plan.id} style={styles.menuCard} onPress={() => handleDietPlanOrder(plan)}>
+          {dietPlans.map((plan, index) => (
+            <TouchableOpacity key={index} style={styles.menuCard} onPress={() => handleDietPlanOrder(plan)}>
               <Image source={{ uri: plan.planImage || 'https://via.placeholder.com/150' }} style={styles.menuImage} />
               <View style={styles.menuTextContainer}>
                 <Text style={styles.menuTitle}>{plan.planName}</Text>

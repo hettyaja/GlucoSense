@@ -77,6 +77,7 @@ const PaymentMethod = () => {
                 <TouchableOpacity 
                   style={styles.row} 
                   onPress={() => selectMode ? handleSelectCard(card) : null }
+                  disabled={!selectMode}
                 >
                   <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <FontAwesome name='cc-visa' size={24} color='grey' style={{ paddingRight: 8 }} />

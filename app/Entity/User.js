@@ -584,6 +584,40 @@ class User {
       throw new Error('Failed to save user goals. Please try again.');
     }
   }
+
+  static async updateAddress (userId, address) {
+    const userAddressCollection = collection(db, 'users', userId, 'addressDetails');
+    const batch = writeBatch(db);
+
+    try {
+      // Get all addresses
+      const allAddressesSnapshot = await getDocs(userAddressCollection);
+
+      // Set all addresses to not default
+      allAddressesSnapshot.forEach((docSnapshot) => {
+        batch.update(docSnapshot.ref, { default: false });
+      });
+
+      // Set the selected address as default
+      const addressDocRef = doc(db, 'users', userId, 'addressDetails', address.id);
+      batch.update(addressDocRef, { default: true });
+
+      // Commit the batch
+      await batch.commit();
+    } catch (error) {
+      console.error('Error updating address:', error);
+    }
+  }
+
+  static async deleteAddress (userId, address) {
+    try {
+      const addressDocRef = doc(db, 'users', userId, 'addressDetails', address.id);
+      await deleteDoc(addressDocRef);
+    } catch (error) {
+      console.error('Error deleting address:', error);
+      throw error;
+    }
+  }
 }
 
 export default User;

@@ -5,9 +5,12 @@ import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import GetAddressController from '../Controller/GetAddressController';
+import UpdateAddressController from '../Controller/UpdateAddressController'; // Import the update controller
+import DeleteAddressController from '../Controller/DeleteAddressController'; // Import the delete controller
 import { useAuth } from '../service/AuthContext';
 import { usePaymentAndAddress } from '../context/PaymentAndAddressContext'; // Import the context
 import RadioButton from '../components/RadioButton'; 
+import PopupMenu from '../components/PopupMenu'; // Assuming you have a PopupMenu component for edit and delete actions
 
 const ManageAddress = () => {
   const { user } = useAuth();
@@ -45,6 +48,20 @@ const ManageAddress = () => {
     router.back();
   };
 
+  const handleDefault = async (address) => {
+    await UpdateAddressController.updateAddress(user.uid, address);
+    fetchData(); // Refresh the data after setting the default address
+  };
+
+  const handleDelete = async (address) => {
+    await DeleteAddressController.deleteAddress(user.uid, address);
+    fetchData(); // Refresh the data after deleting the address
+  };
+
+  const handleEdit = (address) => {
+    router.push({ pathname: 'Boundary/EditAddressUI', params: { addressData: JSON.stringify(address) } });
+  };
+
   return (
     <>
       <Header
@@ -63,7 +80,8 @@ const ManageAddress = () => {
               <View key={index}>
                 <TouchableOpacity 
                   style={styles.row} 
-                  onPress={() => selectMode ? handleSelectAddress(address) : handleEdit(address)}
+                  onPress={() => selectMode ? handleSelectAddress(address) : null }
+                  disabled={!selectMode}
                 >
                   <View style={{ flexDirection: 'row', flex: 1 }}>
                     <MaterialCommunityIcons name='map-marker-radius-outline' size={24} color='black' style={{ paddingRight: 8 }} />
@@ -78,7 +96,11 @@ const ManageAddress = () => {
                   {selectMode ? (
                     <RadioButton selected={selectedAddress?.id === address.id} />
                   ) : (
-                    <Ionicons name='chevron-forward' size={24} color='black' />
+                    <PopupMenu
+                      onEdit={() => handleEdit(address)}
+                      onDelete={() => handleDelete(address)}
+                      setDefault={() => handleDefault(address)}
+                    />
                   )}
                 </TouchableOpacity>
                 <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5, marginHorizontal: 16 }} />
