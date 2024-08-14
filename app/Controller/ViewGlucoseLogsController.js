@@ -10,4 +10,4 @@ class ViewGlucoseLogsController {
     }
 }
 
-export default ViewGlucoseLogsController
+export default ViewGlucoseLogsController;
