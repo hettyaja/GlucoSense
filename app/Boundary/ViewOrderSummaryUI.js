@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput, ScrollView, Alert } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { router, useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams, useFocusEffect } from 'expo-router';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import Header from '../components/Header';
@@ -24,11 +24,6 @@ const ViewOrderSummaryUI = () => {
   const [gstFee, setGstFee] = useState(0);
   const [notes, setNotes] = useState('');
 
-  useEffect(() => {
-    fetchAddresses();
-    fetchPayment();
-    calculateTotalPayment();
-  }, []);
 
   useEffect(() => {
     if (selectedAddress) {
@@ -69,6 +64,14 @@ const ViewOrderSummaryUI = () => {
     setGstFee(gstFee);
   };
 
+  useFocusEffect(
+    useCallback(() => {
+      fetchAddresses();
+      fetchPayment();
+      calculateTotalPayment();
+    }, [selectedAddress, selectedCard])
+  );
+
   const generateOrderRefNumber = () => {
     const now = new Date();
     const day = String(now.getDate()).padStart(2, '0');
@@ -101,7 +104,7 @@ const ViewOrderSummaryUI = () => {
       [
         {
           text: "OK",
-          onPress: () => router.push('Boundary/OrderHistory'), // Navigate to order history
+          onPress: () => router.push('Boundary/food'), // Navigate to order history
         }
       ]
     );
@@ -185,7 +188,7 @@ const ViewOrderSummaryUI = () => {
           ) : (
             <TouchableOpacity
               style={styles.addPaymentButton}
-              onPress={() => router.push('Boundary/AddPaymentMethod')}
+              onPress={() => router.push('Boundary/CardDetails')}
             >
               <AntDesign name="plus" size={20} />
               <Text style={styles.textPayment}>Add payment method</Text>

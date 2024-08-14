@@ -9,6 +9,14 @@ class UpdateAddressController {
     }
   }
 
+  static async updateAddressDetails(userId, addressData) {
+    try {
+      return await User.updateAddressDetails(userId, addressData);
+    } catch (error) {
+      throw error
+    }
+  }
+
 }
 
 export default UpdateAddressController;

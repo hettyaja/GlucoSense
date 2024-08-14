@@ -49,7 +49,7 @@ const EditAddressUI = () => {
         details,
         id: JSON.parse(addressData).id, // Include the address ID for updating
       };
-      await UpdateAddressController.updateAddress(user.uid, addressDetails);
+      await UpdateAddressController.updateAddressDetails(user.uid, addressDetails);
       router.back();
     } else {
       console.log('Validation', 'Please correct the errors');

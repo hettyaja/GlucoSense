@@ -618,6 +618,23 @@ class User {
       throw error;
     }
   }
+
+  static async updateAddressDetails(userId, updatedAddress){
+    try {
+        // Extract the id from the updatedAddress object
+        const { id, ...updatedAddressWithoutId } = updatedAddress;
+
+        // Reference to the specific document in the Firestore
+        const addressDocRef = doc(db, 'users', userId, 'addressDetails', id);
+
+        // Update the document with the remaining fields
+        await updateDoc(addressDocRef, updatedAddressWithoutId);
+
+        console.log("Address updated successfully");
+    } catch (error) {
+        throw error;
+    }
+  };
 }
 
 export default User;

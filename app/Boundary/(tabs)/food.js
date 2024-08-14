@@ -50,14 +50,14 @@ const Food = () => {
         <View style={styles.statusContainer}>
           <View style={styles.statusHeader}>
             <Text style={styles.statusHeaderText}>My Food</Text>
-            <TouchableOpacity style={styles.statusBox} onPress={() => router.push('Boundary/OrderHistory')}>
+            <TouchableOpacity style={styles.statusBox} onPress={() => router.push('Boundary/MyFoodOrderUI')}>
               <Text>3 Orders</Text>
             </TouchableOpacity>
           </View>
 
           <View style={styles.statusHeader}>
             <Text style={styles.statusHeaderText}>My Diet Plan</Text>
-            <TouchableOpacity style={styles.statusBox}>
+            <TouchableOpacity style={styles.statusBox} onPress={() => router.push('Boundary/MyDietPlanOrderUI')}>
               <Text>3 Plans</Text>
             </TouchableOpacity>
           </View>

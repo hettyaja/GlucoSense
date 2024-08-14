@@ -1,7 +1,7 @@
 import FoodOrder from "../Entity/FoodOrder"
 
 
-class ViewFoodOrderController {
+class ViewBusinessPartnerFoodOrderController {
   static async viewFoodOrderByBusinessPartnerId(businessPartnerId) {
     try {
       return await FoodOrder.fetchFoodOrderByBusinessPartnerId(businessPartnerId)
@@ -11,4 +11,4 @@ class ViewFoodOrderController {
   }
 }
 
-export default ViewFoodOrderController
+export default ViewBusinessPartnerFoodOrderController

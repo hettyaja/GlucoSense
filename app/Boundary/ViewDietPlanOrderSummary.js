@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput, ScrollView, Alert } from 'react-native';
-import React, { useState, useEffect } from 'react';
-import { useLocalSearchParams, router } from 'expo-router';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useLocalSearchParams, router, useFocusEffect } from 'expo-router';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Header from '../components/Header';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -21,12 +21,6 @@ const ViewDietPlanOrderSummary = () => {
   const [totalPayment, setTotalPayment] = useState(0);
   const [gstFee, setGstFee] = useState(0);
   const [notes, setNotes] = useState('');
-
-  useEffect(() => {
-    fetchAddresses();
-    fetchPayment();
-    calculateTotalPayment();
-  }, []);
 
   useEffect(() => {
     if (selectedAddress) {
@@ -66,6 +60,14 @@ const ViewDietPlanOrderSummary = () => {
     setTotalPayment(total);
     setGstFee(gstFee);
   };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchAddresses();
+      fetchPayment();
+      calculateTotalPayment();
+    }, [selectedAddress, selectedCard])
+  );
 
   const generateOrderRefNumber = () => {
     const now = new Date();
@@ -108,7 +110,7 @@ const ViewDietPlanOrderSummary = () => {
       [
         {
           text: "OK",
-          onPress: () => router.push('Boundary/OrderHistory'), // Navigate to order history
+          onPress: () => router.push('Boundary/food'), // Navigate to order history
         }
       ]
     );
@@ -192,7 +194,7 @@ const ViewDietPlanOrderSummary = () => {
           ) : (
             <TouchableOpacity
               style={styles.addPaymentButton}
-              onPress={() => router.push('Boundary/AddPaymentMethod')}
+              onPress={() => router.push('Boundary/CardDetails')}
             >
               <AntDesign name="plus" size={20} />
               <Text style={styles.textPayment}>Add payment method</Text>
