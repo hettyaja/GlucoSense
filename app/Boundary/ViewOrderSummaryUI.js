@@ -94,7 +94,7 @@ const ViewOrderSummaryUI = () => {
         {/* Address Part */}
         <View style={styles.container1}>
           {address ? (
-            <TouchableOpacity style={styles.addressBox} onPress={() => router.push('Boundary/ViewAddress')}>
+            <TouchableOpacity style={styles.addressBox} onPress={() => router.push('Boundary/ManageAddress')}>
               <View style={styles.topRow}>
                 <Text style={{ fontFamily: 'Poppins-SemiBold' }}>{address.name} | {address.phoneNumber}</Text>
                 <EvilIcons name="chevron-right" size={24} color="gray" />
@@ -139,7 +139,7 @@ const ViewOrderSummaryUI = () => {
         <View style={styles.container3}>
           <Text style={styles.header}>Payment Method</Text>
           {payment ? (
-            <TouchableOpacity style={styles.paymentBox} onPress={() => router.push('Boundary/ViewPaymentMethods')}>
+            <TouchableOpacity style={styles.paymentBox} onPress={() => router.push('Boundary/PaymentMethod')}>
               <View style={styles.topRow}>
                 <Text style={{ fontFamily: 'Poppins-SemiBold' }}>{payment.cardHolderName}</Text>
                 <EvilIcons name="chevron-right" size={24} color="gray" />
