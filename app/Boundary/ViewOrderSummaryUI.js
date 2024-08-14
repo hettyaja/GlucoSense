@@ -151,7 +151,7 @@ const ViewOrderSummaryUI = () => {
             <View style={{flex:1, flexDirection:'row'}}>
               <Image source={{ uri: parsedMenuData.image }} style={styles.orderImage} />
               <View style={{flex: 1,justifyContent:'space-between'}}>
-                <Text style={styles.commonText}>{parsedMenuData.foodName}</Text>
+                <Text style={styles.commonText}>{parsedMenuData.foodName} ({parsedMenuData.quantity}x)</Text>
                 <View style={{flexDirection:'row', justifyContent:'space-between'}}>
                   <Text style={styles.commonText}>${parsedMenuData.price}</Text>
                   <Text style={styles.commonText}>x{parsedMenuData.quantity}</Text>
@@ -229,8 +229,52 @@ const ViewOrderSummaryUI = () => {
 };
 
 const styles = StyleSheet.create({
-  box: {
+  container1: {
+    backgroundColor: 'white',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    marginBottom: 8,
+  },
+  container3: {
+    marginVertical: 8,
+    backgroundColor: 'white',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+  },
+  footerContainer: {
     flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderTopWidth: 1,
+    borderColor: '#E0E0E0',
+  },
+  totalPaymentContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    marginRight: 16,
+  },
+  totalPaymentLabel: {
+    fontFamily: 'Poppins-SemiBold',
+    fontSize: 14,
+  },
+  totalPaymentAmount: {
+    fontFamily: 'Poppins-SemiBold',
+    fontSize: 14,
+  },
+  placeOrderButton: {
+    backgroundColor: '#D96B41',
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  placeOrderText: {
+    fontFamily: 'Poppins-Bold',
+    fontSize: 14,
+    color: '#FAF5E1',
   },
   addAddressButton: {
     borderRadius: 8,
@@ -264,35 +308,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 14,
   },
-  smallText: {
-    fontFamily: 'Poppins-Medium',
-    fontSize: 10,
-  },
-  commonText: {
-    fontFamily: 'Poppins-Medium',
-    fontSize: 14,
-  },
-  container1: {
-    backgroundColor: 'white',
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-  },
-  container3: {
-    marginVertical: 8,
-    backgroundColor: 'white',
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-  },
-  container5: {
-    marginTop: 20,
-    backgroundColor: 'white',
-    height: 47,
-  },
-  addressItem: {
-    paddingHorizontal: 16,
-    paddingTop: 8,
-  },
-  topRow: {
+  box: {
     flexDirection: 'row',
     paddingBottom: 8,
   },
