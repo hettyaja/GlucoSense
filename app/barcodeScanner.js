@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
   },
   borderLine: {
-    width: 50,
+    width: 20,
     height: 150,
     borderColor: 'white',
   },
