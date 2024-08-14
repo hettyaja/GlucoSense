@@ -69,7 +69,7 @@ const ViewMenu = () => {
               <Image source={{ uri: menu.image }} style={styles.planImage} />
               <View style={styles.planInfo}>
                 <Text style={styles.planName}>{menu.title}</Text>
-                <Text style={styles.planPrice}>${menu.price}</Text>
+                <Text style={styles.planPrice}>$ {menu.price}</Text>
               </View>
             </TouchableOpacity>
           ))}

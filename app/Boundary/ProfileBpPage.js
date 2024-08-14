@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Alert, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Alert, ScrollView, ActivityIndicator } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter, Stack } from 'expo-router';
 import { useAuth } from '../service/AuthContext';
@@ -25,6 +25,7 @@ const profileBP = () => {
   const [postal, setPostal] = useState('');
   const [city, setCity] = useState('');
   const [isEditable, setIsEditable] = useState(false);
+  const [loading, setLoading] = useState(true);  // Add loading state
 
   useEffect(() => {
     const getBPProfile = async () => {
@@ -45,6 +46,8 @@ const profileBP = () => {
           }
         } catch (error) {
           console.error('Error fetching profile data:', error);
+        }finally {
+          setLoading(false);  // Set loading to false after fetching data
         }
       }
     };
@@ -112,6 +115,15 @@ const profileBP = () => {
     }
     setIsEditable(!isEditable);
   };
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#E58B68" />
+      </View>
+    );
+  }
+
 
   return (
     <>

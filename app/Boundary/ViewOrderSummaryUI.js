@@ -75,7 +75,8 @@ const ViewOrderSummaryUI = () => {
       deliveryAddress: address,
       orderRefNumber, // Add the order reference number here
       totalPayment, // Add the total payment here
-      status: 'waiting'
+      status: 'waiting',
+      orderDate: new Date()
     };
     await CreateOrderController.createOrder(orderData);
     router.push('Boundary/OrderHistory');
@@ -120,7 +121,7 @@ const ViewOrderSummaryUI = () => {
           <View style={styles.box}>
             <Image source={{ uri: parsedMenuData.image }} style={styles.orderImage} />
             <View>
-              <Text style={styles.commonText}>{parsedMenuData.foodName}</Text>
+              <Text style={styles.commonText}>{parsedMenuData.foodName} ({parsedMenuData.quantity}x)</Text>
               <Text style={styles.commonText}>${parsedMenuData.price}</Text>
             </View>
           </View>
@@ -148,7 +149,7 @@ const ViewOrderSummaryUI = () => {
           ) : (
             <TouchableOpacity
               style={styles.addPaymentButton}
-              onPress={() => router.push('Boundary/AddPaymentMethod')}
+              onPress={() => router.push('Boundary/CardDetails')}
             >
               <AntDesign name="plus" size={20} />
               <Text style={styles.textPayment}>Add payment method</Text>

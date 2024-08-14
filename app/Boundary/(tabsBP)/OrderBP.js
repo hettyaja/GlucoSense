@@ -4,6 +4,7 @@ import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import { DietPlanCard, FoodCard } from '../../components/Cards';
 import Header from '../../components/Header';
 import ViewDietPlanOrderController from '../../Controller/ViewDietPlanOrderController';
+import ViewFoodOrderController from '../../Controller/ViewFoodOrderController';
 import { useAuth } from '../../service/AuthContext';
 
 const FirstRoute = () => {
@@ -13,7 +14,7 @@ const FirstRoute = () => {
   useEffect(() => {
     const loadFoodData = async () => {
       try {
-        const data = await ViewDietPlanOrderController.viewDietPlanOrderByBusinessPartnerId(user.uid);
+        const data = await ViewFoodOrderController.viewFoodOrderByBusinessPartnerId(user.uid);
         setFoodOrderData(data);
       } catch (error) {
         console.error('Error loading food data:', error);

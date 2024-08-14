@@ -54,7 +54,7 @@ const Profile = () => {
                 setBirthdate(isValidDate ? birthdate : new Date());
 
                 setPreviousImage(profileData.image);
-                setPhotoUri(profileData.image);
+                setPhotoUri(profileData.photoUri || '');
                 setUsername(profileData.username);
                 setName(profileData.name);
                 setEmail(profileData.email);
@@ -83,12 +83,20 @@ const Profile = () => {
                 Alert.alert("Empty Field", "Username cannot be empty.");
                 return;
             }
+
             try {
                 let imageUrl = photoUri;
                 if (photoUri && photoUri !== previousImage) {
                     imageUrl = await uploadImage(user.uid, photoUri, previousImage);
                 }
-                await updateAccountProfileController.setAccProfile(user.uid, imageUrl, localName, localEmail, localUsername);
+
+                const updatedDetails = {
+                    photoUri: imageUrl,
+                    name :localName,
+                    email :localEmail,
+                    username: localUsername
+                }
+                await updateAccountProfileController.setAccProfile(user.uid, updatedDetails);
                 await setBodyProfileController.setBodProfile(user.uid, localGender, localBirthdate, localWeight, localHeight, localDiabetesType);
             } catch (error) {
                 Alert.alert("Error", error.message);

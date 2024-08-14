@@ -22,7 +22,7 @@ const Setting = () => {
   const fetchProfileData = async () => {
     try {
       const profileData = await getProfileController.getProfile(user.uid);
-      setPhotoUri(profileData.image);
+      setPhotoUri(profileData.photoUri);
       setSubscriptionType(profileData.subscriptionType);
       setName(profileData.name);
     } catch (error) {
