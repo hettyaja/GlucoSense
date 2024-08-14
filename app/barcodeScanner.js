@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View, Alert, Button } from 'react-native';
-import { CameraView, useCameraPermissions} from 'expo-camera';
+import { CameraView, useCameraPermissions } from 'expo-camera';
 import { searchFoodByBarcode } from '../server';
 import { Stack, useRouter } from 'expo-router';
-import food from './Boundary/ViewMenu';
 import { check, request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 
 export default function App() {
@@ -11,7 +10,7 @@ export default function App() {
   const router = useRouter();
   const [permission, requestPermission] = useCameraPermissions();
   const [scanned, setScanned] = useState(false);
-  
+
   const requestCameraPermission = async () => {
     const result = await request(PERMISSIONS.ANDROID.CAMERA);
     if (result === RESULTS.GRANTED) {
@@ -20,9 +19,11 @@ export default function App() {
       console.log('Camera permission denied');
     }
   };
-  
-  requestCameraPermission();
-  
+
+  useEffect(() => {
+    requestCameraPermission();
+  }, []);
+
   if (!permission) {
     // Camera permissions are still loading.
     return <View />;
@@ -31,9 +32,9 @@ export default function App() {
   if (!permission.granted) {
     // Camera permissions are not granted yet.
     return (
-      <View style={styles.container}>
+      <View style={styles.permissionContainer}>
         <Text style={styles.message}>We need your permission to show the camera</Text>
-        <Button onPress={requestPermission} title="grant permission" />
+        <Button onPress={requestPermission} title="Grant Permission" />
       </View>
     );
   }
@@ -62,39 +63,37 @@ export default function App() {
   const renderCamera = () => {
     return (
       <View style={styles.cameraContainer}>
-        <CameraView 
+        <CameraView
           ref={cameraRef}
-          onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
+          onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
           style={styles.camera}
         />
+        <View style={styles.overlay}>
+          <Text style={styles.title}>Scan your QR Code</Text>
+          <View style={styles.borderContainer}>
+            <View style={[styles.borderLine, { borderTopWidth: 4, borderLeftWidth: 4 }]} />
+            <View style={[styles.borderLine, { borderTopWidth: 4, borderRightWidth: 4 }]} />
+          </View>
+          <View style={styles.borderContainer}>
+            <View style={[styles.borderLine, { borderBottomWidth: 4, borderLeftWidth: 4 }]} />
+            <View style={[styles.borderLine, { borderBottomWidth: 4, borderRightWidth: 4 }]} />
+          </View>
+          {scanned && (
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => setScanned(false)}
+            >
+              <Text style={styles.buttonText}>Scan Again</Text>
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
     );
   };
 
-  if (permission === null) {
-    return <View />;
-  }
-
-  if (permission === false) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.text}>Camera permission not granted</Text>
-      </View>
-    );
-  }
-
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Welcome to the Barcode Scanner App!</Text>
-      <Text style={styles.paragraph}>Scan a barcode to start your job.</Text>
       {renderCamera()}
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => setScanned(false)}
-        disabled={!scanned}
-      >
-        <Text style={styles.buttonText}>Scan Again</Text>
-      </TouchableOpacity>
     </View>
   );
 }
@@ -102,37 +101,71 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
     justifyContent: 'center',
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
+  permissionContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+    backgroundColor: '#f5f5f5',
   },
-  paragraph: {
-    fontSize: 16,
-    marginBottom: 40,
+  message: {
+    fontSize: 18,
+    textAlign: 'center',
+    marginBottom: 20,
+    color: '#333',
   },
   cameraContainer: {
-    width: '80%',
-    aspectRatio: 1,
-    overflow: 'hidden',
-    borderRadius: 10,
-    marginBottom: 40,
+    ...StyleSheet.absoluteFillObject,
   },
   camera: {
     flex: 1,
   },
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    color: 'white',
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: { width: -1, height: 1 },
+    textShadowRadius: 10,
+    position: 'absolute',
+    top: 50,
+  },
   button: {
-    backgroundColor: 'blue',
+    backgroundColor: '#007bff',
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 5,
+    marginTop: 20,
+    position: 'absolute',
+    bottom: 50,
   },
   buttonText: {
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
   },
+  borderContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '80%',
+    position: 'absolute',
+  },
+  borderLine: {
+    width: 50,
+    height: 50,
+    borderColor: 'white',
+  },
 });
+
