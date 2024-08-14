@@ -4,6 +4,7 @@ import { CameraView, useCameraPermissions } from 'expo-camera';
 import { searchFoodByBarcode } from '../server';
 import { Stack, useRouter } from 'expo-router';
 import { check, request, PERMISSIONS, RESULTS } from 'react-native-permissions';
+import Header from './components/Header';
 
 export default function App() {
   const cameraRef = useRef(null);
@@ -69,7 +70,7 @@ export default function App() {
           style={styles.camera}
         />
         <View style={styles.overlay}>
-          <Text style={styles.title}>Scan your QR Code</Text>
+          <Text style={styles.title}>Scan your Barcode</Text>
           <View style={styles.borderContainer}>
             <View style={[styles.borderLine, { borderTopWidth: 4, borderLeftWidth: 4 }]} />
             <View style={[styles.borderLine, { borderTopWidth: 4, borderRightWidth: 4 }]} />
@@ -78,21 +79,24 @@ export default function App() {
             <View style={[styles.borderLine, { borderBottomWidth: 4, borderLeftWidth: 4 }]} />
             <View style={[styles.borderLine, { borderBottomWidth: 4, borderRightWidth: 4 }]} />
           </View>
-          {scanned && (
-            <TouchableOpacity
+          <TouchableOpacity
               style={styles.button}
-              onPress={() => setScanned(false)}
-            >
+              onPress={() => setScanned(false)}>
               <Text style={styles.buttonText}>Scan Again</Text>
-            </TouchableOpacity>
-          )}
+          </TouchableOpacity>
         </View>
       </View>
     );
   };
 
   return (
+    
     <View style={styles.container}>
+       <Header
+      title = 'Barcode Scanner'
+      leftButton='Back'
+      onLeftButtonPress={() => router.back()}
+    />
       {renderCamera()}
     </View>
   );
@@ -133,7 +137,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 28,
-    fontWeight: 'bold',
+    fontFamily: 'Poppins-Bold',
     marginBottom: 10,
     color: 'white',
     textShadowColor: 'rgba(0, 0, 0, 0.75)',
@@ -143,18 +147,17 @@ const styles = StyleSheet.create({
     top: 50,
   },
   button: {
-    backgroundColor: '#007bff',
+    backgroundColor: '#E58B68',
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 5,
-    marginTop: 20,
     position: 'absolute',
-    bottom: 50,
+    top: '85%', // Adjusted this value to move the button below the border lines
   },
   buttonText: {
     color: 'white',
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: 'Poppins-SemiBold'
   },
   borderContainer: {
     flexDirection: 'row',
@@ -164,7 +167,7 @@ const styles = StyleSheet.create({
   },
   borderLine: {
     width: 50,
-    height: 50,
+    height: 150,
     borderColor: 'white',
   },
 });
