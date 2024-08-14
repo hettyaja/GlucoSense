@@ -488,6 +488,55 @@ class User {
       throw error;
   }
   }
+
+  static async updatePaymentDetails (userId, cardDetails) {
+    try {
+      // Reference to the user's payment details collection
+      const userPaymentCollection = collection(db, 'users', userId, 'paymentDetails');
+
+      // Get all payment details for the user
+      const paymentSnapshot = await getDocs(userPaymentCollection);
+
+      // Create a batch to update multiple documents
+      const batch = writeBatch(db)
+
+      // Loop through each payment method and update its default status
+      paymentSnapshot.forEach((doc) => {
+        const paymentDocRef = doc.ref;
+
+        // Check if the current document is the selected card
+        if (doc.id === cardDetails.id) {
+          // Set this card as the default
+          batch.update(paymentDocRef, { default: true });
+        } else {
+          // Set all other cards to not default
+          batch.update(paymentDocRef, { default: false });
+        }
+      });
+
+      // Commit the batch operation
+      await batch.commit();
+      console.log('Payment details updated successfully.');
+    } catch (error) {
+      console.error('Error updating payment details:', error);
+      throw error;
+    }
+  }
+
+  static async deletePaymentDetails(userId, cardDetails) {
+    try {
+        // Reference to the specific payment detail document using the cardDetails.id
+        const paymentDocRef = doc(db, 'users', userId, 'paymentDetails', cardDetails.id);
+
+        // Delete the document
+        await deleteDoc(paymentDocRef);
+
+        console.log('Payment details deleted successfully.');
+    } catch (error) {
+        console.error('Error deleting payment details:', error);
+        throw error;
+    }
+}
   
   static async fetchUserGoals (userId) {
     try {

@@ -4,7 +4,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import { Text, View } from 'react-native';
 
-const PopupMenu = ({type, onAdd, onEdit, onDelete, onDisplayAll, onGlucose, onMeal, onMedicine, onToday, on3D, on7D, on30D, color }) => {
+const PopupMenu = ({type, onAdd, onEdit, onDelete, onDisplayAll, onGlucose, onMeal, onMedicine, onToday, on3D, on7D, on30D, color, setDefault }) => {
   const getDefaultOption = () => {
     if (type === 'home') {
       return 'Display all';
@@ -25,7 +25,7 @@ const PopupMenu = ({type, onAdd, onEdit, onDelete, onDisplayAll, onGlucose, onMe
     <Menu>
       <MenuTrigger>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          {['more-vertical', 'Add', 'Edit', 'Delete'].includes(selectedOption) ? (
+          {['more-vertical', 'Add', 'Edit', 'Delete', 'Set as Default'].includes(selectedOption) ? (
             <Feather name='more-vertical' size={24} />
           ) : (
             <>
@@ -39,6 +39,7 @@ const PopupMenu = ({type, onAdd, onEdit, onDelete, onDisplayAll, onGlucose, onMe
         {onAdd && <MenuOption onSelect={() => handleSelect(onAdd, 'Add')} text='Add' />}
         {onEdit && <MenuOption onSelect={() => handleSelect(onEdit, 'Edit')} text='Edit' />}
         {onDelete && <MenuOption onSelect={() => handleSelect(onDelete, 'Delete')} text='Delete' />}
+        {setDefault && <MenuOption onSelect={() => handleSelect(setDefault, 'Set as Default')} text='Set as Default' />}
         {onDisplayAll && <MenuOption onSelect={() => handleSelect(onDisplayAll, 'Display all')} text='Display all' />}
         {onGlucose && <MenuOption onSelect={() => handleSelect(onGlucose, 'Glucose')} text='Glucose' />}
         {onMeal && <MenuOption onSelect={() => handleSelect(onMeal, 'Meal')} text='Meal' />}
@@ -47,6 +48,7 @@ const PopupMenu = ({type, onAdd, onEdit, onDelete, onDisplayAll, onGlucose, onMe
         {on3D && <MenuOption onSelect={() => handleSelect(on3D, '3D')} text='3D' />}
         {on7D && <MenuOption onSelect={() => handleSelect(on7D, '7D')} text='7D' />}
         {on30D && <MenuOption onSelect={() => handleSelect(on30D, '30D')} text='30D' />}
+        
       </MenuOptions>
     </Menu>
   );

@@ -8,6 +8,8 @@ import { DietPlanProvider } from './context/DietPlanContext';
 import { AuthProvider, useAuth } from './service/AuthContext';
 import { MenuProvider } from 'react-native-popup-menu';
 import * as Notifications from 'expo-notifications';
+import { PaymentAndAddressProvider } from './context/PaymentAndAddressContext';
+
 
 const RootLayout = () => {
   const { user, userType } = useAuth();
@@ -58,7 +60,6 @@ const RootLayout = () => {
       <Stack.Screen name="Boundary/(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="Boundary/(tabsBP)" options={{ headerShown: false }} />
       <Stack.Screen name="Boundary/(tabsSA)" options={{ headerShown: false }} />
-      <Stack.Screen name="Boundary/AddGlucoseUI" />
       <Stack.Screen name="ViewAndSearchDietPlan" />
       <Stack.Screen name="searchFood" />
       <Stack.Screen name="Boundary/MenuDetailsUI" options={{
@@ -117,17 +118,19 @@ const _layout = () => {
   }
 
   return (
-    <MenuProvider>
-      <AuthProvider>
-          <DietPlanProvider>
-            <ProfileProvider>
-              <BPProfileProvider>
-                <RootLayout />
-              </BPProfileProvider>
-            </ProfileProvider>
-          </DietPlanProvider>
-      </AuthProvider>
-    </MenuProvider>
+    <PaymentAndAddressProvider>
+      <MenuProvider>
+        <AuthProvider>
+            <DietPlanProvider>
+              <ProfileProvider>
+                <BPProfileProvider>
+                  <RootLayout />
+                </BPProfileProvider>
+              </ProfileProvider>
+            </DietPlanProvider>
+        </AuthProvider>
+      </MenuProvider>
+    </PaymentAndAddressProvider>
   );
 };
 

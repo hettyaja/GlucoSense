@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput, ScrollView, Alert } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -9,11 +9,13 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useAuth } from '../service/AuthContext';
 import GetAddressController from '../Controller/GetAddressController';
 import CreateOrderController from '../Controller/CreateOrderController';
-import { decode as atob } from 'base-64';
 import GetPaymentDetailsController from '../Controller/GetPaymentDetailsController';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { usePaymentAndAddress } from '../context/PaymentAndAddressContext';
 
 const ViewOrderSummaryUI = () => {
   const { menuData } = useLocalSearchParams();
+  const { selectedCard, selectedAddress } = usePaymentAndAddress(); // Use context
   const [parsedMenuData, setParsedMenuData] = useState(menuData ? JSON.parse(atob(menuData)) : null);
   const [address, setAddress] = useState();
   const [payment, setPayment] = useState();
@@ -28,10 +30,22 @@ const ViewOrderSummaryUI = () => {
     calculateTotalPayment();
   }, []);
 
+  useEffect(() => {
+    if (selectedAddress) {
+      setAddress(selectedAddress); // Update address if one is selected
+    }
+  }, [selectedAddress]);
+
+  useEffect(() => {
+    if (selectedCard) {
+      setPayment(selectedCard); // Update payment if a card is selected
+    }
+  }, [selectedCard]);
+
   const fetchAddresses = async () => {
     try {
       const fetchedAddresses = await GetAddressController.getDefaultAddress(user.uid);
-      setAddress(fetchedAddresses);
+      setAddress(selectedAddress || fetchedAddresses); // Use selectedAddress if available
     } catch (error) {
       console.error('Failed to fetch addresses:', error);
     }
@@ -40,7 +54,7 @@ const ViewOrderSummaryUI = () => {
   const fetchPayment = async () => {
     try {
       const fetchedPayment = await GetPaymentDetailsController.getDefaultPaymentDetails(user.uid);
-      setPayment(fetchedPayment);
+      setPayment(selectedCard || fetchedPayment); // Use selectedCard if available
     } catch (error) {
       console.error('Failed to fetch payment:', error);
     }
@@ -79,7 +93,18 @@ const ViewOrderSummaryUI = () => {
       orderDate: new Date()
     };
     await CreateOrderController.createOrder(orderData);
-    router.push('Boundary/OrderHistory');
+
+    // Show success alert
+    Alert.alert(
+      "Order Placed",
+      "Your order has been successfully placed!",
+      [
+        {
+          text: "OK",
+          onPress: () => router.push('Boundary/OrderHistory'), // Navigate to order history
+        }
+      ]
+    );
   };
 
   return (
@@ -94,14 +119,18 @@ const ViewOrderSummaryUI = () => {
         {/* Address Part */}
         <View style={styles.container1}>
           {address ? (
-            <TouchableOpacity style={styles.addressBox} onPress={() => router.push('Boundary/ManageAddress')}>
-              <View style={styles.topRow}>
-                <Text style={{ fontFamily: 'Poppins-SemiBold' }}>{address.name} | {address.phoneNumber}</Text>
-                <EvilIcons name="chevron-right" size={24} color="gray" />
-              </View>
-              <View style={styles.addressDetails}>
-                <Text style={{ fontFamily: 'Poppins-Medium' }}>{address.address} {address.unit} {address.details}</Text>
-                <Text style={{ fontFamily: 'Poppins-Medium' }}>{address.postCode}</Text>
+            <TouchableOpacity style={styles.addressBox} onPress={() => router.push({ pathname: 'Boundary/ManageAddress', params: { selectMode: true } })}>
+              <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
+                <View>
+                  <View style={{flexDirection:'row', alignItems:'center'}}>
+                    <MaterialCommunityIcons name='map-marker-radius-outline' size={24} color='black' style={{ paddingRight: 8 }} />
+                    <Text style={{fontFamily:'Poppins-Regular', fontSize:14}}>Delivery Address</Text>
+                  </View>
+                  <Text style={{ fontFamily: 'Poppins-Medium' }}>{address.name} | {address.phoneNumber}</Text>
+                  <Text style={{ fontFamily: 'Poppins-Regular' }}>{address.address}, {address.unit} {address.details}</Text>
+                  <Text style={{ fontFamily: 'Poppins-Regular' }}>{address.postCode}</Text>
+                </View>
+                <Ionicons name='chevron-forward' size={24} color='grey' />
               </View>
             </TouchableOpacity>
           ) : (
@@ -117,39 +146,46 @@ const ViewOrderSummaryUI = () => {
 
         {/* Menu Details Part */}
         <View style={styles.container3}>
-          <Text>{parsedMenuData.entityName}</Text>
+          <Text style={{fontFamily:'Poppins-SemiBold'}}>{parsedMenuData.entityName}</Text>
           <View style={styles.box}>
-            <Image source={{ uri: parsedMenuData.image }} style={styles.orderImage} />
-            <View>
-              <Text style={styles.commonText}>{parsedMenuData.foodName} ({parsedMenuData.quantity}x)</Text>
-              <Text style={styles.commonText}>${parsedMenuData.price}</Text>
+            <View style={{flex:1, flexDirection:'row'}}>
+              <Image source={{ uri: parsedMenuData.image }} style={styles.orderImage} />
+              <View style={{flex: 1,justifyContent:'space-between'}}>
+                <Text style={styles.commonText}>{parsedMenuData.foodName}</Text>
+                <View style={{flexDirection:'row', justifyContent:'space-between'}}>
+                  <Text style={styles.commonText}>${parsedMenuData.price}</Text>
+                  <Text style={styles.commonText}>x{parsedMenuData.quantity}</Text>
+                </View>
+              </View>
             </View>
           </View>
-          <Text style={styles.notesStyle}>Notes:</Text>
-          <TextInput
-            style={[styles.commonText, { flex: 1 }]}
-            placeholder="Enter your notes here"
-            placeholderTextColor="#999"
-            value={notes}
-            onChangeText={setNotes}
-          />
+          <View style={{borderTopWidth:0.5, borderColor:'#808080'}}/>
+          <View style={{flexDirection:'row', alignItems:'center', justifyContent:'space-between', paddingTop:8}}>
+            <Text style={styles.notesStyle}>Notes:</Text>
+            <TextInput
+              style={[styles.commonText, {textAlign:'right', width:200}]}
+              placeholder="Enter your notes here"
+              placeholderTextColor="#999"
+              value={notes}
+              onChangeText={setNotes}
+            />
+          </View>
         </View>
 
         {/* Payment Method Part */}
         <View style={styles.container3}>
           <Text style={styles.header}>Payment Method</Text>
           {payment ? (
-            <TouchableOpacity style={styles.paymentBox} onPress={() => router.push('Boundary/PaymentMethod')}>
-              <View style={styles.topRow}>
-                <Text style={{ fontFamily: 'Poppins-SemiBold' }}>{payment.cardHolderName}</Text>
-                <EvilIcons name="chevron-right" size={24} color="gray" />
-              </View>
-              <Text style={{ fontFamily: 'Poppins-Medium' }}>{payment.cardNumber}</Text>
+            <>
+            <TouchableOpacity style={styles.paymentBox} onPress={() => router.push({ pathname: 'Boundary/PaymentMethod', params: { selectMode: true } })}>
+              <Text style={{ fontFamily: 'Poppins-Regular' }}>Visa (**** **** **** {payment.cardNumber.slice(-4)})</Text>
+              <Ionicons name='chevron-forward' size={24} color='grey' />
             </TouchableOpacity>
+            </>
           ) : (
             <TouchableOpacity
               style={styles.addPaymentButton}
-              onPress={() => router.push('Boundary/CardDetails')}
+              onPress={() => router.push('Boundary/AddPaymentMethod')}
             >
               <AntDesign name="plus" size={20} />
               <Text style={styles.textPayment}>Add payment method</Text>
@@ -179,15 +215,13 @@ const ViewOrderSummaryUI = () => {
         </View>
       </ScrollView>
 
-      <View style={[styles.container5, { flexDirection: 'row', justifyContent: 'flex-end' }]}>
-        <View>
-          <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 14, marginRight: 5 }}>Total Payment</Text>
-          <Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 14, alignSelf: 'flex-end', marginRight: 5 }}>${totalPayment.toFixed(2)}</Text>
+      <View style={styles.footerContainer}>
+        <View style={styles.totalPaymentContainer}>
+          <Text style={styles.totalPaymentLabel}>Total Payment: </Text>
+          <Text style={styles.totalPaymentAmount}>${totalPayment.toFixed(2)}</Text>
         </View>
-        <TouchableOpacity style={{ alignSelf: 'flex-end' }} onPress={handleOrder}>
-          <View style={{ backgroundColor: "#D96B41", width: 120, height: 47, justifyContent: 'center' }}>
-            <Text style={{ fontSize: 14, fontFamily: "Poppins-Bold", textAlign: 'center', color: '#FAF5E1' }}>Place Order</Text>
-          </View>
+        <TouchableOpacity style={styles.placeOrderButton} onPress={handleOrder}>
+          <Text style={styles.placeOrderText}>Place Order</Text>
         </TouchableOpacity>
       </View>
     </>
@@ -208,6 +242,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  textAddress: {
+    padding: 8,
+    fontFamily: 'Poppins-Medium',
+    textAlign: 'center',
+    fontSize: 14,
+  },
   addPaymentButton: {
     borderRadius: 8,
     marginHorizontal: 16,
@@ -217,15 +257,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  orderBox: {
-    paddingHorizontal: 8,
-  },
-  textAddress: {
-    padding: 8,
-    fontFamily: 'Poppins-Medium',
-    textAlign: 'center',
-    fontSize: 14,
   },
   textPayment: {
     padding: 8,
@@ -263,21 +294,28 @@ const styles = StyleSheet.create({
   },
   topRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 4, // Space between the top row and address details
+    paddingBottom: 8,
+  },
+  orderBox: {
+    paddingHorizontal: 8,
   },
   orderImage: {
     width: 80,
     height: 80,
     borderRadius: 8,
     marginRight: 16,
-    marginTop: 8,
+  },
+  commonText: {
+    fontFamily: 'Poppins-Medium',
+    fontSize: 14,
+  },
+  smallText: {
+    fontFamily: 'Poppins-Medium',
+    fontSize: 10,
   },
   notesStyle: {
     fontFamily: 'Poppins-Medium',
-    fontSize: 12,
-    paddingTop: 8,
+    fontSize: 14,
   },
   header: {
     fontFamily: 'Poppins-SemiBold',
@@ -286,6 +324,11 @@ const styles = StyleSheet.create({
   orderItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+  paymentBox: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems:'center'
   },
 });
 
