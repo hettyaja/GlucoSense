@@ -40,7 +40,7 @@ const ViewMenu = () => {
   return (
     <>
       <Header
-        title='Food Order'
+        title='Food Menu'
         leftButton='Back'
         onLeftButtonPress={() => router.back()}
       />

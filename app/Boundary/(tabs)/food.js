@@ -70,7 +70,7 @@ const Food = () => {
 
         <View style={styles.row}>
           <Text style={styles.sectionTitle}>Featured Menu</Text>
-          <TouchableOpacity onPress={() => router.push('Boundary/ViewMenu')}>
+          <TouchableOpacity onPress={() => router.push('Boundary/ViewMenuUI')}>
             <Ionicons name='chevron-forward' size={24} color='black' />
           </TouchableOpacity>
         </View>
