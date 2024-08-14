@@ -107,6 +107,7 @@ const Insight = () => {
                 marginVertical: 8,
               }}
             />
+            <Text style = {styles.graphExplaination}>Daily average glucose readings for the last 7 days</Text>
           </View>
         </View>
         <View style={styles.statsContainer}>
@@ -186,6 +187,7 @@ const styles = StyleSheet.create({
   },
   chartContainer: {
     backgroundColor: 'white',
+    padding: 10,
   },
   statsContainer: {
     paddingVertical: 16,
@@ -230,5 +232,10 @@ const styles = StyleSheet.create({
   background:{
     flex:1,
     backgroundColor: 'white'
+  },
+  graphExplaination: {
+    fontFamily: 'Poppins-Regular',
+    fontSize: 12,
+    textAlign: 'center',
   }
 });

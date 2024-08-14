@@ -241,6 +241,7 @@ const CaloriesInsight = () => {
                 </G>
               ))}
             </Svg>
+            <Text style = {styles.graphExplaination}>Correlation between daily total calorie consumption and average glucose readings</Text>
           </View>
         </View>
         <View style={styles.statsContainer}>
@@ -396,5 +397,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
   },
+  graphExplaination: {
+    fontFamily: 'Poppins-Regular',
+    fontSize: 12,
+    textAlign: 'center',
+  }
 });
 

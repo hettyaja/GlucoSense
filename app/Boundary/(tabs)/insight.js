@@ -157,6 +157,7 @@ const Insight = () => {
                 marginVertical: 8,
               }}
             />
+            <Text style = {styles.graphExplaination}>Daily average glucose readings for the last 7 days</Text>
           </View>
         </TouchableOpacity>
         <TouchableOpacity style={styles.centeredChart} onPress={() => router.push('/caloriesInsight')}>
@@ -191,6 +192,7 @@ const Insight = () => {
                 marginVertical: 8,
               }}
             />
+            <Text style = {styles.graphExplaination}>Daily total calorie consumption for the last 7 days</Text>
           </View>
         </TouchableOpacity>
         <TouchableOpacity
@@ -243,8 +245,11 @@ const Insight = () => {
                   </G>
                 ))}
               </Svg>
+              
             )}
+            <Text style = {styles.graphExplaination}>Correlation between daily total calorie consumption and average glucose readings</Text>
           </View>
+          
         </TouchableOpacity>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 15, marginTop: 20 }} />
       </ScrollView>
@@ -293,6 +298,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 10,
   },
+  graphExplaination: {
+    fontFamily: 'Poppins-Regular',
+    fontSize: 12,
+    textAlign: 'center',
+  }
 });
 
 export default Insight;

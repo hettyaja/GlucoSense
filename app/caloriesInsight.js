@@ -22,6 +22,7 @@ const CaloriesInsight = () => {
   const [monthlyStats, setMonthlyStats] = useState({ average: null, low: null, high: null });
   const [caloriesConsumed, setCaloriesConsumed] = useState();
   const [calorieGoal, setCalorieGoal] = useState();
+  const [lastMealData, setLastMealData] = useState(null);
 
   const handleBackButton = () => {
     // This will navigate back to the previous screen in the stack, which should be the main Insight page
@@ -54,7 +55,9 @@ const CaloriesInsight = () => {
 
         const mealData = await RetrieveMealLogsController.retrieveMealLogs(user.uid);
         setMealGraphData(mealData ? mealData : { labels: [], datasets: [{ data: [] }] });
-
+        const lastData = mealData.datasets[0].data[mealData.datasets[0].data.length - 1];
+        setLastMealData(lastData);
+        
         const dailyLogs = await RetrieveMealLogsController1.retrieveMealLogs(user.uid, 'daily');
         setDailyStats(calculateStats(dailyLogs));
         setCaloriesConsumed(calculateStats(dailyLogs).sum || 0)
@@ -120,19 +123,21 @@ const CaloriesInsight = () => {
                 propsForDots: {
                   r: "6",
                   strokeWidth: "1",
-                }
+                  fill: (dot) => dot.exceedsGoal ? 'red' : 'black', // Change color based on calorie goal
+                },
               }}
               style={{
                 marginVertical: 8,
               }}
             />
+            <Text style = {styles.graphExplaination}>Daily total calorie consumption for the last 7 days</Text>
           </View>
         </View>
           {/* Calories Burned Card */}
           <View style={{flexDirection:'row', justifyContent:'center'}}>
           <View style={styles.caloriesBurnedContainer}>
             <Text style={styles.caloriesBurnedHeader}>Calories Goal</Text>
-            <Text style={styles.caloriesBurnedText}>{`${caloriesConsumed} / ${calorieGoal}`}</Text>
+            <Text style={styles.caloriesBurnedText}>{`${lastMealData} / ${calorieGoal}`}</Text>
             <Text style={[styles.caloriesBurnedText, {marginBottom:8, fontFamily:'Poppins-Regular'}]}>kcal</Text>
           </View>
           </View>
@@ -216,6 +221,7 @@ const styles = StyleSheet.create({
   },
   chartContainer: {
     backgroundColor: 'white',
+    padding: 10,
   },
   statsContainer: {
     paddingVertical: 16,
@@ -279,4 +285,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
   },
+  graphExplaination: {
+    fontFamily: 'Poppins-Regular',
+    fontSize: 12,
+    textAlign: 'center',
+  }
 });
