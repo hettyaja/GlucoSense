@@ -8,6 +8,8 @@ import { DietPlanProvider } from './context/DietPlanContext';
 import { AuthProvider, useAuth } from './service/AuthContext';
 import { MenuProvider } from 'react-native-popup-menu';
 import * as Notifications from 'expo-notifications';
+import { PaymentAndAddressProvider } from './context/PaymentAndAddressContext';
+
 
 const RootLayout = () => {
   const { user, userType } = useAuth();
@@ -39,7 +41,7 @@ const RootLayout = () => {
       } else if (userType === 'user') {
         router.replace('Boundary/home')
       } else if (userType === 'businessPartner') {
-        router.replace('Boundary/foodBP')
+        router.replace('Boundary/OrderBP')
       } else if (userType === 'systemAdmin') {
         router.replace('Boundary/insightSA')
       }
@@ -58,7 +60,6 @@ const RootLayout = () => {
       <Stack.Screen name="Boundary/(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="Boundary/(tabsBP)" options={{ headerShown: false }} />
       <Stack.Screen name="Boundary/(tabsSA)" options={{ headerShown: false }} />
-      <Stack.Screen name="Boundary/AddGlucoseUI" />
       <Stack.Screen name="ViewAndSearchDietPlan" />
       <Stack.Screen name="searchFood" />
       <Stack.Screen name="Boundary/MenuDetailsUI" options={{
@@ -78,7 +79,7 @@ const RootLayout = () => {
       }} />
       {/* <Stack.Screen name="Subscribe" options={{ headerShown: false }} /> */}
       <Stack.Screen name="Boundary/ProfileBpPage" />
-      <Stack.Screen name="selectMedicine" />
+      <Stack.Screen name='Boundary/SelectMedicineUI' />
       <Stack.Screen name='ReportProblem' options={{
         title: 'ReportProblem',
         headerStyle: { backgroundColor: '#E58B68' },
@@ -94,7 +95,7 @@ const RootLayout = () => {
         headerTitle: 'Help & Feedback',
         headerTitleAlign: 'center',
       }} />
-      <Stack.Screen name='createMedicine' />
+      <Stack.Screen name='Boundary/CreateMedListUI' />
     </Stack>
   );
 };
@@ -117,17 +118,19 @@ const _layout = () => {
   }
 
   return (
-    <MenuProvider>
-      <AuthProvider>
-          <DietPlanProvider>
-            <ProfileProvider>
-              <BPProfileProvider>
-                <RootLayout />
-              </BPProfileProvider>
-            </ProfileProvider>
-          </DietPlanProvider>
-      </AuthProvider>
-    </MenuProvider>
+    <PaymentAndAddressProvider>
+      <MenuProvider>
+        <AuthProvider>
+            <DietPlanProvider>
+              <ProfileProvider>
+                <BPProfileProvider>
+                  <RootLayout />
+                </BPProfileProvider>
+              </ProfileProvider>
+            </DietPlanProvider>
+        </AuthProvider>
+      </MenuProvider>
+    </PaymentAndAddressProvider>
   );
 };
 

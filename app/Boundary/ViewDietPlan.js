@@ -62,7 +62,7 @@ const ViewDietPlan = () => {
                 <Image source={{ uri: plan.planImage }} style={styles.planImage} />
                 <View style={styles.planInfo}>
                   <Text style={styles.planName}>{plan.planName}</Text>
-                  <Text style={styles.planPrice}>S$ {plan.price}</Text>
+                  <Text style={styles.planPrice}>Start from $ {plan.price}</Text>
                 </View>
               </TouchableOpacity>
             ))}
@@ -121,7 +121,6 @@ const styles = StyleSheet.create({
   planName: {
     fontFamily: 'Poppins-SemiBold',
     fontSize: 16,
-    marginBottom: 8,
   },
   planPrice: {
     fontFamily: 'Poppins-Regular',

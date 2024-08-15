@@ -166,6 +166,22 @@ const ConnectBluetooth = () => {
     let syncCount = 0;
 
     try {
+
+      manager.monitorCharacteristicForDevice(
+        device.id,
+        serviceUUID,
+        characteristicUUIDs.recordAccessControlPoint,
+        async (error, characteristic) => {
+          if (error) {
+            console.log('Glucose measurement notification error:', error);
+            return;
+          }
+          if (characteristic) {
+            return;
+          }
+        }
+      );
+      
       // Enable notifications for glucose measurements
       manager.monitorCharacteristicForDevice(
         device.id,

@@ -1,32 +1,39 @@
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Alert } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { getMedicine } from './service/diaryService';
-import { useAuth } from './service/AuthContext';
+import { useAuth } from '../service/AuthContext';
+import { useFocusEffect } from '@react-navigation/native';
 import Checkbox from 'expo-checkbox';
-import PopupMenu from './components/PopupMenu';
-import Header from './components/Header';
+import PopupMenu from '../components/PopupMenu';
+import Header from '../components/Header';
 import { router } from 'expo-router';
-import Divider from './components/Divider';
+import Divider from '../components/Divider';
+import ViewMedListController from '../Controller/ViewMedListController';
+import DeleteMedListController from '../Controller/DeleteMedListController';
 
 const selectMedicine = () => {
   const { user } = useAuth();
   const [medicines, setMedicines] = useState([]);
   const [selectedMedicinesName, setSelectedMedicinesName] = useState({});
 
-  useEffect(() => {
-    const fetchMedicines = async () => {
-      if (user) {
-        try {
-          const medicinesList = await getMedicine(user.uid);
-          setMedicines(medicinesList);
-        } catch (error) {
-          console.error('Error fetching medicines:', error);
-        }
+  const fetchMedicines = async () => {
+    if (user) {
+      try {
+        const medicinesList = await ViewMedListController.viewMedicineList(user.uid);
+        setMedicines(medicinesList);
+      } catch (error) {
+        console.error('Error fetching medicines:', error);
       }
-    };
-    fetchMedicines();
-  }, [user]);
+    }
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchMedicines();
+    }, [user])
+  );
+  
+
 
   const toggleMedicineSelection = (id, name) => {
     setSelectedMedicinesName((prevState) => {
@@ -45,12 +52,36 @@ const selectMedicine = () => {
     const selectedMedicineNames = Object.values(selectedMedicinesName);
     console.log(selectedMedicineNames);
     // Navigate to the 'addMeds' page with selected medicine names
-    router.push({ pathname: 'Boundary/addMeds', params: { selectedMedicineNames: JSON.stringify(selectedMedicineNames) } });
+    router.push({ pathname: 'Boundary/AddMedsUI', params: { selectedMedicineNames: JSON.stringify(selectedMedicineNames) } });
   };
 
   const handleBackPress = () => {
     router.back(); // Default back action
   };
+
+  const handleEdit = (medicine) => {
+    router.push({ pathname: 'Boundary/UpdateMedListUI', params: { medData: JSON.stringify(medicine) } });
+  }
+
+  const confirmDelete = (medicine) => {
+    Alert.alert(
+      "Delete Medicine",
+      "Are you sure you want to delete this medicine?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+        { text: "Delete", onPress: () => handleDelete(medicine) }
+      ],
+      { cancelable: false }
+    );
+  };
+
+  const handleDelete = async (medicine) => {
+    await DeleteMedListController.deleteMedList(user.uid, medicine)
+    fetchMedicines();
+  }
 
   return (
     <>
@@ -80,13 +111,13 @@ const selectMedicine = () => {
                   <Text style={styles.unit}>{medicine.unit}</Text>
                 </View>
               </View>
-              <PopupMenu onEdit={() => alert('Edit')} onDelete={() => alert('Delete')} />
+              <PopupMenu onEdit={() => handleEdit(medicine)} onDelete={() => confirmDelete(medicine)} />
             </TouchableOpacity>
             {index < medicines.length - 1 && <Divider withMargin={false} />}
           </View>
         ))}
 
-        <TouchableOpacity style={styles.createButton} onPress={() => router.push('createMedicine')}>
+        <TouchableOpacity style={styles.createButton} onPress={() => router.push('Boundary/CreateMedListUI')}>
           <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 14 }}>Create medicine</Text>
           <Ionicons name='chevron-forward' size={24} color='black' />
         </TouchableOpacity>

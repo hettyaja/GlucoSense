@@ -1,44 +1,73 @@
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native'
-import React, { useState, useCallback } from 'react'
-import Header from '../components/Header'
-import { router, useFocusEffect } from 'expo-router'
-import Ionicons from 'react-native-vector-icons/Ionicons'
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import Header from '../components/Header';
+import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import GetAddressController from '../Controller/GetAddressController'
-import { useAuth } from '../service/AuthContext'
+import GetAddressController from '../Controller/GetAddressController';
+import UpdateAddressController from '../Controller/UpdateAddressController'; // Import the update controller
+import DeleteAddressController from '../Controller/DeleteAddressController'; // Import the delete controller
+import { useAuth } from '../service/AuthContext';
+import { usePaymentAndAddress } from '../context/PaymentAndAddressContext'; // Import the context
+import RadioButton from '../components/RadioButton'; 
+import PopupMenu from '../components/PopupMenu'; // Assuming you have a PopupMenu component for edit and delete actions
 
 const ManageAddress = () => {
   const { user } = useAuth();
-  const [loading, setLoading] = useState(true)
+  const { selectMode } = useLocalSearchParams();
+  const { selectedAddress, setSelectedAddress } = usePaymentAndAddress(); // Use context
+  const [loading, setLoading] = useState(true);
   const [addressDetails, setAddressDetails] = useState([]);
 
   const fetchData = async () => {
     try {
       const details = await GetAddressController.getAddress(user.uid);
       setAddressDetails(details);
+      if (selectMode) {
+        const defaultAddress = details.find(address => address.default);
+        setSelectedAddress(defaultAddress || details[0]);
+      }
     } catch (error) {
       console.error('Error fetching address details:', error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  };
-
-  const handleEdit = (card) => {
-    // Handle the edit address logic
   };
 
   useFocusEffect(
     useCallback(() => {
-      fetchData()
+      fetchData();
     }, [])
-  )
+  );
+
+  const handleSelectAddress = (address) => {
+    setSelectedAddress(address);
+  };
+
+  const handleBackPress = () => {
+    router.back();
+  };
+
+  const handleDefault = async (address) => {
+    await UpdateAddressController.updateAddress(user.uid, address);
+    fetchData(); // Refresh the data after setting the default address
+  };
+
+  const handleDelete = async (address) => {
+    await DeleteAddressController.deleteAddress(user.uid, address);
+    fetchData(); // Refresh the data after deleting the address
+  };
+
+  const handleEdit = (address) => {
+    router.push({ pathname: 'Boundary/EditAddressUI', params: { addressData: JSON.stringify(address) } });
+  };
 
   return (
     <>
       <Header
-        title="Manage address"
+        title="Manage Address"
         leftButton="Back"
-        onLeftButtonPress={() => router.back()}
+        onLeftButtonPress={handleBackPress}
       />
       <ScrollView>
         <View style={styles.container}>
@@ -47,40 +76,53 @@ const ManageAddress = () => {
               <ActivityIndicator size={32} color="#E68B67" />
             </View>
           ) : (
-            addressDetails.map((card, index) => (
+            addressDetails.map((address, index) => (
               <View key={index}>
-                <TouchableOpacity style={styles.row} onPress={() => handleEdit(card)}>
+                <TouchableOpacity 
+                  style={styles.row} 
+                  onPress={() => selectMode ? handleSelectAddress(address) : null }
+                  disabled={!selectMode}
+                >
                   <View style={{ flexDirection: 'row', flex: 1 }}>
                     <MaterialCommunityIcons name='map-marker-radius-outline' size={24} color='black' style={{ paddingRight: 8 }} />
                     <View style={{ flex: 1 }}>
                       <View style={{flexDirection:'row', alignItems:'center'}}>
-                      <Text style={styles.label}>{card.name} (+65 {card.phoneNumber})</Text>
-                      {card.default && <Text style={styles.defaultLabel}>[DEFAULT]</Text>}
+                        <Text style={styles.label}>{address.name} (+65 {address.phoneNumber})</Text>
+                        {address.default && !selectMode && <Text style={styles.defaultLabel}>[DEFAULT]</Text>}
                       </View>
-                      <Text style={styles.label}>{card.address}</Text>
-                      
+                      <Text style={styles.label}>{address.address}</Text>
                     </View>
                   </View>
-                  <Ionicons name='chevron-forward' size={24} color='black' />
+                  {selectMode ? (
+                    <RadioButton selected={selectedAddress?.id === address.id} />
+                  ) : (
+                    <PopupMenu
+                      onEdit={() => handleEdit(address)}
+                      onDelete={() => handleDelete(address)}
+                      setDefault={() => handleDefault(address)}
+                    />
+                  )}
                 </TouchableOpacity>
                 <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5, marginHorizontal: 16 }} />
               </View>
             ))
           )}
-          <TouchableOpacity style={styles.row} onPress={() => router.push('Boundary/CreateAddressUI')}>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <MaterialCommunityIcons name='map-marker-plus-outline' size={24} color='black' style={{ paddingRight: 8 }} />
-              <Text style={styles.label}>Add New Address</Text>
-            </View>
-            <Ionicons name='chevron-forward' size={24} color='black' />
-          </TouchableOpacity>
+          {!selectMode && (
+            <TouchableOpacity style={styles.row} onPress={() => router.push('Boundary/CreateAddressUI')}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <MaterialCommunityIcons name='map-marker-plus-outline' size={24} color='black' style={{ paddingRight: 8 }} />
+                <Text style={styles.label}>Add New Address</Text>
+              </View>
+              <Ionicons name='chevron-forward' size={24} color='black' />
+            </TouchableOpacity>
+          )}
         </View>
       </ScrollView>
     </>
-  )
-}
+  );
+};
 
-export default ManageAddress
+export default ManageAddress;
 
 const styles = StyleSheet.create({
   scrollView: {
@@ -92,14 +134,14 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderTopWidth: 0.5,
     borderBottomWidth: 0.5,
-    borderColor: '#808080'
+    borderColor: '#808080',
   },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 16,
-    paddingVertical: 8
+    paddingVertical: 8,
   },
   label: {
     fontSize: 12,
@@ -108,12 +150,12 @@ const styles = StyleSheet.create({
   defaultLabel: {
     fontSize: 12,
     fontFamily: 'Poppins-Bold',
-    color:'green',
-    marginLeft:8
+    color: 'green',
+    marginLeft: 8,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  }
+  },
 });

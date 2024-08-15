@@ -8,6 +8,65 @@ class MedicineLogs {
         this.medicine = medicine
     }
 
+    static async createMedList(uid, medSaved){
+      try{
+        const medListRef = collection(db, 'users', uid, 'medicinesSaved');
+        await addDoc(medListRef, medSaved);
+      }catch(error){
+        console.error('Error adding medicine:', error);
+        throw error
+      }
+    }
+
+    static async getMedicine (uid){
+      try {
+        const medicinesRef = collection(db, 'users', uid, 'medicinesSaved')
+        const medicinesSnapshot = await getDocs(medicinesRef)
+        const medicinesList = medicinesSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }))
+        return medicinesList
+      } catch (error) {
+        throw error;
+      }
+    }
+
+    static async updateMedicineList(uid, medicineData) {
+      try {
+        const medicineListRef = doc(db, 'users', uid, 'medicinesSaved', medicineData.id);
+        await updateDoc(medicineListRef, {
+          medicineName : medicineData.medicineName,
+          type: medicineData.type,
+          unit: medicineData.unit,
+          InsulinType: medicineData.InsulinType
+        });
+        console.log('Medicine details updated successfully:', medicineData);
+      } catch (error) {
+        console.error('Error updating medicine details', error);
+        throw error;
+      }
+  }
+
+  static async deleteMedList(uid, medicine) {
+    try {
+      const medListDocRef = doc(db, 'users', uid, 'medicinesSaved', medicine.id);
+      await deleteDoc(medListDocRef);
+    } catch(error) {
+      throw error
+    }
+  }
+
+  static async deleteAddress (userId, address) {
+    try {
+      const addressDocRef = doc(db, 'users', userId, 'addressDetails', address.id);
+      await deleteDoc(addressDocRef);
+    } catch (error) {
+      console.error('Error deleting address:', error);
+      throw error;
+    }
+  }
+
     static async createMedicineLogs(uid, medicineData) {
         try {
             const medicineLogsRef = collection(db, 'users', uid, 'medicineLogs');
@@ -28,7 +87,7 @@ class MedicineLogs {
           });
           console.log('Medicine log updated successfully:', medicineData);
         } catch (error) {
-          console.error('Error updating glucose log:', error);
+          console.error('Error updating med log:', error);
           throw error;
         }
     }

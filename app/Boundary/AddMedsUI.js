@@ -117,7 +117,7 @@ const addMeds = () => {
   return (
     <>
       <Header
-        title='Medicine'
+        title='Create Medicine Diary'
         leftButton='Close'
         onLeftButtonPress={() => router.back('/home')}
         rightButton='Save'
@@ -165,7 +165,7 @@ const addMeds = () => {
               </View>
             </View>
           ))}
-          <TouchableOpacity style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 16, alignItems: 'center' }} onPress={() => router.push('/selectMedicine')}>
+          <TouchableOpacity style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 16, alignItems: 'center' }} onPress={() => router.push('Boundary/SelectMedicineUI')}>
             <Text style={{ fontFamily: 'Poppins-Medium' }}>Add medicine</Text>
             <Ionicons name='chevron-forward' size={24} color='black' />
           </TouchableOpacity>

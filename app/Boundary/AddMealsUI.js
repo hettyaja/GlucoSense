@@ -173,7 +173,7 @@ const addMeals = () => {
   return (
     <>
       <Header
-        title='Meal'
+        title='Create Meal Diary'
         leftButton='Close'
         onLeftButtonPress={() => handleBackButton()}
         rightButton='Save'

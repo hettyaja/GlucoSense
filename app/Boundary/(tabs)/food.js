@@ -50,34 +50,36 @@ const Food = () => {
         <View style={styles.statusContainer}>
           <View style={styles.statusHeader}>
             <Text style={styles.statusHeaderText}>My Food</Text>
-            <TouchableOpacity style={styles.statusBox} onPress={() => router.push('Boundary/OrderHistory')}>
+            <TouchableOpacity style={styles.statusBox} onPress={() => router.push('Boundary/MyFoodOrderUI')}>
               <Text>3 Orders</Text>
+              <Ionicons name='chevron-forward' size={24} color='grey' />
             </TouchableOpacity>
           </View>
 
           <View style={styles.statusHeader}>
             <Text style={styles.statusHeaderText}>My Diet Plan</Text>
-            <TouchableOpacity style={styles.statusBox}>
+            <TouchableOpacity style={styles.statusBox} onPress={() => router.push('Boundary/MyDietPlanOrderUI')}>
               <Text>3 Plans</Text>
+              <Ionicons name='chevron-forward' size={24} color='grey' />
             </TouchableOpacity>
           </View>
         </View>
 
         <TouchableOpacity style={styles.recipeBox} onPress={() => router.push('recipePage')}>
           <Text style={styles.recipeText}>Discover our recipe</Text>
-          <Ionicons name='chevron-forward' size={24} color='black' />
+          <Ionicons name='chevron-forward' size={24} color='grey' />
         </TouchableOpacity>
 
         <View style={styles.row}>
           <Text style={styles.sectionTitle}>Featured Menu</Text>
-          <TouchableOpacity onPress={() => router.push('Boundary/ViewMenu')}>
-            <Ionicons name='chevron-forward' size={24} color='black' />
+          <TouchableOpacity onPress={() => router.push('Boundary/ViewMenuUI')}>
+            <Ionicons name='chevron-forward' size={24} color='grey' />
           </TouchableOpacity>
         </View>
         
         <ScrollView horizontal contentContainerStyle={styles.featuredMenuContainer}>
-          {featuredMenu.map((menu) => (
-            <TouchableOpacity key={menu.id} style={styles.menuCard} onPress={() => handleFoodOrder(menu)}>
+          {featuredMenu.map((menu, index) => (
+            <TouchableOpacity key={index} style={styles.menuCard} onPress={() => handleFoodOrder(menu)}>
               <Image source={{ uri: menu.image }} style={styles.menuImage} />
               <View style={styles.menuTextContainer}>
                 <Text style={styles.menuTitle}>{menu.title}</Text>
@@ -90,12 +92,12 @@ const Food = () => {
         <View style={styles.row}>
           <Text style={styles.sectionTitle}>Diet Plan</Text>
           <TouchableOpacity onPress={() => router.push('Boundary/ViewDietPlan')}>
-            <Ionicons name='chevron-forward' size={24} color='black' />
+            <Ionicons name='chevron-forward' size={24} color='grey' />
           </TouchableOpacity>
         </View>
         <ScrollView horizontal contentContainerStyle={styles.featuredMenuContainer}>
-          {dietPlans.map((plan) => (
-            <TouchableOpacity key={plan.id} style={styles.menuCard} onPress={() => handleDietPlanOrder(plan)}>
+          {dietPlans.map((plan, index) => (
+            <TouchableOpacity key={index} style={styles.menuCard} onPress={() => handleDietPlanOrder(plan)}>
               <Image source={{ uri: plan.planImage || 'https://via.placeholder.com/150' }} style={styles.menuImage} />
               <View style={styles.menuTextContainer}>
                 <Text style={styles.menuTitle}>{plan.planName}</Text>
@@ -131,6 +133,9 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 0.5,
     padding: 16,
+    flexDirection:'row',
+    justifyContent:'space-between',
+    alignItems:'center'
   },
   recipeBox: {
     backgroundColor: 'white',

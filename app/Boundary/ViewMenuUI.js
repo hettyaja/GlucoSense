@@ -6,6 +6,7 @@ import { fetchMenuData } from '../service/foodordermenuService';
 import { useAuth } from '../service/AuthContext';
 import Header from '../components/Header';
 import { encode as btoa } from 'base-64';
+import ViewMenuController from '../Controller/ViewMenuController';
 
 const ViewMenu = () => {
   const { user } = useAuth(); 
@@ -19,7 +20,7 @@ const ViewMenu = () => {
   useEffect(() => {
     const fetchMenuItems = async () => {
       try {
-        const menuCollection = await fetchMenuData();
+        const menuCollection = await ViewMenuController.viewAllMenu();
         console.log('Fetched menu data:', menuCollection);
         setMenuData(menuCollection);
       } catch (error) {
@@ -40,7 +41,7 @@ const ViewMenu = () => {
   return (
     <>
       <Header
-        title='Food Order'
+        title='Food Menu'
         leftButton='Back'
         onLeftButtonPress={() => router.back()}
       />

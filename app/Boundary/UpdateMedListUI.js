@@ -1,39 +1,42 @@
-import { StyleSheet, Text, TextInput, View, Platform } from 'react-native';
-import React, { useState } from 'react';
-import Header from './components/Header';
-import { router } from 'expo-router';
+import { View, Text, StyleSheet, TextInput, Platform } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { router, useLocalSearchParams } from 'expo-router';
 import { Picker } from '@react-native-picker/picker';
 import RNNPickerSelect from 'react-native-picker-select';
-import { useAuth } from './service/AuthContext';
-import { addMedicine } from './service/diaryService';
+import { useAuth } from '../service/AuthContext';
+import UpdateMedicineListController from '../Controller/UpdateMedListController';
+import Header from '../components/Header';
 
+const editMedList = () => {
+  const { user } = useAuth();
+  const { medData } = useLocalSearchParams();
+  const [parsedMedData, setParsedMedData] = useState(medData ? JSON.parse(medData) : null);
 
-const createMedicine = () => {
-  const { user } = useAuth()
-  const [medicineName, setMedicineName] = useState('')
-  const [selectedType, setSelectedType] = useState(null);
-  const [selectedUnit, setSelectedUnit] = useState(null);
-  const [selectedInsulinType, setSelectedInsulinType] = useState(null);
+  const [medicineName, setMedicineName] = useState(parsedMedData.medicineName);
+  const [selectedType, setSelectedType] = useState(parsedMedData.type);
+  const [selectedUnit, setSelectedUnit] = useState(parsedMedData.unit);
+  const [selectedInsulinType, setSelectedInsulinType] = useState(parsedMedData.InsulinType);
 
   const handleBackButton = () => {
     router.back();
   };
 
-  const handleSaveButton = async () => {
+  const saveMeds = async () => {
     if (user) {
-      const newMedicine = {
-        medicineName: medicineName,
+      const updateMedList = {
+        id: parsedMedData.id,
+        medicineName,
         type: selectedType,
         InsulinType: selectedInsulinType,
-        unit:  selectedUnit
-      }
+        unit: selectedUnit,
+      };
 
       try {
-        await addMedicine(user.uid, newMedicine)
-        console.log('Medicine saved:', newMedicine);
-        router.replace('selectMedicine')
+        await UpdateMedicineListController.updateMedicineList(user.uid, updateMedList);
+        console.log('Med list updated:', updateMedList);
+        router.back('');
       } catch (error) {
-        console.error('Error saving medicine:', error);
+        console.error('Error updating med list:', error);
       }
     }
   };
@@ -41,11 +44,11 @@ const createMedicine = () => {
   return (
     <>
       <Header
-        title='Create Medicine'
+        title='Edit Medicine Info'
         leftButton='Back'
         onLeftButtonPress={handleBackButton}
         rightButton='Save'
-        onRightButtonPress={handleSaveButton}
+        onRightButtonPress={saveMeds}
       />
       <View style={styles.container}>
         <View style={styles.item}>
@@ -130,6 +133,8 @@ const createMedicine = () => {
             >
               <Picker.Item label="mg" value='mg'/>
               <Picker.Item label="ml" value='ml'/>
+              <Picker.Item label="pill" value='pill'/>
+              <Picker.Item label="unit" value='unit'/>
             </Picker>
           )}
         </View>
@@ -138,7 +143,7 @@ const createMedicine = () => {
   );
 };
 
-export default createMedicine;
+export default editMedList;
 
 const styles = StyleSheet.create({
   container: {

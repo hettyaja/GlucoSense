@@ -142,7 +142,7 @@ const preReg = () => {
   return (
     <>
       <Header
-        title='Glucose'
+        title='Create Glucose Diary'
         leftButton='Close'
         onLeftButtonPress={() => router.back('/home')}
         rightButton='Save'

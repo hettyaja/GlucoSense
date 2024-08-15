@@ -3,48 +3,16 @@ import { View, Text, StyleSheet, Image, TouchableOpacity, ActivityIndicator } fr
 import MenuDetailsController from '../Controller/MenuDetailsController';
 import UpdateFoodOrderController from '../Controller/UpdateFoodOrderController';
 import { useAuth } from '../service/AuthContext';
+import { encode } from 'base-64'
+import { router } from 'expo-router';
 
-const FoodCard = ({ item }) => {
+const FoodCard = ({ item, onOrderDelivered }) => {
   const { user } = useAuth(); // Use the auth context to get the user
-  const [menuData, setMenuData] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchMenu = async () => {
-      try {
-        console.log(user.uid, item.menuId)
-        const data = await MenuDetailsController.fetchMenu(user.uid, item.menuId);
-        console.log(data)
-        setMenuData(data);
-      } catch (error) {
-        console.error('Error fetching menu data:', error);
-      } finally {
-        setLoading(false); // Set loading to false after fetching data
-      }
-    };
-
-    fetchMenu();
-  }, [user.uid, item.menuId]); // Dependency array includes user.uid and item.menuId
-
-  if (loading) {
-    return (
-      <View style={styles.card}>
-        <ActivityIndicator size="large" color="#E58B68" />
-      </View>
-    );
-  }
-
-  if (!menuData) {
-    return (
-      <View style={styles.card}>
-        <Text style={styles.errorText}>Failed to load menu data.</Text>
-      </View>
-    );
-  }
 
   const handleDeliver = async () => {
     try {
-      await UpdateFoodOrderController.updateFoodOrder(item.id, { status: 'complete' }); // Update the order status to 'complete'
+      await UpdateFoodOrderController.updateFoodOrder(item.orderId, { deliverDate: new Date(), status: 'complete' }); // Update the order status to 'complete'
+      onOrderDelivered();
       console.log('Order status updated to complete');
     } catch (error) {
       console.error('Error updating order status:', error);
@@ -52,21 +20,32 @@ const FoodCard = ({ item }) => {
   };
 
   return (
-    <TouchableOpacity style={styles.card}>
-      <Image source={{ uri: menuData.image }} style={styles.cardImage} />
+    <TouchableOpacity
+      style={styles.card}
+      onPress={() =>
+        router.push({
+          pathname: 'Boundary/BusinessPartnerFoodOrderDetails',
+          params: { orderDetails: encode(JSON.stringify(item)) },
+        })
+      }
+    >
+      <Image source={{ uri: item.menuImage }} style={styles.cardImage} />
       <View style={styles.cardContent}>
         <Text style={styles.cardTitle}>Order {item.orderRefNumber}</Text>
-        <View style={{borderBottomWidth:0.5, borderColor:'#808080'}}/>
-        <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
-          <Text style={styles.cardSubtitle}>{menuData.foodName}</Text>
+        <View style={{ borderBottomWidth: 0.5, borderColor: '#808080' }} />
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Text style={styles.cardSubtitle}>{item.menuName}</Text>
           <Text style={styles.cardSubtitle}>Qty: {item.quantity}</Text>
         </View>
         <Text style={styles.cardLabel}>Notes: {item.notes ? item.notes : '-'}</Text>
-        <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
           <Text style={[styles.cardSubtitle]}>$ {item.totalPayment}</Text>
-          <TouchableOpacity style={styles.deliverButton} onPress={handleDeliver}>
-            <Text style={styles.deliverText}>Deliver</Text>
-          </TouchableOpacity>
+          {/* Conditionally render the "Deliver" button if status is not 'complete' */}
+          {item.status !== 'complete' && (
+            <TouchableOpacity style={styles.deliverButton} onPress={handleDeliver}>
+              <Text style={styles.deliverText}>Deliver</Text>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     </TouchableOpacity>
@@ -74,11 +53,21 @@ const FoodCard = ({ item }) => {
 };
 
 const DietPlanCard = ({ item }) => (
-  <TouchableOpacity style={styles.card}>
-    <Image source={{ uri: item.imageUrl }} style={styles.cardImage} />
+  <TouchableOpacity style={styles.card} onPress={() => router.push({ pathname: 'Boundary/BusinessPartnerDietPlanOrderDetails', params: { orderDetails: encode(JSON.stringify(item)) } })}>
+    <Image source={{ uri: item.dietPlanImage }} style={styles.cardImage} />
     <View style={styles.cardContent}>
-      <Text style={styles.cardTitle}>{item.name}</Text>
-      <Text style={styles.cardSubtitle}>{item.description}</Text>
+      <Text style={styles.cardTitle}>Order {item.orderRefNumber}</Text>
+      <View style={{ borderBottomWidth: 0.5, borderColor: '#808080' }} />
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={styles.cardSubtitle}>{item.dietPlanName} ({item.quantity} Week)</Text>
+        <Text style={styles.cardSubtitle}>${item.totalPayment}</Text>
+      </View>
+      <Text style={styles.cardLabel}>Notes: {item.notes ? item.notes : '-'}</Text>
+      <Text style={styles.cardLabel}>Start: {new Date(item.startDate).toLocaleDateString()}</Text>
+      <Text style={styles.cardLabel}>End: {new Date(item.endDate).toLocaleDateString()}</Text>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+
+      </View>
     </View>
   </TouchableOpacity>
 );
@@ -93,8 +82,8 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   cardImage: {
-    width: 120,
-    height: 120,
+    width: 128,
+    height: 128,
   },
   cardContent: {
     flex: 1,
@@ -109,9 +98,9 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Medium',
   },
   cardLabel: {
-    fontSize:12,
-    fontFamily:'Poppins-Regular',
-    color:'#808080'
+    fontSize: 12,
+    fontFamily: 'Poppins-Regular',
+    color: '#808080',
   },
   errorText: {
     fontFamily: 'Poppins-Regular',
@@ -120,16 +109,18 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   deliverButton: {
-    backgroundColor:"green",
-    borderRadius:8,
-    paddingVertical:8,
-    paddingHorizontal:16
+    borderRadius: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderWidth:1,
+    borderColor:'#E58B68'
   },
   deliverText: {
-    fontFamily:'Poppins-Medium',
-    fontSize:12,
-    color:'white'
-  }
+    fontFamily: 'Poppins-Medium',
+    fontSize: 12,
+    color: '#E58B68',
+  },
 });
+
 
 export { FoodCard, DietPlanCard };

@@ -32,7 +32,7 @@ const BottomSheetModal = ({ isVisible, onClose }) => {
                   <FontAwesome name="cutlery" size={24} color="#000" />
                   <Text style={styles.buttonText}>Meals</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.button} onPress={() => router.push({pathname: 'Boundary/addMeds', query: onClose()})}>
+                <TouchableOpacity style={styles.button} onPress={() => router.push({pathname: 'Boundary/AddMedsUI', query: onClose()})}>
                   <FontAwesome5 name="pills" size={24} color="#000" />
                   <Text style={styles.buttonText}>Meds</Text>
                 </TouchableOpacity>
