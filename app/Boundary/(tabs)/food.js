@@ -1,21 +1,40 @@
-import { useRouter } from 'expo-router';
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
+import { useFocusEffect, useRouter } from 'expo-router';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, Alert } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Header from '../../components/Header';
 import { fetchMenuData, fetchDietPlans } from '../../service/foodordermenuService'; // Import the updated menu service
-import { encode } from 'base-64'
+import { encode } from 'base-64';
+import getProfileController from '../../Controller/getProfileController';
+import { useAuth } from '../../service/AuthContext';
 
 const Food = () => {
+  const { user } = useAuth();
   const router = useRouter();
   const [featuredMenu, setFeaturedMenu] = useState([]);
   const [dietPlans, setDietPlans] = useState([]);
+  const [subscriptionType, setSubscriptionType] = useState();
+
+  const fetchProfileData = async () => {
+    try {
+      const profileData = await getProfileController.getProfile(user.uid);
+      setSubscriptionType(profileData.subscriptionType);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchProfileData();
+    }, [])
+  );
 
   useEffect(() => {
     const fetchFeaturedMenu = async () => {
       try {
         const menuCollection = await fetchMenuData(); // Fetch menu data
-        setFeaturedMenu(menuCollection.slice(0, 5)); // Assuming you want to show the first 4 items as featured
+        setFeaturedMenu(menuCollection.slice(0, 5)); // Assuming you want to show the first 5 items as featured
       } catch (error) {
         console.error('Error fetching menu data:', error);
       }
@@ -27,7 +46,7 @@ const Food = () => {
     const fetchDietPlansData = async () => {
       try {
         const dietPlanCollection = await fetchDietPlans(); // Fetch diet plan data
-        setDietPlans(dietPlanCollection.slice(0,5));
+        setDietPlans(dietPlanCollection.slice(0, 5));
       } catch (error) {
         console.error('Error fetching diet plan data:', error);
       }
@@ -36,47 +55,85 @@ const Food = () => {
   }, []);
 
   const handleFoodOrder = (menu) => {
-    router.push({pathname:'Boundary/MenuDetailsUI', params: {menuData: encode(JSON.stringify(menu))}})
-  }
+    router.push({ pathname: 'Boundary/MenuDetailsUI', params: { menuData: encode(JSON.stringify(menu)) } });
+  };
 
   const handleDietPlanOrder = (plan) => {
-    router.push({pathname:'Boundary/OrderDietPlan', params: {planData: encode(JSON.stringify(plan))}})
-  }
+    if (subscriptionType === 'free') {
+      Alert.alert(
+        'Premium Feature',
+        'Diet plans are only available for premium users. Would you like to upgrade?',
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+          },
+          {
+            text: 'Upgrade',
+            onPress: () => router.push('Boundary/Subscribe'),
+          },
+        ]
+      );
+    } else {
+      router.push({ pathname: 'Boundary/OrderDietPlan', params: { planData: encode(JSON.stringify(plan)) } });
+    }
+  };
+
+  const handleViewDietPlans = () => {
+    if (subscriptionType === 'free') {
+      Alert.alert(
+        'Premium Feature',
+        'Diet plans are only available for premium users. Would you like to upgrade?',
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+          },
+          {
+            text: 'Upgrade',
+            onPress: () => router.push('Boundary/Subscribe'),
+          },
+        ]
+      );
+    } else {
+      router.push('Boundary/ViewDietPlan');
+    }
+  };
 
   return (
     <>
-      <Header title='Food' />
+      <Header title="Food" />
       <ScrollView style={styles.container}>
         <View style={styles.statusContainer}>
           <View style={styles.statusHeader}>
             <Text style={styles.statusHeaderText}>My Food</Text>
             <TouchableOpacity style={styles.statusBox} onPress={() => router.push('Boundary/MyFoodOrderUI')}>
-              <Text>3 Orders</Text>
-              <Ionicons name='chevron-forward' size={24} color='grey' />
+              <Text>Orders</Text>
+              <Ionicons name="chevron-forward" size={24} color="grey" />
             </TouchableOpacity>
           </View>
 
           <View style={styles.statusHeader}>
             <Text style={styles.statusHeaderText}>My Diet Plan</Text>
             <TouchableOpacity style={styles.statusBox} onPress={() => router.push('Boundary/MyDietPlanOrderUI')}>
-              <Text>3 Plans</Text>
-              <Ionicons name='chevron-forward' size={24} color='grey' />
+              <Text>Plans</Text>
+              <Ionicons name="chevron-forward" size={24} color="grey" />
             </TouchableOpacity>
           </View>
         </View>
 
         <TouchableOpacity style={styles.recipeBox} onPress={() => router.push('recipePage')}>
           <Text style={styles.recipeText}>Discover our recipe</Text>
-          <Ionicons name='chevron-forward' size={24} color='grey' />
+          <Ionicons name="chevron-forward" size={24} color="grey" />
         </TouchableOpacity>
 
         <View style={styles.row}>
           <Text style={styles.sectionTitle}>Featured Menu</Text>
           <TouchableOpacity onPress={() => router.push('Boundary/ViewMenuUI')}>
-            <Ionicons name='chevron-forward' size={24} color='grey' />
+            <Ionicons name="chevron-forward" size={24} color="grey" />
           </TouchableOpacity>
         </View>
-        
+
         <ScrollView horizontal contentContainerStyle={styles.featuredMenuContainer}>
           {featuredMenu.map((menu, index) => (
             <TouchableOpacity key={index} style={styles.menuCard} onPress={() => handleFoodOrder(menu)}>
@@ -90,11 +147,12 @@ const Food = () => {
         </ScrollView>
 
         <View style={styles.row}>
-          <Text style={styles.sectionTitle}>Diet Plan</Text>
-          <TouchableOpacity onPress={() => router.push('Boundary/ViewDietPlan')}>
-            <Ionicons name='chevron-forward' size={24} color='grey' />
+          <Text style={styles.sectionTitle}>Featured Diet Plan</Text>
+          <TouchableOpacity onPress={handleViewDietPlans}>
+            <Ionicons name="chevron-forward" size={24} color="grey" />
           </TouchableOpacity>
         </View>
+
         <ScrollView horizontal contentContainerStyle={styles.featuredMenuContainer}>
           {dietPlans.map((plan, index) => (
             <TouchableOpacity key={index} style={styles.menuCard} onPress={() => handleDietPlanOrder(plan)}>
@@ -133,24 +191,24 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 0.5,
     padding: 16,
-    flexDirection:'row',
-    justifyContent:'space-between',
-    alignItems:'center'
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   recipeBox: {
     backgroundColor: 'white',
     borderRadius: 8,
     borderWidth: 0.5,
     marginHorizontal: 16,
-    marginBottom:16,
+    marginBottom: 16,
     padding: 16,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
   recipeText: {
-    fontFamily:'Poppins-Medium',
-    fontSize:14
+    fontFamily: 'Poppins-Medium',
+    fontSize: 14,
   },
   sectionTitle: {
     fontFamily: 'Poppins-Medium',
@@ -158,8 +216,8 @@ const styles = StyleSheet.create({
   },
   featuredMenuContainer: {
     marginLeft: 16,
-    marginBottom:16,
-    marginTop:8
+    marginBottom: 16,
+    marginTop: 8,
   },
   menuCard: {
     backgroundColor: 'white',
@@ -191,11 +249,11 @@ const styles = StyleSheet.create({
     color: '#808080',
   },
   row: {
-    flexDirection:'row',
-    justifyContent:'space-between',
-    alignItems:'center',
-    marginHorizontal:16
-  }
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginHorizontal: 16,
+  },
 });
 
 export default Food;

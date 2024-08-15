@@ -82,6 +82,12 @@ const Profile = () => {
             } else if (!localUsername) {
                 Alert.alert("Empty Field", "Username cannot be empty.");
                 return;
+            } else if (!localWeight) {
+                Alert.alert("Empty Field", "Weight cannot be empty.");
+                return;
+            } else if (!localHeight) {
+                Alert.alert("Empty Field", "Height cannot be empty.");
+                return;
             }
 
             try {

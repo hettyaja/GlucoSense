@@ -37,6 +37,12 @@ export default function UserProfile() {
     if (age < 10) {
       Alert.alert("Invalid Age", "You must be at least 10 years old.");
       return;
+    } else if (!weight) {
+      Alert.alert("Empty Field", "Weight cannot be empty.");
+      return;
+    } else if (!height) {
+        Alert.alert("Empty Field", "Height cannot be empty.");
+        return;
     }
 
     const bodyProfileData = {

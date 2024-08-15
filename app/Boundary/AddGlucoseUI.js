@@ -174,12 +174,6 @@ const preReg = () => {
             </Picker>
           </View>
         </View>
-        <View style={styles.centered}>
-          <TouchableOpacity style={styles.button} onPress={() => router.push('/glucoseScanner')}>
-            <Feather name="camera" size={24} />
-            <Text style={styles.buttonText}>Camera</Text>
-          </TouchableOpacity>
-        </View>
         <View style={styles.section}>
           <View style={styles.row}>
             <Text style={styles.label}>Glucose</Text>
@@ -223,13 +217,13 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
     backgroundColor: '#f5f5f5',
-    marginTop: 16,
   },
   section: {
     backgroundColor: 'white',
     borderTopWidth: 0.5,
     borderBottomWidth: 0.5,
     borderColor: '#808080',
+    marginTop:16
   },
   row: {
     flexDirection: 'row',

@@ -1,5 +1,5 @@
 import { StyleSheet, Text, TextInput, View, Platform } from 'react-native';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import { router } from 'expo-router';
 import { Picker } from '@react-native-picker/picker';
@@ -11,13 +11,21 @@ import CreateMedListController from '../Controller/CreateMedListController';
 const createMedicine = () => {
   const { user } = useAuth()
   const [medicineName, setMedicineName] = useState('')
-  const [selectedType, setSelectedType] = useState(null);
-  const [selectedUnit, setSelectedUnit] = useState(null);
+  const [selectedType, setSelectedType] = useState('Pill');
+  const [selectedUnit, setSelectedUnit] = useState('mg');
   const [selectedInsulinType, setSelectedInsulinType] = useState(null);
 
   const handleBackButton = () => {
     router.back();
   };
+
+
+  useEffect(() => {
+    if (selectedType === 'Insulin') {
+      setSelectedInsulinType('Basal');
+    }
+  }, [selectedType]);
+
 
   const handleSaveButton = async () => {
     if (user) {
