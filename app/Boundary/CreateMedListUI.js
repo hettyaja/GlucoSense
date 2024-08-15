@@ -1,11 +1,11 @@
 import { StyleSheet, Text, TextInput, View, Platform } from 'react-native';
 import React, { useState } from 'react';
-import Header from './components/Header';
+import Header from '../components/Header';
 import { router } from 'expo-router';
 import { Picker } from '@react-native-picker/picker';
 import RNNPickerSelect from 'react-native-picker-select';
-import { useAuth } from './service/AuthContext';
-import { addMedicine } from './service/diaryService';
+import { useAuth } from '../service/AuthContext';
+import CreateMedListController from '../Controller/CreateMedListController';
 
 
 const createMedicine = () => {
@@ -27,13 +27,13 @@ const createMedicine = () => {
         InsulinType: selectedInsulinType,
         unit:  selectedUnit
       }
-
+    
       try {
-        await addMedicine(user.uid, newMedicine)
-        console.log('Medicine saved:', newMedicine);
-        router.replace('selectMedicine')
+        await CreateMedListController.createMedsList(user.uid, newMedicine);
+        console.log('Medicine log saved:', newMedicine);
+        router.replace('Boundary/SelectMedicineUI');
       } catch (error) {
-        console.error('Error saving medicine:', error);
+        console.error('Error saving medicine log:', error);
       }
     }
   };

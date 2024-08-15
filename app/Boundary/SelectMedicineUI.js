@@ -1,13 +1,14 @@
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { getMedicine } from './service/diaryService';
-import { useAuth } from './service/AuthContext';
+//import { getMedicine } from '../service/diaryService';
+import { useAuth } from '../service/AuthContext';
 import Checkbox from 'expo-checkbox';
-import PopupMenu from './components/PopupMenu';
-import Header from './components/Header';
+import PopupMenu from '../components/PopupMenu';
+import Header from '../components/Header';
 import { router } from 'expo-router';
-import Divider from './components/Divider';
+import Divider from '../components/Divider';
+import ViewMedListController from '../Controller/ViewMedListController';
 
 const selectMedicine = () => {
   const { user } = useAuth();
@@ -18,7 +19,7 @@ const selectMedicine = () => {
     const fetchMedicines = async () => {
       if (user) {
         try {
-          const medicinesList = await getMedicine(user.uid);
+          const medicinesList = await ViewMedListController.viewMedicineList(user.uid);
           setMedicines(medicinesList);
         } catch (error) {
           console.error('Error fetching medicines:', error);
@@ -86,7 +87,7 @@ const selectMedicine = () => {
           </View>
         ))}
 
-        <TouchableOpacity style={styles.createButton} onPress={() => router.push('createMedicine')}>
+        <TouchableOpacity style={styles.createButton} onPress={() => router.push('Boundary/CreateMedListUI')}>
           <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 14 }}>Create medicine</Text>
           <Ionicons name='chevron-forward' size={24} color='black' />
         </TouchableOpacity>

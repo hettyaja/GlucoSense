@@ -8,6 +8,31 @@ class MedicineLogs {
         this.medicine = medicine
     }
 
+    static async createMedList(uid, medSaved){
+      try{
+        const medListRef = collection(db, 'users', uid, 'medicinesSaved');
+        await addDoc(medListRef, medSaved);
+      }catch(error){
+        console.error('Error adding medicine:', error);
+        throw error
+      }
+    }
+
+    static async getMedicine (uid){
+      try {
+        const medicinesRef = collection(db, 'users', uid, 'medicinesSaved')
+        const medicinesSnapshot = await getDocs(medicinesRef)
+        const medicinesList = medicinesSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }))
+        return medicinesList
+      } catch (error) {
+        throw error;
+      }
+    }
+
+
     static async createMedicineLogs(uid, medicineData) {
         try {
             const medicineLogsRef = collection(db, 'users', uid, 'medicineLogs');

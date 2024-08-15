@@ -79,7 +79,7 @@ const RootLayout = () => {
       }} />
       {/* <Stack.Screen name="Subscribe" options={{ headerShown: false }} /> */}
       <Stack.Screen name="Boundary/ProfileBpPage" />
-      <Stack.Screen name="selectMedicine" />
+      <Stack.Screen name='Boundary/SelectMedicineUI' />
       <Stack.Screen name='ReportProblem' options={{
         title: 'ReportProblem',
         headerStyle: { backgroundColor: '#E58B68' },
@@ -95,7 +95,7 @@ const RootLayout = () => {
         headerTitle: 'Help & Feedback',
         headerTitleAlign: 'center',
       }} />
-      <Stack.Screen name='createMedicine' />
+      <Stack.Screen name='Boundary/CreateMedListUI' />
     </Stack>
   );
 };
