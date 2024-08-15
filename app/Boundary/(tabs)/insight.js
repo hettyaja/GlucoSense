@@ -10,9 +10,11 @@ import getProfileController from '../../Controller/getProfileController';
 import RetrieveGlucoseLogsController from '../../Controller/RetrieveGlucoseLogsController';
 import RetrieveMealLogsController from '../../Controller/RetrieveMealLogsController';
 import Header from '../../components/Header';
+import ViewUserGoalsController from '../../Controller/ViewUserGoalsController';
 import * as d3 from 'd3';
 
 const Insight = () => {
+  const [calorieGoal, setCalorieGoal] = useState();
   const [subscriptionType, setSubscriptionType] = useState('');
   const screenHeight = 220;
   const screenWidth = Dimensions.get("window").width;
@@ -92,11 +94,32 @@ const Insight = () => {
       }
       const prepareDataForGraphs = async () => {
         try {
+          const userGoals = await ViewUserGoalsController.viewUserGoals(user.uid);
           const glucoseData = await RetrieveGlucoseLogsController.retrieveGlucoseLogs(user.uid);
           const mealData = await RetrieveMealLogsController.retrieveMealLogs(user.uid);
           const combinedData = combineGlucoseAndMealData(glucoseData, mealData);
           setGlucoseGraphData(glucoseData);
-          setMealGraphData(mealData);
+          const calorieGoal = userGoals.goals.BMRGoals.default
+          ? userGoals.goals.BMRGoals.calorieGoals
+          : userGoals.goals.customGoals.calorieGoals;
+          
+          setCalorieGoal(calorieGoal); // Set the calorie goal
+          const goalData = {
+            labels: mealData.labels,
+            datasets: [
+              ...mealData.datasets,
+              {
+                data: Array(mealData.labels.length).fill(calorieGoal),
+                color: () => `#E58B68`, // Red line
+                withDots: false,
+                fillShadowGradient: 'transparent',
+                fillShadowGradientTo: 'transparent',
+                fillShadowGradientOpacity: 0, // Explicitly set to 0
+              },
+            ],
+          };
+          setMealGraphData(goalData);
+  
           setScatterGraphData(combinedData);
         } catch (error) {
           console.error('Error preparing data for graphs:', error);
@@ -183,10 +206,13 @@ const Insight = () => {
                 style: {
                   borderRadius: 16
                 },
+                fillShadowGradient: 'transparent',
+                fillShadowGradientTo: 'transparent',
+                fillShadowGradientOpacity: 0, // Explicitly set to 0
                 propsForDots: {
                   r: "6",
                   strokeWidth: "1",
-                }
+                },
               }}
               style={{
                 marginVertical: 8,

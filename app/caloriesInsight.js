@@ -1,6 +1,5 @@
-// caloriesInsight.js
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Dimensions, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, ScrollView, Image } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import { useNavigation, useRoute } from '@react-navigation/native'; // Use hooks
 import { useAuth } from './service/AuthContext';
@@ -54,13 +53,29 @@ const CaloriesInsight = () => {
         setCalorieGoal(calorieGoal); // Set the calorie goal
 
         const mealData = await RetrieveMealLogsController.retrieveMealLogs(user.uid);
-        setMealGraphData(mealData ? mealData : { labels: [], datasets: [{ data: [] }] });
         const lastData = mealData.datasets[0].data[mealData.datasets[0].data.length - 1];
         setLastMealData(lastData);
-        
+
+        // Add horizontal line for calorie goal
+        const goalData = {
+          labels: mealData.labels,
+          datasets: [
+            ...mealData.datasets,
+            {
+              data: Array(mealData.labels.length).fill(calorieGoal),
+              color: () => `#E58B68`, // Red line
+              withDots: false,
+              fillShadowGradient: 'transparent',
+              fillShadowGradientTo: 'transparent',
+              fillShadowGradientOpacity: 0, // Explicitly set to 0
+            },
+          ],
+        };
+        setMealGraphData(goalData);
+
         const dailyLogs = await RetrieveMealLogsController1.retrieveMealLogs(user.uid, 'daily');
         setDailyStats(calculateStats(dailyLogs));
-        setCaloriesConsumed(calculateStats(dailyLogs).sum || 0)
+        setCaloriesConsumed(calculateStats(dailyLogs).sum || 0);
 
         const weeklyLogs = await RetrieveMealLogsController1.retrieveMealLogs(user.uid, 'weekly');
         setWeeklyStats(calculateStats(weeklyLogs));
@@ -120,6 +135,9 @@ const CaloriesInsight = () => {
                 style: {
                   borderRadius: 16
                 },
+                fillShadowGradient: 'transparent',
+                fillShadowGradientTo: 'transparent',
+                fillShadowGradientOpacity: 0, // Explicitly set to 0
                 propsForDots: {
                   r: "6",
                   strokeWidth: "1",
@@ -129,36 +147,20 @@ const CaloriesInsight = () => {
                 marginVertical: 8,
               }}
             />
-            <Text style = {styles.graphExplaination}>Daily total calorie consumption for the last 7 days</Text>
+            <Text style={styles.graphExplaination}>Daily total calorie consumption for the last 7 days</Text>
           </View>
         </View>
-          {/* Calories Burned Card */}
-          <View style={{flexDirection:'row', justifyContent:'center'}}>
+        {/* Calories Burned Card */}
+        <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
           <View style={styles.caloriesBurnedContainer}>
             <Text style={styles.caloriesBurnedHeader}>Calories Goal</Text>
             <Text style={styles.caloriesBurnedText}>{`${lastMealData} / ${calorieGoal}`}</Text>
-            <Text style={[styles.caloriesBurnedText, {marginBottom:8, fontFamily:'Poppins-Regular'}]}>kcal</Text>
+            <Text style={[styles.caloriesBurnedText, { marginBottom: 8, fontFamily: 'Poppins-Regular' }]}>kcal</Text>
           </View>
-          </View>
+        </View>
         <View style={styles.statsContainer}>
+
           <View style={{ backgroundColor: 'white', justifyContent: 'flex-end', paddingBottom: 10 }}>
-            <Text style={styles.statsHeader}>Last 24 hours</Text>
-            <View style={styles.statsRow}>
-              <View style={styles.statsBox}>
-                <Text style={styles.titleText}>Avg</Text>
-                <Text style={styles.subTitleText}>{dailyStats.average !== null ? dailyStats.average.toFixed(2) : '---'}</Text>
-              </View>
-              <View style={styles.statsBox}>
-                <Text style={styles.titleText}>Low</Text>
-                <Text style={styles.subTitleText}>{dailyStats.low !== null ? dailyStats.low : '---'}</Text>
-              </View>
-              <View style={styles.statsBox}>
-                <Text style={styles.titleText}>High</Text>
-                <Text style={styles.subTitleText}>{dailyStats.high !== null ? dailyStats.high : '---'}</Text>
-              </View>
-            </View>
-          </View>
-          <View style={{ backgroundColor: 'white', justifyContent: 'flex-end', marginTop: 16, paddingBottom: 10 }}>
             <Text style={styles.statsHeader}>Last 7 days Stats</Text>
             <View style={styles.statsRow}>
               <View style={styles.statsBox}>
@@ -193,8 +195,6 @@ const CaloriesInsight = () => {
               </View>
             </View>
           </View>
-
-
         </View>
       </ScrollView>
     </>
