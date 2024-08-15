@@ -123,7 +123,6 @@ const CaloriesInsight = () => {
                 propsForDots: {
                   r: "6",
                   strokeWidth: "1",
-                  fill: (dot) => dot.exceedsGoal ? 'red' : 'black', // Change color based on calorie goal
                 },
               }}
               style={{
