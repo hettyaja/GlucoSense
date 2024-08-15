@@ -269,20 +269,14 @@ const Insight = () => {
               </View>
             ) : (
               <Svg height={screenHeight + 40} width={screenWidth - 10} style={styles.scatterChartContainer}>
-                {/* Add horizontal and vertical axes lines */}
-                <Line x1="40" y1={screenHeight - 40} x2={screenWidth - 40} y2={screenHeight - 40} stroke="grey" strokeWidth="2" />
-                <Line x1="40" y1="20" x2="40" y2={screenHeight - 40} stroke="grey" strokeWidth="2" />
-                {data.map((point, index) => (
-                  <Circle key={index} cx={point.x} cy={point.y} r="6" fill="black" />
-                ))}
                 {/* Add trend line */}
                 <Line x1={trendLine.x1} y1={trendLine.y1} x2={trendLine.x2} y2={trendLine.y2} stroke="#E58B68" strokeWidth="2" />
                 {/* Add grid lines */}
                 {xTicks.map((tick, index) => (
-                  <Line key={index} x1={xScale(tick)} y1="20" x2={xScale(tick)} y2={screenHeight - 40} stroke="grey" strokeDasharray="4, 4" />
+                  <Line key={index} x1={xScale(tick)} y1="20" x2={xScale(tick)} y2={screenHeight - 40} stroke="#D3D3D3" strokeDasharray="4, 4" />
                 ))}
                 {yTicks.map((tick, index) => (
-                  <Line key={index} x1="40" y1={yScale(tick)} x2={screenWidth - 40} y2={yScale(tick)} stroke="grey" strokeDasharray="4, 4" />
+                  <Line key={index} x1="40" y1={yScale(tick)} x2={screenWidth - 40} y2={yScale(tick)} stroke="#D3D3D3" strokeDasharray="5, 10" />
                 ))}
 
                 {/* Axes labels */}
@@ -300,6 +294,12 @@ const Insight = () => {
                     <Line x1="30" y1={yScale(tick)} x2="30" y2={yScale(tick)} stroke="black" />
                     <SvgText x="30" y={yScale(tick) + 5} fill="black" fontSize="12" textAnchor="end">{tick}</SvgText>
                   </G>
+                ))}
+                {/* Add horizontal and vertical axes lines */}
+                <Line x1="40" y1={screenHeight - 40} x2={screenWidth - 40} y2={screenHeight - 40} stroke="grey" strokeWidth="2" />
+                <Line x1="40" y1="20" x2="40" y2={screenHeight - 40} stroke="grey" strokeWidth="2" />
+                {data.map((point, index) => (
+                  <Circle key={index} cx={point.x} cy={point.y} r="6" fill="black" />
                 ))}
               </Svg>
               
