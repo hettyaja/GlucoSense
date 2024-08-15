@@ -65,9 +65,9 @@ const CaloriesInsight = () => {
               data: Array(mealData.labels.length).fill(calorieGoal),
               color: () => `#E58B68`, // Red line
               withDots: false,
-              fillShadowGradient: 'transparent',
-              fillShadowGradientTo: 'transparent',
-              fillShadowGradientOpacity: 0, // Explicitly set to 0
+              fillShadowGradient: '#ffffff',
+                fillShadowGradientTo: '#ffffff',
+                fillShadowGradientOpacity: 0, // No gradient
             },
           ],
         };
@@ -135,9 +135,9 @@ const CaloriesInsight = () => {
                 style: {
                   borderRadius: 16
                 },
-                fillShadowGradient: 'transparent',
-                fillShadowGradientTo: 'transparent',
-                fillShadowGradientOpacity: 0, // Explicitly set to 0
+                fillShadowGradient: '#ffffff',
+                fillShadowGradientTo: '#ffffff',
+                fillShadowGradientOpacity: 0, // No gradient
                 propsForDots: {
                   r: "6",
                   strokeWidth: "1",

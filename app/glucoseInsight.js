@@ -6,6 +6,7 @@ import { useAuth } from './service/AuthContext';
 import RetrieveGlucoseLogsController from './Controller/RetrieveGlucoseLogsController';
 import RetrieveGlucoseLogsController1 from './Controller/RetrieveGlucoseLogsController1';
 import Header from './components/Header';
+import ViewUserGoalsController from './Controller/ViewUserGoalsController';
 
 const Insight = () => {
   const screenWidth = Dimensions.get("window").width;
@@ -34,8 +35,34 @@ const Insight = () => {
 
     const prepareDataForGraphs = async () => {
       try {
+        const userGoals = await ViewUserGoalsController.viewUserGoals(user.uid);
+        const lowerGoal = userGoals.goals.glucoseGoals.afterMealLowerBound;
+        const upperGoal = userGoals.goals.glucoseGoals.afterMealUpperBound;
         const glucoseData = await RetrieveGlucoseLogsController.retrieveGlucoseLogs(user.uid);
-        setGlucoseGraphData(glucoseData ? glucoseData : { labels: [], datasets: [{ data: [] }] });
+        const goalData1 = {
+          labels: glucoseData.labels,
+          datasets: [
+            ...glucoseData.datasets,
+            {
+              data: Array(glucoseData.labels.length).fill(lowerGoal),
+              color: () => `green`, // Green line for lowerGoal
+              withDots: false,
+              fillShadowGradient: '#ffffff',
+              fillShadowGradientTo: '#ffffff',
+              fillShadowGradientOpacity: 0, // No gradient
+            },
+            {
+              data: Array(glucoseData.labels.length).fill(upperGoal),
+              color: () => `green`, // Green line for upperGoal
+              withDots: false,
+              fillShadowGradient: '#ffffff',
+              fillShadowGradientTo: '#ffffff',
+              fillShadowGradientOpacity: 0, // No gradient
+            },
+          ],
+        };
+        
+        setGlucoseGraphData(goalData1);
 
         const dailyLogs = await RetrieveGlucoseLogsController1.retrieveGlucoseLogs(user.uid, 'daily');
         setDailyStats(calculateStats(dailyLogs));
@@ -98,6 +125,9 @@ const Insight = () => {
                 style: {
                   borderRadius: 16
                 },
+                fillShadowGradient: '#ffffff',
+                fillShadowGradientTo: '#ffffff',
+                fillShadowGradientOpacity: 0, // No gradient
                 propsForDots: {
                   r: "6",
                   strokeWidth: "1",

@@ -15,6 +15,8 @@ import * as d3 from 'd3';
 
 const Insight = () => {
   const [calorieGoal, setCalorieGoal] = useState();
+  const [lowerGoal, setLowerGoal] = useState();
+  const [upperGoal, setUpperGoal] = useState();
   const [subscriptionType, setSubscriptionType] = useState('');
   const screenHeight = 220;
   const screenWidth = Dimensions.get("window").width;
@@ -98,28 +100,54 @@ const Insight = () => {
           const glucoseData = await RetrieveGlucoseLogsController.retrieveGlucoseLogs(user.uid);
           const mealData = await RetrieveMealLogsController.retrieveMealLogs(user.uid);
           const combinedData = combineGlucoseAndMealData(glucoseData, mealData);
-          setGlucoseGraphData(glucoseData);
+    
           const calorieGoal = userGoals.goals.BMRGoals.default
           ? userGoals.goals.BMRGoals.calorieGoals
           : userGoals.goals.customGoals.calorieGoals;
-          
+          const lowerGoal = userGoals.goals.glucoseGoals.afterMealLowerBound;
+          const upperGoal = userGoals.goals.glucoseGoals.afterMealUpperBound;
           setCalorieGoal(calorieGoal); // Set the calorie goal
           const goalData = {
             labels: mealData.labels,
             datasets: [
+              
               ...mealData.datasets,
               {
                 data: Array(mealData.labels.length).fill(calorieGoal),
                 color: () => `#E58B68`, // Red line
                 withDots: false,
-                fillShadowGradient: 'transparent',
-                fillShadowGradientTo: 'transparent',
-                fillShadowGradientOpacity: 0, // Explicitly set to 0
+                fillShadowGradient: '#ffffff',
+                fillShadowGradientTo: '#ffffff',
+                fillShadowGradientOpacity: 0, // No gradient
               },
             ],
           };
           setMealGraphData(goalData);
-  
+
+          const goalData1 = {
+            labels: glucoseData.labels,
+            datasets: [
+              ...glucoseData.datasets,
+              {
+                data: Array(glucoseData.labels.length).fill(lowerGoal),
+                color: () => `green`, // Green line for lowerGoal
+                withDots: false,
+                fillShadowGradient: '#ffffff',
+                fillShadowGradientTo: '#ffffff',
+                fillShadowGradientOpacity: 0, // No gradient
+              },
+              {
+                data: Array(glucoseData.labels.length).fill(upperGoal),
+                color: () => `green`, // Green line for upperGoal
+                withDots: false,
+                fillShadowGradient: '#ffffff',
+                fillShadowGradientTo: '#ffffff',
+                fillShadowGradientOpacity: 0, // No gradient
+              },
+            ],
+          };
+          
+          setGlucoseGraphData(goalData1);
           setScatterGraphData(combinedData);
         } catch (error) {
           console.error('Error preparing data for graphs:', error);
@@ -171,10 +199,13 @@ const Insight = () => {
                 style: {
                   borderRadius: 16
                 },
+                fillShadowGradient: '#ffffff',
+                fillShadowGradientTo: '#ffffff',
+                fillShadowGradientOpacity: 0, // Grey gradient
                 propsForDots: {
                   r: "6",
                   strokeWidth: "1",
-                }
+                },
               }}
               style={{
                 marginVertical: 8,
@@ -206,9 +237,9 @@ const Insight = () => {
                 style: {
                   borderRadius: 16
                 },
-                fillShadowGradient: 'transparent',
-                fillShadowGradientTo: 'transparent',
-                fillShadowGradientOpacity: 0, // Explicitly set to 0
+                fillShadowGradient: '#ffffff',
+                fillShadowGradientTo: '#ffffff',
+                fillShadowGradientOpacity: 0, // No gradient
                 propsForDots: {
                   r: "6",
                   strokeWidth: "1",
