@@ -44,7 +44,7 @@ const FoodCard = ({ item }) => {
 
   const handleDeliver = async () => {
     try {
-      await UpdateFoodOrderController.updateFoodOrder(item.id, { status: 'complete' }); // Update the order status to 'complete'
+      await UpdateFoodOrderController.updateFoodOrder(item.id, {deliverDate: new Date(),  status: 'complete' }); // Update the order status to 'complete'
       console.log('Order status updated to complete');
     } catch (error) {
       console.error('Error updating order status:', error);
@@ -75,10 +75,18 @@ const FoodCard = ({ item }) => {
 
 const DietPlanCard = ({ item }) => (
   <TouchableOpacity style={styles.card}>
-    <Image source={{ uri: item.imageUrl }} style={styles.cardImage} />
+    <Image source={{ uri: item.planImage }} style={styles.cardImage} />
     <View style={styles.cardContent}>
-      <Text style={styles.cardTitle}>{item.name}</Text>
-      <Text style={styles.cardSubtitle}>{item.description}</Text>
+      <Text style={styles.cardTitle}>Order {item.orderRefNumber}</Text>
+      <View style={{borderBottomWidth:0.5, borderColor:'#808080'}}/>
+      <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
+        <Text style={styles.cardSubtitle}>{item.planName}</Text>
+        <Text style={styles.cardSubtitle}>Qty: {item.quantity}</Text>
+      </View>
+      <Text style={styles.cardLabel}>Notes: {item.notes ? item.notes : '-'}</Text>
+      <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
+        <Text style={[styles.cardSubtitle]}>$ {item.totalPayment}</Text>
+      </View>
     </View>
   </TouchableOpacity>
 );
@@ -131,5 +139,6 @@ const styles = StyleSheet.create({
     color:'white'
   }
 });
+
 
 export { FoodCard, DietPlanCard };

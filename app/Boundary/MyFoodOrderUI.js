@@ -5,21 +5,27 @@ import { router } from 'expo-router';
 import Header from '../components/Header';
 import ViewUserFoodOrderController from '../Controller/ViewUserFoodOrderController';
 import { useAuth } from '../service/AuthContext'; // Assuming you have an AuthContext to get user data
+import { encode } from 'base-64'
 
 const ToReceiveRoute = ({ orders }) => (
   <ScrollView style={styles.container}>
     {orders.map((order, index) => (
-      <View key={`${order.orderId}-${index}`} style={styles.orderCard}>
-        <Image source={{ uri: order.menuImage }} style={styles.orderImage} />
+      <TouchableOpacity key={`${order.orderId}-${index}`} style={styles.orderCard} onPress={() => router.push({ pathname: 'Boundary/UserFoodOrderDetails', params: { orderDetails: encode(JSON.stringify(order)) } })}>
+        <Text style={styles.storeName}>{order.businessPartnerName}</Text>
         <View style={styles.orderInfo}>
-          <Text style={styles.storeName}>{order.businessPartnerName}</Text>
-          <Text style={styles.itemName}>{order.menuName}</Text>
-          <Text style={styles.price}>${order.price}</Text>
-          <TouchableOpacity style={styles.cancelButton}>
-            <Text style={styles.buttonText}>Cancel</Text>
-          </TouchableOpacity>
+          <Image source={{ uri: order.menuImage }} style={styles.orderImage} />
+          <View style={{flex:1}}>
+            <View style={styles.row}>
+              <Text style={styles.itemName}>{order.menuName}</Text>
+              <Text style={styles.itemName}>x{order.quantity}</Text>
+            </View>
+            <Text style={styles.notes}>Ordered on {order.orderDate.toLocaleString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</Text>
+            <View style={{flexDirection:'row', justifyContent:'flex-end'}}>
+              <Text style={styles.price}>${order.totalPayment}</Text>
+            </View>
+          </View>
         </View>
-      </View>
+      </TouchableOpacity>
     ))}
   </ScrollView>
 );
@@ -27,17 +33,22 @@ const ToReceiveRoute = ({ orders }) => (
 const CompletedRoute = ({ orders }) => (
   <ScrollView style={styles.container}>
     {orders.map((order, index ) => (
-      <View key={`${order.orderId}-${index}`} style={styles.orderCard}>
+      <TouchableOpacity key={`${order.orderId}-${index}`} style={styles.orderCard} onPress={() => router.push({ pathname: 'Boundary/UserFoodOrderDetails', params: { orderDetails: encode(JSON.stringify(order)) } })}>
+      <Text style={styles.storeName}>{order.businessPartnerName}</Text>
+      <View style={styles.orderInfo}>
         <Image source={{ uri: order.menuImage }} style={styles.orderImage} />
-        <View style={styles.orderInfo}>
-          <Text style={styles.storeName}>{order.businessPartnerName}</Text>
-          <Text style={styles.itemName}>{order.quantity}</Text>
-          <Text style={styles.price}>${order.price}</Text>
-          <TouchableOpacity style={styles.reorderButton}>
-            <Text style={styles.buttonText}>Re-Order</Text>
-          </TouchableOpacity>
+        <View style={{flex:1}}>
+          <View style={styles.row}>
+            <Text style={styles.itemName}>{order.menuName}</Text>
+            <Text style={styles.itemName}>x{order.quantity}</Text>
+          </View>
+          <Text style={styles.notes}>Delivered on {order.deliverDate.toLocaleString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</Text>
+          <View style={{flexDirection:'row', justifyContent:'flex-end'}}>
+            <Text style={styles.price}>${order.totalPayment}</Text>
+          </View>
         </View>
       </View>
+    </TouchableOpacity>
     ))}
   </ScrollView>
 );
@@ -109,35 +120,42 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f5f5',
   },
   orderCard: {
-    flexDirection: 'row',
     backgroundColor: '#fff',
     borderRadius: 8,
     marginBottom: 16,
     padding: 16,
   },
   orderImage: {
-    width: 80,
-    height: 80,
+    width: 88,
+    height: 88,
     borderRadius: 8,
     marginRight: 16,
   },
   orderInfo: {
     flex: 1,
-    justifyContent: 'space-between',
+    flexDirection:'row'
+  },
+  row: {
+    flex:1,
+    flexDirection:'row',
+    justifyContent:'space-between'
   },
   storeName: {
-    fontFamily: 'Poppins-SemiBold',
-    fontSize: 16,
+    fontFamily: 'Poppins-Medium',
+    fontSize: 14,
   },
   itemName: {
-    fontFamily: 'Poppins-Regular',
+    fontFamily: 'Poppins-Medium',
     fontSize: 14,
-    color: '#666',
+  },
+  notes: {
+    fontFamily:'Poppins-Regular',
+    fontSize:14,
+    color:'#808080'
   },
   price: {
-    fontFamily: 'Poppins-Regular',
+    fontFamily: 'Poppins-Medium',
     fontSize: 14,
-    color: '#333',
   },
   cancelButton: {
     backgroundColor: '#E58B68',

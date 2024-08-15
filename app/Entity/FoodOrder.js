@@ -92,6 +92,7 @@ class FoodOrder{
             deliveryAddress: data.deliveryAddress,
             totalPayment: data.totalPayment,
             orderDate: data.orderDate.toDate(), // Convert Firestore Timestamp to JavaScript Date
+            deliverDate: data.deliverDate ? data.deliverDate.toDate() : null,
             status: data.status,
             notes: data.notes,
           };

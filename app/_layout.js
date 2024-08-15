@@ -41,7 +41,7 @@ const RootLayout = () => {
       } else if (userType === 'user') {
         router.replace('Boundary/home')
       } else if (userType === 'businessPartner') {
-        router.replace('Boundary/foodBP')
+        router.replace('Boundary/OrderBP')
       } else if (userType === 'systemAdmin') {
         router.replace('Boundary/insightSA')
       }

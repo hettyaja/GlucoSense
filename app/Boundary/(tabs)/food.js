@@ -52,6 +52,7 @@ const Food = () => {
             <Text style={styles.statusHeaderText}>My Food</Text>
             <TouchableOpacity style={styles.statusBox} onPress={() => router.push('Boundary/MyFoodOrderUI')}>
               <Text>3 Orders</Text>
+              <Ionicons name='chevron-forward' size={24} color='grey' />
             </TouchableOpacity>
           </View>
 
@@ -59,19 +60,20 @@ const Food = () => {
             <Text style={styles.statusHeaderText}>My Diet Plan</Text>
             <TouchableOpacity style={styles.statusBox} onPress={() => router.push('Boundary/MyDietPlanOrderUI')}>
               <Text>3 Plans</Text>
+              <Ionicons name='chevron-forward' size={24} color='grey' />
             </TouchableOpacity>
           </View>
         </View>
 
         <TouchableOpacity style={styles.recipeBox} onPress={() => router.push('recipePage')}>
           <Text style={styles.recipeText}>Discover our recipe</Text>
-          <Ionicons name='chevron-forward' size={24} color='black' />
+          <Ionicons name='chevron-forward' size={24} color='grey' />
         </TouchableOpacity>
 
         <View style={styles.row}>
           <Text style={styles.sectionTitle}>Featured Menu</Text>
           <TouchableOpacity onPress={() => router.push('Boundary/ViewMenuUI')}>
-            <Ionicons name='chevron-forward' size={24} color='black' />
+            <Ionicons name='chevron-forward' size={24} color='grey' />
           </TouchableOpacity>
         </View>
         
@@ -90,7 +92,7 @@ const Food = () => {
         <View style={styles.row}>
           <Text style={styles.sectionTitle}>Diet Plan</Text>
           <TouchableOpacity onPress={() => router.push('Boundary/ViewDietPlan')}>
-            <Ionicons name='chevron-forward' size={24} color='black' />
+            <Ionicons name='chevron-forward' size={24} color='grey' />
           </TouchableOpacity>
         </View>
         <ScrollView horizontal contentContainerStyle={styles.featuredMenuContainer}>
@@ -131,6 +133,9 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 0.5,
     padding: 16,
+    flexDirection:'row',
+    justifyContent:'space-between',
+    alignItems:'center'
   },
   recipeBox: {
     backgroundColor: 'white',
