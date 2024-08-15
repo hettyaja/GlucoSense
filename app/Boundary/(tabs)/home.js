@@ -231,7 +231,7 @@ const home = () => {
     if (item.type === 'meal') {
       router.push({ pathname: 'Boundary/UpdateMealsUI', params: { mealData: JSON.stringify(item) } });
     } else if (item.type === 'medicine') {
-      router.push({ pathname: 'Boundary/editMeds', params: { medicineData: JSON.stringify(item) } });
+      router.push({ pathname: 'Boundary/UpdateMedLogUI', params: { medicineData: JSON.stringify(item) } });
     } else if (item.type === 'glucose') {
       router.push({ pathname: 'Boundary/UpdateGlucoseUI', params: { glucoseData: JSON.stringify(item) } });
     }

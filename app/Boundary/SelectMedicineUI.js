@@ -52,7 +52,7 @@ const selectMedicine = () => {
     const selectedMedicineNames = Object.values(selectedMedicinesName);
     console.log(selectedMedicineNames);
     // Navigate to the 'addMeds' page with selected medicine names
-    router.push({ pathname: 'Boundary/addMeds', params: { selectedMedicineNames: JSON.stringify(selectedMedicineNames) } });
+    router.push({ pathname: 'Boundary/AddMedsUI', params: { selectedMedicineNames: JSON.stringify(selectedMedicineNames) } });
   };
 
   const handleBackPress = () => {
