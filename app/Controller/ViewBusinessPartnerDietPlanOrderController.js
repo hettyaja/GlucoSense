@@ -1,6 +1,6 @@
 import DietPlanOrder from "../Entity/DietPlanOrder"
 
-class ViewDietPlanOrderController {
+class ViewBusinessPartnerDietPlanOrderController {
   static async viewDietPlanOrderByBusinessPartnerId(businessPartnerId) {
     try {
       return await DietPlanOrder.fetchDietPlanOrderByBusinessPartnerId(businessPartnerId)
@@ -10,4 +10,4 @@ class ViewDietPlanOrderController {
   }
 }
 
-export default ViewDietPlanOrderController
+export default ViewBusinessPartnerDietPlanOrderController

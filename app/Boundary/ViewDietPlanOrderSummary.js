@@ -94,15 +94,12 @@ const ViewDietPlanOrderSummary = () => {
       dietPlanId: parsedOrderData.dietPlanId,
       deliveryAddress: address,
       totalPayment,
+      quantity: parsedOrderData.quantity,
       startDate,
       endDate,
       notes,
     };
     await CreateDietPlanOrderController.createDietPlanOrder(orderData);
-
-    
-    router.push('Boundary/OrderHistory');
-    
         // Show success alert
     Alert.alert(
       "Order Placed",
