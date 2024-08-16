@@ -57,7 +57,6 @@ const RootLayout = () => {
       <Stack.Screen name="Boundary/(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="Boundary/(tabsBP)" options={{ headerShown: false }} />
       <Stack.Screen name="Boundary/(tabsSA)" options={{ headerShown: false }} />
-      <Stack.Screen name="searchFood" />
       <Stack.Screen name="Boundary/MenuDetailsUI" options={{
         title: 'Details',
         headerStyle: { backgroundColor: '#E58B68' },
