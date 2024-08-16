@@ -76,7 +76,7 @@ const searchFoodPage = () => {
         {results.length === 0 ? (
           <View style={styles.placeholderContainer}>
             <Image
-              source = {require('../app/assets/foodIcon.png')}
+              source = {require('../assets/foodIcon.png')}
               style = {styles.imageIcon}
             />
             <Text style={styles.placeholderText}>Add Food or Drink</Text>
