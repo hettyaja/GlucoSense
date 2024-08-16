@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { Stack, router, useSegments } from 'expo-router';
 import { useFonts } from 'expo-font';
 import ImageButton from './components/ImageButton';
-import { ProfileProvider } from './context/ProfileContext';
 import { AuthProvider, useAuth } from './service/AuthContext';
 import { MenuProvider } from 'react-native-popup-menu';
 import * as Notifications from 'expo-notifications';
@@ -103,9 +102,7 @@ const _layout = () => {
     <PaymentAndAddressProvider>
       <MenuProvider>
         <AuthProvider>
-              <ProfileProvider>
                   <RootLayout />
-              </ProfileProvider>
         </AuthProvider>
       </MenuProvider>
     </PaymentAndAddressProvider>
