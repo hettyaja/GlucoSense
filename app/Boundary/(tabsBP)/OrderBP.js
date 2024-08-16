@@ -29,7 +29,7 @@ const FirstRoute = ({ refreshFlag, triggerRefresh }) => {
     };
 
     loadFoodData();
-  }, [user.uid, refreshFlag]); // Adding refreshFlag as a dependency
+  }, [user.uid, refreshFlag]); 
 
   return (
     <ScrollView style={styles.container}>

@@ -13,7 +13,7 @@ const MenuCard = ({ menu, onDelete , onEdit}) => {
   const {user} = useAuth()
 
   return (
-    <TouchableOpacity style={styles.card} onPress={() => router.push({ pathname: 'Boundary/EditMenuPage', params: {menuData: encode(JSON.stringify(menu))} })}>      
+    <TouchableOpacity style={styles.card} onPress={() => router.push({ pathname: 'Boundary/UpdateMenuUI', params: {menuData: encode(JSON.stringify(menu))} })}>      
       {menu.image && <Image source={{ uri: menu.image }} style={styles.image} />}
       <View style={styles.infoContainer}>
         <Text style={styles.title}>{menu.foodName}</Text>

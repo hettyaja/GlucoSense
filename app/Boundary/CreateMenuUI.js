@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
     alignItems:'center'
   },
   textInput: {
-    fontFamily:'Poppins-regular',
+    fontFamily:'Poppins-Regular',
     fontSize:14,
     textAlign:'right'
   },

@@ -36,7 +36,7 @@ const foodBP = () => {
   );
 
   const handleEdit = (menu) =>{
-    router.push({pathname: 'Boundary/EditMenuPage', params: {menuData: encode(JSON.stringify(menu))}})
+    router.push({pathname: 'Boundary/UpdateMenuUI', params: {menuData: encode(JSON.stringify(menu))}})
   }
 
   const confirmDelete = (menu) => {
@@ -67,7 +67,7 @@ const foodBP = () => {
       <Header
         title='Menu Management'
         rightButton='Add'
-        onRightButtonPress={() => router.push('Boundary/CreateMenuPage')}
+        onRightButtonPress={() => router.push('Boundary/CreateMenuUI')}
       />
       <View style={{ flex: 1 }}>
         
