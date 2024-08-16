@@ -167,32 +167,36 @@ const home = () => {
   };
 
   const calculateGlucoseStatsByDate = (filterSelected, logsToCalculate = logs) => {
-    const now = new Date();
+    const now = new Date(); // Current date and time
     let startDate;
     switch (filterSelected) {
       case 'Today':
-        startDate = new Date(now.setHours(0, 0, 0, 0));
+        startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate()); // Start of today
         break;
       case '3D':
-        startDate = new Date(now.setDate(now.getDate() - 3));
+        startDate = new Date(now); // Create a copy of `now`
+        startDate.setDate(now.getDate() - 3); // Last 3 days
         break;
       case '7D':
-        startDate = new Date(now.setDate(now.getDate() - 7));
+        startDate = new Date(now); // Create a copy of `now`
+        startDate.setDate(now.getDate() - 7); // Last 7 days
         break;
       case '30D':
-        startDate = new Date(now.setDate(now.getDate() - 30));
+        startDate = new Date(now); // Create a copy of `now`
+        startDate.setDate(now.getDate() - 30); // Last 30 days
         break;
       default:
-        startDate = new Date(0);
+        startDate = new Date(0); // Default to show all dates
         break;
     }
-
+  
     const glucoseLogs = logsToCalculate.filter(log => log.type === 'glucose');
     const filteredGlucoseLogs = glucoseLogs.filter(log => {
       const logDate = new Date(log.time.seconds * 1000);
-      return logDate >= startDate;
+      // Filter out logs with a date in the future
+      return logDate >= startDate && logDate < now;
     });
-
+  
     calculateGlucoseStats(filteredGlucoseLogs);
   };
 
