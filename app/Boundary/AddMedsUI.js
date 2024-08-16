@@ -3,11 +3,11 @@ import React, { useEffect, useState } from 'react';
 import { router, useLocalSearchParams } from 'expo-router';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { useAuth } from '../service/AuthContext';
-import { addMedicineLog, getMedicineByName } from '../service/diaryService';
 import CreateMedicineLogsController from '../Controller/CreateMedicineLogsController';
 import Header from '../components/Header';
 import { Picker } from '@react-native-picker/picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import GetMedicineByNameController from '../Controller/GetMedicineByNameController';
 
 const addMeds = () => {
   const { user } = useAuth();
@@ -22,7 +22,7 @@ const addMeds = () => {
       if (user && selectedMedicineNames) {
         try {
           const names = JSON.parse(selectedMedicineNames);
-          const medicines = await getMedicineByName(user.uid, names);
+          const medicines = await GetMedicineByNameController.getMedicineByName(user.uid, names);
           setSelectedMedicines(medicines);
         } catch (error) {
           console.error('Error fetching selected medicines:', error);

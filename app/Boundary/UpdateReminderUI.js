@@ -5,7 +5,6 @@ import { router, useLocalSearchParams } from 'expo-router';
 import RNNPickerSelect from 'react-native-picker-select';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import * as Notifications from 'expo-notifications';
-import { updateReminder, deleteReminder } from '../service/reminderService';
 import { useAuth } from '../service/AuthContext';
 import UpdateReminderController from '../Controller/UpdateReminderController';
 import DeleteReminderController from '../Controller/DeleteReminderController';

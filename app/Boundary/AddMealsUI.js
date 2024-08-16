@@ -211,11 +211,11 @@ const addMeals = () => {
         </View>
 
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={[styles.button, {borderRightColor:'#808080', borderRightWidth:0.5}]} onPress={() => router.push('/searchFood')}>
+          <TouchableOpacity style={[styles.button, {borderRightColor:'#808080', borderRightWidth:0.5}]} onPress={() => router.push('Boundary/searchFood')}>
             <Text style={styles.buttonText}>Search</Text>
             <Fontisto name="search" size={24} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={() => router.push('/barcodeScanner')}>
+          <TouchableOpacity style={styles.button} onPress={() => router.push('Boundary/barcodeScanner')}>
             <Text style={styles.buttonText}>Scan</Text>
             <MaterialCommunityIcons name='barcode-scan' size={32} />
           </TouchableOpacity>

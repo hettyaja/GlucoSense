@@ -3,10 +3,11 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, Alert } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Header from '../../components/Header';
-import { fetchMenuData, fetchDietPlans } from '../../service/foodordermenuService'; // Import the updated menu service
 import { encode } from 'base-64';
 import getProfileController from '../../Controller/getProfileController';
 import { useAuth } from '../../service/AuthContext';
+import ViewMenuController from '../../Controller/ViewMenuController';
+import ViewDietPlanController from '../../Controller/ViewDietPlanController';
 
 const Food = () => {
   const { user } = useAuth();
@@ -33,7 +34,7 @@ const Food = () => {
   useEffect(() => {
     const fetchFeaturedMenu = async () => {
       try {
-        const menuCollection = await fetchMenuData(); // Fetch menu data
+        const menuCollection = await ViewMenuController.viewAllMenu(); // Fetch menu data
         setFeaturedMenu(menuCollection.slice(0, 5)); // Assuming you want to show the first 5 items as featured
       } catch (error) {
         console.error('Error fetching menu data:', error);
@@ -45,7 +46,7 @@ const Food = () => {
   useEffect(() => {
     const fetchDietPlansData = async () => {
       try {
-        const dietPlanCollection = await fetchDietPlans(); // Fetch diet plan data
+        const dietPlanCollection = await ViewDietPlanController.fetchAllDietPlansForUser(); // Fetch diet plan data
         setDietPlans(dietPlanCollection.slice(0, 5));
       } catch (error) {
         console.error('Error fetching diet plan data:', error);

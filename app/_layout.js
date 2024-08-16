@@ -60,7 +60,6 @@ const RootLayout = () => {
       <Stack.Screen name="Boundary/(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="Boundary/(tabsBP)" options={{ headerShown: false }} />
       <Stack.Screen name="Boundary/(tabsSA)" options={{ headerShown: false }} />
-      <Stack.Screen name="ViewAndSearchDietPlan" />
       <Stack.Screen name="searchFood" />
       <Stack.Screen name="Boundary/MenuDetailsUI" options={{
         title: 'Details',
@@ -80,21 +79,6 @@ const RootLayout = () => {
       {/* <Stack.Screen name="Subscribe" options={{ headerShown: false }} /> */}
       <Stack.Screen name="Boundary/ViewProfileBpUI" />
       <Stack.Screen name='Boundary/SelectMedicineUI' />
-      <Stack.Screen name='ReportProblem' options={{
-        title: 'ReportProblem',
-        headerStyle: { backgroundColor: '#E58B68' },
-        headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold' },
-        headerLeft: () => (
-          <ImageButton
-            source={require("./assets/back.png")}
-            imageSize={{ width: 24, height: 24 }}
-            customStyle={{ paddingLeft: 10 }}
-            onPress={() => router.back('/registerPage')}
-          />
-        ),
-        headerTitle: 'Help & Feedback',
-        headerTitleAlign: 'center',
-      }} />
       <Stack.Screen name='Boundary/CreateMedListUI' />
     </Stack>
   );

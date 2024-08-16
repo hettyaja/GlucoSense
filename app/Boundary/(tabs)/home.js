@@ -7,7 +7,6 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { useAuth } from '../../service/AuthContext';
 import Header from '../../components/Header';
 import A1CComponent from '../../components/A1C'; // Ensure this import is correct
-import { fetchLogs, deleteLog } from '../../service/diaryService';
 import PopupMenu from '../../components/PopupMenu';
 import Divider from '../../components/Divider';
 import ViewGlucoseLogsController from '../../Controller/ViewGlucoseLogsController';
@@ -18,6 +17,7 @@ import FetchA1cController from '../../Controller/FetchA1cController';
 import Modal from 'react-native-modal'; // Import from react-native-modal
 import BottomSheetModal from './add';
 import ViewUserGoalsController from '../../Controller/ViewUserGoalsController';
+import DeleteLogsController from '../../Controller/DeleteLogsController';
 
 const formatDate = (time) => {
   const date = new Date(time.seconds * 1000);
@@ -257,7 +257,7 @@ const home = () => {
 
   const handleDelete = async (item) => {
     try {
-      await deleteLog(user.uid, item.type === 'meal' ? 'mealLogs' : item.type === 'medicine' ? 'medicineLogs' : 'glucoseLogs', item.id);
+      await DeleteLogsController.deleteLogs(user.uid, item.type === 'meal' ? 'mealLogs' : item.type === 'medicine' ? 'medicineLogs' : 'glucoseLogs', item.id);
       const updatedLogs = filteredLogs.filter(log => log.id !== item.id);
       setFilteredLogs(updatedLogs);
       setLogs(updatedLogs);
