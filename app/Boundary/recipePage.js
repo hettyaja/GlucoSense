@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Image, Button } from 'react-native';
 import { router } from 'expo-router';
-import { fetchRecipes } from './service/spoonacularAPI';
-import Header from './components/Header';
+import { fetchRecipes } from '../service/spoonacularAPI';
+import Header from '../components/Header';
 
 const recipePage = () => {
   const [recipes, setRecipes] = useState([]);

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Button, TouchableOpacity } from 'react-native';
 import { useLocalSearchParams, Stack, router } from 'expo-router';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import Header from './components/Header';
+import Header from '../components/Header';
 
 const FoodDetails = () => {
   const { item } = useLocalSearchParams();

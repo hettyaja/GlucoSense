@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { router, Stack } from 'expo-router';
-import { fetchRecipeDetails } from './service/spoonacularAPI';
-import Header from './components/Header';
+import { fetchRecipeDetails } from '../service/spoonacularAPI';
+import Header from '../components/Header';
 
 const RecipeDetails = () => {
   const { recipeId } = useLocalSearchParams();
@@ -29,7 +29,7 @@ const RecipeDetails = () => {
   if (!recipe) {
     return (<View style={[styles.containerGif, styles.background]}>
       <Image
-        source={require('../app/assets/loadingFood.gif')}
+        source={require('../assets/loadingFood.gif')}
         style={styles.imageGif}
       />
     </View>
