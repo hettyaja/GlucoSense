@@ -97,7 +97,7 @@ const Food = () => {
         ]
       );
     } else {
-      router.push('Boundary/ViewDietPlan');
+      router.push('Boundary/ViewDietPlanUI');
     }
   };
 

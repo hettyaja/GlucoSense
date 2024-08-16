@@ -14,7 +14,6 @@ const MenuDetails = () => {
   console.log('ini details', parsedMenuData);
   const [quantity, setQuantity] = useState(1);
   const [menuItem, setMenuItem] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { user } = useAuth();
 
@@ -37,37 +36,8 @@ const MenuDetails = () => {
     router.push({ pathname: 'Boundary/ViewOrderSummaryUI', params: { menuData: btoa(JSON.stringify(orderDetails)) } });
   };
 
-  useEffect(() => {
-    if (!menuData) {
-      setError(new Error('Missing menuId or userId'));
-      setLoading(false);
-      return;
-    }
-
-    const fetchMenuItem = async () => {
-      try {
-        const items = await MenuDetailsController.fetchMenu(parsedMenuData.bpId, parsedMenuData.id);
-        setMenuItem(items);
-      } catch (error) {
-        setError(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchMenuItem();
-  }, [menuData]);
-
-  if (loading) {
-    return <ActivityIndicator size="large" color="#E58B68" style={styles.loader} />;
-  }
-
   if (error) {
     return <Text>Error loading menu item: {error.message}</Text>;
-  }
-
-  if (!menuItem) {
-    return <Text>No menu item found</Text>;
   }
 
   return (
@@ -79,24 +49,24 @@ const MenuDetails = () => {
       />
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View>
-          <Image source={{ uri: menuItem.image }} style={styles.image} />
+          <Image source={{ uri: parsedMenuData.image }} style={styles.image} />
         </View>
         <View style={styles.itemContainer}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-            <Text style={styles.title}>{menuItem.foodName}</Text>
+            <Text style={styles.title}>{parsedMenuData.foodName}</Text>
             <View>
-              <Text style={styles.price}>${menuItem.price}</Text>
+              <Text style={styles.price}>${parsedMenuData.price}</Text>
               <Text style={styles.basePrice}>Base price</Text>
             </View>
           </View>
-          <Text style={styles.description}>{menuItem.description}</Text>
+          <Text style={styles.description}>{parsedMenuData.description}</Text>
         </View>
 
         <View style={styles.itemContainer}>
           <Text style={styles.subtitle}>Ingredients</Text>
           <View style={styles.ingredientsContainer}>
-            {menuItem.ingredients ? (
-              menuItem.ingredients.split(',').map((ingredient, i) => (
+            {parsedMenuData.ingredients ? (
+              parsedMenuData.ingredients.split(',').map((ingredient, i) => (
                 <Text key={i} style={styles.ingredient}>• {ingredient.trim()}</Text>
               ))
             ) : (
@@ -110,31 +80,31 @@ const MenuDetails = () => {
 
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
             <Text style={styles.details}>Calories</Text>
-            <Text style={styles.unit}>{menuItem.calories} cal</Text>
+            <Text style={styles.unit}>{parsedMenuData.calories} cal</Text>
           </View>
 
           <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5 }} />
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
             <Text style={styles.details}>Fat</Text>
-            <Text style={styles.unit}>{menuItem.fat} g</Text>
+            <Text style={styles.unit}>{parsedMenuData.fat} g</Text>
           </View>
 
           <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5 }} />
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
             <Text style={styles.details}>Carbohydrate</Text>
-            <Text style={styles.unit}>{menuItem.carbs} g</Text>
+            <Text style={styles.unit}>{parsedMenuData.carbs} g</Text>
           </View>
 
           <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5 }} />
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
             <Text style={styles.details}>Protein</Text>
-            <Text style={styles.unit}>{menuItem.protein} g</Text>
+            <Text style={styles.unit}>{parsedMenuData.protein} g</Text>
           </View>
 
           <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5 }} />
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
             <Text style={styles.details}>Sugar</Text>
-            <Text style={styles.unit}>{menuItem.sugar} g</Text>
+            <Text style={styles.unit}>{parsedMenuData.sugar} g</Text>
           </View>
         </View>
       </ScrollView>
