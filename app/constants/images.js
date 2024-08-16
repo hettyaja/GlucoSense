@@ -4,7 +4,6 @@ export const images = {
     welcome3: require('../assets/welcome-3.png'),
     logo: require('../assets/logo.png'),
     back: require('../assets/back(2).png'),
-    header: require('../assets/header.png'),
     headerQuestion1: require('../assets/headerQuestion1.png'),
     headerQuestion2: require('../assets/headerQuestion2.png'),
     headerQuestion3: require('../assets/headerQuestion3.png'),
@@ -15,6 +14,5 @@ export const images = {
     add: require('../assets/add.png'),
     food: require('../assets/food.png'),
     more: require('../assets/more.png'),
-    upgrade: require('../assets/upgrade.png'),
     reminder: require('../assets/reminder.png'),
   };
