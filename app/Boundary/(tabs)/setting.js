@@ -138,7 +138,7 @@ const Setting = () => {
               if (subscriptionType === 'free') {
                 router.push('Boundary/Subscribe'); // Redirect to the subscription page if the user is on the free plan
               } else {
-                router.push('reminder'); // Proceed to the reminder page if the user is on a premium plan
+                router.push('Boundary/reminder'); // Proceed to the reminder page if the user is on a premium plan
               }
             }}>
             <MaterialCommunityIcons name="bell-outline" size={24} />
