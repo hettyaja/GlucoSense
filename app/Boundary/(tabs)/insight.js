@@ -176,7 +176,7 @@ const Insight = () => {
     <>
       <Header title='Insight' />
       <ScrollView style={styles.container}>
-        <TouchableOpacity style={styles.centeredChart} onPress={() => router.push('/glucoseInsight')}>
+        <TouchableOpacity style={styles.centeredChart} onPress={() => router.push('Boundary/ViewGlucoseInsight')}>
           <View style={styles.chartContainer}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 15, marginTop: 15 }}>
               <Text style={styles.chartTitle}>Blood Glucose</Text>

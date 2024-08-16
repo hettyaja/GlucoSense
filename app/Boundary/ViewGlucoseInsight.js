@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Dimensions, ScrollView, Image} from 'react-native';
+import { View, Text, StyleSheet, Dimensions, ScrollView, ActivityIndicator} from 'react-native';
 import { Tabs, router } from 'expo-router';
 import { LineChart } from 'react-native-chart-kit';
-import { useAuth } from './service/AuthContext';
-import RetrieveGlucoseLogsController from './Controller/RetrieveGlucoseLogsController';
-import RetrieveGlucoseLogsController1 from './Controller/RetrieveGlucoseLogsController1';
-import Header from './components/Header';
-import ViewUserGoalsController from './Controller/ViewUserGoalsController';
+import { useAuth } from '../service/AuthContext';
+import RetrieveGlucoseLogsController from '../Controller/RetrieveGlucoseLogsController';
+import RetrieveGlucoseLogsController1 from '../Controller/RetrieveGlucoseLogsController1';
+import Header from '../components/Header';
+import ViewUserGoalsController from '../Controller/ViewUserGoalsController';
 
 const Insight = () => {
   const screenWidth = Dimensions.get("window").width;
@@ -86,10 +86,7 @@ const Insight = () => {
 
   if (loading) {
     return (<View style={[styles.containerGif, styles.background]}>
-      <Image
-        source={require('../app/assets/loading.gif')}
-        style={styles.imageGif}
-      />
+      <ActivityIndicator size='large' color='#E58B68' />
     </View>
     )
   }
