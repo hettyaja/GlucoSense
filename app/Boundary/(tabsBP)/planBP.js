@@ -61,7 +61,7 @@ const planBP = () => {
       <Header
         title="Diet Plan"
         rightButton="Add"
-        onRightButtonPress={() => router.push('/Boundary/CreateDietPlan')}
+        onRightButtonPress={() => router.push('/Boundary/CreateDietPlanUI')}
       />
       <ScrollView style={styles.container}>
         <View style={styles.searchContainer}>

@@ -78,7 +78,7 @@ const settingBP = () => {
         {/* Profile Card Section */}
         <TouchableOpacity
           style={styles.profileCard}
-          onPress={() => router.push('Boundary/ProfileBpPage')}
+          onPress={() => router.push('Boundary/ViewProfileBpUI')}
         >
           <View style={{ flexDirection: 'row', alignItems: 'center', padding: 24 }}>
           {photoUri ? (

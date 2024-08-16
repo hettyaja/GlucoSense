@@ -171,8 +171,6 @@ class BusinessPartner {
     }
   }
 
- 
-
   static async createDietPlan(userId, newDietPlan) {
     const dietPlanCollection = collection(db, `businessPartner/${userId}/dietplan`);
     const docRef = await addDoc(dietPlanCollection, newDietPlan);

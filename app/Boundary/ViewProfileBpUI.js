@@ -25,7 +25,7 @@ const profileBP = () => {
   const [postal, setPostal] = useState('');
   const [city, setCity] = useState('');
   const [isEditable, setIsEditable] = useState(false);
-  const [loading, setLoading] = useState(true);  // Add loading state
+  const [loading, setLoading] = useState(true);  
 
   useEffect(() => {
     const getBPProfile = async () => {
