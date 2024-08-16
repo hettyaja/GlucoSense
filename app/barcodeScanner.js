@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View, Alert, Button } from 'react-native';
-import { CameraView, useCameraPermissions } from 'expo-camera';
+import { CameraView, useCameraPermissions, Camera, BarcodeScanningResult } from 'expo-camera';
 import { searchFoodByBarcode } from '../server';
 import { Stack, useRouter } from 'expo-router';
 import food from './Boundary/ViewMenuUI';
-import { check, request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 import Header from './components/Header';
 
 export default function App() {
@@ -13,17 +12,13 @@ export default function App() {
   const [permission, requestPermission] = useCameraPermissions();
   const [scanned, setScanned] = useState(false);
 
-  const requestCameraPermission = async () => {
-    const result = await request(PERMISSIONS.ANDROID.CAMERA);
-    if (result === RESULTS.GRANTED) {
-      console.log('You can use the camera');
-    } else {
-      console.log('Camera permission denied');
-    }
-  };
-
   useEffect(() => {
-    requestCameraPermission();
+    (async () => {
+      const { status: cameraStatus } = await Camera.requestCameraPermissionsAsync();
+      if (cameraStatus !== 'granted') {
+        alert('Sorry, we need camera permissions to make this work!');
+      }
+    })();
   }, []);
 
   if (!permission) {
@@ -67,7 +62,14 @@ export default function App() {
       <View style={styles.cameraContainer}>
         <CameraView
           ref={cameraRef}
-          onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+          barcodeScannerSettings={{
+            barCodeTypes: [
+            "upc_a",
+            "upc_e",
+            ],
+            }}
+          onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
+          
           style={styles.camera}
         />
         <View style={styles.overlay}>
