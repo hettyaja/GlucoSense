@@ -63,7 +63,8 @@ const CaloriesInsight = () => {
             ...mealData.datasets,
             {
               data: Array(mealData.labels.length).fill(calorieGoal),
-              color: () => `#E58B68`, // Red line
+              color: () => `red`, // Red line
+              strokeWidth:1,
               withDots: false,
               fillShadowGradient: '#ffffff',
                 fillShadowGradientTo: '#ffffff',

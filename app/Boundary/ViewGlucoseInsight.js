@@ -45,7 +45,8 @@ const Insight = () => {
             ...glucoseData.datasets,
             {
               data: Array(glucoseData.labels.length).fill(lowerGoal),
-              color: () => `green`, // Green line for lowerGoal
+              color: () => `red`, // Green line for lowerGoal
+              strokeWidth:1,
               withDots: false,
               fillShadowGradient: '#ffffff',
               fillShadowGradientTo: '#ffffff',
@@ -53,7 +54,8 @@ const Insight = () => {
             },
             {
               data: Array(glucoseData.labels.length).fill(upperGoal),
-              color: () => `green`, // Green line for upperGoal
+              color: () => `red`, // Green line for upperGoal
+              strokeWidth:1,
               withDots: false,
               fillShadowGradient: '#ffffff',
               fillShadowGradientTo: '#ffffff',

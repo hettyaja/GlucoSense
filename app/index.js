@@ -9,8 +9,6 @@ const Index = () => {
 
   return (
     <View style={styles.container}>
-      <Image source={images.logo} style={styles.logo} />
-      <Text style={styles.titleText}>GlucoSense</Text>
       <ActivityIndicator size="large" color="#E58B68" style={styles.loadingIndicator} />
     </View>
   );
