@@ -1,4 +1,3 @@
-//Create Menu Page
 import { View, Text, StyleSheet, Alert, TouchableOpacity, ScrollView, TextInput, SafeAreaView, Image } from 'react-native';
 import React, { useState } from 'react';
 import CreateMenuController from '../Controller/CreateMenuController';
@@ -20,25 +19,66 @@ const createMenu = () => {
   const [protein, setProtein] = useState();
   const [carbs, setCarbs] = useState();
   const [fat, setFat] = useState();
+  const [sugar, setSugar] = useState(); // New sugar state
   const [price, setPrice] = useState();
 
+  // Nutritional Thresholds
+  const THRESHOLDS = {
+    calories: { min: 300, max: 700 },
+    totalFat: { min: 10, max: 20 },
+    carbohydrates: { min: 30, max: 60 },
+    protein: { min: 10 }, // Minimum protein required
+    sugar: { max: 10 }, // Maximum sugar allowed
+  };
+
   const handleSave = async () => {
-    if (!image || !foodName || !description || !ingredients || !calories || !protein || !carbs || !fat || !price) {
+    if (!image || !foodName || !description || !ingredients || !calories || !protein || !carbs || !fat || !sugar || !price) {
       Alert.alert('Missing Information', 'Please fill out all fields and select an image before saving.');
       return;
     }
 
+    // Validate nutritional thresholds
+    const caloriesNum = parseFloat(calories);
+    const proteinNum = parseFloat(protein);
+    const carbsNum = parseFloat(carbs);
+    const fatNum = parseFloat(fat);
+    const sugarNum = parseFloat(sugar);
+
+    if (
+      caloriesNum < THRESHOLDS.calories.min ||
+      caloriesNum > THRESHOLDS.calories.max ||
+      fatNum < THRESHOLDS.totalFat.min ||
+      fatNum > THRESHOLDS.totalFat.max ||
+      carbsNum < THRESHOLDS.carbohydrates.min ||
+      carbsNum > THRESHOLDS.carbohydrates.max ||
+      proteinNum < THRESHOLDS.protein.min ||
+      sugarNum > THRESHOLDS.sugar.max
+    ) {
+      Alert.alert(
+        'Unhealthy Menu',
+        `This menu item exceeds the allowed nutritional thresholds:
+        - Calories: 300 - 700 kcal
+        - Total Fat: 10 - 20 grams
+        - Carbohydrates: 30 - 60 grams
+        - Protein: At least 10 grams
+        - Sugar: Less than or equal to 10 grams
+        Please adjust the nutritional values to proceed.`
+      );
+      return;
+    }
+
     if (user) {
-      const imageURL = await uploadMenuImage(user.uid, image)
+      const imageURL = await uploadMenuImage(user.uid, image);
       const newMenuLog = {
         image: imageURL,
         foodName,
         description,
         ingredients,
-        calories,
-        carbs,
-        fat,
-        protein,
+        calories: caloriesNum,
+        carbs: carbsNum,
+        fat: fatNum,
+        sugar: sugarNum, // Include sugar in the log
+        protein: proteinNum,
         price,
       };
 
@@ -87,114 +127,128 @@ const createMenu = () => {
             <Text style={styles.label}>Menu Image</Text>
             <TouchableOpacity onPress={addImage} style={styles.uploadButton}>
               {image ? (
-                <Image source={{uri: image}} style={styles.image}/>
+                <Image source={{ uri: image }} style={styles.image} />
               ) : (
-                <MaterialIcons name='add-photo-alternate' size={80} color='#E58B68'/>
+                <MaterialIcons name='add-photo-alternate' size={80} color='#E58B68' />
               )}
             </TouchableOpacity>
           </View>
-          <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5}} />
+          <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5 }} />
           <View style={styles.fieldSection}>
             <Text style={styles.label}>Food Name</Text>
-              <TextInput
-                placeholder="Food Name"
-                value={foodName}
-                onChangeText={setFoodName}
-                style={styles.textInput}
-              />
+            <TextInput
+              placeholder="Food Name"
+              value={foodName}
+              onChangeText={setFoodName}
+              style={styles.textInput}
+            />
           </View>
-          <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5}} />
+          <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5 }} />
           <View style={styles.fieldSection}>
             <Text style={styles.label}>Price</Text>
-              <TextInput
-                placeholder="Price"
-                value={price}
-                onChangeText={setPrice}
-                style={styles.textInput}
-              />
+            <TextInput
+              placeholder="Price"
+              value={price}
+              onChangeText={setPrice}
+              style={styles.textInput}
+            />
           </View>
-          <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5}} />
+          <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5 }} />
           <View style={styles.fieldSection}>
             <Text style={styles.label}>Description</Text>
-              <TextInput
-                style={styles.ingredientsInput}
-                value={description}
-                placeholder="Add food description"
-                onChangeText={setDesc}
-                multiline
-              />
+            <TextInput
+              style={styles.ingredientsInput}
+              value={description}
+              placeholder="Add food description"
+              onChangeText={setDesc}
+              multiline
+            />
           </View>
-          <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5}} />
+          <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5 }} />
           <View style={styles.fieldSection}>
             <Text style={styles.label}>Ingredients</Text>
+            <TextInput
+              style={styles.ingredientsInput}
+              value={ingredients}
+              placeholder='Add food ingredients'
+              onChangeText={setIngredients}
+              multiline
+            />
+          </View>
+        </View>
+
+        <Text style={styles.title}>Nutrition Fact</Text>
+        <View style={styles.section}>
+          <View style={styles.fieldSection}>
+            <Text style={styles.label}>Calories</Text>
+            <View style={styles.infoContainer}>
               <TextInput
-                style={styles.ingredientsInput}
-                value={ingredients}
-                placeholder='Add food ingredients'
-                onChangeText={setIngredients}
-                multiline
+                value={calories}
+                placeholder='Add food calorie'
+                onChangeText={setCal}
+                keyboardType='numeric'
+                style={styles.textInput}
               />
-          </View>
-          </View>
-          
-          <Text style={styles.title}>Nutrition Fact</Text>
-          <View style={styles.section}>
-            <View style={styles.fieldSection}>
-              <Text style={styles.label}>Calories</Text>
-              <View style={styles.infoContainer}>
-                  <TextInput
-                    value={calories}
-                    placeholder='Add food calorie'
-                    onChangeText={setCal}
-                    keyboardType='numeric'
-                    style={styles.textInput}
-                  />
-                <Text style={styles.unit}>kcal</Text>
-              </View>
-            </View>
-            <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5}} />
-            <View style={styles.fieldSection}>
-              <Text style={styles.label}>Fat</Text>
-              <View style={styles.infoContainer}>
-                  <TextInput
-                    value={fat}
-                    placeholder='Add food fat'
-                    onChangeText={setFat}
-                    keyboardType='numeric'
-                    style={styles.textInput}
-                  />
-                <Text style={styles.unit}>g</Text>
-              </View>
-            </View>
-            <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5}} />
-            <View style={styles.fieldSection}>
-              <Text style={styles.label}>Carbohydrate</Text>
-              <View style={styles.infoContainer}>
-                  <TextInput
-                    value={carbs}
-                    placeholder='Add food carbohydrate'
-                    onChangeText={setCarbs}
-                    keyboardType='numeric'
-                    style={styles.textInput}
-                />
-                <Text style={styles.unit}>g</Text>
-              </View>
-            </View>
-            <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5}} />
-            <View style={styles.fieldSection}>
-              <Text style={styles.label}>Protein</Text>
-              <View style={styles.infoContainer}>
-                  <TextInput
-                    value={protein}
-                    placeholder='Add food protein'
-                    onChangeText={setProtein}
-                    keyboardType='numeric'
-                    style={styles.textInput}
-                    />
-                <Text style={styles.unit}>g</Text>
-              </View>
+              <Text style={styles.unit}>kcal</Text>
             </View>
           </View>
+          <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5 }} />
+          <View style={styles.fieldSection}>
+            <Text style={styles.label}>Fat</Text>
+            <View style={styles.infoContainer}>
+              <TextInput
+                value={fat}
+                placeholder='Add food fat'
+                onChangeText={setFat}
+                keyboardType='numeric'
+                style={styles.textInput}
+              />
+              <Text style={styles.unit}>g</Text>
+            </View>
+          </View>
+          <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5 }} />
+          <View style={styles.fieldSection}>
+            <Text style={styles.label}>Carbohydrate</Text>
+            <View style={styles.infoContainer}>
+              <TextInput
+                value={carbs}
+                placeholder='Add food carbohydrate'
+                onChangeText={setCarbs}
+                keyboardType='numeric'
+                style={styles.textInput}
+              />
+              <Text style={styles.unit}>g</Text>
+            </View>
+          </View>
+          <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5 }} />
+          <View style={styles.fieldSection}>
+            <Text style={styles.label}>Protein</Text>
+            <View style={styles.infoContainer}>
+              <TextInput
+                value={protein}
+                placeholder='Add food protein'
+                onChangeText={setProtein}
+                keyboardType='numeric'
+                style={styles.textInput}
+              />
+              <Text style={styles.unit}>g</Text>
+            </View>
+          </View>
+          <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5 }} />
+          <View style={styles.fieldSection}>
+            <Text style={styles.label}>Sugar</Text>
+            <View style={styles.infoContainer}>
+              <TextInput
+                value={sugar}
+                placeholder='Add food sugar'
+                onChangeText={setSugar}
+                keyboardType='numeric'
+                style={styles.textInput}
+              />
+              <Text style={styles.unit}>g</Text>
+            </View>
+          </View>
+        </View>
       </ScrollView>
     </>
   );

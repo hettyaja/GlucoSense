@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, Image, ScrollView } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, Image, ScrollView, Alert } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import * as ImagePicker from 'expo-image-picker';
 import { useAuth } from '../service/AuthContext';
@@ -8,60 +8,100 @@ import UpdateMenuController from '../Controller/UpdateMenuController';
 import { decode } from 'base-64';
 import { deleteImage, uploadMenuImage } from '../service/storageService';
 
-
 const EditMenuPage = () => {
   const { user } = useAuth();
   const { menuData } = useLocalSearchParams();
   const [parsedMenuData, setParsedMenuData] = useState(menuData ? JSON.parse(decode(menuData)) : null);
   const [image, setImage] = useState(parsedMenuData.image);
-  const [tempImage, setTempImage] = useState(null)
+  const [tempImage, setTempImage] = useState(null);
   const [foodName, setFoodName] = useState(parsedMenuData.foodName);
   const [price, setPrice] = useState(parsedMenuData.price.toString());
   const [description, setDesc] = useState(parsedMenuData.description);
   const [isEditable, setIsEditable] = useState(false);
   const [ingredients, setIngredients] = useState(parsedMenuData.ingredients);
-  const [calories, setCal] = useState(parsedMenuData.calories);
-  const [protein, setProtein] = useState(parsedMenuData.protein);
-  const [carbs, setCarbs] = useState(parsedMenuData.carbs);
-  const [fat, setFat] = useState(parsedMenuData.fat);
+  const [calories, setCal] = useState(parsedMenuData.calories.toString());
+  const [protein, setProtein] = useState(parsedMenuData.protein.toString());
+  const [carbs, setCarbs] = useState(parsedMenuData.carbs.toString());
+  const [fat, setFat] = useState(parsedMenuData.fat.toString());
+  const [sugar, setSugar] = useState(parsedMenuData.sugar?.toString() || '');
+
+  // Nutritional Thresholds
+  const THRESHOLDS = {
+    calories: { min: 300, max: 700 },
+    totalFat: { min: 10, max: 20 },
+    carbohydrates: { min: 30, max: 60 },
+    protein: { min: 10 }, // Minimum protein required
+    sugar: { max: 10 }, // Maximum sugar allowed
+  };
 
   const saveMenu = async () => {
-    if (!image || !foodName || !description || !ingredients || !calories || !protein || !carbs || !fat || !price) {
+    if (!image || !foodName || !description || !ingredients || !calories || !protein || !carbs || !fat || !sugar || !price) {
       Alert.alert('Missing Information', 'Please fill out all fields and select an image before saving.');
       return;
     }
 
-    let finalImage = image;
-  
-  if (tempImage) {
-    const previousImage = parsedMenuData.image;
-    if (previousImage) {
-      await deleteImage(previousImage); // Delete the previous image if it exists
+    const caloriesNum = parseFloat(calories);
+    const proteinNum = parseFloat(protein);
+    const carbsNum = parseFloat(carbs);
+    const fatNum = parseFloat(fat);
+    const sugarNum = parseFloat(sugar);
+
+    // Validate nutritional thresholds
+    if (
+      caloriesNum < THRESHOLDS.calories.min ||
+      caloriesNum > THRESHOLDS.calories.max ||
+      fatNum < THRESHOLDS.totalFat.min ||
+      fatNum > THRESHOLDS.totalFat.max ||
+      carbsNum < THRESHOLDS.carbohydrates.min ||
+      carbsNum > THRESHOLDS.carbohydrates.max ||
+      proteinNum < THRESHOLDS.protein.min ||
+      sugarNum > THRESHOLDS.sugar.max
+    ) {
+      Alert.alert(
+        'Unhealthy Menu',
+        `This menu item exceeds the allowed nutritional thresholds:
+        - Calories: 300 - 700 kcal
+        - Total Fat: 10 - 20 grams
+        - Carbohydrates: 30 - 60 grams
+        - Protein: At least 10 grams
+        - Sugar: Less than or equal to 10 grams
+        Please adjust the nutritional values to proceed.`
+      );
+      return;
     }
-    finalImage = await uploadMenuImage(user.uid, tempImage); // Upload the new image and get its URL
-    setImage(finalImage); // Update the image state with the new URL
-  }
 
-  const updateMenu = {
-    id: parsedMenuData.id,
-    foodName,
-    price,
-    description,
-    image: finalImage,
-    ingredients,
-    calories,
-    protein,
-    carbs,
-    fat,
-  };
+    let finalImage = image;
 
-  try {
-    await UpdateMenuController.updateMenu(user.uid, updateMenu);
-    console.log('Menu log updated:', updateMenu);
-    router.replace('Boundary/foodBP');
-  } catch (error) {
-    console.error('Error updating menu:', error);
-  }
+    if (tempImage) {
+      const previousImage = parsedMenuData.image;
+      if (previousImage) {
+        await deleteImage(previousImage); // Delete the previous image if it exists
+      }
+      finalImage = await uploadMenuImage(user.uid, tempImage); // Upload the new image and get its URL
+      setImage(finalImage); // Update the image state with the new URL
+    }
+
+    const updateMenu = {
+      id: parsedMenuData.id,
+      foodName,
+      price,
+      description,
+      image: finalImage,
+      ingredients,
+      calories: caloriesNum,
+      protein: proteinNum,
+      carbs: carbsNum,
+      fat: fatNum,
+      sugar: sugarNum, // Include sugar in the log
+    };
+
+    try {
+      await UpdateMenuController.updateMenu(user.uid, updateMenu);
+      console.log('Menu log updated:', updateMenu);
+      router.replace('Boundary/foodBP');
+    } catch (error) {
+      console.error('Error updating menu:', error);
+    }
   };
 
   const toggleEdit = () => {
@@ -95,7 +135,7 @@ const EditMenuPage = () => {
       <Stack.Screen options={{
         title: 'Edit menu',
         headerStyle: { backgroundColor: '#E58B68' },
-        headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Medium', fontSize:16 },
+        headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Medium', fontSize: 16 },
         headerLeft: () => (
           <TouchableOpacity onPress={() => router.back('Boundary/foodBP')}>
             <Ionicons name='chevron-back' size={24} color='white' />
@@ -153,6 +193,7 @@ const EditMenuPage = () => {
                   value={price}
                   onChangeText={setPrice}
                   style={styles.textInput}
+                  keyboardType="numeric"
                   editable={isEditable}
                 />
               ) : (
@@ -266,6 +307,25 @@ const EditMenuPage = () => {
                   />
                 ) : (
                   <Text style={styles.textInput}>{protein}</Text>
+                )}
+                <Text style={styles.unit}>g</Text>
+              </View>
+            </View>
+            <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5 }} />
+            <View style={styles.fieldSection}>
+              <Text style={styles.label}>Sugar</Text>
+              <View style={styles.infoContainer}>
+                {isEditable ? (
+                  <TextInput
+                    value={sugar}
+                    placeholder='Add food sugar'
+                    onChangeText={setSugar}
+                    keyboardType='numeric'
+                    editable={isEditable}
+                    style={styles.textInput}
+                  />
+                ) : (
+                  <Text style={styles.textInput}>{sugar}</Text>
                 )}
                 <Text style={styles.unit}>g</Text>
               </View>

@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-const DietPlanEntry = ({ day, mealType, entry = { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '' }, setEntry, addEntryImage, tempImages = {}}) => {
+const DietPlanEntry = ({ day, mealType, entry = { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '', sugar: '' }, setEntry, addEntryImage, tempImages = {} }) => {
   const tempUri = tempImages[`${day}_${mealType}`];
 
   return (
@@ -53,6 +53,11 @@ const DietPlanEntry = ({ day, mealType, entry = { image: '', name: '', descripti
         <Text style={styles.label}>Fat (g)</Text>
         <TextInput placeholder="Fat" value={entry.fat} onChangeText={(text) => setEntry(day, mealType, { ...entry, fat: text })} style={styles.input} />
       </View>
+      <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5}} />
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Sugar (g)</Text>
+        <TextInput placeholder="Sugar" value={entry.sugar} onChangeText={(text) => setEntry(day, mealType, { ...entry, sugar: text })} style={styles.input} />
+      </View>
     </View>
   );
 };
@@ -69,11 +74,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: 8,
-    textAlign:'right'
+    textAlign: 'right',
   },
   input: {
     marginHorizontal: 16,
-    textAlign:'right'
+    textAlign: 'right',
   },
   label: {
     fontFamily: 'Poppins-Regular',
