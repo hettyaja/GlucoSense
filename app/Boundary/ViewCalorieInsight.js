@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Dimensions, ScrollView, Image } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import { useNavigation, useRoute } from '@react-navigation/native'; // Use hooks
-import { useAuth } from './service/AuthContext';
-import RetrieveMealLogsController from './Controller/RetrieveMealLogsController';
-import RetrieveMealLogsController1 from './Controller/RetrieveMealLogsController1';
-import Header from './components/Header';
-import ViewUserGoalsController from './Controller/ViewUserGoalsController';
+import { useAuth } from '../service/AuthContext';
+import RetrieveMealLogsController from '../Controller/RetrieveMealLogsController';
+import RetrieveMealLogsController1 from '../Controller/RetrieveMealLogsController1';
+import Header from '../components/Header';
+import ViewUserGoalsController from '../Controller/ViewUserGoalsController';
 
 const CaloriesInsight = () => {
   const navigation = useNavigation(); // Hook to get navigation
@@ -97,10 +97,7 @@ const CaloriesInsight = () => {
   if (loading) {
     return (
       <View style={[styles.containerGif, styles.background]}>
-        <Image
-          source={require('../app/assets/loading.gif')}
-          style={styles.imageGif}
-        />
+        <ActivityIndicator size='large' color='#E58B68' />
       </View>
     );
   }
@@ -110,7 +107,7 @@ const CaloriesInsight = () => {
       <Header
         title='Calories Insight'
         leftButton='Back'
-        onLeftButtonPress={handleBackButton} // Use the back button handler
+        onLeftButtonPress={handleBackButton}
       />
       <ScrollView style={styles.container}>
         <View style={styles.centeredChart}>

@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
-import Header from './components/Header';
+import Header from '../components/Header';
 import { router, useLocalSearchParams } from 'expo-router';
 import RNNPickerSelect from 'react-native-picker-select';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import * as Notifications from 'expo-notifications';
-import { updateReminder, deleteReminder } from './service/reminderService';
-import { useAuth } from './service/AuthContext';
-import UpdateReminderController from './Controller/UpdateReminderController';
-import DeleteReminderController from './Controller/DeleteReminderController';
+import { updateReminder, deleteReminder } from '../service/reminderService';
+import { useAuth } from '../service/AuthContext';
+import UpdateReminderController from '../Controller/UpdateReminderController';
+import DeleteReminderController from '../Controller/DeleteReminderController';
 import { Picker } from '@react-native-picker/picker';
 
 const editReminder = () => {
@@ -60,7 +60,7 @@ const editReminder = () => {
       try {
         await UpdateReminderController.updateReminder(user.uid, reminderData);
         scheduleNotification(reminderData);
-        router.replace('reminder');
+        router.replace('Boundary/reminder');
       } catch (error) {
         console.error('Error updateing reminder:', error);
       }
@@ -108,7 +108,7 @@ const editReminder = () => {
     try {
         console.log(reminderData.id)
         await DeleteReminderController.deleteReminder(user.uid, parsedReminderData.id);
-        router.replace('reminder')
+        router.replace('Boundary/reminder')
       } catch (error) {
         console.error('Error deleting reminder:', error);
       }
