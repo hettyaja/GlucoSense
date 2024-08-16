@@ -123,7 +123,7 @@ const Food = () => {
           </View>
         </View>
 
-        <TouchableOpacity style={styles.recipeBox} onPress={() => router.push('recipePage')}>
+        <TouchableOpacity style={styles.recipeBox} onPress={() => router.push('Boundary/recipePage')}>
           <Text style={styles.recipeText}>Discover our recipe</Text>
           <Ionicons name="chevron-forward" size={24} color="grey" />
         </TouchableOpacity>

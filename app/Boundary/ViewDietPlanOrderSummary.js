@@ -125,7 +125,7 @@ const ViewDietPlanOrderSummary = () => {
       [
         {
           text: "OK",
-          onPress: () => router.push('Boundary/food'), // Navigate to order history
+          onPress: () => router.dismiss(3), // Navigate to order history
         }
       ]
     );

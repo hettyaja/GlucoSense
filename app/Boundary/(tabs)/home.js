@@ -334,7 +334,7 @@ const home = () => {
 
   const handleReminder = () => {
       if (subscriptionType === 'premium') {
-        router.push('reminder')
+        router.push('Boundary/reminder')
       } else {
         router.push('Boundary/Subscribe')
       }

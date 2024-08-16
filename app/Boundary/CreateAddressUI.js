@@ -19,7 +19,7 @@ const CreateAddressUI = () => {
     const validate = () => {
         const errors = {};
         if (!name) errors.name = 'Enter your full name';
-        if (!phoneNumber || phoneNumber.length !== 10) errors.phoneNumber = 'Enter a valid phone number';
+        if (!phoneNumber || phoneNumber.length !== 8) errors.phoneNumber = 'Enter a valid phone number';
         if (!postCode) errors.postCode = 'Enter a valid postcode';
         if (!address) errors.address = 'Enter a valid address';
         setErrors(errors);
