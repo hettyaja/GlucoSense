@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SafeAreaView, StyleSheet, Text, ScrollView, View, TouchableOpacity, TextInput, Image } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, ScrollView, View, TouchableOpacity, TextInput, Image, Alert } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CreateDietPlanController from '../Controller/CreateDietPlanController';
@@ -10,15 +10,23 @@ import * as ImagePicker from 'expo-image-picker';
 import { uploadDietPlanImage } from '../service/storageService';
 
 const initialDietPlanState = {
-  Monday: { Lunch: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '' }, Dinner: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '' } },
-  Tuesday: { Lunch: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '' }, Dinner: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '' } },
-  Wednesday: { Lunch: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '' }, Dinner: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '' } },
-  Thursday: { Lunch: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '' }, Dinner: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '' } },
-  Friday: { Lunch: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '' }, Dinner: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '' } },
-  Saturday: { Lunch: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '' }, Dinner: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '' } },
-  Sunday: { Lunch: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '' }, Dinner: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '' } },
+  Monday: { Lunch: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '', sugar: '' }, Dinner: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '', sugar: '' } },
+  Tuesday: { Lunch: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '', sugar: '' }, Dinner: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '', sugar: '' } },
+  Wednesday: { Lunch: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '', sugar: '' }, Dinner: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '', sugar: '' } },
+  Thursday: { Lunch: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '', sugar: '' }, Dinner: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '', sugar: '' } },
+  Friday: { Lunch: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '', sugar: '' }, Dinner: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '', sugar: '' } },
+  Saturday: { Lunch: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '', sugar: '' }, Dinner: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '', sugar: '' } },
+  Sunday: { Lunch: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '', sugar: '' }, Dinner: { image: '', name: '', description: '', ingredients: '', carbs: '', protein: '', calorie: '', fat: '', sugar: '' } },
 };
 
+// Nutritional Thresholds
+const THRESHOLDS = {
+  calories: { min: 300, max: 700 },
+  totalFat: { min: 10, max: 20 },
+  carbohydrates: { min: 30, max: 60 },
+  protein: { min: 10 }, // Minimum protein required
+  sugar: { max: 10 }, // Maximum sugar allowed
+};
 
 const CreateDietPlan = () => {
   const { user } = useAuth();
@@ -39,13 +47,43 @@ const CreateDietPlan = () => {
     }));
   };
 
+  const validateNutrition = () => {
+    for (const day in dietPlans) {
+      for (const mealType in dietPlans[day]) {
+        const meal = dietPlans[day][mealType];
+        if (
+          parseFloat(meal.calorie) < THRESHOLDS.calories.min ||
+          parseFloat(meal.calorie) > THRESHOLDS.calories.max ||
+          parseFloat(meal.fat) < THRESHOLDS.totalFat.min ||
+          parseFloat(meal.fat) > THRESHOLDS.totalFat.max ||
+          parseFloat(meal.carbs) < THRESHOLDS.carbohydrates.min ||
+          parseFloat(meal.carbs) > THRESHOLDS.carbohydrates.max ||
+          parseFloat(meal.protein) < THRESHOLDS.protein.min ||
+          parseFloat(meal.sugar) > THRESHOLDS.sugar.max
+        ) {
+          return `Meal "${meal.name}" on ${day} ${mealType} exceeds/falls short of the nutritional threshold:
+            - Calories: ${meal.calorie} kcal (allowed: ${THRESHOLDS.calories.min} - ${THRESHOLDS.calories.max} kcal)
+            - Fat: ${meal.fat} g (allowed: ${THRESHOLDS.totalFat.min} - ${THRESHOLDS.totalFat.max} g)
+            - Carbs: ${meal.carbs} g (allowed: ${THRESHOLDS.carbohydrates.min} - ${THRESHOLDS.carbohydrates.max} g)
+            - Protein: ${meal.protein} g (minimum: ${THRESHOLDS.protein.min} g)
+            - Sugar: ${meal.sugar} g (maximum: ${THRESHOLDS.sugar.max} g)`;
+        }
+      }
+    }
+    return null;
+  };
+
   const handleSave = async () => {
+    const validationMessage = validateNutrition();
+    if (validationMessage) {
+      Alert.alert('Nutritional Limit Exceeded', validationMessage);
+      return;
+    }
+
     try {
-      // Upload plan image
       const planImageURL = await uploadDietPlanImage(user.uid, planImage);
       setPlanImage(planImageURL);
 
-      // Upload diet plan images
       const updatedDietPlans = { ...dietPlans };
       for (const day in updatedDietPlans) {
         for (const mealType in updatedDietPlans[day]) {
@@ -66,7 +104,7 @@ const CreateDietPlan = () => {
       };
 
       await CreateDietPlanController.createDietPlan(user.uid, completeDietPlan);
-      router.push('/Boundary/planBP'); // Ensure this path is correct
+      router.push('/Boundary/planBP');
     } catch (error) {
       console.error("Error adding document: ", error);
     }

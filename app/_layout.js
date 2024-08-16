@@ -2,9 +2,6 @@ import React, { useEffect } from 'react';
 import { Stack, router, useSegments } from 'expo-router';
 import { useFonts } from 'expo-font';
 import ImageButton from './components/ImageButton';
-import { BPProfileProvider } from './context/BPProfileContext';
-import { ProfileProvider } from './context/ProfileContext';
-import { DietPlanProvider } from './context/DietPlanContext';
 import { AuthProvider, useAuth } from './service/AuthContext';
 import { MenuProvider } from 'react-native-popup-menu';
 import * as Notifications from 'expo-notifications';
@@ -60,8 +57,6 @@ const RootLayout = () => {
       <Stack.Screen name="Boundary/(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="Boundary/(tabsBP)" options={{ headerShown: false }} />
       <Stack.Screen name="Boundary/(tabsSA)" options={{ headerShown: false }} />
-      <Stack.Screen name="ViewAndSearchDietPlan" />
-      <Stack.Screen name="searchFood" />
       <Stack.Screen name="Boundary/MenuDetailsUI" options={{
         title: 'Details',
         headerStyle: { backgroundColor: '#E58B68' },
@@ -78,23 +73,8 @@ const RootLayout = () => {
         headerTitleAlign: 'center',
       }} />
       {/* <Stack.Screen name="Subscribe" options={{ headerShown: false }} /> */}
-      <Stack.Screen name="Boundary/ProfileBpPage" />
+      <Stack.Screen name="Boundary/ViewProfileBpUI" />
       <Stack.Screen name='Boundary/SelectMedicineUI' />
-      <Stack.Screen name='ReportProblem' options={{
-        title: 'ReportProblem',
-        headerStyle: { backgroundColor: '#E58B68' },
-        headerTitleStyle: { color: 'white', fontFamily: 'Poppins-Bold' },
-        headerLeft: () => (
-          <ImageButton
-            source={require("./assets/back.png")}
-            imageSize={{ width: 24, height: 24 }}
-            customStyle={{ paddingLeft: 10 }}
-            onPress={() => router.back('/registerPage')}
-          />
-        ),
-        headerTitle: 'Help & Feedback',
-        headerTitleAlign: 'center',
-      }} />
       <Stack.Screen name='Boundary/CreateMedListUI' />
     </Stack>
   );
@@ -121,13 +101,7 @@ const _layout = () => {
     <PaymentAndAddressProvider>
       <MenuProvider>
         <AuthProvider>
-            <DietPlanProvider>
-              <ProfileProvider>
-                <BPProfileProvider>
                   <RootLayout />
-                </BPProfileProvider>
-              </ProfileProvider>
-            </DietPlanProvider>
         </AuthProvider>
       </MenuProvider>
     </PaymentAndAddressProvider>

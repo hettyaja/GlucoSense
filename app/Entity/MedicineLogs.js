@@ -103,17 +103,34 @@ class MedicineLogs {
     }
 
     static async fetchMedicineLogs(uid) {
-        try {
-          const logsRef = collection(db, 'users', uid, 'medicineLogs');
-          const logsQuery = query(logsRef, orderBy('time', 'desc'), limit(10));
-          const querySnapshot = await getDocs(logsQuery);
-          const logs = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-          return logs;
-        } catch (error) {
-          console.error(`Error fetching medicine logs:`, error);
-          throw error;
-        }
+      try {
+        const logsRef = collection(db, 'users', uid, 'medicineLogs');
+        const logsQuery = query(logsRef, orderBy('time', 'desc'), limit(10));
+        const querySnapshot = await getDocs(logsQuery);
+        const logs = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        return logs;
+      } catch (error) {
+        console.error(`Error fetching medicine logs:`, error);
+        throw error;
       }
+    }
+
+    static async getMedicineByName(userId, name) {
+      try {
+        const medicines = [];
+        const userRef = doc(db, 'users', userId); 
+        const medicineRef = collection(userRef, 'medicinesSaved');
+        const q = query(medicineRef, where('medicineName', 'in', name));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+          medicines.push({ id: doc.id, ...doc.data() });
+        });
+        return medicines;
+      } catch (error) {
+        console.error('Error fetching medicines by names:', error);
+        throw error;
+      }
+    }
 }
 
 export default MedicineLogs

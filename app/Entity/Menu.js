@@ -1,6 +1,7 @@
 // entities/Menu.js
-import {doc, deleteDoc, updateDoc, collection, addDoc, getDoc, getDocs} from 'firebase/firestore';
+import {doc, deleteDoc, updateDoc, collection, addDoc, getDoc, getDocs, query} from 'firebase/firestore';
 import {db} from '../../firebase';
+
 class Menu {
     constructor(foodName, price, ingredients, photoURL) {
       this.foodName = foodName;
@@ -57,6 +58,22 @@ class Menu {
           console.error('Error fetching menu item:', error);
           throw error;
         }
+    }
+
+    static async fetchMenu(uid) {
+      try {
+        const docRef = collection(db, 'businessPartner', uid, 'menu');
+        const q = query(docRef);
+        const querySnapshot = await getDocs(q);
+        const menu = [];
+        querySnapshot.forEach((doc) => {
+        menu.push({ id: doc.id, ...doc.data() })});
+        return menu
+    
+      } catch (error) {
+        console.error('Error fetching menu data:', error);
+        throw error;
+      }
     }
 
     static async fetchAllMenu() {

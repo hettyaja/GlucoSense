@@ -134,7 +134,13 @@ const Setting = () => {
             <Text style={styles.buttonText}>Report</Text>
           </TouchableOpacity>
           <View style={{ borderBottomColor: '#d9d9d9', borderBottomWidth: 1 }} />
-          <TouchableOpacity style={styles.button} onPress={() => router.push('reminder')}>
+          <TouchableOpacity style={styles.button} onPress={() => {
+              if (subscriptionType === 'free') {
+                router.push('Boundary/Subscribe'); // Redirect to the subscription page if the user is on the free plan
+              } else {
+                router.push('Boundary/reminder'); // Proceed to the reminder page if the user is on a premium plan
+              }
+            }}>
             <MaterialCommunityIcons name="bell-outline" size={24} />
             <Text style={styles.buttonText}>Reminder</Text>
           </TouchableOpacity>
@@ -164,12 +170,6 @@ const Setting = () => {
           )}
         </View>
 
-        <View style={styles.section}>
-          <TouchableOpacity style={styles.button} onPress={() => router.push('ReportProblem')}>
-            <FontAwesome name="question-circle" size={24}/>
-            <Text style={styles.buttonText}>Help & Feedback</Text>
-          </TouchableOpacity>
-        </View>
         <View style={styles.section}>
           <TouchableOpacity style={styles.button} onPress={openDeleteModal}>
             <AntDesign name="deleteuser" size={24} />

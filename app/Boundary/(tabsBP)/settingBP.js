@@ -6,13 +6,13 @@ import Octicons from 'react-native-vector-icons/Octicons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import { fetchBPProfile } from '../../service/profileBPService';
 import { useFocusEffect } from '@react-navigation/native';
 import DeleteBPController from '../../Controller/DeleteBPController';
 import LogoutController from '../../Controller/LogoutController';
 import Header from '../../components/Header';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useAuth } from '../../service/AuthContext';
+import ViewProfileBpController from '../../Controller/ViewProfileBpController';
 
 const settingBP = () => {
   const { user } = useAuth();
@@ -25,7 +25,7 @@ const settingBP = () => {
   const getBPProfile = async () => {
     if (user) {
       try {
-        const data = await fetchBPProfile(user.uid);
+        const data = await ViewProfileBpController.viewProfileBp(user.uid);
         if (data) {
           setPhotoUri(data.photoUri || '');
           setentityName(data.entityName || '');
@@ -78,7 +78,7 @@ const settingBP = () => {
         {/* Profile Card Section */}
         <TouchableOpacity
           style={styles.profileCard}
-          onPress={() => router.push('Boundary/ProfileBpPage')}
+          onPress={() => router.push('Boundary/ViewProfileBpUI')}
         >
           <View style={{ flexDirection: 'row', alignItems: 'center', padding: 24 }}>
           {photoUri ? (

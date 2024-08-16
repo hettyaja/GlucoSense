@@ -185,15 +185,15 @@ const addMeals = () => {
       <ScrollView style={{ flex: 1, backgroundColor: '#f5f5f5' }}>
         <View style={styles.section}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16}}>
-            <Text style={{ fontSize: 16, fontFamily: 'Poppins-Medium' }}>Time</Text>
+            <Text style={{ fontSize: 16, fontFamily: 'Poppins-Regular' }}>Time</Text>
             <TouchableOpacity onPress={showDatePicker}>
               <Text>{selectedDate.toLocaleString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', hour: 'numeric', minute: 'numeric' })}</Text>
             </TouchableOpacity>
           </View>
 
           <View style={{ borderBottomWidth: StyleSheet.hairlineWidth, marginHorizontal: 16 }} />
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16 }}>
-            <Text style={{ fontSize: 16, fontFamily: 'Poppins-Medium' }}>Period</Text>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+            <Text style={{ fontSize: 16, fontFamily: 'Poppins-Regular', paddingHorizontal:16 }}>Period</Text>
             <Picker
               selectedValue={selectedValue}
               style={styles.picker}
@@ -211,11 +211,11 @@ const addMeals = () => {
         </View>
 
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={[styles.button, {borderRightColor:'#808080', borderRightWidth:0.5}]} onPress={() => router.push('/searchFood')}>
+          <TouchableOpacity style={[styles.button, {borderRightColor:'#808080', borderRightWidth:0.5}]} onPress={() => router.push('Boundary/searchFood')}>
             <Text style={styles.buttonText}>Search</Text>
             <Fontisto name="search" size={24} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={() => router.push('/barcodeScanner')}>
+          <TouchableOpacity style={styles.button} onPress={() => router.push('Boundary/barcodeScanner')}>
             <Text style={styles.buttonText}>Scan</Text>
             <MaterialCommunityIcons name='barcode-scan' size={32} />
           </TouchableOpacity>
@@ -259,17 +259,17 @@ const addMeals = () => {
 
           <View style={{ borderBottomWidth: StyleSheet.hairlineWidth, marginHorizontal: 16 }} />
           <View style={styles.item}>
-            <Text style={styles.itemTitle}>Notes{"\n\n\n"}</Text>
+            <Text style={styles.itemTitle}>Notes</Text>
             <TextInput 
               style={styles.notesTitle} 
               placeholder='Add notes'
               onChangeText={setNotes}
               value={notes}
+              multiline
             />
           </View>
           
         </View>
-        <Text>{"\n\n\n\n\n\n\n"}</Text>
       </ScrollView>
       <DateTimePickerModal
         isVisible={isDatePickerVisible}
@@ -305,26 +305,27 @@ const styles = StyleSheet.create({
     flexDirection:'row',
     justifyContent:'space-between',
     paddingHorizontal:16,
-    paddingVertical:8
+    paddingVertical:8,
   },
   itemTitle: {
     fontSize:14,
-    fontFamily: "Poppins-Medium",
+    fontFamily: "Poppins-Regular",
   },
   notesTitle: {
     fontSize:14,
-    fontFamily: "Poppins-Medium",
+    fontFamily: "Poppins-Regular",
+    textAlign:'right',
+    flex:1
   },
   buttonText: {
     fontSize: 14,
-    fontFamily: "Poppins-Medium",
+    fontFamily: "Poppins-Regular",
     textAlign: 'center',
     color: 'black',
   },
   picker: {
     fontFamily: 'Poppins-Regular',
     width: '55%',
-    marginLeft: 170,
     color: '#808080',
   },
   pickerItem: {

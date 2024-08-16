@@ -37,23 +37,26 @@ const OrderDietPlan = () => {
                       <Text style={styles.mealName}>{meal.name}</Text>
                       <Text style={styles.mealDescription}>{meal.description}</Text>
                       <Text style={styles.mealIngredients}>{meal.ingredients}</Text>
-                      <View style={{flexDirection:'row'}}>
-                        <View style={{alignItems:'center', marginRight:8}}>
+                      <View style={{ flexDirection: 'row' }}>
+                        <View style={{ alignItems: 'center', marginRight: 8 }}>
                           <Text style={styles.mealNutrition}>Carbs</Text>
                           <Text style={styles.mealNutrition}>{meal.carbs}g</Text>
                         </View>
-                        
-                        <View style={{alignItems:'center', marginRight:8}}>
+                        <View style={{ alignItems: 'center', marginRight: 8 }}>
                           <Text style={styles.mealNutrition}>Protein</Text>
                           <Text style={styles.mealNutrition}>{meal.protein}g</Text>
                         </View>
-                        <View style={{alignItems:'center', marginRight:8}}>
+                        <View style={{ alignItems: 'center', marginRight: 8 }}>
                           <Text style={styles.mealNutrition}>Calories</Text>
-                          <Text style={styles.mealNutrition}>{meal.carbs}</Text>
+                          <Text style={styles.mealNutrition}>{meal.calorie}</Text>
                         </View>
-                        <View style={{alignItems:'center', marginRight:8}}>
+                        <View style={{ alignItems: 'center', marginRight: 8 }}>
                           <Text style={styles.mealNutrition}>Fat</Text>
                           <Text style={styles.mealNutrition}>{meal.fat}g</Text>
+                        </View>
+                        <View style={{ alignItems: 'center', marginRight: 8 }}>
+                          <Text style={styles.mealNutrition}>Sugar</Text>
+                          <Text style={styles.mealNutrition}>{meal.sugar}g</Text>
                         </View>
                       </View>
                     </View>
@@ -74,10 +77,9 @@ const OrderDietPlan = () => {
       ...parsedPlanData,
       userId: user.uid,
       quantity
-    }
-    console.log(orderData)
-    router.push({pathname:'Boundary/ViewDietPlanOrderSummary', params: {orderData: encode(JSON.stringify(orderData))}})
-
+    };
+    console.log(orderData);
+    router.push({ pathname: 'Boundary/ViewDietPlanOrderSummary', params: { orderData: encode(JSON.stringify(orderData)) } });
   };
 
   const incrementQuantity = () => {
@@ -153,7 +155,7 @@ const styles = StyleSheet.create({
   },
   planName: {
     fontSize: 20,
-    fontFamily:'Poppins-SemiBold'
+    fontFamily: 'Poppins-SemiBold'
   },
   priceSection: {
     justifyContent: 'flex-start',
@@ -161,31 +163,31 @@ const styles = StyleSheet.create({
   price: {
     fontSize: 18,
     fontWeight: 'bold',
-    alignSelf:'flex-end'
+    alignSelf: 'flex-end'
   },
   priceLabel: {
     fontSize: 12,
     color: '#808080',
-    fontFamily:'Poppins-Regular'
+    fontFamily: 'Poppins-Regular'
   },
   daySection: {
     marginTop: 8,
   },
   dayTitle: {
     fontSize: 14,
-    fontFamily:'Poppins-Medium',
-    color:'#808080',
-    marginHorizontal:16
+    fontFamily: 'Poppins-Medium',
+    color: '#808080',
+    marginHorizontal: 16
   },
   mealSection: {
     backgroundColor: 'white',
     paddingHorizontal: 16,
-    paddingVertical:8,
+    paddingVertical: 8,
     borderColor: '#ddd',
   },
   mealTitle: {
     fontSize: 14,
-    fontFamily:'Poppins-SemiBold'
+    fontFamily: 'Poppins-SemiBold'
   },
   mealContent: {
     flexDirection: 'row',
@@ -248,7 +250,7 @@ const styles = StyleSheet.create({
   quantityButtonText: {
     color: 'white',
     fontSize: 16,
-    fontFamily:'Poppins-SemiBold'
+    fontFamily: 'Poppins-SemiBold'
   },
   quantityText: {
     marginHorizontal: 10,
@@ -263,6 +265,6 @@ const styles = StyleSheet.create({
   orderButtonText: {
     color: 'white',
     fontSize: 14,
-    fontFamily:'Poppins-Medium'
+    fontFamily: 'Poppins-Medium'
   },
 });

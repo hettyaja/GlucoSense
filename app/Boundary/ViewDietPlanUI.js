@@ -5,6 +5,7 @@ import Header from '../components/Header';
 import { useAuth } from '../service/AuthContext';
 import ViewDietPlanController from '../Controller/ViewDietPlanController';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { encode } from 'base-64'
 
 const ViewDietPlan = () => {
   const { user } = useAuth();
@@ -58,7 +59,7 @@ const ViewDietPlan = () => {
         ) : (
           <ScrollView contentContainerStyle={styles.scrollViewContent}>
             {filteredDietPlans.map(plan => (
-              <TouchableOpacity key={plan.id} style={styles.planCard}>
+              <TouchableOpacity key={plan.id} style={styles.planCard} onPress={() => router.push({ pathname: 'Boundary/OrderDietPlan', params: { planData: encode(JSON.stringify(plan)) } })}>
                 <Image source={{ uri: plan.planImage }} style={styles.planImage} />
                 <View style={styles.planInfo}>
                   <Text style={styles.planName}>{plan.planName}</Text>

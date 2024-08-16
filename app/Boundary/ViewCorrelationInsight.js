@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Svg, Circle, Line, Text as SvgText, G } from 'react-native-svg';
-import { View, Text, StyleSheet, Dimensions, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, ScrollView, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import { useNavigation, useRoute } from '@react-navigation/native'; // Use hooks
-import { useAuth } from './service/AuthContext';
-import RetrieveMealLogsController from './Controller/RetrieveMealLogsController';
-import RetrieveMealLogsController1 from './Controller/RetrieveMealLogsController1';
-import RetrieveGlucoseLogsController from './Controller/RetrieveGlucoseLogsController';
-import RetrieveGlucoseLogsController1 from './Controller/RetrieveGlucoseLogsController1';
-import Header from './components/Header';
-import ViewUserGoalsController from './Controller/ViewUserGoalsController';
+import { useAuth } from '../service/AuthContext';
+import RetrieveMealLogsController from '../Controller/RetrieveMealLogsController';
+import RetrieveMealLogsController1 from '../Controller/RetrieveMealLogsController1';
+import RetrieveGlucoseLogsController from '../Controller/RetrieveGlucoseLogsController';
+import RetrieveGlucoseLogsController1 from '../Controller/RetrieveGlucoseLogsController1';
+import Header from '../components/Header';
+import ViewUserGoalsController from '../Controller/ViewUserGoalsController';
 import * as d3 from 'd3';
 
 const CaloriesInsight = () => {
@@ -184,10 +184,7 @@ const CaloriesInsight = () => {
   if (loading) {
     return (
       <View style={[styles.containerGif, styles.background]}>
-        <Image
-          source={require('../app/assets/loading.gif')}
-          style={styles.imageGif}
-        />
+        <ActivityIndicator size='large' color='#E58B68' />
       </View>
     );
   }

@@ -5,12 +5,12 @@ import { View, Text, ScrollView, TouchableOpacity, TextInput, StyleSheet, Alert 
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MenuCard from '../../components/MenuCard';
-import {fetchMenuData} from '../../service/menuService';
 import DeleteMenuController from '../../Controller/DeleteMenuController';
 import { useAuth } from '../../service/AuthContext';
 import UpdateMenuController from '../../Controller/UpdateMenuController';
 import Header from '../../components/Header';
 import { encode } from 'base-64';
+import ViewMenuController from '../../Controller/ViewMenuController';
 
 const foodBP = () => {
   const {user} = useAuth()
@@ -21,7 +21,7 @@ const foodBP = () => {
     const menuItem = async () => {
       if(user){
       try {
-        const menuCollection = await fetchMenuData( user.uid);
+        const menuCollection = await ViewMenuController.viewMenu(user.uid);
         setMenuData(menuCollection);
       } catch (error) {
         console.error('Error fetching menu data:', error);
@@ -36,7 +36,7 @@ const foodBP = () => {
   );
 
   const handleEdit = (menu) =>{
-    router.push({pathname: 'Boundary/EditMenuPage', params: {menuData: encode(JSON.stringify(menu))}})
+    router.push({pathname: 'Boundary/UpdateMenuUI', params: {menuData: encode(JSON.stringify(menu))}})
   }
 
   const confirmDelete = (menu) => {
@@ -67,7 +67,7 @@ const foodBP = () => {
       <Header
         title='Menu Management'
         rightButton='Add'
-        onRightButtonPress={() => router.push('Boundary/CreateMenuPage')}
+        onRightButtonPress={() => router.push('Boundary/CreateMenuUI')}
       />
       <View style={{ flex: 1 }}>
         

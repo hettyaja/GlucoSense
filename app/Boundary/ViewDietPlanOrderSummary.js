@@ -79,6 +79,24 @@ const ViewDietPlanOrderSummary = () => {
   };
 
   const handleOrder = async () => {
+    if (!address) {
+      Alert.alert(
+        "Address Missing",
+        "Please add a delivery address before placing your order.",
+        [{ text: "OK" }]
+      );
+      return;
+    }
+  
+    if (!payment) {
+      Alert.alert(
+        "Payment Method Missing",
+        "Please add a payment method before placing your order.",
+        [{ text: "OK" }]
+      );
+      return;
+    }
+    
     const orderRefNumber = generateOrderRefNumber();
 
     const startDate = new Date();
@@ -107,7 +125,7 @@ const ViewDietPlanOrderSummary = () => {
       [
         {
           text: "OK",
-          onPress: () => router.push('Boundary/food'), // Navigate to order history
+          onPress: () => router.dismiss(3), // Navigate to order history
         }
       ]
     );

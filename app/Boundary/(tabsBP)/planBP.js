@@ -1,16 +1,9 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
-import { DietPlanContext } from '../../context/DietPlanContext';
 import DietPlanCard from '../DietPlanCard';
-import Calendar from '../../Calendar';
-import moment from 'moment';
 import { Tabs, useRouter } from 'expo-router';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '../../../firebase';
 import ViewDietPlanController from '../../Controller/ViewDietPlanController';
 import Header from '../../components/Header';
-import Fontisto from 'react-native-vector-icons/Fontisto'
 import DeleteDietPlanController from '../../Controller/DeleteDietPlanController';
 import { useAuth } from '../../service/AuthContext';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -61,7 +54,7 @@ const planBP = () => {
       <Header
         title="Diet Plan"
         rightButton="Add"
-        onRightButtonPress={() => router.push('/Boundary/CreateDietPlan')}
+        onRightButtonPress={() => router.push('/Boundary/CreateDietPlanUI')}
       />
       <ScrollView style={styles.container}>
         <View style={styles.searchContainer}>

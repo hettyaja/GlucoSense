@@ -1,4 +1,5 @@
 import BusinessPartner from '../Entity/BusinessPartner';
+import DietPlan from '../Entity/DietPlan';
 
 class ViewDietPlanController {
   static async fetchDietPlans(userId) {
@@ -7,6 +8,14 @@ class ViewDietPlanController {
 
   static async fetchAllDietPlans() {
     return await BusinessPartner.fetchAllDietPlans();
+  }
+
+  static async fetchAllDietPlansForUser() {
+    try {
+      return await DietPlan.fetchAllDietPlansForUser()
+    } catch(error) {
+
+    }
   }
 }
 

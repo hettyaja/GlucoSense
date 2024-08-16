@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Image } from 'react-native';
 import { router } from 'expo-router';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import { fetchMenuData } from '../service/foodordermenuService';
 import { useAuth } from '../service/AuthContext';
 import Header from '../components/Header';
 import { encode as btoa } from 'base-64';

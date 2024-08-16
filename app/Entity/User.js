@@ -635,6 +635,16 @@ class User {
         throw error;
     }
   };
+
+  static async deleteLog(userId, logType, logId) {
+    try {
+      const logRef = doc(db, 'users', userId, logType, logId);
+      await deleteDoc(logRef);
+    } catch (error) {
+      console.error('Error deleting log:', error);
+      throw error;
+    }
+  }
 }
 
 export default User;

@@ -7,10 +7,10 @@ import { router } from 'expo-router';
 import { Picker } from '@react-native-picker/picker';
 import XLSX from 'xlsx';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import Header from './components/Header';
-import FetchUsersController from './Controller/FetchUsersController';
-import ViewBusinessPartnerController from './Controller/ViewBusinessPartnerController';
-import { useAuth } from './service/AuthContext';
+import Header from '../components/Header';
+import FetchUsersController from '../Controller/FetchUsersController';
+import ViewBusinessPartnerController from '../Controller/ViewBusinessPartnerController';
+import { useAuth } from '../service/AuthContext';
 
 const exportReportSA = () => {
   const { user } = useAuth();

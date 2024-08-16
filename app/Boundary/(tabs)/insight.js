@@ -114,7 +114,8 @@ const Insight = () => {
               ...mealData.datasets,
               {
                 data: Array(mealData.labels.length).fill(calorieGoal),
-                color: () => `#E58B68`, // Red line
+                color: () => `red`, // Red line
+                strokeWidth:1,
                 withDots: false,
                 fillShadowGradient: '#ffffff',
                 fillShadowGradientTo: '#ffffff',
@@ -130,7 +131,8 @@ const Insight = () => {
               ...glucoseData.datasets,
               {
                 data: Array(glucoseData.labels.length).fill(lowerGoal),
-                color: () => `green`, // Green line for lowerGoal
+                color: () => `red`, // Green line for lowerGoal
+                strokeWidth:1,
                 withDots: false,
                 fillShadowGradient: '#ffffff',
                 fillShadowGradientTo: '#ffffff',
@@ -138,7 +140,8 @@ const Insight = () => {
               },
               {
                 data: Array(glucoseData.labels.length).fill(upperGoal),
-                color: () => `green`, // Green line for upperGoal
+                color: () => `red`, // Green line for upperGoal
+                strokeWidth:1,
                 withDots: false,
                 fillShadowGradient: '#ffffff',
                 fillShadowGradientTo: '#ffffff',
@@ -176,7 +179,7 @@ const Insight = () => {
     <>
       <Header title='Insight' />
       <ScrollView style={styles.container}>
-        <TouchableOpacity style={styles.centeredChart} onPress={() => router.push('/glucoseInsight')}>
+        <TouchableOpacity style={styles.centeredChart} onPress={() => router.push('Boundary/ViewGlucoseInsight')}>
           <View style={styles.chartContainer}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 15, marginTop: 15 }}>
               <Text style={styles.chartTitle}>Blood Glucose</Text>
@@ -214,7 +217,7 @@ const Insight = () => {
             <Text style = {styles.graphExplaination}>Daily average glucose readings for the last 7 days</Text>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.centeredChart} onPress={() => router.push('/caloriesInsight')}>
+        <TouchableOpacity style={styles.centeredChart} onPress={() => router.push('Boundary/ViewCalorieInsight')}>
           <View style={styles.chartContainer}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 15, marginTop: 15 }}>
               <Text style={styles.chartTitle}>Calorie Consumption</Text>
@@ -254,7 +257,7 @@ const Insight = () => {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.centeredChart}
-          onPress={() => subscriptionType === 'free' ? router.push('Boundary/Subscribe') : router.push('/correlationInsight')}
+          onPress={() => subscriptionType === 'free' ? router.push('Boundary/Subscribe') : router.push('Boundary/ViewCorrelationInsight')}
         >
           <View style={styles.chartContainer}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 15, marginTop: 15 }}>

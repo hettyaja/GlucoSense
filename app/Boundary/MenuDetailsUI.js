@@ -1,23 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Header from '../components/Header';
 import { useAuth } from '../service/AuthContext';
 import MenuDetailsController from '../Controller/MenuDetailsController';
-import CreateAddressController from '../Controller/CreateAddressController';
-import { ActivityIndicator } from 'react-native';
-import { decode as atob} from 'base-64'
-import { encode as btoa } from 'base-64'
-
+import { decode as atob } from 'base-64';
+import { encode as btoa } from 'base-64';
 
 const MenuDetails = () => {
   const { menuData } = useLocalSearchParams();
   const [parsedMenuData, setParsedMenuData] = useState(menuData ? JSON.parse(atob(menuData)) : null);
-  console.log('ini details', parsedMenuData)
+  console.log('ini details', parsedMenuData);
   const [quantity, setQuantity] = useState(1);
   const [menuItem, setMenuItem] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { user } = useAuth();
 
@@ -35,44 +31,13 @@ const MenuDetails = () => {
     const orderDetails = {
       ...parsedMenuData,
       quantity,
-    }
-    console.log('Menu: ', orderDetails)
-    router.push({pathname: 'Boundary/ViewOrderSummaryUI', params:{menuData: btoa(JSON.stringify(orderDetails))}})
-  };
-
-
-  useEffect(() => {
-    if (!menuData) {
-      setError(new Error('Missing menuId or userId'));
-      setLoading(false);
-      return;
-    }
-
-    const fetchMenuItem = async () => {
-      try {
-        const items = await MenuDetailsController.fetchMenu(parsedMenuData.bpId, parsedMenuData.id);
-        setMenuItem(items);
-      } catch (error) {
-        setError(error);
-      } finally {
-        setLoading(false);
-      }
     };
-
-    fetchMenuItem();
-  }, [menuData]);
-
-  if (loading) {
-    return <ActivityIndicator size="large" color="#E58B68" style={styles.loader} />;
-    
-  }
+    console.log('Menu: ', orderDetails);
+    router.push({ pathname: 'Boundary/ViewOrderSummaryUI', params: { menuData: btoa(JSON.stringify(orderDetails)) } });
+  };
 
   if (error) {
     return <Text>Error loading menu item: {error.message}</Text>;
-  }
-
-  if (!menuItem) {
-    return <Text>No menu item found</Text>;
   }
 
   return (
@@ -84,59 +49,64 @@ const MenuDetails = () => {
       />
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View>
-          <Image source={{ uri: menuItem.image }} style={styles.image} />
+          <Image source={{ uri: parsedMenuData.image }} style={styles.image} />
         </View>
         <View style={styles.itemContainer}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-            <Text style={styles.title}>{menuItem.foodName}</Text>
+            <Text style={styles.title}>{parsedMenuData.foodName}</Text>
             <View>
-              <Text style={styles.price}>${menuItem.price}</Text>
+              <Text style={styles.price}>${parsedMenuData.price}</Text>
               <Text style={styles.basePrice}>Base price</Text>
             </View>
           </View>
-          <Text style={styles.description}>{menuItem.description}</Text>
+          <Text style={styles.description}>{parsedMenuData.description}</Text>
         </View>
 
-          <View style={styles.itemContainer}>
+        <View style={styles.itemContainer}>
           <Text style={styles.subtitle}>Ingredients</Text>
           <View style={styles.ingredientsContainer}>
-            {menuItem.ingredients ? (
-              menuItem.ingredients.split(',').map((ingredient, i) => (
+            {parsedMenuData.ingredients ? (
+              parsedMenuData.ingredients.split(',').map((ingredient, i) => (
                 <Text key={i} style={styles.ingredient}>• {ingredient.trim()}</Text>
               ))
             ) : (
               <Text style={styles.ingredient}>No ingredients listed</Text>
             )}
-             </View>
+          </View>
+        </View>
+
+        <View style={[styles.itemContainer, { marginBottom: 160 }]}>
+          <Text style={styles.title}>Nutrition fact</Text>
+
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Text style={styles.details}>Calories</Text>
+            <Text style={styles.unit}>{parsedMenuData.calories} cal</Text>
           </View>
 
-          <View style = {[styles.itemContainer, {marginBottom:160}]}>
-            <Text style={styles.title} >Nutrition fact</Text>
-            
-            <View style={{flexDirection: 'row', justifyContent:'space-between', alignItems: 'center'}}>
-              <Text style={styles.details}> Calorie </Text>
-              <Text style={styles.unit}>{menuItem.calories} cal</Text>
-            </View>
-
-            <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5}} />
-            <View style={{flexDirection: 'row', justifyContent:'space-between', alignItems: 'center'}}>
-              <Text style={styles.details}>Fat</Text>
-              <Text style={styles.unit}>{menuItem.fat} g</Text>
-            </View>
-
-
-            <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5}} />
-            <View style={{flexDirection: 'row', justifyContent:'space-between', alignItems: 'center'}}>
-              <Text style={styles.details}>Carbohydrate</Text>
-              <Text style={styles.unit}>{menuItem.carbs} g</Text>
-            </View>
-
-              <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5}} />
-                <View style={{flexDirection: 'row', justifyContent:'space-between', alignItems: 'center'}}>
-                <Text style={styles.details}>Protein</Text>
-                <Text style={styles.unit}>{menuItem.protein} g</Text>
-              </View>
+          <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5 }} />
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Text style={styles.details}>Fat</Text>
+            <Text style={styles.unit}>{parsedMenuData.fat} g</Text>
           </View>
+
+          <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5 }} />
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Text style={styles.details}>Carbohydrate</Text>
+            <Text style={styles.unit}>{parsedMenuData.carbs} g</Text>
+          </View>
+
+          <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5 }} />
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Text style={styles.details}>Protein</Text>
+            <Text style={styles.unit}>{parsedMenuData.protein} g</Text>
+          </View>
+
+          <View style={{ borderBottomColor: '#808080', borderBottomWidth: 0.5 }} />
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Text style={styles.details}>Sugar</Text>
+            <Text style={styles.unit}>{parsedMenuData.sugar} g</Text>
+          </View>
+        </View>
       </ScrollView>
 
       <View style={styles.footer}>
@@ -149,11 +119,10 @@ const MenuDetails = () => {
             <AntDesign name="plus" size={24} color="black" />
           </TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.buyButton} onPress = {()=> handleSave()}>
+        <TouchableOpacity style={styles.buyButton} onPress={() => handleSave()}>
           <Text style={styles.buyButtonText}>Buy</Text>
         </TouchableOpacity>
       </View>
-   
     </>
   );
 };
@@ -185,18 +154,17 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-SemiBold',
     marginBottom: 8,
     paddingTop: 8,
-    paddingHorizontal: 4
+    paddingHorizontal: 4,
   },
   price: {
     fontSize: 16,
     fontFamily: 'Poppins-SemiBold',
-    paddingTop: 8
+    paddingTop: 8,
   },
   basePrice: {
     fontFamily: 'Poppins-Regular',
     fontSize: 10,
     marginRight: 20,
-    alignSelf: 'flex-end',
     alignSelf: 'flex-end',
   },
   description: {
@@ -210,10 +178,10 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 16,
     fontFamily: 'Poppins-SemiBold',
-    padding: 4
+    padding: 4,
   },
   ingredientsContainer: {
-    paddingHorizontal:4
+    paddingHorizontal: 4,
   },
   ingredient: {
     fontSize: 14,
@@ -247,10 +215,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Bold',
     color: 'white',
   },
-  checkOut:{
-    backgroundColor: 'red',
-    borderRadius: 1000,
-  },
   footer: {
     position: 'absolute',
     bottom: 0,
@@ -259,17 +223,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     borderTopWidth: 1,
     borderTopColor: '#e0e0e0',
-  }, 
-  details:{
+  },
+  details: {
     borderBottomColor: '#d9d9d9',
     flexDirection: 'row',
     justifyContent: 'space-between',
     fontFamily: 'Poppins-Regular',
     paddingVertical: 16,
   },
-  loader:{
-    marginTop: 10
-  }
+  loader: {
+    marginTop: 10,
+  },
 });
 
 export default MenuDetails;

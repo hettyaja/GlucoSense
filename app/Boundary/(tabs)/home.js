@@ -7,7 +7,6 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { useAuth } from '../../service/AuthContext';
 import Header from '../../components/Header';
 import A1CComponent from '../../components/A1C'; // Ensure this import is correct
-import { fetchLogs, deleteLog } from '../../service/diaryService';
 import PopupMenu from '../../components/PopupMenu';
 import Divider from '../../components/Divider';
 import ViewGlucoseLogsController from '../../Controller/ViewGlucoseLogsController';
@@ -18,6 +17,7 @@ import FetchA1cController from '../../Controller/FetchA1cController';
 import Modal from 'react-native-modal'; // Import from react-native-modal
 import BottomSheetModal from './add';
 import ViewUserGoalsController from '../../Controller/ViewUserGoalsController';
+import DeleteLogsController from '../../Controller/DeleteLogsController';
 
 const formatDate = (time) => {
   const date = new Date(time.seconds * 1000);
@@ -167,32 +167,36 @@ const home = () => {
   };
 
   const calculateGlucoseStatsByDate = (filterSelected, logsToCalculate = logs) => {
-    const now = new Date();
+    const now = new Date(); // Current date and time
     let startDate;
     switch (filterSelected) {
       case 'Today':
-        startDate = new Date(now.setHours(0, 0, 0, 0));
+        startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate()); // Start of today
         break;
       case '3D':
-        startDate = new Date(now.setDate(now.getDate() - 3));
+        startDate = new Date(now); // Create a copy of `now`
+        startDate.setDate(now.getDate() - 3); // Last 3 days
         break;
       case '7D':
-        startDate = new Date(now.setDate(now.getDate() - 7));
+        startDate = new Date(now); // Create a copy of `now`
+        startDate.setDate(now.getDate() - 7); // Last 7 days
         break;
       case '30D':
-        startDate = new Date(now.setDate(now.getDate() - 30));
+        startDate = new Date(now); // Create a copy of `now`
+        startDate.setDate(now.getDate() - 30); // Last 30 days
         break;
       default:
-        startDate = new Date(0);
+        startDate = new Date(0); // Default to show all dates
         break;
     }
-
+  
     const glucoseLogs = logsToCalculate.filter(log => log.type === 'glucose');
     const filteredGlucoseLogs = glucoseLogs.filter(log => {
       const logDate = new Date(log.time.seconds * 1000);
-      return logDate >= startDate;
+      // Filter out logs with a date in the future
+      return logDate >= startDate && logDate < now;
     });
-
+  
     calculateGlucoseStats(filteredGlucoseLogs);
   };
 
@@ -253,7 +257,7 @@ const home = () => {
 
   const handleDelete = async (item) => {
     try {
-      await deleteLog(user.uid, item.type === 'meal' ? 'mealLogs' : item.type === 'medicine' ? 'medicineLogs' : 'glucoseLogs', item.id);
+      await DeleteLogsController.deleteLogs(user.uid, item.type === 'meal' ? 'mealLogs' : item.type === 'medicine' ? 'medicineLogs' : 'glucoseLogs', item.id);
       const updatedLogs = filteredLogs.filter(log => log.id !== item.id);
       setFilteredLogs(updatedLogs);
       setLogs(updatedLogs);
@@ -330,7 +334,7 @@ const home = () => {
 
   const handleReminder = () => {
       if (subscriptionType === 'premium') {
-        router.push('reminder')
+        router.push('Boundary/reminder')
       } else {
         router.push('Boundary/Subscribe')
       }

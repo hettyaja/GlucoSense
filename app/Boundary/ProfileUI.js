@@ -4,7 +4,6 @@ import { Stack, router } from 'expo-router';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
 import * as ImagePicker from 'expo-image-picker';
-import { useProfile } from '../context/ProfileContext';
 import { useAuth } from '../service/AuthContext';
 import getProfileController from '../Controller/getProfileController';
 import setBodyProfileController from '../Controller/SetBodyProfileController';
@@ -15,14 +14,13 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { deleteImage, uploadProfileImage } from '../service/storageService';
 
 const Profile = () => {
-    const { profileData } = useProfile();
     const { user } = useAuth();
     const [previousImage, setPreviousImage] = useState('');
     const [photoUri, setPhotoUri] = useState('');
     const [localUsername, setUsername] = useState('');
     const [localName, setName] = useState('');
     const [localEmail, setEmail] = useState('');
-    const [localBirthdate, setBirthdate] = useState(profileData.birthdate ? new Date(profileData.birthdate) : null);
+    const [localBirthdate, setBirthdate] = useState(null);
     const [localWeight, setWeight] = useState('');
     const [localHeight, setHeight] = useState('');
     const [localGender, setGender] = useState('');
@@ -81,6 +79,12 @@ const Profile = () => {
                 return;
             } else if (!localUsername) {
                 Alert.alert("Empty Field", "Username cannot be empty.");
+                return;
+            } else if (!localWeight) {
+                Alert.alert("Empty Field", "Weight cannot be empty.");
+                return;
+            } else if (!localHeight) {
+                Alert.alert("Empty Field", "Height cannot be empty.");
                 return;
             }
 

@@ -1,11 +1,11 @@
 import { Stack, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { View, TextInput, FlatList, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { searchFood } from '../server';
+import { searchFood } from '../../server';
 import { router} from 'expo-router';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Fontisto from 'react-native-vector-icons/Fontisto';
-import Header from './components/Header';
+import Header from '../components/Header';
 
 const handleBackButton = () => {
   router.back();
@@ -76,7 +76,7 @@ const searchFoodPage = () => {
         {results.length === 0 ? (
           <View style={styles.placeholderContainer}>
             <Image
-              source = {require('../app/assets/foodIcon.png')}
+              source = {require('../assets/foodIcon.png')}
               style = {styles.imageIcon}
             />
             <Text style={styles.placeholderText}>Add Food or Drink</Text>

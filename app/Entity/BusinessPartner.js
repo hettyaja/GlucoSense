@@ -171,8 +171,6 @@ class BusinessPartner {
     }
   }
 
- 
-
   static async createDietPlan(userId, newDietPlan) {
     const dietPlanCollection = collection(db, `businessPartner/${userId}/dietplan`);
     const docRef = await addDoc(dietPlanCollection, newDietPlan);
@@ -226,14 +224,6 @@ class BusinessPartner {
       throw error
     }
   }
-
-  // static async fetchDietPlans(userId) {
-  //   const dietPlanCollection = collection(db, `businessPartner/${userId}/dietplan`);
-  //   const dietPlanSnapshot = await getDocs(dietPlanCollection);
-  //   return dietPlanSnapshot.docs.map(doc => ({
-  //     ...doc.data(), id: doc.id,
-  //   }));
-  // }
 
   static async fetchAllDietPlans() {
     try {

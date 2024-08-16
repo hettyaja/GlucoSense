@@ -17,17 +17,19 @@ const FirstRoute = ({ refreshFlag, triggerRefresh }) => {
   useEffect(() => {
     const loadFoodData = async () => {
       try {
-        const data = await ViewBusinessPartnerFoodOrderController.viewFoodOrderByBusinessPartnerId(user.uid);
-        // Filter out orders with status 'complete'
-        const filteredData = data.filter(order => order.status !== 'complete');
-        setFoodOrderData(filteredData);
+        if (user) {
+          const data = await ViewBusinessPartnerFoodOrderController.viewFoodOrderByBusinessPartnerId(user.uid);
+          // Filter out orders with status 'complete'
+          const filteredData = data.filter(order => order.status !== 'complete');
+          setFoodOrderData(filteredData);
+        }
       } catch (error) {
         console.error('Error loading food data:', error);
       }
     };
 
     loadFoodData();
-  }, [user.uid, refreshFlag]); // Adding refreshFlag as a dependency
+  }, [user.uid, refreshFlag]); 
 
   return (
     <ScrollView style={styles.container}>
@@ -45,10 +47,14 @@ const SecondRoute = ({ refreshFlag, triggerRefresh }) => {
   useEffect(() => {
     const loadDietPlanData = async () => {
       try {
+        if (user) {
+          
         const data = await ViewBusinessPartnerDietPlanOrderController.viewDietPlanOrderByBusinessPartnerId(user.uid);
         // Filter out diet plan orders with status 'complete'
         const filteredData = data.filter(order => order.status !== 'complete');
         setDietPlanOrderData(filteredData);
+
+      }
       } catch (error) {
         console.error('Error loading diet plan data:', error);
       }

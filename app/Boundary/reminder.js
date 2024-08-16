@@ -2,14 +2,14 @@ import { View, Text, StyleSheet, Image, Button, TouchableOpacity, Touchable, Tex
 import React, { useState, useEffect } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack, router} from 'expo-router'
-import { images } from './constants/images';
+import { images } from '../constants/images';
 import { Picker } from '@react-native-picker/picker';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
-import Header from './components/Header';
-import { useAuth } from './service/AuthContext';
-import ViewReminderController from './Controller/ViewReminderController';
+import Header from '../components/Header';
+import { useAuth } from '../service/AuthContext';
+import ViewReminderController from '../Controller/ViewReminderController';
 
 
 
@@ -36,11 +36,11 @@ const reminder = () => {
   }
 
   const handleRightButton = () => {
-    router.push('/createReminder')
+    router.push('Boundary/CreateReminderUI')
   }
 
   const handleEdit = (item) => {
-    router.push({pathname: 'editReminder', params: {reminderData: JSON.stringify(item)}})
+    router.push({pathname: 'Boundary/UpdateReminderUI', params: {reminderData: JSON.stringify(item)}})
   }
 
   return (
@@ -90,6 +90,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#999',
     textAlign: 'center',
+    marginTop: 300,
   },
 });
 export default reminder

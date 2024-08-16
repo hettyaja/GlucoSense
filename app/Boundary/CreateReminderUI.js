@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Platform, Alert } from 'react-native';
-import Header from './components/Header';
+import Header from '../components/Header';
 import { router } from 'expo-router';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import * as Notifications from 'expo-notifications';
-import { useAuth } from './service/AuthContext';
-import CreateReminderController from './Controller/CreateReminderController';
+import { useAuth } from '../service/AuthContext';
+import CreateReminderController from '../Controller/CreateReminderController';
 import { Picker } from '@react-native-picker/picker';
 
 const createReminder = () => {
@@ -30,7 +30,7 @@ const createReminder = () => {
       try {
         await CreateReminderController.createReminder(user.uid, reminderData);
         scheduleNotification(reminderData);
-        router.replace('reminder');
+        router.replace('Boundary/reminder');
       } catch (error) {
         console.error('Error saving reminder:', error);
         Alert.alert('Error', 'An error occurred while saving the reminder.');
@@ -85,7 +85,7 @@ const createReminder = () => {
 
   const handleConfirm = (date) => {
     setSelectedTime(date);
-    console.warn("A date has been picked: ", date);
+    console.log("A date has been picked: ", date);
     hideDatePicker();
   };
 

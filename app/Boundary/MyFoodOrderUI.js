@@ -4,7 +4,7 @@ import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import { router } from 'expo-router';
 import Header from '../components/Header';
 import ViewUserFoodOrderController from '../Controller/ViewUserFoodOrderController';
-import { useAuth } from '../service/AuthContext'; // Assuming you have an AuthContext to get user data
+import { useAuth } from '../service/AuthContext'; 
 import { encode } from 'base-64'
 
 const ToReceiveRoute = ({ orders }) => (
@@ -61,7 +61,7 @@ const MyFoodOrderUI = () => {
     { key: 'completed', title: 'Completed' },
   ]);
 
-  const { user } = useAuth(); // Get the authenticated user's data
+  const { user } = useAuth(); 
   const [toReceiveOrders, setToReceiveOrders] = useState([]);
   const [completedOrders, setCompletedOrders] = useState([]);
 
@@ -87,11 +87,11 @@ const MyFoodOrderUI = () => {
   const renderTabBar = (props) => (
     <TabBar
       {...props}
-      indicatorStyle={{ backgroundColor: '#E58B68' }} // Change the indicator color
-      style={{ backgroundColor: 'white' }} // Change the tab bar background color
-      activeColor="#E58B68" // Change the active tab text color
-      inactiveColor="#808080" // Change the inactive tab text color
-      labelStyle={{ fontFamily: 'Poppins-Medium' }} // Customize the tab label font
+      indicatorStyle={{ backgroundColor: '#E58B68' }} 
+      style={{ backgroundColor: 'white' }} 
+      activeColor="#E58B68" 
+      inactiveColor="#808080" 
+      labelStyle={{ fontFamily: 'Poppins-Medium' }} 
     />
   );
 
