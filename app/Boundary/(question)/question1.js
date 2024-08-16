@@ -47,7 +47,7 @@ export default function UserProfile() {
 
     const bodyProfileData = {
       gender,
-      birthdate: birthdate.toISOString(),
+      birthdate,
       weight,
       height,
     };

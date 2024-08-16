@@ -34,7 +34,7 @@ const Goals = () => {
         setWeight(profileData.weight);
         setGender(profileData.gender);
         setHeight(profileData.height);
-        setBirthdate(profileData.birthdate);
+        setBirthdate(profileData.birthdate.toDate());
         
         // Determine which goal set is the default
         const bmrGoals = profileData.goals.BMRGoals;
@@ -72,12 +72,12 @@ const Goals = () => {
   }, [weightGoal, exerciseLevel, gender, weight, height, birthdate]);
 
   const calculateBMRAndTDEE = (weightGoal, exerciseLevel) => {
-    // Convert Firestore Timestamp to Date object
-    const birthdateObj = new Date(birthdate.seconds * 1000);
+    // Ensure birthdate is already a Date object
+    const birthdateObj = birthdate;
 
     // Calculate the age
     const currentDate = new Date();
-    const age = currentDate.getFullYear() - birthdateObj.getFullYear();
+    let age = currentDate.getFullYear() - birthdateObj.getFullYear();
     const monthDifference = currentDate.getMonth() - birthdateObj.getMonth();
 
     // Adjust the age if the current date hasn't reached the birthday in the current year
