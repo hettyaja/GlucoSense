@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View, Alert, Button } from 'react-native';
 import { CameraView, useCameraPermissions, Camera, BarcodeScanningResult } from 'expo-camera';
-import { searchFoodByBarcode } from '../server';
+import { searchFoodByBarcode } from '../../server';
 import { Stack, useRouter } from 'expo-router';
-import food from './Boundary/ViewMenuUI';
-import Header from './components/Header';
+import Header from '../components/Header';
 
 export default function App() {
   const cameraRef = useRef(null);
@@ -47,7 +46,7 @@ export default function App() {
       const foodData = await searchFoodByBarcode(data);
       console.log(foodData);
       router.push({
-        pathname: 'foodDetails',
+        pathname: './foodDetails',
         params: { item: JSON.stringify({ food: foodData }) },
       });
     } catch (error) {
