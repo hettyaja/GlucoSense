@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Alert, LogBox } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { router, useLocalSearchParams } from 'expo-router';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
@@ -17,6 +17,12 @@ const addMeds = () => {
   const [notes, setNotes] = useState('');
   const [selectedValue, setSelectedValue] = useState("Before breakfast");
 
+
+  LogBox.ignoreLogs([
+    'Support for defaultProps will be removed from memo components in a future major release',
+  ]);
+
+  
   useEffect(() => {
     const fetchSelectedMedicines = async () => {
       if (user && selectedMedicineNames) {

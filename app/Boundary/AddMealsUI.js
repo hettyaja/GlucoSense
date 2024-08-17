@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Alert, Button, TouchableOpacity, ScrollView, TextInput } from 'react-native';
+import { View, Text, StyleSheet, Alert, Button, TouchableOpacity, ScrollView, TextInput, LogBox } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Picker } from '@react-native-picker/picker';
@@ -29,6 +29,11 @@ const addMeals = () => {
   const [protein, setProtein] = useState(parsedMealData?.protein || 0);
   const [notes, setNotes] = useState('');
   const [isSaveDisabled, setIsSaveDisabled] = useState(true); // New state variable
+
+
+  LogBox.ignoreLogs([
+    'Support for defaultProps will be removed from memo components in a future major release',
+  ]);
 
   useEffect(() => {
     if (parsedMealData && selectedDate) {

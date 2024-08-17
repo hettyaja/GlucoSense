@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity, Alert, TextInput, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, TextInput, ScrollView, LogBox } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { router } from 'expo-router';
 import { Picker } from '@react-native-picker/picker';
@@ -21,6 +21,11 @@ const preReg = () => {
   const [afterMealLowerBound, setAfterMealLowerBound] = useState();
   const [afterMealUpperBound, setAfterMealUpperBound] = useState();
 
+
+  LogBox.ignoreLogs([
+    'Support for defaultProps will be removed from memo components in a future major release',
+  ]);
+  
   useEffect(() => {
     const fetchUserGoals = async () => {
       try {
