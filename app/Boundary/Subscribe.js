@@ -39,7 +39,7 @@ const Subscribe = () =>
 
             <View style={styles.list}>
                 <AntDesign name='checkcircleo' size={24} color='#E04530' style={styles.icon}/>
-                <Text style={styles.text}>Quick Food Logging: Scan barcodes to effortlessly track your meals.  </Text>
+                <Text style={styles.text}>Quick Glucose Logging: Connect bluetooth to effortlessly track your glucose.  </Text>
             </View>
 
             <View style={styles.list}>
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
 
     list:{
         paddingLeft:24,
-        paddingTop:30,
+        paddingTop:24,
         backgroundColor:"white",
         flexDirection:'row',
     },
@@ -115,18 +115,15 @@ const styles = StyleSheet.create({
     }, 
     price:{
         backgroundColor:'#ffff',
-        marginTop:100,
-        paddingBottom:80,
+        marginTop:16,
         borderRadius:24,
-        // borderWidth: 10,
-        // borderColor: 'red',
+        borderBottomLeftRadius:0,
+        borderBottomRightRadius:0,
+        paddingBottom:24,
         alignItems:'center',
         justifyContent:'center',
-        elevation: 10, // Adjust the value to increase or decrease the shadow
-        shadowColor: '#000',
         borderWidth: 0.5,
         borderColor: '#808080',
-        shadowOffset: { width: -50, height: -40000 }, // This creates the illusion of the shadow at the top
     },
 
     tag:{

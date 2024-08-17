@@ -196,7 +196,7 @@ const profileBP = () => {
               placeholder="Add Email"
               value={email}
               onChangeText={setEmail}
-              editable={isEditable}
+              editable={false}
             />
           </View>
         </View>

@@ -1,9 +1,8 @@
+// UpdateGlucoseUI.js
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Alert } from 'react-native';
 import React, { useState, useEffect } from 'react';
-import { Stack, router, useLocalSearchParams } from 'expo-router';
-import AntDesign from 'react-native-vector-icons/AntDesign';
+import { router, useLocalSearchParams } from 'expo-router';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import Feather from 'react-native-vector-icons/Feather';
 import { useAuth } from '../service/AuthContext';
 import UpdateGlucoseLogsController from '../Controller/UpdateGlucoseLogsController';
 import { Picker } from '@react-native-picker/picker';
@@ -17,13 +16,13 @@ const editGlucose = () => {
   const [selectedDate, setSelectedDate] = useState(new Date(parsedGlucoseData.time.seconds * 1000));
   const [selectedValue, setSelectedValue] = useState(parsedGlucoseData.period);
   const [glucoseValue, setGlucoseValue] = useState(parsedGlucoseData.glucose.toString());
+  const [notes, setNotes] = useState(parsedGlucoseData.notes);
 
   const handleChange = (text) => {
     const newText = text.replace(/[^0-9.]/g, '');
     if (newText.split('.').length > 2) {
       return;
     }
-
     setGlucoseValue(newText);
   };
 
@@ -38,7 +37,8 @@ const editGlucose = () => {
         id: parsedGlucoseData.id,
         time: selectedDate,
         period: selectedValue,
-        glucose: glucoseValue
+        glucose: glucoseValue,
+        notes: notes
       };
 
       try {
@@ -63,7 +63,6 @@ const editGlucose = () => {
 
   const handleConfirm = (date) => {
     setSelectedDate(date);
-    console.warn("A date has been picked: ", date);
     hideDatePicker();
   };
 
@@ -72,10 +71,7 @@ const editGlucose = () => {
       "Delete Log",
       "Are you sure you want to delete this log?",
       [
-        {
-          text: "Cancel",
-          style: "cancel"
-        },
+        { text: "Cancel", style: "cancel" },
         { text: "OK", onPress: () => handleDelete() }
       ]
     );
@@ -93,28 +89,27 @@ const editGlucose = () => {
   return (
     <>
       <Header
-        title = 'Glucose'
-        leftButton='Close'
-        onLeftButtonPress={()=> router.back('Boundary/home')}
-        rightButton='Save'
-        onRightButtonPress={()=> saveGlucose()}
+        title="Edit Glucose Log"
+        leftButton="Close"
+        onLeftButtonPress={() => router.back('/home')}
+        rightButton="Save"
+        onRightButtonPress={() => saveGlucose()}
       />
 
-      <ScrollView style={{ flex: 1, backgroundColor: '#f5f5f5' }}>
+      <ScrollView style={styles.scrollView}>
         <View style={styles.section}>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16 }}>
-            <Text style={{ fontSize: 16, fontFamily: 'Poppins-Medium' }}>Time</Text>
+          <View style={styles.row}>
+            <Text style={styles.label}>Time</Text>
             <TouchableOpacity onPress={showDatePicker}>
-              <Text>{selectedDate.toLocaleString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', hour: 'numeric', minute: 'numeric' })}</Text>
+              <Text style={styles.value}>{selectedDate.toLocaleString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', hour: 'numeric', minute: 'numeric' })}</Text>
             </TouchableOpacity>
           </View>
-          <View style={{ borderBottomWidth: StyleSheet.hairlineWidth, marginHorizontal: 16 }} />
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16 }}>
-            <Text style={{ fontSize: 16, fontFamily: 'Poppins-Medium' }}>Period</Text>
+          <View style={styles.separator} />
+          <View style={styles.row}>
+            <Text style={styles.label}>Period</Text>
             <Picker
               selectedValue={selectedValue}
               style={styles.picker}
-              itemStyle={styles.pickerItem}
               onValueChange={(itemValue) => setSelectedValue(itemValue)}
             >
               <Picker.Item label="Before breakfast" value="Before breakfast" />
@@ -126,46 +121,44 @@ const editGlucose = () => {
             </Picker>
           </View>
         </View>
-        <View style={{ alignItems: 'center' }}>
-          <TouchableOpacity style={styles.button}>
-            <Feather name="camera" size={24} />
-            <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 14 }}>Camera</Text>
-          </TouchableOpacity>
-        </View>
+
         <View style={styles.section}>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16 }}>
-            <Text style={{ fontSize: 16, fontFamily: 'Poppins-Medium' }}>Glucose</Text>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <View style={styles.row}>
+            <Text style={styles.label}>Glucose</Text>
+            <View style={styles.glucoseInputContainer}>
               <TextInput
-                style={{ fontFamily: 'Poppins-Medium', fontSize: 16, marginRight: 16 }}
+                style={styles.glucoseInput}
                 value={glucoseValue}
-                placeholder='000'
+                placeholder="000"
                 onChangeText={handleChange}
                 keyboardType="numeric"
                 maxLength={5}
-                color="#808080"
               />
-              <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 12 }}>mg/dL</Text>
+              <Text style={styles.unit}>mg/dL</Text>
             </View>
           </View>
-          <View style={{ borderBottomWidth: StyleSheet.hairlineWidth, marginHorizontal: 16 }} />
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16 }}>
-            <Text style={{ fontSize: 16, fontFamily: 'Poppins-Medium' }}>Notes</Text>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <TextInput style={{ fontFamily: 'Poppins-Medium', fontSize: 16 }} placeholder={'Add your notes'} />
-            </View>
+          <View style={styles.separator} />
+          <View style={styles.row}>
+            <Text style={styles.label}>Notes</Text>
+            <TextInput
+              style={styles.notesInput}
+              placeholder="Add your notes"
+              value={notes}
+              onChangeText={(text) => setNotes(text)}
+            />
           </View>
         </View>
 
         <View style={styles.section}>
-          <TouchableOpacity style={{ padding: 16, alignItems: 'center' }} onPress={() => confirmDelete()}>
-            <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 16, color: 'red' }}>Delete</Text>
+          <TouchableOpacity style={styles.deleteButton} onPress={confirmDelete}>
+            <Text style={styles.deleteText}>Delete</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
       <DateTimePickerModal
         isVisible={isDatePickerVisible}
         mode="datetime"
+        display="inline"
         onConfirm={handleConfirm}
         onCancel={hideDatePicker}
       />
@@ -174,46 +167,74 @@ const editGlucose = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    justifyContent: 'space-around',
-  },
-  button: {
-    backgroundColor: 'white',
-    borderRadius: 16,
-    width: '25%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 16,
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowRadius: 1,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 5,
-  },
-  buttonText: {
-    fontSize: 12,
-    fontFamily: "Poppins-Regular",
-    textAlign: 'center',
-    color: 'black',
+  scrollView: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
   },
   section: {
     backgroundColor: 'white',
-    borderColor: '#808080',
     borderTopWidth: 0.5,
     borderBottomWidth: 0.5,
-    marginVertical: 24,
+    borderColor: '#808080',
+    marginTop: 16,
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  label: {
+    fontSize: 14,
+    fontFamily: 'Poppins-Regular',
+    color: 'black',
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+  },
+  value: {
+    fontSize: 14,
+    fontFamily: 'Poppins-Regular',
+    color: '#808080',
+    marginHorizontal: 16,
+  },
+  separator: {
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#808080',
   },
   picker: {
-    fontFamily: 'Poppins-Regular',
     width: '50%',
-    marginLeft: 170,
+    height: 40,
     color: '#808080',
   },
-  pickerItem: {
-    fontSize: 12,
-    fontFamily: 'Poppins-Regular',
-    height: 36,
+  glucoseInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginHorizontal: 16,
+  },
+  glucoseInput: {
+    fontFamily: 'Poppins-Medium',
+    fontSize: 14,
+    width: 50,
+    color: '#808080',
+  },
+  unit: {
+    fontFamily: 'Poppins-Regular',
+    fontSize: 14,
+  },
+  notesInput: {
+    fontFamily: 'Poppins-Medium',
+    fontSize: 14,
+    flex: 1,
+    textAlign: 'right',
+    marginHorizontal: 16,
+  },
+  deleteButton: {
+    padding: 16,
+    alignItems: 'center',
+  },
+  deleteText: {
+    fontFamily: 'Poppins-Medium',
+    fontSize: 14,
+    color: 'red',
   },
 });
 

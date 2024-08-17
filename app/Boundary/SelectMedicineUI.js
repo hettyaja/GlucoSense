@@ -118,8 +118,8 @@ const selectMedicine = () => {
         ))}
 
         <TouchableOpacity style={styles.createButton} onPress={() => router.push('Boundary/CreateMedListUI')}>
-          <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 14 }}>Create medicine</Text>
-          <Ionicons name='chevron-forward' size={24} color='black' />
+          <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 14 }}>Create medicine</Text>
+          <Ionicons name='chevron-forward' size={24} color='grey' />
         </TouchableOpacity>
       </ScrollView>
     </>
@@ -154,13 +154,13 @@ const styles = StyleSheet.create({
   medicineName: {
     fontSize: 14,
     fontFamily: 'Poppins-Regular',
-    paddingTop: 10,
     paddingLeft: 10,
   },
   unit: {
     fontSize: 12,
     fontFamily: 'Poppins-Regular',
     color: '#808080',
+    paddingLeft: 10,
     
   },
   createButton: {

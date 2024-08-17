@@ -13,11 +13,11 @@ const getStartedPage_3 = () => {
           }}
         />
     <View style={{flex:1}}>
-        <View style={{
-          flex:7,
-          backgroundColor:"#E58B68",
-          alignItems:"center"
-        }}>
+    <View style={{ flex: 7, backgroundColor: "#E58B68" }}>
+          {/* Center the image within this View */}
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <Image source={images.getStarted3} style={{ width: 400, height: 400 }} />
+          </View>
         </View>
 
         <View style={{
@@ -31,7 +31,7 @@ const getStartedPage_3 = () => {
             fontFamily:"Poppins-Bold",
             fontSize:16
           }}>
-            Customized Diet, Delivered!
+            Health Reports, Simplified
           </Text>
 
           <Text style={{
@@ -41,7 +41,7 @@ const getStartedPage_3 = () => {
             paddingTop:12,
             color:"#808080"
           }}>
-              {'Order personalized plans and\nhealthy meals for easy,\nnutritious eating.'}
+              {'Easily export your health data\nas PDF or Excel files for quick sharing,\ntracking, and better insights.'}
           </Text>
         </View>
 

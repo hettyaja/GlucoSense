@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import Header from '../components/Header';
 import { router, useLocalSearchParams } from 'expo-router';
-import RNNPickerSelect from 'react-native-picker-select';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import * as Notifications from 'expo-notifications';
 import { useAuth } from '../service/AuthContext';
@@ -16,6 +15,7 @@ const editReminder = () => {
   const [parsedReminderData, setParsedReminderData] = useState(reminderData ? JSON.parse(reminderData) : null);
   const [selectedType, setSelectedType] = useState(parsedReminderData ? parsedReminderData.type : null);
   const [selectedDay, setSelectedDay] = useState(parsedReminderData ? parsedReminderData.day : null);
+
 
   // Parse the time correctly
   const [selectedTime, setSelectedTime] = useState(() => {
@@ -59,7 +59,7 @@ const editReminder = () => {
       try {
         await UpdateReminderController.updateReminder(user.uid, reminderData);
         scheduleNotification(reminderData);
-        router.replace('Boundary/reminder');
+        router.back();
       } catch (error) {
         console.error('Error updateing reminder:', error);
       }
@@ -107,7 +107,7 @@ const editReminder = () => {
     try {
         console.log(reminderData.id)
         await DeleteReminderController.deleteReminder(user.uid, parsedReminderData.id);
-        router.replace('Boundary/reminder')
+        router.back()
       } catch (error) {
         console.error('Error deleting reminder:', error);
       }
@@ -140,70 +140,37 @@ const editReminder = () => {
         <View style={styles.section}>
           <View style={styles.item}>
             <Text>Type</Text>
-            {Platform.OS === 'ios' ? (
-              <RNNPickerSelect
-                onValueChange={(itemValue) => setSelectedType(itemValue)}
-                value={selectedType}
-                placeholder={{ label: 'Select type', value: null, fontFamily: 'Poppins-Regular', fontSize: 14 }}
-                items={[
-                  { label: 'Glucose', value: 'Glucose' },
-                  { label: 'Meal', value: 'Meal' },
-                  { label: 'Medicine', value: 'Medicine' }
-                ]}
-              />
-            ) : (
               <Picker
                 selectedValue={selectedType}
                 onValueChange={(itemValue) => setSelectedType(itemValue)}
                 style={styles.picker}
-                itemStyle={styles.pickerItem}
-                mode='dropdown'
               >
-                <Picker.Item label="Glucose" value='Glucose' />
-                <Picker.Item label="Meal" value='Meal' />
-                <Picker.Item label="Medicine" value='Medicine' />
+                <Picker.Item label="Glucose" value="Glucose" />
+                <Picker.Item label="Meal" value="Meal" />
+                <Picker.Item label="Medicine" value="Medicine" />
               </Picker>
-            )}
           </View>
+          <View style={{borderBottomWidth:0.5, borderColor:'#808080', marginHorizontal:16}}/>
           <View style={styles.item}>
-            <Text>Day</Text>
-            {Platform.OS === 'ios' ? (
-              <RNNPickerSelect
-                onValueChange={(itemValue) => setSelectedDay(itemValue)}
-                value={selectedDay}
-                placeholder={{ label: 'Select day', value: null, fontFamily: 'Poppins-Regular', fontSize: 14 }}
-                items={[
-                  { label: 'Everyday', value: 'Everyday' },
-                  { label: 'Monday', value: 'Monday' },
-                  { label: 'Tuesday', value: 'Tuesday' },
-                  { label: 'Wednesday', value: 'Wednesday' },
-                  { label: 'Thursday', value: 'Thursday' },
-                  { label: 'Friday', value: 'Friday' },
-                  { label: 'Saturday', value: 'Saturday' },
-                  { label: 'Sunday', value: 'Sunday' }
-                ]}
-              />
-            ) : (
+            <Text style={{ fontFamily: 'Poppins-Regular', fontSize:14}}>Day</Text>
               <Picker
                 selectedValue={selectedDay}
                 onValueChange={(itemValue) => setSelectedDay(itemValue)}
                 style={styles.picker}
-                itemStyle={styles.pickerItem}
-                mode='dropdown'
               >
-                <Picker.Item label="Everyday" value='Everyday' />
-                <Picker.Item label="Monday" value='Monday' />
-                <Picker.Item label="Tuesday" value='Tuesday' />
-                <Picker.Item label="Wednesday" value='Wednesday' />
-                <Picker.Item label="Thursday" value='Thursday' />
-                <Picker.Item label="Friday" value='Friday' />
-                <Picker.Item label="Saturday" value='Saturday' />
-                <Picker.Item label="Sunday" value='Sunday' />
+                <Picker.Item label="Everyday" value="Everyday" />
+                <Picker.Item label="Monday" value="Monday" />
+                <Picker.Item label="Tuesday" value="Tuesday" />
+                <Picker.Item label="Wednesday" value="Wednesday" />
+                <Picker.Item label="Thursday" value="Thursday" />
+                <Picker.Item label="Friday" value="Friday" />
+                <Picker.Item label="Saturday" value="Saturday" />
+                <Picker.Item label="Sunday" value="Sunday" />
               </Picker>
-            )}
           </View>
-          <View style={styles.item}>
-            <Text>Time</Text>
+          <View style={{borderBottomWidth:0.5, borderColor:'#808080', marginHorizontal:16}}/>
+          <View style={[styles.item,{paddingVertical:16}]}>
+            <Text style={{ fontFamily: 'Poppins-Regular', fontSize:14}}>Time</Text>
             <TouchableOpacity onPress={showDatePicker}>
               <Text>{selectedTime.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}</Text>
             </TouchableOpacity>
@@ -211,7 +178,7 @@ const editReminder = () => {
         </View>
         <View style={styles.section}>
             <TouchableOpacity style={{padding: 16, alignItems: 'center' }} onPress={() => handleDelete()}>
-            <Text style={{ fontFamily: 'Poppins-Medium', fontSize:16, color:'red'}}>Delete</Text>
+            <Text style={{ fontFamily: 'Poppins-Regular', fontSize:14, color:'red'}}>Delete</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -240,17 +207,13 @@ const styles = StyleSheet.create({
     borderColor: '#808080'
   },
   item: {
-    padding: 16,
+    paddingHorizontal: 16,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between'
   },
   picker: {
-    height: 55
+    height: 40,
+    width:'45%'
   },
-  pickerItem: {
-    height: 55,
-    fontSize: 14,
-    fontFamily: 'Poppins-Regular',
-  }
 });

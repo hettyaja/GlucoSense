@@ -15,7 +15,7 @@ const addMeds = () => {
   const [selectedMedicines, setSelectedMedicines] = useState([]);
   const [medicineAmount, setMedicineAmount] = useState({});
   const [notes, setNotes] = useState('');
-  const [selectedValue, setSelectedValue] = useState("Breakfast");
+  const [selectedValue, setSelectedValue] = useState("Before breakfast");
 
   useEffect(() => {
     const fetchSelectedMedicines = async () => {
@@ -109,7 +109,6 @@ const addMeds = () => {
 
   const handleConfirm = (date) => {
     setSelectedDate(date);
-    console.warn("A date has been picked: ", date);
     hideDatePicker();
   };
 
@@ -125,18 +124,17 @@ const addMeds = () => {
       <ScrollView style={{ flex: 1, backgroundColor: '#f5f5f5' }}>
         <View style={styles.section}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16 }}>
-            <Text style={{ fontSize: 16, fontFamily: 'Poppins-Medium' }}>Time</Text>
+            <Text style={{ fontSize: 14, fontFamily: 'Poppins-Regular' }}>Time</Text>
             <TouchableOpacity onPress={showDatePicker}>
               <Text>{selectedDate.toLocaleString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', hour: 'numeric', minute: 'numeric' })}</Text>
             </TouchableOpacity>
           </View>
-          <View style={{borderBottomWidth: StyleSheet.hairlineWidth, marginHorizontal:16}}/>
-            <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center', padding:16}}>
-              <Text style={{fontSize: 16, fontFamily: 'Poppins-Medium'}}>Period</Text>
+          <View style={{borderBottomWidth: 0.5, borderColor:'#808080', marginHorizontal:16}}/>
+            <View style={{flexDirection:'row', justifyContent:'space-between', alignItems:'center', paddingHorizontal:16}}>
+              <Text style={{fontSize: 14, fontFamily: 'Poppins-Regular'}}>Period</Text>
               <Picker
                 selectedValue={selectedValue}
                 style={styles.picker}
-                itemStyle={styles.pickerItem}
                 onValueChange={(itemValue) => setSelectedValue(itemValue)}
                 >
                   <Picker.Item label="Before breakfast" value="Before breakfast" />
@@ -165,13 +163,13 @@ const addMeds = () => {
             </View>
           ))}
           <TouchableOpacity style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 16, alignItems: 'center' }} onPress={() => router.push('Boundary/SelectMedicineUI')}>
-            <Text style={{ fontFamily: 'Poppins-Medium' }}>Add medicine</Text>
-            <Ionicons name='chevron-forward' size={24} color='black' />
+            <Text style={{ fontFamily: 'Poppins-Regular', fontSize:14 }}>Add medicine</Text>
+            <Ionicons name='chevron-forward' size={24} color='grey' />
           </TouchableOpacity>
         </View>
         <View style={styles.section}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16 }}>
-            <Text style={{ fontSize: 16, fontFamily: 'Poppins-Medium' }}>Notes</Text>
+            <Text style={{ fontSize: 14, fontFamily: 'Poppins-Regular' }}>Notes</Text>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <TextInput
                 placeholder='Add your notes'
@@ -226,14 +224,7 @@ const styles = StyleSheet.create({
   picker: {
     fontFamily: 'Poppins-Regular',
     width: '50%',
-    marginLeft: 170,
     color: '#808080',
-  },
-  pickerItem: {
-    fontSize: 12,
-    fontFamily: 'Poppins-Regular',
-    height: 36,
-    marginHorizontal: 16
   },
   medicineContainer: {
     flexDirection: 'row',
@@ -252,11 +243,8 @@ const styles = StyleSheet.create({
     paddingLeft: 8
   },
   picker: {
-    fontFamily: 'Poppins-Regular',
-    // width: '50%',
-    height: 100,
-    width: 200,
-    marginLeft: 10,
+    width: '55%',
+    height: 40,
     color: '#808080',
   },
 });

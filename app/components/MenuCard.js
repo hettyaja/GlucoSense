@@ -18,8 +18,6 @@ const MenuCard = ({ menu, onDelete , onEdit}) => {
       <View style={styles.infoContainer}>
         <Text style={styles.title}>{menu.foodName}</Text>
         <Text style={styles.price}>${menu.price}</Text>
-        <Text style={styles.sold}>Sold: {menu.status}</Text>
-        {menu.isSoldOut && <Text style={styles.soldOut}>Sold Out</Text>}
       </View>
       <View style={{ paddingTop: 10, marginLeft: 20, paddingRight: 8 }}>
         <PopupMenu

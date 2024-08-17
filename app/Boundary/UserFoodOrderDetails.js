@@ -53,7 +53,7 @@ const UserFoodOrderDetails = () => {
         {/* Order Date */}
         <View style={styles.section}>
           <Text style={styles.label}>Payment</Text>
-          <Text style={styles.menuName}>Total: ${order.totalPayment}</Text>
+          <Text style={styles.menuName}>Total: ${order.totalPayment.toFixed(2)}</Text>
         </View>
       </ScrollView>
     </>

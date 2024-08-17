@@ -13,11 +13,11 @@ const getStartedPage_2 = () => {
           }}
         />
         <View style={{flex:1}}>
-        <View style={{
-          flex:7,
-          backgroundColor:"#E58B68",
-          alignItems:"center"
-        }}>
+        <View style={{ flex: 7, backgroundColor: "#E58B68" }}>
+          {/* Center the image within this View */}
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <Image source={images.getStarted2} style={{ width: 400, height: 400 }} />
+          </View>
         </View>
         
         <View style={{
@@ -31,7 +31,7 @@ const getStartedPage_2 = () => {
             fontFamily:"Poppins-Bold",
             fontSize:16
           }}>
-            Effortless Food Journaling
+            Expert-Crafted Nutrition
           </Text>
 
           <Text style={{
@@ -41,7 +41,7 @@ const getStartedPage_2 = () => {
             paddingTop:12,
             color:"#808080"
           }}>
-            {'Effortlessly log meals with\nbarcode scans, image recognition\nfor a comprehensive food diary.'}
+            {'Get personalized diet plans\nand healthy meals created by\n experts to support your health.'}
           </Text>
         </View>
 

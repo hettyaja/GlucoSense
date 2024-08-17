@@ -2,7 +2,6 @@ import { View, Text, StyleSheet, TextInput, Platform } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Picker } from '@react-native-picker/picker';
-import RNNPickerSelect from 'react-native-picker-select';
 import { useAuth } from '../service/AuthContext';
 import UpdateMedicineListController from '../Controller/UpdateMedListController';
 import Header from '../components/Header';
@@ -51,7 +50,7 @@ const editMedList = () => {
         onRightButtonPress={saveMeds}
       />
       <View style={styles.container}>
-        <View style={styles.item}>
+        <View style={[styles.item, {paddingVertical:16}]}>
           <Text style={styles.itemText}>Name</Text>
           <TextInput 
             placeholder='Medicine Name' 
@@ -62,16 +61,6 @@ const editMedList = () => {
         </View>
         <View style={styles.item}>
           <Text style={styles.itemText}>Type</Text>
-          {Platform.OS === 'ios' ? (
-            <RNNPickerSelect
-              onValueChange={(itemValue) => setSelectedType(itemValue)}
-              placeholder={{ label: 'Select Type', value: null, fontFamily: 'Poppins-Regular', fontSize: 14 }}
-              items={[
-                { label: 'Pill', value: 'Pill' },
-                { label: 'Insulin', value: 'Insulin' }
-              ]}
-            />
-          ) : (
             <Picker
               selectedValue={selectedType}
               onValueChange={(itemValue) => setSelectedType(itemValue)}
@@ -82,21 +71,10 @@ const editMedList = () => {
               <Picker.Item label="Pill" value='Pill'/>
               <Picker.Item label="Insulin" value='Insulin'/>
             </Picker>
-          )}
         </View>
         {selectedType === 'Insulin' && (
           <View style={styles.item}>
             <Text style={styles.itemText}>Insulin Type</Text>
-            {Platform.OS === 'ios' ? (
-              <RNNPickerSelect
-                onValueChange={(itemValue) => setSelectedInsulinType(itemValue)}
-                placeholder={{ label: 'Select Insulin Type', value: null, fontFamily: 'Poppins-Regular', fontSize: 14 }}
-                items={[
-                  { label: 'Basal', value: 'Basal' },
-                  { label: 'Bolus', value: 'Bolus' }
-                ]}
-              />
-            ) : (
               <Picker
                 selectedValue={selectedInsulinType}
                 onValueChange={(itemValue) => setSelectedInsulinType(itemValue)}
@@ -107,23 +85,10 @@ const editMedList = () => {
                 <Picker.Item label="Basal" value='Basal'/>
                 <Picker.Item label="Bolus" value='Bolus'/>
               </Picker>
-            )}
           </View>
         )}
         <View style={[styles.item, { borderBottomWidth: 0.5, borderColor: '#808080' }]}>
           <Text style={styles.itemText}>Unit</Text>
-          {Platform.OS === 'ios' ? (
-            <RNNPickerSelect
-              onValueChange={(itemValue) => setSelectedUnit(itemValue)}
-              placeholder={{ label: 'Select Unit', value: null, fontFamily: 'Poppins-Regular', fontSize: 14 }}
-              items={[
-                { label: 'mg', value: 'mg' },
-                { label: 'ml', value: 'ml' },
-                { label: 'pill', value: 'pill'},
-                { label: 'unit', value: 'unit'}
-              ]}
-            />
-          ) : (
             <Picker
               selectedValue={selectedUnit}
               onValueChange={(itemValue) => setSelectedUnit(itemValue)}
@@ -136,7 +101,6 @@ const editMedList = () => {
               <Picker.Item label="pill" value='pill'/>
               <Picker.Item label="unit" value='unit'/>
             </Picker>
-          )}
         </View>
       </View>
     </>
@@ -153,7 +117,7 @@ const styles = StyleSheet.create({
   },
   item: {
     backgroundColor: 'white',
-    padding: 16,
+    paddingHorizontal: 16,
     borderTopWidth: 0.5,
     borderColor: '#808080',
     flexDirection: 'row',

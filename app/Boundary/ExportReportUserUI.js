@@ -97,7 +97,7 @@ const exportReportUserUI = () => {
     }
   };
 
-  const generateTableRows = (logs, type) => {
+  const generateTableRowsForPdf = (logs, type) => {
     return logs.map(log => {
       const { dateString, timeString } = convertTimestamp(log.time);
       if (type === 'Glucose') {
@@ -105,8 +105,8 @@ const exportReportUserUI = () => {
           <tr>
             <td>${dateString}</td>
             <td>${timeString}</td>
-            <td>${log.period}</td>
-            <td>${log.glucose}</td>
+            <td>${log.period || ''}</td>
+            <td>${log.glucose || ''}</td>
             <td>${log.notes || ''}</td>
           </tr>
         `;
@@ -115,23 +115,23 @@ const exportReportUserUI = () => {
           <tr>
             <td>${dateString}</td>
             <td>${timeString}</td>
-            <td>${log.period}</td>
-            <td>${log.calories}</td>
-            <td>${log.carbs}</td>
-            <td>${log.protein}</td>
-            <td>${log.fat}</td>
+            <td>${log.period || ''}</td>
+            <td>${log.calories || ''}</td>
+            <td>${log.carbs || ''}</td>
+            <td>${log.protein || ''}</td>
+            <td>${log.fat || ''}</td>
             <td>${log.notes || ''}</td>
           </tr>
         `;
       } else if (type === 'Medicine') {
-        const medicineString = Object.entries(log.medicine)
+        const medicineString = Object.entries(log.medicine || {})
           .map(([name, amount]) => `${name}: ${amount}mg`)
           .join(', ');
         return `
           <tr>
             <td>${dateString}</td>
             <td>${timeString}</td>
-            <td>${medicineString}</td>
+            <td>${medicineString || ''}</td>
             <td>${log.notes || ''}</td>
           </tr>
         `;
@@ -139,10 +139,46 @@ const exportReportUserUI = () => {
     }).join('');
   };
 
+  const generateTableRowsForExcel = (logs, type) => {
+    return logs.map(log => {
+      const { dateString, timeString } = convertTimestamp(log.time);
+      if (type === 'Glucose') {
+        return {
+          Date: dateString,
+          Time: timeString,
+          Period: log.period || '',
+          'Blood Sugar': log.glucose || '',
+          Notes: log.notes || '',
+        };
+      } else if (type === 'Meal') {
+        return {
+          Date: dateString,
+          Time: timeString,
+          Period: log.period || '',
+          Calories: log.calories || '',
+          Carbs: log.carbs || '',
+          Protein: log.protein || '',
+          Fat: log.fat || '',
+          Notes: log.notes || '',
+        };
+      } else if (type === 'Medicine') {
+        const medicineString = Object.entries(log.medicine || {})
+          .map(([name, amount]) => `${name}: ${amount}mg`)
+          .join(', ');
+        return {
+          Date: dateString,
+          Time: timeString,
+          Medicine: medicineString || '',
+          Notes: log.notes || '',
+        };
+      }
+    });
+  };
+
   const generateHtml = (type, logs) => {
     const tableHeaders = generateTableHeaders(type);
-    const tableRows = generateTableRows(logs, type);
-
+    const tableRows = generateTableRowsForPdf(logs, type);
+  
     return `
       <html>
       <head>
@@ -211,7 +247,7 @@ const exportReportUserUI = () => {
       if (selectedLogType === 'Glucose') logs = filterLogsByDateRange(glucoseLogs);
       else if (selectedLogType === 'Meal') logs = filterLogsByDateRange(mealLogs);
       else if (selectedLogType === 'Medicine') logs = filterLogsByDateRange(medicineLogs);
-
+  
       const html = generateHtml(selectedLogType, logs);
       const { uri } = await printToFileAsync({ html });
       const base64Data = await FileSystem.readAsStringAsync(uri, { encoding: FileSystem.EncodingType.Base64 });
@@ -221,19 +257,22 @@ const exportReportUserUI = () => {
       Alert.alert('Error', 'An error occurred while generating or saving the PDF file.');
     }
   };
-
+  
   const exportAsExcel = async () => {
     try {
       let logs;
       if (selectedLogType === 'Glucose') logs = filterLogsByDateRange(glucoseLogs);
       else if (selectedLogType === 'Meal') logs = filterLogsByDateRange(mealLogs);
       else if (selectedLogType === 'Medicine') logs = filterLogsByDateRange(medicineLogs);
-
-      const tableRows = generateTableRows(logs, selectedLogType);
-      const ws = XLSX.utils.json_to_sheet(tableRows.map(row => JSON.parse(row.match(/{.*?}/)[0])));
+  
+      const tableRows = generateTableRowsForExcel(logs, selectedLogType);
+  
+      // Convert table rows to worksheet
+      const ws = XLSX.utils.json_to_sheet(tableRows);
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, 'Logs');
-
+  
+      // Write the workbook and save it
       const wbout = XLSX.write(wb, { type: 'base64', bookType: 'xlsx' });
       await pickDirectoryAndSaveFile(`${selectedLogType}_Logs.xlsx`, wbout, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     } catch (error) {

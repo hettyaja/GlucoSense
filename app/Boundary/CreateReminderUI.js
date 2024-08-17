@@ -30,7 +30,7 @@ const createReminder = () => {
       try {
         await CreateReminderController.createReminder(user.uid, reminderData);
         scheduleNotification(reminderData);
-        router.replace('Boundary/reminder');
+        router.back();
       } catch (error) {
         console.error('Error saving reminder:', error);
         Alert.alert('Error', 'An error occurred while saving the reminder.');
@@ -64,10 +64,16 @@ const createReminder = () => {
       };
     }
 
+    const reminderMessages = {
+      Glucose: "It's time to check your glucose level. Stay on track!",
+      Meal: "It's time for your meal. Remember to eat well!",
+      Medicine: "It's time to take your medicine. Keep up the consistency!"
+    };
+
     await Notifications.scheduleNotificationAsync({
       content: {
         title: "Reminder",
-        body: `It's time to ${reminder.type.toLowerCase()}!`,
+        body: reminderMessages[reminder.type],
       },
       trigger,
     });
@@ -113,6 +119,7 @@ const createReminder = () => {
                 <Picker.Item label="Medicine" value="Medicine" />
               </Picker>
           </View>
+          <View style={{borderBottomWidth:0.5, borderColor:'#808080', marginHorizontal:16}}/>
           <View style={styles.item}>
             <Text>Day</Text>
               <Picker
@@ -131,7 +138,8 @@ const createReminder = () => {
                 <Picker.Item label="Sunday" value="Sunday" />
               </Picker>
           </View>
-          <View style={styles.item}>
+          <View style={{borderBottomWidth:0.5, borderColor:'#808080', marginHorizontal:16}}/>
+          <View style={[styles.item, {paddingVertical:16}]}>
             <Text>Time</Text>
             <TouchableOpacity onPress={showDatePicker}>
               <Text>{selectedTime.toLocaleString('en-GB', { hour: 'numeric', minute: 'numeric' })}</Text>
@@ -164,7 +172,7 @@ const styles = StyleSheet.create({
     borderColor: '#808080'
   },
   item: {
-    padding: 16,
+    paddingHorizontal: 16,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between'

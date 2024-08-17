@@ -40,7 +40,8 @@ class GlucoseLogs {
           await updateDoc(glucoseLogsRef, {
             time: glucoseData.time,
             period: glucoseData.period,
-            glucose: glucoseData.glucose
+            glucose: glucoseData.glucose,
+            notes: glucoseData.notes
           });
           console.log('Glucose log updated successfully:', glucoseData);
         } catch (error) {

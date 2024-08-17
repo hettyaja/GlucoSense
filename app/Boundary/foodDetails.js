@@ -61,7 +61,7 @@ const FoodDetails = () => {
               <Text style={styles.buttonText}>-</Text>
             </TouchableOpacity>
             <Text style={styles.sectionText}>{servings}</Text>
-            <TouchableOpacity style={styles.button} onPress={handleIncrease}>
+            <TouchableOpacity style={[styles.button, {marginRight:16}]} onPress={handleIncrease}>
               <Text style={styles.buttonText}>+</Text>
             </TouchableOpacity>
             

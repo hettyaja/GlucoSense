@@ -62,7 +62,7 @@ const recipePage = () => {
                 key={recipe.id}
                 style={styles.recipeItem}
                 onPress={() => router.push({
-                pathname: '/recipeDetails',
+                pathname: 'Boundary/recipeDetails',
                 params: { recipeId: recipe.id }
                 })}
             >

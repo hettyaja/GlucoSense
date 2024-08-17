@@ -1,12 +1,7 @@
 import { View, Text, StyleSheet, Image, Button, TouchableOpacity, Touchable, TextInput, ScrollView} from 'react-native'
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Stack, router} from 'expo-router'
-import { images } from '../constants/images';
-import { Picker } from '@react-native-picker/picker';
-import Ionicons from 'react-native-vector-icons/Ionicons'
-import DateTimePickerModal from "react-native-modal-datetime-picker";
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
+import { Stack, router, useFocusEffect} from 'expo-router'
 import Header from '../components/Header';
 import { useAuth } from '../service/AuthContext';
 import ViewReminderController from '../Controller/ViewReminderController';
@@ -17,19 +12,23 @@ const reminder = () => {
   const { user } = useAuth()
   const [reminders, setReminders] = useState([])
 
-  useEffect(() => {
-    const getReminder = async () => {
-      if (user) {
-        try {
-          const remindersList = await ViewReminderController.viewReminder(user.uid);
-          setReminders(remindersList);
-        } catch (error) {
-          console.error('Error fetching reminder:', error);
-        }
+
+  const getReminder = async () => {
+    if (user) {
+      try {
+        const remindersList = await ViewReminderController.viewReminder(user.uid);
+        setReminders(remindersList);
+      } catch (error) {
+        console.error('Error fetching reminder:', error);
       }
-    };
-    getReminder();
-  }, [user]);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      getReminder();
+    }, [user])
+  )
 
   const handleLeftButton = () => {
     router.back()

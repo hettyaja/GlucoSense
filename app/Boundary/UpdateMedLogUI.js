@@ -1,14 +1,13 @@
-import { View, Text, StyleSheet, Alert, TouchableOpacity, ScrollView, TextInput } from 'react-native';
-import React, { useState, useEffect } from 'react';
-import { Stack, router, useLocalSearchParams } from 'expo-router';
-import AntDesign from 'react-native-vector-icons/AntDesign';
+// UpdateMedicineUI.js
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Alert } from 'react-native';
+import React, { useState } from 'react';
+import { router, useLocalSearchParams } from 'expo-router';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { useAuth } from '../service/AuthContext';
 import UpdateMedicineLogsController from '../Controller/UpdateMedicineLogsController';
-import DeleteMedicineLogsController from '../Controller/DeleteMedicineLogsController';
 import { Picker } from '@react-native-picker/picker';
+import DeleteMedicineLogsController from '../Controller/DeleteMedicineLogsController';
 import Header from '../components/Header';
-
 
 const editMeds = () => {
   const { user } = useAuth();
@@ -58,19 +57,15 @@ const editMeds = () => {
 
   const handleConfirm = (date) => {
     setSelectedDate(date);
-    console.warn("A date has been picked: ", date);
     hideDatePicker();
   };
-  
+
   const confirmDelete = () => {
     Alert.alert(
       "Delete Log",
       "Are you sure you want to delete this log?",
       [
-        {
-          text: "Cancel",
-          style: "cancel"
-        },
+        { text: "Cancel", style: "cancel" },
         { text: "OK", onPress: () => handleDelete() }
       ]
     );
@@ -79,7 +74,7 @@ const editMeds = () => {
   const handleDelete = async () => {
     try {
       await DeleteMedicineLogsController.deleteMedicineLogs(user.uid, parsedMedicineData.id);
-      router.replace('Boundary/home')
+      router.replace('Boundary/home');
     } catch (error) {
       console.error('Error deleting log:', error);
     }
@@ -88,28 +83,27 @@ const editMeds = () => {
   return (
     <>
       <Header
-        title = 'Edit'
-        leftButton='Close'
-        onLeftButtonPress={()=> router.back('Boundary/home')}
-        rightButton='Save'
-        onRightButtonPress={()=> saveMeds}
+        title="Edit Medicine Log"
+        leftButton="Close"
+        onLeftButtonPress={() => router.back('/home')}
+        rightButton="Save"
+        onRightButtonPress={saveMeds}
       />
 
-      <ScrollView style={{ flex: 1, backgroundColor: '#f5f5f5' }}>
+      <ScrollView style={styles.scrollView}>
         <View style={styles.section}>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16 }}>
-            <Text style={{ fontSize: 16, fontFamily: 'Poppins-Medium' }}>Time</Text>
+          <View style={styles.row}>
+            <Text style={styles.label}>Time</Text>
             <TouchableOpacity onPress={showDatePicker}>
-              <Text>{selectedDate.toLocaleString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', hour: 'numeric', minute: 'numeric' })}</Text>
+              <Text style={styles.value}>{selectedDate.toLocaleString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', hour: 'numeric', minute: 'numeric' })}</Text>
             </TouchableOpacity>
           </View>
-          <View style={{ borderBottomWidth: StyleSheet.hairlineWidth, marginHorizontal: 16 }} />
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16 }}>
-            <Text style={{ fontSize: 16, fontFamily: 'Poppins-Medium' }}>Period</Text>
+          <View style={styles.separator} />
+          <View style={styles.row}>
+            <Text style={styles.label}>Period</Text>
             <Picker
               selectedValue={selectedValue}
               style={styles.picker}
-              itemStyle={styles.pickerItem}
               onValueChange={(itemValue) => setSelectedValue(itemValue)}
             >
               <Picker.Item label="Before breakfast" value="Before breakfast" />
@@ -120,16 +114,17 @@ const editMeds = () => {
               <Picker.Item label="After dinner" value="After dinner" />
             </Picker>
           </View>
-         
         </View>
+
         <View style={styles.section}>
           {Object.keys(medicineAmount).map((medicineName) => (
             <View key={medicineName} style={styles.medicineContainer}>
-              <Text style={styles.medicineName}>{medicineName}</Text>
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Text style={styles.label}>{medicineName}</Text>
+              <View style={styles.medicineInputContainer}>
                 <TextInput
-                  placeholder='000'
-                  textAlign='right'
+                  style={styles.medicineInput}
+                  placeholder="000"
+                  textAlign="right"
                   value={medicineAmount[medicineName]}
                   onChangeText={(text) => handleInputChange(medicineName, text)}
                 />
@@ -138,12 +133,13 @@ const editMeds = () => {
             </View>
           ))}
         </View>
+
         <View style={styles.section}>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16 }}>
-            <Text style={{ fontSize: 16, fontFamily: 'Poppins-Medium' }}>Notes</Text>
+          <View style={styles.row}>
+            <Text style={styles.label}>Notes</Text>
             <TextInput
-              style={{ fontFamily: 'Poppins-Medium', fontSize: 16 }}
-              placeholder='Add your notes'
+              style={styles.notesInput}
+              placeholder="Add your notes"
               value={notes}
               onChangeText={(text) => setNotes(text)}
             />
@@ -151,11 +147,12 @@ const editMeds = () => {
         </View>
 
         <View style={styles.section}>
-          <TouchableOpacity style={{padding: 16, alignItems: 'center' }} onPress={() => confirmDelete()}>
-            <Text style={{ fontFamily: 'Poppins-Medium', fontSize:16, color:'red'}}>Delete</Text>
+          <TouchableOpacity style={styles.deleteButton} onPress={confirmDelete}>
+            <Text style={styles.deleteText}>Delete</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
+
       <DateTimePickerModal
         isVisible={isDatePickerVisible}
         mode="datetime"
@@ -167,41 +164,82 @@ const editMeds = () => {
 };
 
 const styles = StyleSheet.create({
+  scrollView: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+  },
   section: {
     backgroundColor: 'white',
+    borderTopWidth: 0.5,
+    borderBottomWidth: 0.5,
     borderColor: '#808080',
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    marginVertical: 24,
+    marginTop: 16,
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  label: {
+    fontSize: 14,
+    fontFamily: 'Poppins-Regular',
+    color: 'black',
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+  },
+  value: {
+    fontSize: 14,
+    fontFamily: 'Poppins-Regular',
+    color: '#808080',
+    marginHorizontal: 16,
+  },
+  separator: {
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#808080',
   },
   picker: {
-    fontFamily: 'Poppins-Regular',
-    width: '55%',
-    marginLeft: 170,
+    width: '50%',
+    height: 40,
     color: '#808080',
-  },
-  pickerItem: {
-    fontSize: 12,
-    fontFamily: 'Poppins-Regular',
-    height: 36,
-    marginHorizontal: 16
   },
   medicineContainer: {
     flexDirection: 'row',
-    padding: 16,
     justifyContent: 'space-between',
-    borderColor: '#808080',
     borderBottomWidth: 0.5,
+    borderBottomColor: '#808080',
   },
-  medicineName: {
+  medicineInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  medicineInput: {
     fontFamily: 'Poppins-Regular',
-    fontSize: 14
+    fontSize: 14,
+    width: 40,
+    color: '#808080',
   },
   unit: {
-    fontSize: 14,
     fontFamily: 'Poppins-Regular',
-    paddingLeft: 8
-  }
+    fontSize: 14,
+    paddingLeft: 8,
+    paddingRight:16
+  },
+  notesInput: {
+    fontFamily: 'Poppins-Regular',
+    fontSize: 14,
+    flex: 1,
+    textAlign: 'right',
+    marginHorizontal: 16,
+  },
+  deleteButton: {
+    padding: 16,
+    alignItems: 'center',
+  },
+  deleteText: {
+    fontFamily: 'Poppins-Medium',
+    fontSize: 14,
+    color: 'red',
+  },
 });
 
 export default editMeds;

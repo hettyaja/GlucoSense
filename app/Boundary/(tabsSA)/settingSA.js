@@ -16,7 +16,7 @@ const SettingSA = () => {
   };
 
   const handleExportReport = () => {
-    router.push('/exportReportSA');
+    router.push('Boundary/exportReportSA');
   };
 
   const handleProfile = () => {

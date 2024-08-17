@@ -10,11 +10,12 @@ const getStartedPage_1 = () => {
     <>
       <Stack.Screen options={{headerShown:false}}/>
       <View style={{flex:1}}>
-      <View style={{
-        flex:7,
-        backgroundColor:"#E58B68"
-      }}>
-      </View>
+      <View style={{ flex: 7, backgroundColor: "#E58B68" }}>
+          {/* Center the image within this View */}
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <Image source={images.getStarted1} style={{ width: 650, height: 650 }} />
+          </View>
+        </View>
 
       <View style={{
         flex:3,
@@ -22,7 +23,6 @@ const getStartedPage_1 = () => {
         alignItems:"center",
         paddingTop:24
       }}>
-
       <Text style={{fontFamily:"Poppins-Bold", fontSize:16}}>
         Seamless Glucose Monitoring
       </Text>

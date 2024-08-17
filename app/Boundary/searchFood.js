@@ -41,7 +41,7 @@ const searchFoodPage = () => {
   const handleItemPress = (item) => {
     console.log('Selected item:', item);
     router.push({
-      pathname: 'foodDetails', // Ensure this matches the name of your detail page route
+      pathname: 'Boundary/foodDetails', // Ensure this matches the name of your detail page route
       params: { item: JSON.stringify(item) },
     });
   };

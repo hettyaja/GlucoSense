@@ -21,7 +21,7 @@ const ToReceiveRoute = ({ orders }) => (
             </View>
             <Text style={styles.notes}>Ordered on {order.orderDate.toLocaleString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</Text>
             <View style={{flexDirection:'row', justifyContent:'flex-end'}}>
-              <Text style={styles.price}>${order.totalPayment}</Text>
+              <Text style={styles.price}>${order.totalPayment.toFixed(2)}</Text>
             </View>
           </View>
         </View>

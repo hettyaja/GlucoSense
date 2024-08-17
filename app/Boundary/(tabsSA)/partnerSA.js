@@ -123,7 +123,7 @@ const PartnerSA = () => {
           </TouchableOpacity>
         </View>
         <View style={styles.tableHeader}>
-          <Text style={styles.tableHeaderCell}>Username</Text>
+          <Text style={styles.tableHeaderCell}>Name</Text>
           <Text style={styles.tableHeaderCell}>Stall Name</Text>
           <Text style={styles.tableHeaderCell}>Registered</Text>
           <Text style={styles.tableHeaderCell}>Status</Text>

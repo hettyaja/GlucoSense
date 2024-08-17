@@ -102,18 +102,7 @@ const settingBP = () => {
         </TouchableOpacity>
         
       <View style = {styles.section}>
-        <TouchableOpacity style={styles.optionButton} onPress={() => router.push('Notification')}>
-          <MaterialCommunityIcons name='bell-outline' size={24} style={styles.icon} />
-          <Text style={styles.optionButtonText}>Notification</Text>
-        </TouchableOpacity>
         
-        <View style={{borderBottomColor:'#d9d9d9', borderBottomWidth:1}}/>
-        <TouchableOpacity style={styles.optionButton} onPress={() => router.push('/ReportProblem')}>
-          <Octicons name='report' size={24} style={styles.icon} />
-          <Text style={styles.optionButtonText}>Report problem</Text>
-        </TouchableOpacity>
-
-        <View style={{borderBottomColor:'#d9d9d9', borderBottomWidth:1}}/>
         <TouchableOpacity style={styles.optionButton} onPress={() => handleSignOut()}>
           <MaterialIcons name='logout' size={24} style={styles.icon} />
           <Text style={styles.optionButtonText}>Log out</Text>

@@ -39,7 +39,7 @@ const FoodCard = ({ item, onOrderDelivered }) => {
         </View>
         <Text style={styles.cardLabel}>Notes: {item.notes ? item.notes : '-'}</Text>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Text style={[styles.cardSubtitle]}>$ {item.totalPayment}</Text>
+          <Text style={[styles.cardSubtitle]}>$ {item.totalPayment.toFixed(2)}</Text>
           {/* Conditionally render the "Deliver" button if status is not 'complete' */}
           {item.status !== 'complete' && (
             <TouchableOpacity style={styles.deliverButton} onPress={handleDeliver}>

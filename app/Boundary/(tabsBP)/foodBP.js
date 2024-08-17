@@ -7,7 +7,6 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MenuCard from '../../components/MenuCard';
 import DeleteMenuController from '../../Controller/DeleteMenuController';
 import { useAuth } from '../../service/AuthContext';
-import UpdateMenuController from '../../Controller/UpdateMenuController';
 import Header from '../../components/Header';
 import { encode } from 'base-64';
 import ViewMenuController from '../../Controller/ViewMenuController';

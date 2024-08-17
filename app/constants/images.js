@@ -15,4 +15,7 @@ export const images = {
     food: require('../assets/food.png'),
     more: require('../assets/more.png'),
     reminder: require('../assets/reminder.png'),
+    getStarted1: require('../assets/getStarted1.png'),
+    getStarted2: require('../assets/getStarted2.png'),
+    getStarted3: require('../assets/getStarted3.png')
   };

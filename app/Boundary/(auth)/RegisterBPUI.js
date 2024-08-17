@@ -243,7 +243,7 @@ const RegisterBPUI = ({}) => {
         </View>
 
         <View style={{ alignItems: 'center' }}>
-          <TouchableOpacity onPress={() => router.push('/loginPage')}>
+          <TouchableOpacity onPress={() => router.push('Boundary/loginPage')}>
             <Text style={{ alignItems: 'center', fontFamily: 'Poppins-Medium', fontSize: 14, paddingBottom: 35, color: '#0044CC', justifyContent: 'center', textAlign: 'center' }}>
               Log In
             </Text>

@@ -19,7 +19,6 @@ const handleBackButton = () => {
 
 const addMeals = () => {
   const { user } = useAuth();
-  const [selectedButton, setSelectedButton] = useState(null);
   const [selectedValue, setSelectedValue] = useState("Before breakfast");
   const { mealData } = useLocalSearchParams();
   const [parsedMealData, setParsedMealData] = useState(mealData ? JSON.parse(mealData) : null);
@@ -185,15 +184,15 @@ const addMeals = () => {
       <ScrollView style={{ flex: 1, backgroundColor: '#f5f5f5' }}>
         <View style={styles.section}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16}}>
-            <Text style={{ fontSize: 16, fontFamily: 'Poppins-Regular' }}>Time</Text>
+            <Text style={{ fontSize: 14, fontFamily: 'Poppins-Regular' }}>Time</Text>
             <TouchableOpacity onPress={showDatePicker}>
-              <Text>{selectedDate.toLocaleString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', hour: 'numeric', minute: 'numeric' })}</Text>
+              <Text style={{ fontSize: 14, fontFamily: 'Poppins-Regular', color:"#808080" }}>{selectedDate.toLocaleString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', hour: 'numeric', minute: 'numeric' })}</Text>
             </TouchableOpacity>
           </View>
 
-          <View style={{ borderBottomWidth: StyleSheet.hairlineWidth, marginHorizontal: 16 }} />
+          <View style={{ borderBottomWidth: 0.5, borderColor:'#808080', marginHorizontal: 16 }} />
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
-            <Text style={{ fontSize: 16, fontFamily: 'Poppins-Regular', paddingHorizontal:16 }}>Period</Text>
+            <Text style={{ fontSize: 14, fontFamily: 'Poppins-Regular', paddingHorizontal:16 }}>Period</Text>
             <Picker
               selectedValue={selectedValue}
               style={styles.picker}
@@ -239,25 +238,25 @@ const addMeals = () => {
             <Text style={styles.itemTitle}>{calories} kcal</Text>
           </View>
 
-          <View style={{ borderBottomWidth: StyleSheet.hairlineWidth, marginHorizontal: 16 }} />
+          <View style={{ borderBottomWidth: 0.5, borderColor:'#808080', marginHorizontal: 16 }} />
           <View style={styles.item}>
             <Text style={styles.itemTitle}>Carbs</Text>
             <Text style={styles.itemTitle}>{carbs} g</Text>
           </View>
 
-          <View style={{ borderBottomWidth: StyleSheet.hairlineWidth, marginHorizontal: 16 }} />
+          <View style={{ borderBottomWidth: 0.5, borderColor:'#808080', marginHorizontal: 16 }} />
           <View style={styles.item}>
             <Text style={styles.itemTitle}>Protein</Text>
             <Text style={styles.itemTitle}>{protein} g</Text>
           </View>
 
-          <View style={{ borderBottomWidth: StyleSheet.hairlineWidth, marginHorizontal: 16 }} />
+          <View style={{ borderBottomWidth: 0.5, borderColor:'#808080', marginHorizontal: 16 }} />
           <View style={styles.item}>
             <Text style={styles.itemTitle}>Fat</Text>
             <Text style={styles.itemTitle}>{fat} g</Text>
           </View>
 
-          <View style={{ borderBottomWidth: StyleSheet.hairlineWidth, marginHorizontal: 16 }} />
+          <View style={{ borderBottomWidth: 0.5, borderColor:'#808080', marginHorizontal: 16 }} />
           <View style={styles.item}>
             <Text style={styles.itemTitle}>Notes</Text>
             <TextInput 
@@ -284,9 +283,9 @@ const addMeals = () => {
 const styles = StyleSheet.create({
   section: {
     backgroundColor: 'white',
+    borderTopWidth: 0.5,
+    borderBottomWidth: 0.5,
     borderColor: '#808080',
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
     marginVertical: 24,
   },
   buttonContainer: {
@@ -305,7 +304,7 @@ const styles = StyleSheet.create({
     flexDirection:'row',
     justifyContent:'space-between',
     paddingHorizontal:16,
-    paddingVertical:8,
+    paddingVertical:16,
   },
   itemTitle: {
     fontSize:14,

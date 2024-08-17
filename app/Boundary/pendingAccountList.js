@@ -67,7 +67,7 @@ const PendingAccountList = () => {
           </View>
         </View>
         <View style={styles.tableHeader}>
-          <Text style={[styles.tableHeaderCell, {flex:1.5}]}>Username</Text>
+          <Text style={[styles.tableHeaderCell, {flex:1.5}]}>Name</Text>
           <Text style={styles.tableHeaderCell}>Registered</Text>
           <Text style={[styles.tableHeaderCell, {flex:1}]}>Status</Text>
         </View>
