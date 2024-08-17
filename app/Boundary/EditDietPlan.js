@@ -27,9 +27,9 @@ const dayOrder = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Satur
 
 // Nutritional Thresholds
 const THRESHOLDS = {
-  calories: { min: 300, max: 700 },
-  totalFat: { min: 10, max: 20 },
-  carbohydrates: { min: 30, max: 60 },
+  calories: { max: 700 },
+  totalFat: { max: 20 },
+  carbohydrates: { max: 60 },
   protein: { min: 10 }, // Minimum protein required
   sugar: { max: 10 }, // Maximum sugar allowed
 };
@@ -58,21 +58,18 @@ const EditDietPlan = () => {
       for (const mealType in dietPlan[day]) {
         const meal = dietPlan[day][mealType];
         if (
-          parseFloat(meal.calorie) < THRESHOLDS.calories.min ||
           parseFloat(meal.calorie) > THRESHOLDS.calories.max ||
-          parseFloat(meal.fat) < THRESHOLDS.totalFat.min ||
           parseFloat(meal.fat) > THRESHOLDS.totalFat.max ||
-          parseFloat(meal.carbs) < THRESHOLDS.carbohydrates.min ||
           parseFloat(meal.carbs) > THRESHOLDS.carbohydrates.max ||
           parseFloat(meal.protein) < THRESHOLDS.protein.min ||
           parseFloat(meal.sugar) > THRESHOLDS.sugar.max
         ) {
           return `Meal "${meal.name}" on ${day} ${mealType} exceeds/falls short of the nutritional threshold:
-            - Calories: ${meal.calorie} kcal (allowed: ${THRESHOLDS.calories.min} - ${THRESHOLDS.calories.max} kcal)
-            - Fat: ${meal.fat} g (allowed: ${THRESHOLDS.totalFat.min} - ${THRESHOLDS.totalFat.max} g)
-            - Carbs: ${meal.carbs} g (allowed: ${THRESHOLDS.carbohydrates.min} - ${THRESHOLDS.carbohydrates.max} g)
-            - Protein: ${meal.protein} g (minimum: ${THRESHOLDS.protein.min} g)
-            - Sugar: ${meal.sugar} g (maximum: ${THRESHOLDS.sugar.max} g)`;
+          - Calories: ${meal.calorie} kcal (maximum allowed: ${THRESHOLDS.calories.max} kcal)
+          - Fat: ${meal.fat} g (maximum allowed: ${THRESHOLDS.totalFat.max} g)
+          - Carbs: ${meal.carbs} g (maximum allowed: ${THRESHOLDS.carbohydrates.max} g)
+          - Protein: ${meal.protein} g (minimum allowed: ${THRESHOLDS.protein.min} g)
+          - Sugar: ${meal.sugar} g (maximum allowed: ${THRESHOLDS.sugar.max} g)`;
         }
       }
     }

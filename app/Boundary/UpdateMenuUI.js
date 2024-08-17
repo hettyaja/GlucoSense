@@ -27,9 +27,9 @@ const EditMenuPage = () => {
 
   // Nutritional Thresholds
   const THRESHOLDS = {
-    calories: { min: 300, max: 700 },
-    totalFat: { min: 10, max: 20 },
-    carbohydrates: { min: 30, max: 60 },
+    calories: { max: 700 },
+    totalFat: { max: 20 },
+    carbohydrates: { max: 60 },
     protein: { min: 10 }, // Minimum protein required
     sugar: { max: 10 }, // Maximum sugar allowed
   };
@@ -46,13 +46,9 @@ const EditMenuPage = () => {
     const fatNum = parseFloat(fat);
     const sugarNum = parseFloat(sugar);
 
-    // Validate nutritional thresholds
     if (
-      caloriesNum < THRESHOLDS.calories.min ||
       caloriesNum > THRESHOLDS.calories.max ||
-      fatNum < THRESHOLDS.totalFat.min ||
       fatNum > THRESHOLDS.totalFat.max ||
-      carbsNum < THRESHOLDS.carbohydrates.min ||
       carbsNum > THRESHOLDS.carbohydrates.max ||
       proteinNum < THRESHOLDS.protein.min ||
       sugarNum > THRESHOLDS.sugar.max
@@ -60,9 +56,9 @@ const EditMenuPage = () => {
       Alert.alert(
         'Unhealthy Menu',
         `This menu item exceeds the allowed nutritional thresholds:
-        - Calories: 300 - 700 kcal
-        - Total Fat: 10 - 20 grams
-        - Carbohydrates: 30 - 60 grams
+        - Calories: Up to 700 kcal
+        - Total Fat: Up to 20 grams
+        - Carbohydrates: Up to 60 grams
         - Protein: At least 10 grams
         - Sugar: Less than or equal to 10 grams
         Please adjust the nutritional values to proceed.`
