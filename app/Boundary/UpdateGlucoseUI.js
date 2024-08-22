@@ -1,5 +1,5 @@
 // UpdateGlucoseUI.js
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Alert, LogBox } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { router, useLocalSearchParams } from 'expo-router';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
@@ -17,6 +17,10 @@ const editGlucose = () => {
   const [selectedValue, setSelectedValue] = useState(parsedGlucoseData.period);
   const [glucoseValue, setGlucoseValue] = useState(parsedGlucoseData.glucose.toString());
   const [notes, setNotes] = useState(parsedGlucoseData.notes);
+
+  LogBox.ignoreLogs([
+    'Support for defaultProps will be removed from memo components in a future major release',
+  ]);
 
   const handleChange = (text) => {
     const newText = text.replace(/[^0-9.]/g, '');

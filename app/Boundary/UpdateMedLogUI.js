@@ -1,5 +1,5 @@
 // UpdateMedicineUI.js
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Alert, LogBox } from 'react-native';
 import React, { useState } from 'react';
 import { router, useLocalSearchParams } from 'expo-router';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
@@ -17,6 +17,10 @@ const editMeds = () => {
   const [selectedDate, setSelectedDate] = useState(new Date(parsedMedicineData.time.seconds * 1000));
   const [medicineAmount, setMedicineAmount] = useState(parsedMedicineData.medicine || {});
   const [notes, setNotes] = useState(parsedMedicineData.notes);
+
+  LogBox.ignoreLogs([
+    'Support for defaultProps will be removed from memo components in a future major release',
+  ]);
 
   const handleInputChange = (medicineName, value) => {
     setMedicineAmount((prev) => ({

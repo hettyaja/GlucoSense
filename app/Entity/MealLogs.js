@@ -162,7 +162,7 @@ class MealLogs {
         logsRef,
         where('time', '>=', timestamp),
         orderBy('time', 'desc')
-      );
+      );  
   
       const querySnapshot = await getDocs(logsQuery);
       const logs = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));

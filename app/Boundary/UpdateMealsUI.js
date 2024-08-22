@@ -1,5 +1,5 @@
 // UpdateMealsUI.js
-import { View, Text, StyleSheet, Alert, TouchableOpacity, ScrollView, TextInput } from 'react-native';
+import { View, Text, StyleSheet, Alert, TouchableOpacity, ScrollView, TextInput, LogBox } from 'react-native';
 import React, { useState } from 'react';
 import { router, useLocalSearchParams } from 'expo-router';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
@@ -22,6 +22,10 @@ const editMeals = () => {
   const [carbs, setCarbs] = useState(parsedMealData.carbs);
   const [protein, setProtein] = useState(parsedMealData.protein);
   const [notes, setNotes] = useState(parsedMealData.notes);
+
+  LogBox.ignoreLogs([
+    'Support for defaultProps will be removed from memo components in a future major release',
+  ]);
 
   const saveMeals = async () => {
     if (user) {
