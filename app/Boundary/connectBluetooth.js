@@ -221,7 +221,7 @@ const ConnectBluetooth = () => {
           },
           trigger: null, // Trigger immediately
         });
-      }, 3000); // Adjust the delay as needed
+      }, 10000); // Adjust the delay as needed
 
       const allValuesRetriever = [0x01, 0x01];
       const allValuesRetrieverInBase64 = Buffer.from(allValuesRetriever).toString('base64');
