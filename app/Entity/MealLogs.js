@@ -58,7 +58,7 @@ class MealLogs {
     static async fetchMealLogs(uid) {
       try {
         const logsRef = collection(db, 'users', uid, 'mealLogs');
-        const logsQuery = query(logsRef, orderBy('time', 'desc'), limit(10));
+        const logsQuery = query(logsRef, orderBy('time', 'desc'));
         const querySnapshot = await getDocs(logsQuery);
         const logs = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         return logs;

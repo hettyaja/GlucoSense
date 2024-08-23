@@ -105,7 +105,7 @@ class MedicineLogs {
     static async fetchMedicineLogs(uid) {
       try {
         const logsRef = collection(db, 'users', uid, 'medicineLogs');
-        const logsQuery = query(logsRef, orderBy('time', 'desc'), limit(10));
+        const logsQuery = query(logsRef, orderBy('time', 'desc'));
         const querySnapshot = await getDocs(logsQuery);
         const logs = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         return logs;
