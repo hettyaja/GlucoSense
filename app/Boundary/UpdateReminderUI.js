@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Platform, LogBox } from 'react-native';
 import Header from '../components/Header';
 import { router, useLocalSearchParams } from 'expo-router';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
@@ -16,6 +16,9 @@ const editReminder = () => {
   const [selectedType, setSelectedType] = useState(parsedReminderData ? parsedReminderData.type : null);
   const [selectedDay, setSelectedDay] = useState(parsedReminderData ? parsedReminderData.day : null);
 
+  LogBox.ignoreLogs([
+    'Support for defaultProps will be removed from memo components in a future major release',
+  ]);
 
   // Parse the time correctly
   const [selectedTime, setSelectedTime] = useState(() => {
