@@ -33,6 +33,8 @@ A mobile app to track and monitor blood glucose levels, designed for diabetic pa
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
+![splash](https://github.com/user-attachments/assets/218a5609-731a-4ab3-b752-3e12a32d0b76)
+
 [![Product Name Screen Shot][product-screenshot]](https://example.com)
 
 GlucoSense is a health-focused mobile app aimed at helping diabetic patients track their blood glucose levels over time. The app allows users to log glucose readings, visualize trands with interactive graphs, set reminders, and sync data with external devices. 
