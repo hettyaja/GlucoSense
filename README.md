@@ -58,7 +58,7 @@ Before you begin, make sure you have the following installed on your machine:
 </ul>
 
 ### Installation 
-1.**Clone the respitory** Open your terminal and run the following command to clone the respitory 
+1. **Clone the respitory** Open your terminal and run the following command to clone the respitory 
    ```sh
    git clone https://github.com/github_username/repo_name.git](https://github.com/hettyaja/GlucoSense
    ```
