@@ -33,7 +33,7 @@ A mobile app to track and monitor blood glucose levels, designed for diabetic pa
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-![splash](https://github.com/user-attachments/assets/218a5609-731a-4ab3-b752-3e12a32d0b76)
+<img src="https://github.com/user-attachments/assets/218a5609-731a-4ab3-b752-3e12a32d0b76" alt="splash" width="300" />
 
 [![Product Name Screen Shot][product-screenshot]](https://example.com)
 
