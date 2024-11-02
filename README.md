@@ -64,7 +64,7 @@ Before you begin, make sure you have the following installed on your machine:
    ```
 2. **Navigate to the Project Directory** Move into the project directory:
     ```sh
-   cd Your local file
+   cd path/to/project/directory
    ```
 3. **Install Dependencies** Use npm or Yarn to install all required dependencies:
    ```sh
